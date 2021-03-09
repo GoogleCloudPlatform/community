@@ -263,79 +263,101 @@ These commands add the project-level IAM bindings that allow the execution of th
 
 ### Deploy the Cloud Function that processes the Cloud Asset Inventory real-time notifications
 
-The [GitHub repository for this tutorial](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/cloud-asset-inventory-auto-label-resources/cloud-function-auto-resource-labeler/) includes the complete working source code of the Cloud Function for the tutorial, which you can use as a reference as you customize it for your use case.
+The [GitHub repository for this tutorial](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/cloud-asset-inventory-auto-label-resources/cloud-function-auto-resource-labeler/)
+includes the complete working source code of the Cloud Function for the tutorial, which you can use as a reference as you customize it for your use case.
 
-Clone the repository and change into the directory containing the Cloud Functions code.
+1.  Clone the repository:
 
-```bash
-git clone https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/cloud-asset-inventory-auto-label-resources/cloud-function-auto-resource-labeler/
-cd GoogleCloudPlatform-community/tutorials/cloud-asset-inventory-auto-label-resources/cloud-function-auto-resource-labeler
-```
+        git clone https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/cloud-asset-inventory-auto-label-resources/cloud-function-auto-resource-labeler/
 
-Deploy the function.
+1.  Go to the directory containing the Cloud Functions code:
 
-```bash
-# Confirm you still have the right variables for the deployment
-# This will be used as the service account for the function
-echo PROJECT_ID=${PROJECT_ID}
-echo GCF_SERVICE_ACCOUNT="${GCF_SERVICE_ACCOUNT}"
-echo TOPIC_NAME=${TOPIC_NAME}
+        cd GoogleCloudPlatform-community/tutorials/cloud-asset-inventory-auto-label-resources/cloud-function-auto-resource-labeler
 
-# Deploy the function
-gcloud functions deploy auto_resource_labeler --runtime python38 --trigger-topic "${TOPIC_NAME}" --service-account="${GCF_SERVICE_ACCOUNT}" --project ${PROJECT_ID} --retry
-```
+1.  Confirm that you still have the correct variables for the deployment:
 
-## Test the labeling triggered by Asset Inventory Real-time Notifications
+        echo PROJECT_ID=${PROJECT_ID}
+        echo GCF_SERVICE_ACCOUNT="${GCF_SERVICE_ACCOUNT}"
+        echo TOPIC_NAME=${TOPIC_NAME}
 
-Now you can test the creation of the supported resources under your organization (or folder) to observe the labeling in action.
+1.  Deploy the function:
 
-* GCE VMs are labeled when transitioning into PROVISIONING state.
-* GKE clusters are labeled when transitioning into RUNNING state.
-* GCS buckets are labled when coming from priorAssetState=DOES_NOT_EXIST.
-* Cloud SQL instances are labeled when transitioning into RUNNABLE state. It may take a few minutes for the labels to be effective.
+        gcloud functions deploy auto_resource_labeler --runtime python38 --trigger-topic "${TOPIC_NAME}" --service-account="${GCF_SERVICE_ACCOUNT}" --project ${PROJECT_ID} --retry
+
+## Test the labeling triggered by Cloud Asset Inventory real-time notifications
+
+Now you can test the creation of the resources under your organization (or folder) to observe the labeling in action.
+
+It may take a few minutes for the labels to be effective.
+
+* Compute Engine VM instances are labeled when transitioning into the `PROVISIONING` state.
+* GKE clusters are labeled when transitioning into the `RUNNING` state.
+* Cloud Storage buckets are labled when coming from `priorAssetState=DOES_NOT_EXIST`.
+* Cloud SQL instances are labeled when transitioning into the `RUNNABLE` state.
 
 ## Considerations
 
-Notifications are only sent upon changes on the resource or policy metadata of the resource. Any existing resources (e.g. existing VMs) that are already deployed will not be acted upon by this solution.  A separate exercise needs to be performed to have the same actions on those existing resources.
+Notifications are only sent upon changes on the resource or policy metadata of the resource. Any existing resources (such as existing VM instances) that are
+already deployed are not acted upon by this solution. You can perform a separate exercise to have the same actions on those existing resources.
 
-## Known Issues
-
-* GKE Autopilot Clusters will generate Compute Instance notifications that cannot be processed by the Cloud Function. This results in 404 errors when trying to retrieve the existing labels.  The current sample code handles by exiting gracefully when encountering any 404 errors.
+GKE Autopilot Clusters generate Compute Engine instance notifications that can't be processed by the Cloud Function. This results in 404 errors when trying to
+retrieve the existing labels. The current sample code handles by exiting gracefully when encountering any 404 errors.
 
 ## Cleaning up
 
-Perform these clean-up steps if you plan to revert changes made throughout the tutorial.
+You can revert changes made throughout the tutorial.
 
-```bash
-# Confirm the feed ID
-gcloud asset feeds list --organization ${ORGANIZATION_ID} --format="flattened(feeds[].name)" 
-# Or if you have been doing it on the folder level:
-#gcloud asset feeds list --folder ${FOLDER_ID} --format="flattened(feeds[].name)"
+### Delete the feed
 
-# The FEED_ID is the portion of the feed name after ".*/feeds/${FEED_ID}".
-# Set the right feed to the variables.  Please be aware of any existing feeds in your organization that you may not want to interfere with
-FEED_ID=feed-resources-
-# echo FEED_ID="${FEED_ID}"
+1.  Confirm the feed ID.
 
-# Delete the feed
-gcloud asset feeds delete ${FEED_ID} --organization ${FOLDER_ID}
-# Or if you have been doing it on the folder level:
-#gcloud asset feeds delete ${FEED_ID} --folder ${FOLDER_ID}
-```
+    - For an organization:
+    
+          gcloud asset feeds list --organization ${ORGANIZATION_ID} --format="flattened(feeds[].name)" 
+          
+    - For a folder:
 
-To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project hosting Pub/Sub and the Cloud Function. Deleting a project has the following consequences:
+          gcloud asset feeds list --folder ${FOLDER_ID} --format="flattened(feeds[].name)"
+
+    The feed ID is the portion of the feed name after `.*/feeds/${FEED_ID}`.
+
+1.  Set the right feed for the variables:
+
+        FEED_ID=feed-resources-
+
+    Be aware of any existing feeds in your organization that you may not want to interfere with.
+
+1.  Delete the feed.
+
+    - For an organization:
+    
+          gcloud asset feeds delete ${FEED_ID} --organization ${FOLDER_ID}        
+         
+    - For a folder:
+
+          gcloud asset feeds delete ${FEED_ID} --folder ${FOLDER_ID}
+
+### Delete the project
+
+To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project hosting the Pub/Sub and Cloud
+Functions resources.
+
+Deleting a project has the following consequences:
 
 * If you used an existing project, you will also delete any other work that you have done in the project.
-* You cannot reuse the project ID of a deleted project. If you created a custom project ID that you plan to use in the future, delete the resources inside the project instead.
+* You cannot reuse the project ID of a deleted project. If you created a custom project ID that you plan to use in the future, delete the resources inside the
+*  project instead.
 
 To delete a project, do the following:
 
-1. In the Cloud Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
-1. In the project list, select the project you want to delete and click **Delete**.
-1. In the dialog, type the project ID, and then click **Shut down** to delete the project.
+1.  In the Cloud Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
+1.  In the project list, select the project you want to delete and click **Delete**.
+1.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
 
-Finally, you should create any other resources (e.g. GCE VMs) that you may have created for testing the labeling.
+### Delete other resources
+
+Finally, you can delete any other resources (such as Compute Engine VM instances) that you created for testing the labeling.
 
 ## What's next
 
-* Refer to this page about [Monitoring asset changes](https://cloud.google.com/asset-inventory/docs/monitoring-asset-changes) for more information.
+* For more information, see [Monitoring asset changes](https://cloud.google.com/asset-inventory/docs/monitoring-asset-changes).
