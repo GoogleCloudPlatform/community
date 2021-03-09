@@ -197,81 +197,71 @@ Enable the required Google Cloud APIs.
 
         gcloud services enable compute.googleapis.com container.googleapis.com storage.googleapis.com sqladmin.googleapis.com --project ${PROJECT_ID}
 
-### Add the IAM policy bindings needed on the project hosting the Pub/Sub and Cloud Functions resources
+### Add the IAM policy bindings on the project hosting the Pub/Sub and Cloud Functions resources
 
-These commands allow the execution of the subsequent steps (Pub/Sub, Cloud Function, etc) by the MEMBER (yourself or another designated personnel).
+These commands add the project-level IAM bindings that allow the execution of the subsequent steps by the `MEMBER` user (yourself or another designated user).
 
-```bash
-# Project-level IAM bindings
+    # for creating the Pub/Sub topic and managing IAM permissions on the Pub/Sub topic
+    gcloud projects add-iam-policy-binding ${PROJECT_ID} --member="${MEMBER}" --role="roles/pubsub.admin"
+    
+    # for creating the asset feed
+    gcloud projects add-iam-policy-binding ${PROJECT_ID} --member="${MEMBER}" --role="roles/serviceusage.serviceUsageConsumer"
+    
+    # for creating the Cloud Function
+    gcloud projects add-iam-policy-binding ${PROJECT_ID} --member="${MEMBER}" --role="roles/cloudfunctions.developer"
 
-# Needed for creating the pubsub topic and managing the IAM permission on the pubsub topic
-gcloud projects add-iam-policy-binding ${PROJECT_ID} --member="${MEMBER}" --role="roles/pubsub.admin"
-# Needed for creating the asset feed
-gcloud projects add-iam-policy-binding ${PROJECT_ID} --member="${MEMBER}" --role="roles/serviceusage.serviceUsageConsumer"
-# Needed for creating the Cloud Function
-gcloud projects add-iam-policy-binding ${PROJECT_ID} --member="${MEMBER}" --role="roles/cloudfunctions.developer"
-# Needed for deploying the Cloud Function package
-gcloud projects add-iam-policy-binding ${PROJECT_ID} --member="${MEMBER}" --role="roles/storage.objectCreator"
-
-```
+    # for deploying the Cloud Function package
+    gcloud projects add-iam-policy-binding ${PROJECT_ID} --member="${MEMBER}" --role="roles/storage.objectCreator"
 
 ### Create the Pub/Sub topic
 
-If the subsequent steps are to be done by a different person due to separation of duties, make sure the variables are set properly.
+**Note**: If the steps in this section are to be done by a different person due to separation of duties, make sure that the `PROJECT_ID`, `PROJECT_NUMBER`, and 
+`ORGANIZATION_ID` variables are set, as described in the preliminary procedures of this tutorial.
 
-```bash
-# Set your project id to the project you want to use (the project that hosts the Pub/Sub and the Clouf Function)
-#PROJECT_ID=
-echo PROJECT_ID=${PROJECT_ID}
-PROJECT_NUMBER=$(gcloud projects describe ${PROJECT_ID} --format="value(project_number)")
-echo PROJECT_NUMBER=${PROJECT_NUMBER}
 
-ORGANIZATION_ID=$(gcloud projects get-ancestors ${GOOGLE_CLOUD_PROJECT} --format="csv[no-heading](id,type)" | grep ",organization$" | cut -d"," -f1 )
-echo ORGANIZATION_ID=${ORGANIZATION_ID}
-```
+1.  Give a name for the Pub/Sub topic:
 
-Run these commands to create the Pub/Sub topic.
+        TOPIC_NAME="asset-changes"
 
-```bash
-TOPIC_NAME="asset-changes"
-gcloud pubsub topics create "${TOPIC_NAME}" --project ${PROJECT_ID}
+1.  Create the Pub/Sub topic:
 
-```
+        gcloud pubsub topics create "${TOPIC_NAME}" --project ${PROJECT_ID}
 
-### Allow Asset Inventory Built-in Service Account to publish to the Pub/Sub topic
+### Allow the Cloud Asset Inventory built-in service account to publish to the Pub/Sub topic
 
-```bash
-gcloud beta services identity create --service=cloudasset.googleapis.com --project=${PROJECT_ID}
+    gcloud beta services identity create --service=cloudasset.googleapis.com --project=${PROJECT_ID}
 
-gcloud pubsub topics add-iam-policy-binding "${TOPIC_NAME}" --member "serviceAccount:service-${PROJECT_NUMBER}@gcp-sa-cloudasset.iam.gserviceaccount.com" --role roles/pubsub.publisher --project ${PROJECT_ID}
-```
+    gcloud pubsub topics add-iam-policy-binding "${TOPIC_NAME}" --member "serviceAccount:service-${PROJECT_NUMBER}@gcp-sa-cloudasset.iam.gserviceaccount.com" --role roles/pubsub.publisher --project ${PROJECT_ID}
 
-### Create an Asset Feed for the organization or the folder
+### Create an asset feed for the organization or folder
 
-Specify the asset types. The supported ones can be found on this [page](https://cloud.google.com/asset-inventory/docs/supported-asset-types). These are the 4 types supported by the sample Cloud Function in this tutorial.
+1.  Specify the four asset types to monitor:
 
-```bash
-ASSET_TYPES="compute.googleapis.com/Instance,container.googleapis.com/Cluster,sqladmin.googleapis.com/Instance,storage.googleapis.com/Bucket"
-```
+        ASSET_TYPES="compute.googleapis.com/Instance,container.googleapis.com/Cluster,sqladmin.googleapis.com/Instance,storage.googleapis.com/Bucket"
 
-Create the feed.
+    For a complete list of asset types that you can monitor, see [Supported asset types](https://cloud.google.com/asset-inventory/docs/supported-asset-types). 
 
-```bash
-# Create a feed for the entire organization
-gcloud asset feeds create "feed-resources-${ORGANIZATION_ID}" --organization="${ORGANIZATION_ID}" --content-type=resource --asset-types="${ASSET_TYPES}" --pubsub-topic="projects/${PROJECT_ID}/topics/${TOPIC_NAME}" --billing-project ${PROJECT_ID}
+1.  Create the feed.
 
-# Alternately, create a feed for the folder
-#echo FOLDER_ID=${FOLDER_ID}
-#gcloud asset feeds create "feed-resources-${FOLDER_ID}" --folder="${FOLDER_ID}" --content-type=resource --asset-types="${ASSET_TYPES}" --pubsub-topic="projects/${PROJECT_ID}/topics/${TOPIC_NAME}" --billing-project ${PROJECT_ID}
+    - For the entire organization:
 
-# Confirm the feed creation
-gcloud asset feeds list --organization ${ORGANIZATION_ID} --format="flattened(feeds[].name)" --billing-project ${PROJECT_ID}
-# Or if you have been doing it on the folder level:
-#gcloud asset feeds list --folder ${FOLDER_ID} --format="flattened(feeds[].name)" --billing-project ${PROJECT_ID}
+          gcloud asset feeds create "feed-resources-${ORGANIZATION_ID}" --organization="${ORGANIZATION_ID}" --content-type=resource --asset-types="${ASSET_TYPES}" --pubsub-topic="projects/${PROJECT_ID}/topics/${TOPIC_NAME}" --billing-project ${PROJECT_ID}
 
-```
+    - For a folder:
 
-### Deploy the Cloud Function which processes the Asset Inventory Real-time Notifications
+          gcloud asset feeds create "feed-resources-${FOLDER_ID}" --folder="${FOLDER_ID}" --content-type=resource --asset-types="${ASSET_TYPES}" --pubsub-topic="projects/${PROJECT_ID}/topics/${TOPIC_NAME}" --billing-project ${PROJECT_ID}
+
+1.  Confirm the feed creation.
+
+    - For the entire organization:
+
+          gcloud asset feeds list --organization ${ORGANIZATION_ID} --format="flattened(feeds[].name)" --billing-project ${PROJECT_ID}
+          
+    - For a folder:
+    
+          gcloud asset feeds list --folder ${FOLDER_ID} --format="flattened(feeds[].name)" --billing-project ${PROJECT_ID}
+
+### Deploy the Cloud Function that processes the Cloud Asset Inventory real-time notifications
 
 The [GitHub repository for this tutorial](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/cloud-asset-inventory-auto-label-resources/cloud-function-auto-resource-labeler/) includes the complete working source code of the Cloud Function for the tutorial, which you can use as a reference as you customize it for your use case.
 
