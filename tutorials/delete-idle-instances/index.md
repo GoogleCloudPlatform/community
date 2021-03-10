@@ -3,10 +3,10 @@ title: Delete idle Compute Engine instances automatically
 description: Use a simple and scalable serverless mechanism to automatically delete Compute Engine instances that are not in active use.
 author: jpatokal
 tags: garbage collection, Cloud Scheduler, Cloud Functions
-date_published: TBD
+date_published: 2021-03-15
 ---
 
-Jani Patokallio | Google
+Jani Patokallio | Solutions Architect | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
