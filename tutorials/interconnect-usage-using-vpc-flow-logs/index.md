@@ -6,6 +6,8 @@ tags: VLAN attachments
 date_published: 2021-02-22
 ---
 
+Anastasiia Manokhina | Strategic Cloud Engineer | Google
+
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
  
 This tutorial shows you how to analyze VPC Flow Logs to estimate the amount of Interconnect attachment usage by different projects and instances. 
