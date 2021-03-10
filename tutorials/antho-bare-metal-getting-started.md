@@ -21,7 +21,7 @@ some automatically created Google Cloud Operations dashboards.
 
 ## Objectives
 
-* Install the Anthos on bare metal conmmand-line utility (`bmctl`).
+* Install the Anthos on bare metal command-line utility (`bmctl`).
 * Create a cluster configuration file.
 * Adjust the cluster configuration file.
 * Deploy the cluster.
@@ -122,7 +122,7 @@ In this section, you install the Anthos on bare metal command-line utility, `bmc
 
 Before you deploy the cluster, it’s important to understand some details about how networking works with Anthos on bare metal.
 
-When configuring Anthos on bare metal, you specify three distinct IP subnets. Two are fairly standard to Kuberenetes: the pod network and the services network. 
+When configuring Anthos on bare metal, you specify three distinct IP subnets. Two are fairly standard to Kubernetes: the pod network and the services network. 
 The third subnet is used for ingress and load balancing. The IP addresses associated with this network must be on the same local L2 network as your load balancer
 node (which in the case of this tutorial is the same as the control plane node). You need to specify an IP address for the load balancer, one for ingress, and 
 then a range for the load balancers to draw from to expose your services outside the cluster. The ingress virtual IP address must be within the range that you 
