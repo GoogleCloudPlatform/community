@@ -89,10 +89,6 @@ you can hit this problem:
   a monotonically increasing indexed property like a timestamp, because these
   properties are the keys for rows in the index tables in Bigtable.
 
-For a more detailed explanation of this issue, see [Ikai Lan's blog posting on saving monotonically increasing values in the Datastore][ikaisays].
-
-[ikaisays]: http://ikaisays.com/2011/01/25/app-engine-datastore-tip-monotonically-increasing-values-are-bad/
-
 ## Do not set a spending limit that could be exceeded
 
 You can [configure a daily spending limit][billing] for your application if you
