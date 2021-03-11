@@ -56,12 +56,12 @@ This step uses the functionality of the sample app. In the sample
 app, a service named `MyUploadService` is implemented to upload a file outside of the
 main application thread. 
 
-The [**uploadFromUri** function in the sample app](https://github.com/firebase/quickstart-android/blob/master/storage/app/src/main/java/com/google/firebase/quickstart/firebasestorage/MainActivity.java#L174)
+The [`uploadFromUri` function in the sample app](https://github.com/firebase/quickstart-android/blob/f6e021c2bf4ddd3d06908480c909da0ac8175371/storage/app/src/main/java/com/google/firebase/quickstart/firebasestorage/java/MainActivity.java#L178)
 illustrates the bulk of the operations performed by the provided service.
 
-After the file is uploaded, the __fileUri__ is passed in an **Intent** so that
-the **MainActivity** class can retrieve the file data. This is done in the sample
-app in the [**MyUploadService** activity's **broadcastUploadFinished** method](https://github.com/firebase/quickstart-android/blob/master/storage/app/src/main/java/com/google/firebase/quickstart/firebasestorage/MyUploadService.java#L127).
+After the file is uploaded, the `fileUri` is passed in an **Intent** so that
+the `MainActivity` class can retrieve the file data. This is done in the sample
+app in the [`MyUploadService` activity's `broadcastUploadFinished` method](https://github.com/firebase/quickstart-android/blob/f6e021c2bf4ddd3d06908480c909da0ac8175371/storage/app/src/main/java/com/google/firebase/quickstart/firebasestorage/java/MyUploadService.java#L151).
 
 You can verify that the storage operation
 works by visiting the Firebase console for storage and seeing the uploaded
@@ -109,10 +109,10 @@ The following code shows how to retrieve the metadata for the last uploaded imag
 It might be best to do this in a separate service, but for the
 purposes of this proof of concept, this should be sufficient. Also, this replaces
 the proto-style object characters with JSON-style object characters because of
-manually filtering the result data in **UpdateUI**.
+manually filtering the result data in `UpdateUI`.
 
-When **UpdateUI** is called, the sample app checks the stored member variable
-__mResponse__ and then filters the label description strings from the result
+When `UpdateUI` is called, the sample app checks the stored member variable
+`mResponse` and then filters the label description strings from the result
 data.
 
 [![Code for step 3c](https://storage.googleapis.com/gcp-community/tutorials/android-firebase-vision/code3c.png)](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/android-firebase-vision/code-step-3c.txt)
