@@ -151,8 +151,8 @@ The output contains the prediction and key values as follows:
         ]
     }
 
-The [`functional_API_example` notebook](notebooks/functional_API_example.ipynb) explains the whole procedure to use this approach for batch prediction. To run 
-the notebook, follow the instructions in the last section of this document.
+The [`functional_API_example` notebook](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/ai-platform-batch-prediction-keras/notebooks/functional_API_example.ipynb)
+explains the whole procedure to use this approach for batch prediction. To run the notebook, follow the instructions in the last section of this document.
 
 ### Using the `@tf.function` decorator
 
@@ -217,8 +217,8 @@ The output contains the prediction and key values as follows:
 
 **Note**: The output format is different from the output of the functional API approach in the previous section.
 
-The [`decorator_example` notebook](notebooks/decorator_example.ipynb) explains the whole procedure to use this method for batch prediction. To run the notebook,
-follow the instructions in the next section of this document.
+The [`decorator_example` notebook](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/ai-platform-batch-prediction-keras/notebooks/decorator_example.ipynb)
+explains the whole procedure to use this method for batch prediction. To run the notebook, follow the instructions in the next section of this document.
 
 ## Go through example notebooks using AI Platform Notebooks
 

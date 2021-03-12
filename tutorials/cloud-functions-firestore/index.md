@@ -145,8 +145,6 @@ You now have a `package.json` file listing your dependencies
 and you have an `index.js` file which will respond to an HTTP trigger.
 
 You will use the `gcloud` command-line tool to deploy our function, and configure it to listen to HTTP requests.
-(there are other ways to deploy including
-[git-push CI/CD tooling](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/cloud-functions-github-auto-deployer/index.md)).
 
 ### (optional) Install functions-emulator for local testing
 

@@ -210,7 +210,7 @@ below.
 [appengine]: https://cloud.google.com/appengine/
 [endpoints]: https://cloud.google.com/endpoints/
 [storage]: https://cloud.google.com/storage/
-[credentials]: https://cloud.google.com/apis/credentials
+[credentials]: https://console.cloud.google.com/apis/credentials
 [quota_docs]: https://cloud.google.com/endpoints/docs/openapi/quotas-configure
 
 [openapi]: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md
