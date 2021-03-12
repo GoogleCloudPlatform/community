@@ -72,4 +72,4 @@ used to perform the npm installation. Learn more about the [Node.js runtime for 
 
 ![gcloud app deploy](https://storage.googleapis.com/gcp-community/tutorials/appengine-yarn/appDeploy.gif)
 
-And that's it! If you have any other questions about Node.js on Google Cloud, be sure to [join us](https://gcp-slack.appspot.com) on our [Slack channel](https://googlecloud-community.slack.com/messages/nodejs/).
+And that's it!
