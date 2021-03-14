@@ -21,7 +21,7 @@ using the
 
 A service account token is exposed as a signed [JSON Web Token (JWT)](https://en.wikipedia.org/wiki/JSON_Web_Token). The
 private keys that sign these tokens are specific to the cluster. In
-[Google Kubernetes Engine (GKE)]((https://cloud.google.com/kubernetes-engine/)), when
+[Google Kubernetes Engine (GKE)](https://cloud.google.com/kubernetes-engine/), when
 [Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity) is enabled, the
 corresponding public keys are published at a URL that can be derived from the issuer field in the token conforming to the
 [OpenID Connect (OIDC) Discovery standard](https://openid.net/specs/openid-connect-discovery-1_0.html).
@@ -53,7 +53,7 @@ the command-line interface built into the Cloud Console, which includes current 
 `envsubst`.
 
 If you choose instead to use the [Google Cloud SDK](https://cloud.google.com/sdk/), then you need to install the SDK and the
-[`kubectl`]((https://kubernetes.io/docs/tasks/tools/install-kubectl/)) and `envsubst` packages. This tutorial requires
+[`kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/) and `envsubst` packages. This tutorial requires
 `kubectl` version 1.14 and later with
 [kustomize integration](https://kubernetes.io/blog/2019/03/25/kubernetes-1-14-release-announcement/).
 
