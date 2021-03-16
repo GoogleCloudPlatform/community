@@ -39,18 +39,16 @@ METADATA_HEADERS = {"Metadata-Flavor": "Google"}
 SERVICE_ACCOUNT = "default"
 
 
-def get_access_token_from_meta_data(force=False):
-    global token
-    if token is None or force:
-        url = '{}instance/service-accounts/{}/token'.format(
-            METADATA_URL, SERVICE_ACCOUNT)
+def get_access_token_from_meta_data():
+    url = '{}instance/service-accounts/{}/token'.format(
+        METADATA_URL, SERVICE_ACCOUNT)
 
-        # Request an access token from the metadata server.
-        r = requests.get(url, headers=METADATA_HEADERS)
-        r.raise_for_status()
+    # Request an access token from the metadata server.
+    r = requests.get(url, headers=METADATA_HEADERS)
+    r.raise_for_status()
 
-        # Extract the access token from the response.
-        token = r.json()['access_token']
+    # Extract the access token from the response.
+    token = r.json()['access_token']
     return token
 
 
@@ -223,7 +221,7 @@ def write_to_bigquery(rows_to_insert):
 def save_to_bq(token):
     for metric, query in config.MQL_QUERYS.items():
         result = get_mql_result(token, query)
-        if result["timeSeriesDescriptor"]:
+        if result.get("timeSeriesDescriptor"):
             row = build_rows(metric, result)
             write_to_bigquery(row)
         else:

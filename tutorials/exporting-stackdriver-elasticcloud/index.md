@@ -182,7 +182,7 @@ with the metadata service.
     the Cloud ID can be viewed from the deployment page, this is the only time the password for the elastic user is 
     available. Visit the **Security** page to reset the password if needed. When considering production environments, create
     new Elasticsearch credentials with tighter permissions and avoid using the `elastic` user. As
-    [documented](https://www.elastic.co/guide/en/cloud/master/ec-cloud-id.html): "On a production system, you should adapt 
+    [documented](https://www.elastic.co/guide/en/cloud-enterprise/current/ece-cloud-id.html): "On a production system, you should adapt 
     these examples by creating a user that can write to and access only the minimally required indices."
 
     ![Launching an Elastic Cloud deployment](https://storage.googleapis.com/gcp-community/tutorials/exporting-stackdriver-elasticcloud/es_deployment_launch.png)

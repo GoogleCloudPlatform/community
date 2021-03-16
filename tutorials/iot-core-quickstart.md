@@ -87,7 +87,7 @@ You use the MQTT sample to send messages to IoT Core.
 Clone the sample program with the following command:
 
 ```bash
-git clone https://github.com/GoogleCloudPlatform/nodejs-docs-samples.git
+git clone https://github.com/googleapis/nodejs-iot.git
 ```
 
 ## Grant permission to the IoT Core service account
@@ -96,16 +96,16 @@ In this section, you use a helper script to add the
 `cloud-iot@system.gserviceaccount.com` service account to the Pub/Sub
 topic with the Publisher role.
 
-### Navigate to the iot/ directory:
+### Navigate to the samples/ directory:
 
 ```bash
-cd nodejs-docs-samples/iot/
+cd nodejs-iot/samples
 ```
 
 ### Install the dependencies:
 
 ```bash
-npm --prefix ./scripts install
+npm install
 ```
 
 <walkthrough-test-code-output text="node scripts/postinstall" />
@@ -162,6 +162,12 @@ gcloud iot devices create my-node-device \
 
 <walkthrough-test-code-output text="Created device|ALREADY_EXISTS" />
 
+## Download root credentials
+
+Download [Google's CA root certificate](https://pki.goog/roots.pem) and note the
+location where you downloaded it. You'll need the file path when you run the
+Node.js command in the next step.
+
 ## Connect your device and publish messages
 
 In this section, you send messages from a virtual device to Pub/Sub.
@@ -188,6 +194,7 @@ node cloudiot_mqtt_example_nodejs.js \
     --registryId=my-registry \
     --deviceId=my-node-device \
     --privateKeyFile=../rsa_private.pem \
+    --serverCertFile=../roots.pem \
     --numMessages=25 \
     --algorithm=RS256 \
     --mqttBridgePort=443
@@ -239,10 +246,9 @@ information, see the [IoT Core documentation](https://cloud.google.com/iot/docs/
 
 View more IoT Core samples on GitHub in any of several programming languages:
 
--   [C](https://github.com/GoogleCloudPlatform/cpp-docs-samples/tree/master/iot/mqtt-ciotc)
+-   [Node.js](https://github.com/googleapis/nodejs-iot/tree/master/samples/)
+-   [Python](https://github.com/GoogleCloudPlatform/python-docs-samples/tree/master/iot/api-client/)
 -   [Java](https://github.com/GoogleCloudPlatform/java-docs-samples/tree/master/iot/api-client)
--   [Node.js](https://github.com/GoogleCloudPlatform/nodejs-docs-samples/tree/master/iot)
--   [Python](https://github.com/GoogleCloudPlatform/python-docs-samples/tree/master/iot/api-client)
 
 [spotlight-open-devshell]: walkthrough://spotlight-pointer?spotlightId=devshell-activate-button
 [spotlight-console-menu]: walkthrough://spotlight-pointer?spotlightId=console-nav-menu

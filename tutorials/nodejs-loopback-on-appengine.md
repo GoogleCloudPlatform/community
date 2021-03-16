@@ -20,7 +20,7 @@ overview of Node.js itself and learn ways to run Node.js apps on Google Cloud.
 
 ## Prepare the app
 
-1. Install the LoopBack coomand-line interface:
+1. Install the LoopBack command-line interface:
 
         npm install -g loopback-cli
 
