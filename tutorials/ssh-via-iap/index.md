@@ -40,5 +40,5 @@ Google Cloud Console or `gcloud` commands, you can create a firewall rule that a
 
 ## What's next
 
-- Learn more about [Identity Aware Proxy](https://cloud.google.com/iap/docs/using-tcp-forwarding).
+- Learn more about [Identity-Aware Proxy](https://cloud.google.com/iap/docs/using-tcp-forwarding).
 - Try out other Google Cloud features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
