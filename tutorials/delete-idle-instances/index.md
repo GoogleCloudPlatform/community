@@ -20,10 +20,10 @@ Some cases in which this may be useful:
   delete themselves after the task is complete, but ensuring that this always happens can be difficult if the task is distributed or some workers stop because
   of errors.
 
-[Idle VM recommendations](https://cloud.google.com/compute/docs/instances/viewing-and-applying-idle-vm-recommendations) are generated automatically based
-on system utilization over the past 14 days.  They are not available for some types of instances, including VMs belonging to managed instance groups,
-managed services like Dataflow or Kubernetes Engine, or instances with local resources like local SSDs, GPUs or TPUS.  See the
-[documentation](https://cloud.google.com/compute/docs/instances/viewing-and-applying-idle-vm-recommendations) for the full list of exclusions.
+Idle VM recommendations are generated automatically based on system utilization over the past 14 days. They are not available for some types of instances, 
+including VMs belonging to managed instance groups, managed services like Dataflow or Google Kubernetes Engine, or instances with local resources like local 
+SSDs, GPUs, or TPUS. For the full list of limitations, see
+[Viewing and applying idle VM recommendations](https://cloud.google.com/compute/docs/instances/viewing-and-applying-idle-vm-recommendations#limitations).
 
 ## How it works 
 
@@ -34,19 +34,24 @@ The following diagram shows a high-level overview of the solution:
 The overall flow is the following:
 
 1.  A Cloud Scheduler cron job is triggered regularly (for example, once a day). The Cloud Scheduler configuration specifies the label of the 
-    pool of VMs to target and whether or not they should be deleted, using the following format: `'{"label":"env=test,action=mark"}'`.  If the configuration is empty
-    `{}`, all VMs are considered targets.
+    pool of VM instances to target and whether or not they should be deleted, using the following format:
+    
+        '{"label":"env=test,action=mark"}'
+
+    If the configuration is empty (`{}`), all VM instances are considered targets.
+	
 1.  When the cron job is triggered, Cloud Scheduler calls a Cloud Function with the payload.
 1.  Each time the function is triggered, it does the following: 
     1.  The Idle VM Recommender is queried for a list of idle Compute Engine instances.
     1.  The list is filtered for instances that have the target label.
     1.  Iterates through the instances and does the following: 
-        1.  If the Cloud Scheduler configuration included the label `action=stop`, the target is immediately stopped and the recommendation status is set to `SUCCEEDED`.
-        1.  If the Cloud Scheduler configuration included the label `action=delete`, the target is immediately deleted and the recommendation status is set to `SUCCEEDED`.
-        1.  Otherwise, the label `delete=true` is applied to the instance and the recommendation status is set to `CLAIMED`.
-
-
-Note: By default, potential idle instances are only labeled.  The list of labeled instances can be obtained by checking recommendation status or searching for instances with the label.
+        *   If the Cloud Scheduler configuration included the label `action=stop`, then the target is immediately stopped and the recommendation status is set to
+            `SUCCEEDED`.
+        *   If the Cloud Scheduler configuration included the label `action=delete`, then the target is immediately deleted and the recommendation status is set 
+            to `SUCCEEDED`.
+        *   Otherwise, the label `delete=true` is applied to the instance and the recommendation status is set to `CLAIMED`.
+            By default, potential idle instances are only labeled. You can obtain the list of labeled instances by checking recommendation status or searching 
+            for instances with the label.
 
 ## Costs
 
@@ -65,11 +70,11 @@ New Google Cloud users may be eligible for a [free trial](http://cloud.google.co
 
 ## Before you begin
 
-Note: The following steps create a new project and new VMs, so idle VM recommendations may not be generated until 14 days of system metrics are available.  For immediate results, you can deploy this in an existing project with idle instances instead.
+The following steps create a new project and new VM instances, so idle VM instance recommendations may not be generated until 14 days of system metrics are 
+available. For immediate results, you can deploy this in an existing project with idle instances instead.
 
 1.  If you don’t already have one, create a [Google Account](https://accounts.google.com/SignUp).
-
-1.  Create a Google Cloud project: In the [Cloud Console](https://console.cloud.google.com/project), select **Create Project**.
+1.  Create a Google Cloud project: In the [Cloud Console](https://console.cloud.google.com/project), click **Create project**.
 1.  [Enable billing for the project](https://support.google.com/cloud/answer/6293499#enable-billing).
 1.  Open [Cloud Shell](https://cloud.google.com/shell/docs/using-cloud-shell).
 1.  Create an App Engine app, which is required by Cloud Scheduler:
@@ -78,9 +83,9 @@ Note: The following steps create a new project and new VMs, so idle VM recommend
     
 1.  Enable the APIs used by this tutorial:
 
-            gcloud services enable appengine.googleapis.com cloudbuild.googleapis.com \
-              cloudfunctions.googleapis.com cloudscheduler.googleapis.com compute.googleapis.com \
-              recommender.googleapis.com
+        gcloud services enable appengine.googleapis.com cloudbuild.googleapis.com \
+          cloudfunctions.googleapis.com cloudscheduler.googleapis.com compute.googleapis.com \
+          recommender.googleapis.com
     
 ## Set up the automated cleanup code
 
@@ -117,7 +122,7 @@ Run the commands in this section in Cloud Shell.
         gcloud functions deploy mark_idle_instances --trigger-http --region us-central1 --runtime=nodejs12 \
           --service-account ${SCHEDULER_SA} --entry-point=deleteIdleInstances --no-allow-unauthenticated
 
-Note: The Cloud Function runs with the default App Engine service account, which has Project `editor` rights allowing it
+    **Note**: The Cloud Function runs with the default App Engine service account, which has project `editor` rights.
 
 1.  Configure Cloud Scheduler to invoke the Cloud Function once per day:
 
@@ -127,9 +132,10 @@ Note: The Cloud Function runs with the default App Engine service account, which
           --message-body='{"label":"env=test"}'
 
     The schedule is specified in [unix-cron format](https://cloud.google.com/scheduler/docs/configuring/cron-job-schedules).
-    `0 0 * * *` means that the jobs runs at 0:00 (midnight) UTC every day of the month, every month, and every day of the week.  More simply put, the job runs once per day.
+    `0 0 * * *` means that the jobs runs at 0:00 (midnight) UTC every day of the month, every month, and every day of the week. More simply put, the job runs 
+    once per day.
 
-    You can verify that the job has been created with the following command:
+1.  You can verify that the job has been created with the following command:
 
         gcloud scheduler jobs list
 
@@ -143,7 +149,7 @@ Note: The Cloud Function runs with the default App Engine service account, which
         gcloud compute instances create idle-test --zone=us-central1-a \
           --machine-type=n1-standard-1 --labels=env=test
 
-1.  Check that the new instance has started successfully.
+1.  Check that the new instance has started successfully:
 
         gcloud compute instances list --format='table(name,status,labels.list())'
 
@@ -163,7 +169,7 @@ Note: The Cloud Function runs with the default App Engine service account, which
         $(gcloud compute instances list --filter='labels.delete=true' --format='value(name)')
 
 You can also see the Cloud Function execution results, including the names of the marked instances, by viewing the Cloud Function logs from the
-[**Cloud Functions** page](https://pantheon.corp.google.com/functions/list) in the Cloud Console.
+[**Cloud Functions** page](https://console.colud.google.com/functions/list) in the Cloud Console.
 
 ## Shut down resources used in the tutorial
 
