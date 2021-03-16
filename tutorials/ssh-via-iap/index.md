@@ -27,7 +27,7 @@ Google Cloud Console or `gcloud` commands, you can create a firewall rule that a
 
         env | grep SSH_CLIENT
 
-    ![SSH client IP Address](https://storage.googleapis.com/gcp-community/tutorials/ssh-via-iap/check-ssh-client.png)
+    ![SSH client IP address](https://storage.googleapis.com/gcp-community/tutorials/ssh-via-iap/check-ssh-client.png)
 
     The client IP address in the SSH connection will be part of the range `35.235.240.0/20`. This range is the pool of IP addresses used by IAP to proxy the
     connection from your browser to your instance. So, you can create a more restrictive VPC firewall rule allowing SSH connections only from this IP address
@@ -36,7 +36,7 @@ Google Cloud Console or `gcloud` commands, you can create a firewall rule that a
 1.  If you are using the default VPC network, remove the firewall rule `default-allow-ssh`, and create a new restrictive SSH firewall rule with the 
     settings shown in the following image:
 
-    ![Firewall Rule](https://storage.googleapis.com/gcp-community/tutorials/ssh-via-iap/fw-rule-ssh.png)
+    ![Firewall rule](https://storage.googleapis.com/gcp-community/tutorials/ssh-via-iap/fw-rule-ssh.png)
 
 ## What's next
 
