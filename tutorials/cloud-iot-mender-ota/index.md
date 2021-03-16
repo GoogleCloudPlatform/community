@@ -6,10 +6,12 @@ tags: IoT, Internet of Things, Raspberry Pi
 date_published: 2018-09-25
 ---
 
-* KC Rakam | Customer Engineer Specialist | Google
-* Preston Holmes | Solution Architect | Google
-* Drew Moseley | Solution Architect | Mender
-* Eystein Stenberg | Product Manager | Mender
+
+- KC Rakam | Customer Engineer Specialist | Google
+- Preston Holmes | Solution Architect | Google
+- Drew Moseley | Solution Architect | Mender
+- Eystein Stenberg | Product Manager | Mender
+
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
@@ -17,7 +19,7 @@ This tutorial demonstrates how to successfully deploy an over-the-air (OTA) soft
 
 ## Objectives
 
- - Deploy a Mender management server on GCE
+ - Deploy a Mender management server on Compute Engine
  - Integrate device identity and lifecycle between IoT Core and Mender
  - Configure a live sample device with a base image
  - Push an over-the-air update to the device with an IoT Core application
@@ -59,7 +61,7 @@ Some of the key features of Mender:
 * Build system: Yocto Project (meta-mender)
 * Remote features: deployment server, build artifact management, device management console
 
-More information on Mender can be found [here](https://mender.io/what-is-mender).
+More information on Mender can be found on the [Mender website](https://mender.io/how-it-works).
 
 ### Mender components
 
