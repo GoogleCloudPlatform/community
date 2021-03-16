@@ -17,21 +17,19 @@ Creating a virtual machine instance and connecting to it through SSH is a straig
 connections less secure is to use a firewall configuration that leaves the SSH port publicly exposed. If you manage your instances using SSH through the
 Google Cloud Console or `gcloud` commands, you can create a firewall rule that allows access only from Google Cloud Identity-Aware Proxy (IAP) IP address ranges.
 
-## What is the Identity Aware Proxy IP address range?
-
 1.  [Create a Compute Engine VM instance](https://cloud.google.com/compute/docs/instances/create-start-instance).
 
 1.  [Connect to the VM instance](https://cloud.google.com/compute/docs/ssh-in-browser) using the **SSH** button in the Cloud Console.
 
     ![SSH button](https://storage.googleapis.com/gcp-community/tutorials/ssh-via-iap/ssh-to-vm.png)
 
-1.  Check the SSH client IP address connected to the instance:
+1.  Find the SSH client IP address connected to the instance:
 
         env | SSH_CLIENT
 
     ![SSH client IP Address](https://storage.googleapis.com/gcp-community/tutorials/ssh-via-iap/check-ssh-client.png)
 
-    The client IP address in the SSH connection will be part of the range `35.235.240.0/20`. This range is the pool of IP addresses used by IAP to proxy the  
+    The client IP address in the SSH connection will be part of the range `35.235.240.0/20`. This range is the pool of IP addresses used by IAP to proxy the
     connection from your browser to your instance. So, you can create a more restrictive VPC firewall rule allowing SSH connections only from this IP address
     range. As a result, only users allowed by IAP will be able to connect to VM using SSH.
 
