@@ -3,7 +3,7 @@ title: Delete idle Compute Engine instances automatically
 description: Use a simple and scalable serverless mechanism to automatically delete Compute Engine instances that are not in active use.
 author: jpatokal
 tags: garbage collection, Cloud Scheduler, Cloud Functions
-date_published: 2021-03-15
+date_published: 2021-03-19
 ---
 
 Jani Patokallio | Solutions Architect | Google
@@ -29,7 +29,7 @@ managed services like Dataflow or Kubernetes Engine, or instances with local res
 
 The following diagram shows a high-level overview of the solution:
 
-![High-level overview of the solution](overview.svg)
+![High-level overview of the solution](https://storage.googleapis.com/gcp-community/tutorials/delete-idle-instances/overview.svg)
 
 The overall flow is the following:
 
