@@ -25,7 +25,7 @@ Google Cloud Console or `gcloud` commands, you can create a firewall rule that a
 
 1.  Find the SSH client IP address connected to the instance:
 
-        env | SSH_CLIENT
+        env | grep SSH_CLIENT
 
     ![SSH client IP Address](https://storage.googleapis.com/gcp-community/tutorials/ssh-via-iap/check-ssh-client.png)
 
