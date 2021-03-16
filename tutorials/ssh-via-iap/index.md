@@ -1,48 +1,46 @@
 ---
-title: SSH via IAP
-description: IAP is the simple and secure way to manage instance via SSH.
+title: Restrict SSH connections to virtual machine instances with Identity-Aware Proxy
+description: Use Identity-Aware Proxy (IAP) to manage SSH connections to virtual machine instances.
 author: erikesouza-google
-tags: iap, ssh, 
-date_published: 2021-03-02
+tags: security, VM
+date_published: 2021-03-19
 ---
 
-Erike Souza | Community Editor | Google
+Erike Souza | Customer Engineer | Google
 
-Reviewed by Renato Marcovitti
-
-<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-## Objectives
+Learn how to connect from a browser or the Google SDK to a virtual machine (VM) instance without using an external IP address, a bastion host, or network
+address translation (NAT).
 
-Explain how to connect from our browser or Google SDK (gcloud command) into VM instances without using an external IP address, bastion host or NAT
+Creating a virtual machine instance and connecting to it through SSH is a straightforward process in Google Cloud. However, one thing that can make such
+connections less secure is to use a firewall configuration that leaves the SSH port publicly exposed. If you manage your instances using SSH through the
+Google Cloud Console or `gcloud` commands, you can create a firewall rule that allows access only from Google Cloud Identity-Aware Proxy (IAP) IP address ranges.
 
-## Connecting to the instance
+## What is the Identity Aware Proxy IP address range?
 
-Creating an instance in GCP and connecting to it via SSH is really straightforward and secure in GCP. But one thing that normally I see in some 
-GCP firewall configurations is the SSH port open to the world. If you manage your instances using SSH via GCP console or gcloud command 
-you can create a firewall rule restricting access only from GCP Identity Aware Proxy IP address range.
+1.  [Create a Compute Engine VM instance](https://cloud.google.com/compute/docs/instances/create-start-instance).
 
-# What is the Identity Aware Proxy IP address range?
+1.  [Connect to the VM instance](https://cloud.google.com/compute/docs/ssh-in-browser) using the **SSH** button in the Cloud Console.
 
-Create an GCP instance and connect to it using the SSH Button in GCP Console
+    ![SSH button](https://storage.googleapis.com/gcp-community/tutorials/ssh-via-iap/ssh-to-vm.png)
 
-![SSH button](ssh-to-vm.png?raw=true)
+1.  Check the SSH client IP address connected to the instance:
 
+        env | SSH_CLIENT
 
-Check the SSH Client Ip address connected to the instance
+    ![SSH client IP Address](https://storage.googleapis.com/gcp-community/tutorials/ssh-via-iap/check-ssh-client.png)
 
-![SSH client IP Address](check-ssh-client.png?raw=true)
+    The client IP address in the SSH connection will be part of the range `35.235.240.0/20`. This range is the pool of IP addresses used by IAP to proxy the  
+    connection from your browser to your instance. So, you can create a more restrictive VPC firewall rule allowing SSH connections only from this IP address
+    range. As a result, only users allowed by IAP will be able to connect to VM using SSH.
 
+1.  If you are using the default VPC network, remove the firewall rule `default-allow-ssh`, and create a new restrictive SSH firewall rule with the 
+    settings shown in the following image:
 
-The Client IP address in the SSH connection will be part of the range 35.235.240.0/20. This range is the Pool of IP address used by IAP to proxy the connection 
-from your browser to your instance. So, you can create a more restrictive VPC firewall rule allowing SSH only from this IP address range and as a
-consequence only controlled users via IAP will be able to hit the SSH port on VMs via IAP
+    ![Firewall Rule](https://storage.googleapis.com/gcp-community/tutorials/ssh-via-iap/fw-rule-ssh.png)
 
-If you are using the default VPC remove the firewall rule "default-allow-ssh"and create a new restrictive SSH firewall rule.  
-![Firewall Rule](fw-rule-ssh.png?raw=true)
-
-### What's next
+## What's next
 
 - Learn more about [Identity Aware Proxy](https://cloud.google.com/iap/docs/using-tcp-forwarding).
 - Try out other Google Cloud features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
