@@ -42,16 +42,17 @@ The overall flow is the following:
 	
 1.  When the cron job is triggered, Cloud Scheduler calls a Cloud Function with the payload.
 1.  Each time the function is triggered, it does the following: 
-    1.  The Idle VM Recommender is queried for a list of idle Compute Engine instances.
-    1.  The list is filtered for instances that have the target label.
+    1.  Queries the Idle VM Recommender for a list of idle Compute Engine instances.
+    1.  Filters the list for instances that have the target label.
     1.  Iterates through the instances and does the following: 
-        *   If the Cloud Scheduler configuration included the label `action=stop`, then the target is immediately stopped and the recommendation status is set to
+        *   If the Cloud Scheduler configuration includes the label `action=stop`, then the target is immediately stopped and the recommendation status is set to
             `SUCCEEDED`.
-        *   If the Cloud Scheduler configuration included the label `action=delete`, then the target is immediately deleted and the recommendation status is set 
+        *   If the Cloud Scheduler configuration includes the label `action=delete`, then the target is immediately deleted and the recommendation status is set 
             to `SUCCEEDED`.
         *   Otherwise, the label `delete=true` is applied to the instance and the recommendation status is set to `CLAIMED`.
-            By default, potential idle instances are only labeled. You can obtain the list of labeled instances by checking recommendation status or searching 
-            for instances with the label.
+
+By default, potential idle instances are only labeled. You can obtain the list of labeled instances by checking recommendation status or searching for instances
+with the label.
 
 ## Costs
 
@@ -95,7 +96,7 @@ Run the commands in this section in Cloud Shell.
 
         git clone https://github.com/GoogleCloudPlatform/community
 
-1.  Change directories to the `delete-idle-instances` directory:
+1.  Go to the `delete-idle-instances` directory:
 
         cd community/tutorials/delete-idle-instances
 	
@@ -117,7 +118,7 @@ Run the commands in this section in Cloud Shell.
           --member serviceAccount:${SCHEDULER_SA} \
           --role roles/recommender.computeAdmin
 
-1.  Deploy the Cloud Function that will mark idle instances:
+1.  Deploy the Cloud Function that marks idle instances:
 
         gcloud functions deploy mark_idle_instances --trigger-http --region us-central1 --runtime=nodejs12 \
           --service-account ${SCHEDULER_SA} --entry-point=deleteIdleInstances --no-allow-unauthenticated
@@ -135,7 +136,7 @@ Run the commands in this section in Cloud Shell.
     `0 0 * * *` means that the jobs runs at 0:00 (midnight) UTC every day of the month, every month, and every day of the week. More simply put, the job runs 
     once per day.
 
-1.  You can verify that the job has been created with the following command:
+1.  Verify that the job has been created:
 
         gcloud scheduler jobs list
 
@@ -159,11 +160,11 @@ Run the commands in this section in Cloud Shell.
 
     The `idle-test` instance should be shown as `RUNNING` with the label `delete=true` now applied.
 
-1.  List instances marked for deletion.
+1.  List and review instances marked for deletion:
 
         gcloud compute instances list --filter='labels.delete=true' --format='value(name)'
 
-1.  Review the instances marked for deletion, and optionally run the following command to delete them:
+1.  (Optional) Delete the instance that are marked for deletion:
 
         gcloud compute instances delete |\
         $(gcloud compute instances list --filter='labels.delete=true' --format='value(name)')
