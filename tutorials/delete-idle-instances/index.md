@@ -164,7 +164,7 @@ Run the commands in this section in Cloud Shell.
 
         gcloud compute instances list --filter='labels.delete=true' --format='value(name)'
 
-1.  (Optional) Delete the instance that are marked for deletion:
+1.  (Optional) Delete the instances that are marked for deletion:
 
         gcloud compute instances delete |\
         $(gcloud compute instances list --filter='labels.delete=true' --format='value(name)')
@@ -174,7 +174,7 @@ You can also see the Cloud Function execution results, including the names of th
 
 ## Shut down resources used in the tutorial
 
-Now that you have tested the automated cleanup of VM instances, you can either
+After you have tested the automated cleanup of VM instances, you can either
 [delete the entire project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#shutting_down_projects) or delete the individual resources
 that you created to prevent further billing for them on your account.
 
