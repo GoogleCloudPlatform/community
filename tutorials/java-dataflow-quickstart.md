@@ -6,19 +6,9 @@ tags: Dataflow
 date_published: 2019-07-31
 ---
 
-# Count words with Dataflow and Java
-
-<!-- {% setvar directory "dataflow-intro" %} -->
-<!-- {% setvar job_name "dataflow-intro" %} -->
-<!-- {% setvar project_id_no_domain "<your-project>" %} -->
-<!-- {% setvar project_id "<your-project>" %} -->
-
-<walkthrough-alt>
 Take the interactive version of this tutorial, which runs in the Cloud Console:
 
 [![Open in Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=java_dataflow_quickstart)
-
-</walkthrough-alt>
 
 ## Introduction
 
@@ -40,8 +30,6 @@ collect all of the related resources for a single application in one place.
 
 Begin by creating a new project or selecting an existing project for this tutorial.
 
-<walkthrough-project-billing-setup></walkthrough-project-billing-setup>
-
 For details, see
 [Creating a project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#creating_a_project).
 
@@ -57,19 +45,13 @@ you must first enable their APIs.
 
 Use the following to enable the APIs:
 
-<walkthrough-enable-apis apis=
-"compute.googleapis.com,dataflow,cloudresourcemanager.googleapis.com,logging,storage_component,storage_api,bigquery,pubsub">
-</walkthrough-enable-apis>
-
-<walkthrough-alt>
 https://console.cloud.google.com/flows/enableapi?apiid=compute.googleapis.com,dataflow,cloudresourcemanager.googleapis.com,logging,storage_component,storage_api,bigquery,pubsub
-</walkthrough-alt>
 
 ### Open Cloud Shell
 
 In this tutorial, you do much of your work in Cloud Shell, which is a built-in command-line tool for the Cloud Console.
 
-Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
+Open Cloud Shell by clicking the [**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
 
 ## Install Dataflow samples
 
@@ -128,10 +110,10 @@ pipeline code.
 In Cloud Shell, use the command `gsutil mb` to create a Cloud Storage bucket.
 
 ```bash
-gsutil mb gs://{{project_id_no_domain}}
+gsutil mb gs://[PROJECT_ID]
 ```
 
-`{{project_id_no_domain}}` is your Google Cloud project ID.
+`[PROJECT_ID]` is your Google Cloud project ID.
 
 For more information about the `gsutil` tool, see the [documentation][gsutil-docs].
 
@@ -153,15 +135,15 @@ The running pipeline is referred to as a *job.*
 ```bash
 mvn compile exec:java \
   -Dexec.mainClass=com.example.WordCount \
-  -Dexec.args="--project={{project_id}} \
-  --gcpTempLocation=gs://{{project_id_no_domain}}/tmp/ \
-  --output=gs://{{project_id_no_domain}}/output \
+  -Dexec.args="--project=[PROJECT_ID] \
+  --gcpTempLocation=gs://[PROJECT_ID]/tmp/ \
+  --output=gs://[PROJECT_ID]/output \
   --runner=DataflowRunner \
   --jobName=dataflow-intro" \
   -Pdataflow-runner
 ```
 
-*   `{{project_id}}` is your Google Cloud project ID.
+*   `[PROJECT_ID]` is your Google Cloud project ID.
 *   `gcpTempLocation` is the storage bucket that Dataflow will use for the
     binaries and other data for running your pipeline. This location can be
     shared across multiple jobs.
@@ -190,8 +172,6 @@ in the Cloud Console.
 Open the [**Navigation menu**][spotlight-console-menu] in the upper-left corner of the console, and 
 then select **Dataflow**.
 
-<walkthrough-menu-navigation sectionId="DATAFLOW_SECTION"></walkthrough-menu-navigation>
-
 ### Select your job
 
 Click the job name `dataflow-intro` to view the job details.
@@ -206,7 +186,7 @@ Click a step in the pipeline to view its metrics.
 As your job finishes, you'll see the job status change, and the Compute Engine
 instances used by the job will stop automatically.
 
-Note: When you see the message in Cloud Shell that the job is finished, you can close Cloud Shell.
+**Note**: When you see the message in Cloud Shell that the job is finished, you can close Cloud Shell.
 
 ## View your output
 
@@ -216,8 +196,6 @@ Now that your job has run, you can explore the output files in Cloud Storage.
 
 Open the [**Navigation menu**][spotlight-console-menu] in the upper-left corner of the console,
 select **Storage**, and then click **Browser**.
-
-<walkthrough-menu-navigation sectionId=STORAGE_SECTION></walkthrough-menu-navigation>
 
 ### Go to the storage bucket
 
@@ -241,8 +219,6 @@ created.
     confirm the deletion.
 
 ## Conclusion
-
-<walkthrough-conclusion-trophy></walkthrough-conclusion-trophy>
 
 Here's what you can do next:
 

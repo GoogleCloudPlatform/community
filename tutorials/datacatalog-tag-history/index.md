@@ -207,7 +207,7 @@ in the Cloud Console.
 1. Create a service account to use as the user-managed controller service account for Dataflow:
 
         gcloud iam service-accounts create  ${TAG_HISTORY_SERVICE_ACCOUNT} \
-        --description="Service Account to run the DataCatalog tag history collection and recording pipeline." \
+        --description="Service Account to run the Data Catalog tag history collection and recording pipeline." \
         --display-name="Data Catalog History collection account"
 
 1.  Create a custom role with required permissions for accessing BigQuery, Pub/Sub, Dataflow, and Data Catalog:    
@@ -285,6 +285,6 @@ To avoid incurring charges to your Google Cloud account for the resources used i
 
 ## What's next
 
-* Learn more about [Data Catalog](https://cloud.google.com/datacatalog)
+* Learn more about [Data Catalog](https://cloud.google.com/data-catalog)
 * Learn more about [Cloud developer tools](https://cloud.google.com/products/tools).
 * Try out other Google Cloud features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).

@@ -15,7 +15,7 @@ This tutorial demonstrates how to configure Cloud Functions for Firebase to rela
 
 ## Objectives
 
-- Send application logs from device software over [MQTT](https://www.mqtt.com/) and IoT Core
+- Send application logs from device software over [MQTT](https://www.mqtt.org/) and IoT Core
 - View device logs in Cloud Logging
 - Use sorting and searching features of Cloud Logging to find logs of interest
 - Use the monitored resource type for IoT devices to see multiple log entries from different sources for a given device
@@ -25,13 +25,13 @@ This tutorial demonstrates how to configure Cloud Functions for Firebase to rela
 
 ## Before you begin
 
-This tutorial assumes you already have a Google Cloud Platform (GCP) account set up and have completed the IoT Core [quickstart](https://cloud.google.com/iot/docs/quickstart).
+This tutorial assumes you already have a Google Cloud account set up and have completed the IoT Core [quickstart](https://cloud.google.com/iot/docs/quickstart).
 
-You need to associate Firebase to your GCP project. Visit the [Firebase Console](https://console.firebase.google.com/?authuser=0) and choose to add a project. You can then choose to add Firebase to an existing GCP project.
+You need to associate Firebase to your Google Cloud project. Visit the [Firebase Console](https://console.firebase.google.com/?authuser=0) and choose to add a project. You can then choose to add Firebase to an existing Google Cloud project.
 
 ## Costs
 
-This tutorial uses billable components of GCP, including the following:
+This tutorial uses billable components of Google Cloud, including the following:
 
 - IoT Core
 - Pub/Sub
@@ -178,7 +178,7 @@ Now in just a few moments, you will see two new entries in Cloud Logging. One is
 
 This is then followed by a device application log reporting the imaginary "spring back" value. This shows how we can view both system logs from IoT Core and device application logs in one place.
 
-You can use the refresh button in the GCP Console, or use the play button to stream logs.
+You can use the refresh button in the Google Cloud Console, or use the play button to stream logs.
 
 ![console image](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-logging/c4.png)
 
