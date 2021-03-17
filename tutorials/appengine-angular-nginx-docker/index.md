@@ -12,7 +12,7 @@ date_published: 2021-03-16
 
 This tutorial shows you how to deploy a sample angular application to App Engine using the `gcloud` command for builds and app engine.
 
-![image](https://user-images.githubusercontent.com/13769236/111506916-1f5bb200-8718-11eb-8600-71449f0af5e9.png)
+![image](https://user-images.githubusercontent.com/13769236/111524561-95691480-872a-11eb-9e65-aa6c9cb629d7.png)
 
 ## Assumptions
 
@@ -197,7 +197,9 @@ Here are the steps you will be taking.
   - `gcloud builds submit` This will create the docker image on the specified path in cloudbuild.yaml file. Once done verify you have a container image created at https://console.cloud.google.com/gcr/images/yourprojectid?project=yourprojectid
   - `gcloud app deploy --image-url us.gcr.io/yourprojectid/angular-nginx-container` This will deploy your image to app engine with the service name you have provided in app.yaml.
 * Your UI will looks like this once you access it using version url of the service. Check the webapiurl you have provided in environment variable.
-![image](https://user-images.githubusercontent.com/13769236/111413008-724b5000-86ab-11eb-9b9f-5845b11d0e5a.png)
+
+![image](https://user-images.githubusercontent.com/13769236/111523863-bed57080-8729-11eb-8175-ef27c97504b4.png)
+
 * After following this tutorial you will be able to deploy angular ui in app engine using cloud build, nginx and docker. Using this you can have dynamic api urls or configuration directly defined in app.yaml so you can use same docker image and deploy it in different environments like dev, testing, staging or prod. All you have to do is have separate app.yaml per environment. 
 * This can be easily integrated in GitLab CI/CD pipelines as separated build steps of `build (angular ui using ng build)`, `publish (using cloud build)` and `deploy (using gcloud app deploy)`
 
