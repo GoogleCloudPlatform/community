@@ -172,8 +172,8 @@ The snippet below shows the InSpec control that implements the policy:
 
 ```ruby
 control 'policy_bucket_config' do
-  title 'GCS bucket configuration policy'
-  desc 'Compliance policy checks for GCS buckets'
+  title 'Cloud Storage bucket configuration policy'
+  desc 'Compliance policy checks for Cloud Storage buckets'
   impact 'medium'
   tag scc_category: 'BUCKET_CONFIG'
   tag resource_type: 'bucket'
