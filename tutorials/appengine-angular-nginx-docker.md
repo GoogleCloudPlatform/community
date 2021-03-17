@@ -1,6 +1,6 @@
 ---
-title: App Engine with angular, nginx, docker
-description: Learn how to deploy a sample angular application to App Engine using nginx docker container with just one cloud build.
+title: App Engine with angular, nginx, docker and cloud build
+description: Learn how to deploy a sample angular application to App Engine using nginx and docker with cloud build.
 author: Sandeep Parmar
 tags: App Engine
 date_published: 2021-03-16
@@ -32,7 +32,7 @@ Here are the steps you will be taking.
 
 * Follow this page to create a sample angular application https://angular.io/guide/setup-local
 * Once you have a project created and verify that it's working on localhost:4200 as per above guide
-* Here we are also going to learn how to use environment variable of app engine to use dynamic API urls in UI application. For that follow below steps
+* We are also going to learn, how to use environment variable of app engine to use dynamic API urls in UI application. For that follow below steps
   - Under src/assets folder add env.js and env.template.js files
   - Copy this content in env.js
     ```
@@ -62,14 +62,15 @@ Here are the steps you will be taking.
      };
      ```
 * For testing whether API_URL working or not add usage of this environment.webapiurl anywhere in the application. For example I have added that in app.componennt.html and         app.component.ts
-      ```
-       <span>webapiurl : {{ webapiurl }}</span>
-       
-       export class AppComponent {
+     ```
+     <span>webapiurl : {{ webapiurl }}</span>
+     ```
+     ```  
+     export class AppComponent {
            title = 'sample-app';
            webapiurl = environment.webapiurl;
-       }
-       ```
+     }
+     ```
 * Update outputPath in build section of angular.json with `"outputPath": "dist"`
 * Now build your angular project again and verify you are able to see the webapiurl as http://localhost:8080/api when you open the app in browser. If everything is       working well then you can go to next step of doing the cloud build.
      
@@ -132,16 +133,16 @@ Here are the steps you will be taking.
             # Google App Engine expects the runtime to serve HTTP traffic from port 8080.
             listen 8080;  
 
-		    # Root directory and index files
+	    # Root directory and index files
             index index.html index.htm;
 
             location / {
-			    root /usr/share/nginx/www/sampleapp;
-		    }
+		root /usr/share/nginx/www/sampleapp;
+	    }
 
-		    location /sampleapp/ {
-		        root /usr/share/nginx/www;
-	        }
+	    location /sampleapp/ {
+		root /usr/share/nginx/www;
+	    }
         }
     }
     ```
@@ -173,4 +174,6 @@ Here are the steps you will be taking.
   - `gcloud builds submit` This will create the docker image on the specified path in cloudbuild.yaml file. Once done verify you have a container image created at https://console.cloud.google.com/gcr/images/yourprojectid?project=yourprojectid
   - `gcloud app deploy --image-url us.gcr.io/yourprojectid/angular-nginx-container` This will deploy your image to app engine with the service name you have provided in app.yaml 
 * Your UI will looks like this once you access it using version url of the service.
-
+![image](https://user-images.githubusercontent.com/13769236/111413008-724b5000-86ab-11eb-9b9f-5845b11d0e5a.png)
+* After following this tutorial you will be able to deploy angular ui in app engine using cloud build, nginx and docker. Using this you can have dynamic api urls or configuration directly defined in app.yaml so you can use same docker image and deploy it it different environments like testing, staging or prod. All you have to do is have separate app.yaml per environment. 
+* This can be easily integrated in GitLab CI/CD pipelines as separated build steps of build (angular ui using ng build), publish (using cloud build) and deploy (using gcloud app deploy)
