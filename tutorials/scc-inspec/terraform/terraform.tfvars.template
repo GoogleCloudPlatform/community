@@ -1,0 +1,5 @@
+region="${REGION}"
+project_id="${PROJECT_ID}"
+suffix=${PROJECT_NUM}
+org_id=${ORG_ID}
+source_id=${SOURCE_ID}
