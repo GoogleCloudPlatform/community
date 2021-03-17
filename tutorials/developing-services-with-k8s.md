@@ -177,7 +177,6 @@ What's going on behind the scenes? Your incoming request goes to the load balanc
 ## Additional resources
 
 * [Setting up a Python development environment for Docker](http://matthewminer.com/2015/01/25/docker-dev-environment-for-web-app.html) covers how to configure your Docker image for hot reload
-* [Doing the same for NodeJS](http://fostertheweb.com/2016/02/nodemon-inside-docker-container/)
 * The [Microservices Architecture Guide](https://www.datawire.io/guide) covers design patterns and HOWTOs in setting up an end-to-end microservices infrastructure
 * The [Kubernetes tutorial](https://kubernetes.io/docs/tutorials/kubernetes-basics/) gives a good walk-through of using Kubernetes, or visit the [Google Kubernetes Engine quickstart](https://cloud.google.com/kubernetes-engine/docs/quickstart)
 
