@@ -22,9 +22,9 @@ exports.config = {
   jasmineNodeOpts: {
     showColors: true,
     defaultTimeoutInterval: 30000,
-    print: function() {}
+    print: function () {}
   },
-  onPrepare() {
+  onPrepare () {
     require('ts-node').register({
       project: require('path').join(__dirname, './tsconfig.json')
     });
