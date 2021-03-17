@@ -11,19 +11,19 @@ Peter ONeill | Developer Advocate | Ambassador Labs
 <p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
 Kubernetes, microservices, and cloud-native architectures have quickly become the new standard for software development. These technologies promise faster, more
-efficient processes for development teams, but the truth is the learning curve is often very steep, especially for application developers. In the transition from
-the monolith to microservices, the techniques that once worked so well for application developers-such as local development and debugging-become nearly 
+efficient processes for development teams, but the truth is that the learning curve is often very steep, especially for application developers. In the transition
+from the monolith to microservices, the techniques that once worked so well for application developers——such as local development and debugging——become nearly 
 impossible with new application architectures, and often it’s up to the application developers to find solutions. First, developers must learn how to change
 their development processes. Then, they have to find the right tools for the job. The whole process can become daunting very quickly. 
 
 One of the more common cloud-native development workflows looks like this:
 
-1.  Package code as a container 
+1.  Package code as a container.
 1.  Push the container to Google Container Registry.
 1.  Deploy the changes.
 1.  Wait for continuous integration to run to see the changes live.
 
-This workflow seems to work for larger, infrequent changes; but for small, fast changes it introduces a lot of wait time. You should be able to see the results 
+This workflow seems to work for large, infrequent changes; but for small, fast changes it introduces a lot of wait time. You should be able to see the results 
 of your changes immediately. 
 
 In this tutorial, you'll set up a local development environment for a Go microservice in Google Kubernete Engine (GKE). Instead of waiting through the
@@ -36,11 +36,11 @@ For this example, you'll make code changes to the Go microservice running betwee
 sample microservice application consisting of 3 services:
 
 * **VeryLargeJavaService**: A memory-intensive service written in Java that generates the frontend graphics and web pages for the application.
-* **DataProcessingService**: A Go service that manages requests for information between the two services.
 * **VeryLargeDataStore**: A large datastore service that contains the sample data for the Edgey Corp store.
+* **DataProcessingService**: A Go service that manages requests for information between the two services.
 
 **Note**: We've called these *VeryLarge* services to emphasize the fact that your local environment may not have enough CPU and RAM, or you may just not want to
-pay for all that extra overhead. But don't worry: this sample app is actually pretty small.
+pay for all that extra overhead. But don't worry: the sample app used in this tutorial is actually quite small.
 
 ![](https://storage.googleapis.com/gcp-community/tutorials/telepresence-and-gke/0_7J_48_5o8juPX5E6.png)
 
@@ -57,8 +57,8 @@ Start by deploying the sample application to a GKE cluster:
 ## Configure your local development environment to work with the Go microservice
 
 You'll need to grab all of the code for your local development environment so that you can edit the `DataProcessingService` service. As shown in the architecture
-diagram, `DataProcessingService` is dependent on a connection to both `VeryLargeJavaService` and `VeryLargeDataStore`. So, in order to make a change to this 
-service, you'll need to exchange data with these other services as well.
+diagram, the `DataProcessingService` service is dependent on a connection to both the `VeryLargeJavaService` service and the `VeryLargeDataStore` service. So, in 
+order to make a change to this service, you'll need to exchange data with these other services, too.
 
 1.  Clone the repository for this application from GitHub:
 
@@ -129,11 +129,11 @@ route all of the traffic to the *local* version of `DataProcessingService` runni
 
 1.  Access the the sample application directly with Telepresence by going to `http://verylargejavaservice:8080`.
 
-    Telepresence is intercepting network requests intended for GKE and routes them appropriately.
+    Telepresence intercepts network requests intended for GKE and routes them appropriately.
     
 1.  Make some updates to the Go microservice:
 
-    1.  Open `edgey-corp-go/DataProcessingService/main.go`.
+    1.  Open the `edgey-corp-go/DataProcessingService/main.go` file in an editor.
     1.  Change the value of the `color` variable from `blue` to `orange`.
     1.  Save the file.
     1.  Stop the previous server instance and start it again:
