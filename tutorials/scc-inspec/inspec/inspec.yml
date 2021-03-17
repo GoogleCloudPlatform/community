@@ -10,7 +10,7 @@ depends:
 inputs:
 - name: project_id
   required: true
-  description: 'The GCP project identifier.'
+  description: 'The Google Cloud project identifier.'
   type: String
 - name: bucket_ignore_pattern
   required: false
