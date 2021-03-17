@@ -129,5 +129,3 @@ Tell the reader what they should read or watch next if they're interested in lea
 - Learn more about [AI on Google Cloud](https://cloud.google.com/solutions/ai/).
 - Learn more about [Cloud developer tools](https://cloud.google.com/products/tools).
 - Try out other Google Cloud features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
-	
-
