@@ -36,7 +36,7 @@ Here are the steps you will be taking.
     Your app will be real and you'll be able to experiment with it after you
     deploy, or you can remove it and start fresh.
 
-## Angular Project setup
+## Angular Project Setup
 
 * Follow this page to create a sample angular application https://angular.io/guide/setup-local
 * Once you have a project created and verify that it's working on http://localhost:4200 as per above guide
