@@ -1,10 +1,15 @@
 ---
-title: Develop Golang Microservices on GKE with Telepresence
+title: Develop Go microservices on Google Kubernetes Engine with Telepresence
 description: A cloud development environment powered by GKE and Telepresence.
-author: datawire
-tags: kubernetes, gke, telepresence
-date_published: 2021-03-03
+author: peteroneilljr
+tags: golang, gke
+date_published: 2021-03-19
 ---
+
+Peter ONeill | Developer Advocate | Ambassador Labs
+
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
 Kubernetes, microservices, and cloud native architectures have quickly become the new standard for software development. These technologies promise faster, more efficient processes for development teams, but the truth is the learning curve is often very steep, especially for application developers. In the transition from the monolith to microservices, the techniques that once worked so well for application developers - local development, debugging, etc. become nearly impossible with new application architectures and oftentimes, it’s up to the application developers to find solutions. First, developers must learn how to change their development processes. Then, they have to find the right tools for the job. The whole process can become daunting very quickly. 
 
 One of the more common cloud native development workflows looks like this: 
