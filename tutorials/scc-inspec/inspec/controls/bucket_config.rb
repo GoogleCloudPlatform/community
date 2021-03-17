@@ -4,8 +4,8 @@ project_id = input('project_id')
 bucket_ignore_pattern = input('bucket_ignore_pattern')
 
 control 'policy_bucket_config' do
-  title 'GCS bucket configuration policy'
-  desc 'Compliance policy checks for GCS buckets'
+  title 'Cloud Storage bucket configuration policy'
+  desc 'Compliance policy checks for Cloud Storage buckets'
   impact 'medium'
   tag scc_category: 'BUCKET_CONFIG'
   tag resource_type: 'bucket'
