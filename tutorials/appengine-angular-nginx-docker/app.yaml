@@ -5,4 +5,5 @@ threadsafe: true
 
 env_variables:
   API_URL: "https://webapi-dev.appname.com"
-  DEBUG: true
+  VARIABLE_ONE: "Variable One"
+  VARIABLE_TWO: "Variable Two"
