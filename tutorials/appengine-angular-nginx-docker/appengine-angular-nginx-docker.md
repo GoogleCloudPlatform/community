@@ -176,4 +176,4 @@ Here are the steps you will be taking.
 * Your UI will looks like this once you access it using version url of the service.
 ![image](https://user-images.githubusercontent.com/13769236/111413008-724b5000-86ab-11eb-9b9f-5845b11d0e5a.png)
 * After following this tutorial you will be able to deploy angular ui in app engine using cloud build, nginx and docker. Using this you can have dynamic api urls or configuration directly defined in app.yaml so you can use same docker image and deploy it it different environments like testing, staging or prod. All you have to do is have separate app.yaml per environment. 
-* This can be easily integrated in GitLab CI/CD pipelines as separated build steps of build (angular ui using ng build), publish (using cloud build) and deploy (using gcloud app deploy)
+* This can be easily integrated in GitLab CI/CD pipelines as separated build steps of `build (angular ui using ng build)`, `publish (using cloud build)` and `deploy (using gcloud app deploy)`
