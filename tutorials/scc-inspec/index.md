@@ -1,16 +1,17 @@
 ---
-title: Integrating InSpec and Security Command Center
+title: Integrating Chef InSpec and Security Command Center
 description: Learn how to programmatically add InSpec test results to Security Command Center.
 author: jtangney
-tags: Security Command Center, InSpec
-date_published: 2021-03-02
+tags: SCC
+date_published: 2021-03-19
 ---
 
 Jeremy Tangney | Solutions Architect | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-This tutorial describes how to automatically add [Chef InSpec](https://www.chef.io/products/chef-inspec) test results to [Security Command Center](https://cloud.google.com/security-command-center). 
+This tutorial describes how to automatically add [Chef InSpec](https://www.chef.io/products/chef-inspec) test results to
+[Security Command Center](https://cloud.google.com/security-command-center). 
 
 InSpec is an open source infrastructure testing framework for specifying compliance, security, and policy requirements. Using InSpec, you can define compliance requirements as code, and test your cloud infrastructure against those requirements. InSpec works across different cloud providers, so you can use InSpec to test your Google Cloud infrastructure in the same way you test your infrastructure in other clouds. For more information about InSpec and Google Cloud, read the [InSpec for GCP](https://opensource.googleblog.com/2020/08/assess-security-of-cloud-deployments.html) blog post.
 
@@ -26,7 +27,7 @@ Security Command Center is the canonical security and risk database for Google C
 
 The following diagram describes the architecture:
 
-![image](./architecture.png)
+![image](https://storage.googleapis.com/gcp-community/tutorials/scc-inspec/architecture.png)
 
 # Costs
 
