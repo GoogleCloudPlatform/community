@@ -18,7 +18,7 @@ scc = None
 
 
 def on_finalize(event, context):
-  """Function entry point, triggered by creation of object in a GCS bucket"""
+  """Function entry point, triggered by creation of object in a Cloud Storage bucket"""
   global gcs
   if not gcs:
     gcs = storage.Client()
