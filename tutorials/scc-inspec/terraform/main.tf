@@ -13,7 +13,7 @@ locals {
     var.function_runtime_sa_name, var.project_id)
 }
 
-// Create a GCS bucket to hold the InSpec reports
+// Create a Cloud Storage bucket to hold the InSpec reports
 resource "google_storage_bucket" "bucket_inspec_reports" {
   project = var.project_id
   name = format("inspec-reports_%s", var.suffix)
@@ -31,7 +31,7 @@ resource "google_storage_bucket_iam_binding" "bucket_inspec_reports_binding" {
   ]
 }
 
-// create a GCS bucket to hold the Cloud Functions src
+// create a Cloud Storage bucket to hold the Cloud Functions src
 resource "google_storage_bucket" "bucket_source_archives" {
   project = var.project_id
   name = format("source-archives_%s", var.suffix)
