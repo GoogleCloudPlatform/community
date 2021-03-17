@@ -12,7 +12,7 @@ date_published: 2021-03-16
 
 This tutorial shows you how to deploy a sample angular application to App Engine using the `gcloud` command for builds and app engine.
 
-![image](https://user-images.githubusercontent.com/13769236/111533746-2218d000-8735-11eb-8ee1-6bc574ea5662.png)
+![image](https://user-images.githubusercontent.com/13769236/111533886-5096ab00-8735-11eb-8580-9a81cf47f7f5.png)
 
 ## Assumptions
 
