@@ -11,7 +11,7 @@ Dan Isla | Solution Architect | Google
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 Note: This tutorial is focused on managing [projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
-For a generalized introduction to Terraform on GCP, go to the [provider documentation](https://www.terraform.io/docs/providers/google/guides/getting_started.html).
+For a generalized introduction to Terraform on Google Cloud, go to the [provider documentation](https://www.terraform.io/docs/providers/google/guides/getting_started.html).
 
 This tutorial demonstrates how to create and manage projects on [Google Cloud with Terraform](https://cloud.google.com/docs/terraform).
 With Terraform, many of your resources such as projects, IAM policies, networks, Compute Engine instances, and Kubernetes Engine clusters can be managed,
