@@ -6,11 +6,19 @@ tags: App Engine, Docker, nginx, angular
 date_published: 2021-03-16
 ---
 
-# App Engine quickstart using angular, nginx, docker, cloud build in custom flex environment
+# App Engine multi environment deployment using angular, nginx, docker, cloud build in custom flex env
 
 ## Introduction
 
-This tutorial shows you how to deploy a sample angular application to App Engine using the `gcloud` command.
+This tutorial shows you how to deploy a sample angular application to App Engine using the `gcloud` command for builds and app engine.
+
+![image](https://user-images.githubusercontent.com/13769236/111506916-1f5bb200-8718-11eb-8600-71449f0af5e9.png)
+
+## Assumptions
+
+You have google cloud project created. You have enabled app engine, cloud builds, container registry apis.
+
+## Steps
 
 Here are the steps you will be taking.
 
@@ -31,10 +39,11 @@ Here are the steps you will be taking.
 ## Angular Project setup
 
 * Follow this page to create a sample angular application https://angular.io/guide/setup-local
-* Once you have a project created and verify that it's working on localhost:4200 as per above guide
+* Once you have a project created and verify that it's working on http://localhost:4200 as per above guide
 * We are also going to learn, how to use environment variable of app engine to use dynamic API urls in UI application. For that follow below steps
   - Under src/assets folder add env.js and env.template.js files
   - Copy this content in env.js
+  
     ```
     (function(window) {
           window["env"] = window["env"] || {};
@@ -44,6 +53,7 @@ Here are the steps you will be taking.
     })(this);
     ```
    - Copy this content in env.template.js
+   
      ```
      (function(window) {
            window.env = window.env || {};
@@ -55,6 +65,7 @@ Here are the steps you will be taking.
    - Add reference of env.js file in index.html
    - Remove `/` from index.html <base href="">. This will be useful when you want to use dispatch.yaml later.
 * Update environment.ts with this.
+
      ```
      export const environment = {
           production: false,
@@ -62,9 +73,11 @@ Here are the steps you will be taking.
      };
      ```
 * For testing whether API_URL working or not add usage of this environment.webapiurl anywhere in the application. For example I have added that in app.componennt.html and         app.component.ts
+
      ```
      <span>webapiurl : {{ webapiurl }}</span>
      ```
+     
      ```  
      export class AppComponent {
            title = 'sample-app';
@@ -79,6 +92,7 @@ Here are the steps you will be taking.
 * There could be many ways of doing cloud build for any application. For simplicity of this tutorial we will use just output `dist` folder of sample app
 * Add `Dockerfile, cloudbuild.yaml, app.yaml and nginx` files under `dist` folder and copy the following contents
   - Dockerfile 
+  
     ```
     # The standard nginx container just runs nginx. The configuration file added
     # below will be used by nginx.
@@ -107,6 +121,7 @@ Here are the steps you will be taking.
     CMD ["/bin/sh",  "-c",  "envsubst < /usr/share/nginx/www/sampleapp/assets/env.template.js > /usr/share/nginx/www/sampleapp/assets/env.js && exec nginx -g 'daemon off;'"]
     ```
   - nginx
+  
     ```
     events {
        worker_connections 768;
@@ -147,6 +162,7 @@ Here are the steps you will be taking.
     }
     ```
   - cloudbuld.yaml
+  
     ```
     steps:
     - name: 'gcr.io/cloud-builders/docker'
@@ -156,6 +172,7 @@ Here are the steps you will be taking.
     images: ['us.gcr.io/$PROJECT_ID/angular-nginx-container']
     ```
   - app.yaml
+  
     ```
     runtime: custom
     env: flex
@@ -166,6 +183,7 @@ Here are the steps you will be taking.
       API_URL: "https://webapi-dev.appname.com"
     ```
 * At this point you can just use docker commands if you want to verify on your local docker. To do that run following two commands on dist folder and verify on localhost:8080    if everything works. To make this work you have to comment out `listen 8080;` from nginx
+
   ```
   docker build -t sampleapp .
   docker run --env API_URL="https://webapi-dev.appname.com" -dp 8080:80 sampleapp
