@@ -14,8 +14,7 @@ This tutorial demonstrates how to use [Pusher](https://pusher.com) on [Google Ap
 Pusher is a hosted API for sending real-time, bi-directional messages through WebSockets to apps and
 other internet-connected devices.
 
-Pusher's real-time functionality replicates the deprecated [Channel API](/appengine/docs/java/channel/)
-and is useful for applications that send information in real time,
+Pusher's real-time functionality is useful for applications that send information in real time,
 such as collaborative applications, multi-player games, and chat rooms.
 
 Using Pusher is a better choice than polling in situations where updates can't be predicted or

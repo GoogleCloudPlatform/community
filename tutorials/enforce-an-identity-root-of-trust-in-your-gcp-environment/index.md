@@ -31,7 +31,7 @@ are aware when any privileged access is used to make changes.
 The result of completing the process in this document is having a
 [Google Cloud organization](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#organizations) 
 node in which your domain is controlled using
-[Cloud Identity](https://support.google.com/cloudidentity/answer/7319251) in the [Admin console](admin.google.com).
+[Cloud Identity](https://support.google.com/cloudidentity/answer/7319251) in the [Admin console](https://admin.google.com).
 
 This process includes the following objectives:
 
