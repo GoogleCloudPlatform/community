@@ -4,4 +4,4 @@ metadata:
   name: gcs-viewer
   namespace: staging
   annotations:
-    iam.gke.io/gcp-service-account: gcs-viewer@[gcp-project-id].iam.gserviceaccount.com
+    iam.gke.io/gcp-service-account: gcs-viewer-staging@[gcp-project-id].iam.gserviceaccount.com
