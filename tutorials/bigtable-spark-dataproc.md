@@ -12,16 +12,16 @@ Billy Jacobson | Developer Relations Engineer | Google
 
 ## Prerequisites
 
-This is a follow up to [Using Spark with Cloud Bigtable](), so follow the steps in that tutorial before beginning this
-one. It walks you through setting up the environment variables, Bigtable instance and table, and running the Spark job
-locally.
+This is a follow up to [Using Spark with Cloud Bigtable](https://cloud.google.com/community/tutorials/bigtable-spark),
+so follow the steps in that tutorial before beginning this one. It walks you through setting up the environment
+variables, Bigtable instance and table, and running the Spark job locally.
 
 
 ## Setup
 
 ### Create Dataproc Cluster
 
-Set the necessary environment variables.
+Set the necessary environment variables for configuring your Dataproc cluster.
 
 **NOTE**: Read [Available regions and zones](https://cloud.google.com/compute/docs/regions-zones#available) for more information about regions and zones.
 
@@ -134,19 +134,22 @@ If you ran wordcount locally, you will see duplicate entries for words since Big
 
 ## Cleaning up
 
-Delete the Bigtable instance.
+If you created a new instance to try this out, delete it. 
 
-```
-cbt \
-  -project=$BIGTABLE_SPARK_PROJECT_ID \
-  deleteinstance $BIGTABLE_SPARK_INSTANCE_ID
-```
+    ```
+    cbt \
+      -project=$BIGTABLE_SPARK_PROJECT_ID \
+      deleteinstance $BIGTABLE_SPARK_INSTANCE_ID
+    ```
 
-```
-cbt \
-  -project=$BIGTABLE_SPARK_PROJECT_ID \
-  listinstances
-```
+If you created a table on an existing instance, only delete that.
+
+    cbt \
+      -project=$BIGTABLE_SPARK_PROJECT_ID \
+      -instance=$BIGTABLE_SPARK_INSTANCE_ID \
+      deletetable $BIGTABLE_SPARK_WORDCOUNT_TABLE
+
+
 
 Delete the Dataproc cluster.
 
@@ -161,9 +164,10 @@ gcloud dataproc clusters list \
   --region=$BIGTABLE_SPARK_DATAPROC_REGION
 ```
 
-Delete your bucket.
+Delete input file and your bucket.
 
 ```
+gsutil rm $BIGTABLE_SPARK_BUCKET_NAME/Romeo-and-Juliet-prologue.txt
 gsutil rb $BIGTABLE_SPARK_BUCKET_NAME
 ```
 

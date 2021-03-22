@@ -22,7 +22,7 @@ Billy Jacobson | Developer Relations Engineer | Google
 
 ```bash
 git clone https://github.com/GoogleCloudPlatform/java-docs-samples.git
-cd bigtable/spark
+cd java-docs-samples/bigtable/spark
 ```
 Execute the following `sbt` command to assemble the sample applications as a single uber/fat jar (with all of its dependencies and configuration).
 
@@ -147,10 +147,13 @@ cbt \
 ## Running on Dataproc
 
 If you'd like to run the Wordcount example on Dataproc, GCP's fully managed and highly scalable service for running
-Apache Spark, see part two of this tutorial: [Running a Cloud Bigtable Spark job on Dataproc](). It continues with the
+Apache Spark, see part two of this tutorial: [Running a Cloud Bigtable Spark job on Dataproc](https://cloud.google.com/community/tutorials/bigtable-spark-dataproc). It continues with the
 same table and instance, so don't clean them up if you want to continue.
 
 ## Cleaning up
+
+If you're not continuing to [run on Dataproc](https://cloud.google.com/community/tutorials/bigtable-spark-dataproc),
+clean up your resources. 
 
 If you created a new instance to try this out, delete it. 
 
