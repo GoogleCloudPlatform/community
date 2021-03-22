@@ -73,7 +73,7 @@ To make cleanup easiest, you may want to create a new project for this tutorial,
 To complete this tutorial, you need a domain that you own or manage. If you don't yet have a domain, there are many services through which you can register a
 domain, such as [Google Domains](https://domains.google.com/). This tutorial uses the domain `democloud.info`.
 
-1.  [Select or create a Google Cloud project.](https://cloud.console.google.com/projectselector2/home/dashboard)
+1.  [Select or create a Google Cloud project.](https://console.cloud.google.com/projectselector2/home/dashboard)
 
 1.  [Enable billing for your project.](https://support.google.com/cloud/answer/6293499#enable-billing)
 
