@@ -231,9 +231,9 @@ Now we are going to use a Kyverno policy to restrict the usage of the Kubernetes
 
     To learn more about how we can adapt and extend this policy to match different criteria check the [Kyverno Write Policies documentation](https://kyverno.io/docs/writing-policies/).
 
-## Bonus: Restrict the Kubernetes service account annotation to the Google service account
+## Optional: Restrict the Kubernetes service account annotation to the Google service account
 
-Let's create a policy to restrict that the Kubernetes service account could be created/annotated with a different Google service account.
+Let's create a policy to restrict that the Kubernetes service account could only be annotated with our Google service account. This policy will also prevent that other Kubernetes service accounts in this namespace could be annotated with our Google service account.
 
 1. Remove the existing KSA.
 
@@ -262,11 +262,11 @@ Let's create a policy to restrict that the Kubernetes service account could be c
                 - ServiceAccount
                 namespaces:
                 - staging
-                name: "$ksa_name"
             validate:
               message: "Invalid workload identity annotation"
               pattern:
                 metadata:
+                  =(name): $ksa_name
                   annotations:
                     =(iam.gke.io/gcp-service-account): $gsa_name@$gcp_project.iam.gserviceaccount.com
         EOF
