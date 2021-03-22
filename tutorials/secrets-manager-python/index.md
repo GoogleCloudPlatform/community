@@ -96,7 +96,9 @@ and the response is decoded, giving the key in plain text.
 
     secrets = secretmanager.SecretManagerServiceClient()
 
-    ALPHA_VANTAGE_KEY = secrets.access_secret_version("projects/"+PROJECT_ID+"/secrets/alpha-vantage-key/versions/1").payload.data.decode("utf-8")
+    ALPHA_VANTAGE_KEY = secrets.access_secret_version(request={"name": "projects/"+PROJECT_ID+"/secrets/alpha-vantage-key/versions/1"}).payload.data.decode("utf-8")
+
+
 
 The following excerpt creates an endpoint called `/api/v1/symbol` and uses the
 [Alpha Vantage Python library](https://github.com/RomelTorres/alpha_vantage) to look up the stock symbol and give

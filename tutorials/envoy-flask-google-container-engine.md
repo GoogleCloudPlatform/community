@@ -10,7 +10,8 @@ date_published: 2017-06-28
 
 One of the recurring problems with using microservices is managing communications. Your clients must be able to speak to your services, and in most cases services need to speak among themselves. When things go wrong, the system as a whole needs to be resilient, so it degrades gracefully instead of catastrophically. It also must be observable so you can figure out what's wrong.
 
-A useful pattern is to enlist a proxy, like [Envoy](https://lyft.github.io/envoy/), to help [make your application more resilient and observable](https://www.datawire.io/guide/traffic/getting-started-lyft-envoy-microservices-resilience/). Envoy can be a bit daunting to set up, so this tutorial walks you through deploying a Python Flask webapp with Envoy on Google Kubernetes Engine.
+A useful pattern is to enlist a proxy, like [Envoy](https://www.envoyproxy.io/), to help
+[make your application more resilient and observable](https://www.datawire.io/guide/traffic/getting-started-lyft-envoy-microservices-resilience/). Envoy can be a bit daunting to set up, so this tutorial walks you through deploying a Python Flask web app with Envoy on Google Kubernetes Engine.
 
 ## The application
 

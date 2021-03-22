@@ -25,7 +25,7 @@ Alternatively, you can use options from the
 
 ## Prerequisites
 
-1.  [Select or create a Google Cloud project.](https://cloud.console.google.com/projectselector2/home/dashboard)
+1.  [Select or create a Google Cloud project.](https://console.cloud.google.com/projectselector2/home/dashboard)
 
 1.  [Enable billing for your project.](https://support.google.com/cloud/answer/6293499#enable-billing)
 
