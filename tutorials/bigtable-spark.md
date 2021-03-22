@@ -1,6 +1,6 @@
 ---
 title: Using Spark with Cloud Bigtable 
-description: Learn how to use Apache Spark for distributed and parallelized data processing with Cloud Bigtable
+description: Learn how to use Apache Spark for distributed and parallelized data processing with Cloud Bigtable.
 author: billyjacobson
 tags: bigtable, spark, database, big table, apache spark, hbase, dataproc
 date_published: 2021-03-19

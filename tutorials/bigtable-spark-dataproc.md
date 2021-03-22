@@ -1,6 +1,6 @@
 ---
 title: Running a Cloud Bigtable Spark job on Dataproc 
-description: Run a Spark job on Dataproc that reads from and writes to Cloud Bigtable. 
+description: Run a Spark job on Dataproc that reads from and writes to Cloud Bigtable.
 author: billyjacobson
 tags: bigtable, spark, database, big table, apache spark, hbase, dataproc
 date_published: 2021-03-19
