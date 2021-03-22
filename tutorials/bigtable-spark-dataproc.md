@@ -21,16 +21,18 @@ locally.
 
 ### Create Dataproc Cluster
 
-Set the below environment variables:
+Set the necessary environment variables.
+
+**NOTE**: Read [Available regions and zones](https://cloud.google.com/compute/docs/regions-zones#available) for more information about regions and zones.
+
 ```
 BIGTABLE_SPARK_DATAPROC_CLUSTER=your-dataproc-cluster
 BIGTABLE_SPARK_DATAPROC_REGION=your-dataproc-region
 BIGTABLE_SPARK_CLUSTER_ZONE=your-bigtable-cluster-zone
 BIGTABLE_SPARK_PROJECT_ID=your-project-id //This can be the same as your Bigtable project 
 ```
-**NOTE**: Read [Available regions and zones](https://cloud.google.com/compute/docs/regions-zones#available) for more information about regions and zones.
 
-Use the `gcloud` command line tool to create a cluster:
+Use the `gcloud` command line tool to create a cluster.
 ```
 gcloud dataproc clusters create $BIGTABLE_SPARK_DATAPROC_CLUSTER \
   --region=$BIGTABLE_SPARK_DATAPROC_REGION \
@@ -56,57 +58,40 @@ Since you're running the Spark job in the Cloud, you'll need to upload your the 
 
 **TIP**: Read [Quickstart: Using the gsutil tool](https://cloud.google.com/storage/docs/quickstart-gsutil) in the official documentation.
 
-1. Create a bucket.
+1. Select a bucket name and set it as an environment variable. 
 
-```
-gsutil mb \
-  -b on \
-  -l $BIGTABLE_SPARK_DATAPROC_REGION \
-  -p $BIGTABLE_SPARK_PROJECT_ID \
-  $BIGTABLE_SPARK_BUCKET_NAME
-```
+    **NOTE**: Bucket names need to be unique across all GCP projects, so you may want to append a few random digits, so you
+don't run into name conflicts during creation.
+    
+    ```
+    BIGTABLE_SPARK_BUCKET_NAME=gs://your-bucket-name-12345
+    ```
+    
+1. Create the bucket.
+    
+    ```
+    gsutil mb \
+      -b on \
+      -l $BIGTABLE_SPARK_DATAPROC_REGION \
+      -p $BIGTABLE_SPARK_PROJECT_ID \
+      $BIGTABLE_SPARK_BUCKET_NAME
+    ```
 
 1. Upload an input file into the bucket.
 
-```
-gsutil cp src/test/resources/Romeo-and-Juliet-prologue.txt $BIGTABLE_SPARK_BUCKET_NAME
-```
+    ```
+    gsutil cp src/test/resources/Romeo-and-Juliet-prologue.txt $BIGTABLE_SPARK_BUCKET_NAME
+    ```
 
 1. List contents of the bucket.
 
-```
-gsutil ls $BIGTABLE_SPARK_BUCKET_NAME
-```
+    ```
+    gsutil ls $BIGTABLE_SPARK_BUCKET_NAME
+    ```
    
 Output should be:
 ```
 gs://[your-bucket-name]/Romeo-and-Juliet-prologue.txt
-
-
-### Configure Environment
-
-Set the additional environment variables:
-```
-BIGTABLE_SPARK_PROJECT_ID=your-project-id
-BIGTABLE_SPARK_INSTANCE_ID=your-instance-id
-
-BIGTABLE_SPARK_WORDCOUNT_TABLE=wordcount
-BIGTABLE_SPARK_BUCKET_NAME=gs://[your-bucket-name]
-BIGTABLE_SPARK_ASSEMBLY_JAR=target/scala-2.11/bigtable-spark-samples-assembly-0.1.jar
-```
-
-
-### Environment variables
-Set the following environment variables, so you can copy/paste the commands in this tutorial:
-
-```bash
-SPARK_HOME=/PATH/TO/spark-2.4.7-bin-hadoop2.7
-BIGTABLE_SPARK_PROJECT_ID=your-project-id
-BIGTABLE_SPARK_INSTANCE_ID=your-instance-id
-
-BIGTABLE_SPARK_WORDCOUNT_TABLE=wordcount
-BIGTABLE_SPARK_WORDCOUNT_FILE=src/test/resources/Romeo-and-Juliet-prologue.txt
-BIGTABLE_SPARK_ASSEMBLY_JAR=target/scala-2.11/bigtable-spark-samples-assembly-0.1.jar
 ```
 
 ### Submit Wordcount
@@ -136,6 +121,8 @@ Waiting for job output...
 
 ### Verify
 
+Read the database.
+
 ```
 cbt \
   -project=$BIGTABLE_SPARK_PROJECT_ID \
@@ -143,8 +130,9 @@ cbt \
   read $BIGTABLE_SPARK_WORDCOUNT_TABLE
 ```
 
-## Cleaning up
+If you ran wordcount locally, you will see duplicate entries for words since Bigtable supports data versioning.
 
+## Cleaning up
 
 Delete the Bigtable instance.
 
@@ -173,10 +161,9 @@ gcloud dataproc clusters list \
   --region=$BIGTABLE_SPARK_DATAPROC_REGION
 ```
 
-Remove the input file in the bucket and the bucket itself.
+Delete your bucket.
 
 ```
-gsutil rm $BIGTABLE_SPARK_BUCKET_NAME/Romeo-and-Juliet-prologue.txt
 gsutil rb $BIGTABLE_SPARK_BUCKET_NAME
 ```
 
