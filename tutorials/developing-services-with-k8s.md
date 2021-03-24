@@ -45,10 +45,10 @@ First, install the `gcloud` and `kubectl` command line tools. Follow the instruc
 You need to install Telepresence, which will proxy your locally running service to Google Kubernetes Engine. (For the latest 
 installation instructions and documentation, visit [the Telepresence website](http://www.telepresence.io).)
 
-On OS X:
+On macOS (Homebrew 3 or later):
 
 ```
-brew cask install osxfuse
+brew install --cask osxfuse
 brew install datawire/blackbird/telepresence
 ```
 
