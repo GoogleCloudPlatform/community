@@ -1,0 +1,2 @@
+google-cloud-securitycenter
+google-cloud-storage

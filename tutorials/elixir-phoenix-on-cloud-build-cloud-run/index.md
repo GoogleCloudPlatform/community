@@ -155,7 +155,7 @@ Your Phoenix application should now be live.
 If you visit the [Cloud Build History page](http://console.cloud.google.com/cloud-build), you should see your build
 either building, successfully built, or possibly failed. 
 
-If it has successfully built, you can check the [Cloud Run Services page](console.cloud.google.com/run) to see if your 
+If it has successfully built, you can check the [Cloud Run page](https://console.cloud.google.com/run) to see if your 
 service has successfully launched. When it has, click the service and follow the URL on the page to view your Phoenix app.
 
 **Note:** If you encountered an error, [view the logs](https://cloud.google.com/run/docs/logging) to debug the issue.

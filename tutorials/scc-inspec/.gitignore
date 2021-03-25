@@ -1,0 +1,11 @@
+*.lock
+.DS_Store
+.vscode/
+
+vendor/
+venv/
+tmp/
+
+.terraform
+terraform.tfvars
+*.tfstate*

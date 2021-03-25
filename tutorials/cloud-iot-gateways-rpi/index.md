@@ -61,7 +61,7 @@ cost estimate based on your projected usage.
 
 - Laptop or desktop with `git` and `python3`
 - [Raspberry Pi 3][rpi] Model B (Other models should work, but they have not been verified.)
-- MicroSD card for [Raspbian](https://www.raspberrypi.org/downloads/raspbian/) (8GB+ recommended)
+- MicroSD card for [Raspberry Pi OS](https://www.raspberrypi.org/software/operating-systems/) (8GB+ recommended)
 - MicroSD card reader
 - USB keyboard
 - MicroUSB to USB-A cable
@@ -168,13 +168,13 @@ device through [UDP sockets][udp-socket] over a local network, which connect to 
 [MQTT bridge][mqtt-bridge]. The Raspberry Pi is not really a constrained device, since it has IP connectivity and the 
 ability to sign JWTs, so its use here is mostly for demonstration purposes.
 
-1.  [Download Raspbian][raspbian-download] (the full image with Desktop and recommended software) and
-    follow [the installation guide][raspbian-installation] to flash Raspbian onto your microSD card.
-1.  Insert the microSD card with Raspbian into your Raspberry Pi.
+1.  [Download Raspberry Pi software](https://www.raspberrypi.org/software/operating-systems/) (the full image with Desktop and recommended software) and
+    follow [the installation guide][raspbian-installation] to flash Raspberry Pi OS onto your microSD card.
+1.  Insert the microSD card with Raspberry Pi OS into your Raspberry Pi.
 1.  Attach a power source to the Raspberry Pi using the microUSB cable (for example, to a laptop USB port).
 1.  Connect your keyboard and mouse to the Raspberry Pi USB ports.
 1.  Connect the Raspberry Pi to a monitor through the HDMI port.
-1.  Go through the default setup steps for Raspbian upon boot.
+1.  Go through the default setup steps for Raspberry Pi OS upon boot.
 1.  Open a terminal and make sure that `git`, `python3`, and other required dependencies are installed. If not, install
     them by running the following:
 
@@ -200,7 +200,7 @@ ability to sign JWTs, so its use here is mostly for demonstration purposes.
 
 [udp-socket]: https://docs.python.org/3/library/socket.html 
 [mqtt-bridge]: https://cloud.google.com/iot/docs/how-tos/mqtt-bridge
-[raspbian-download]: https://www.raspberrypi.org/downloads/raspbian
+[raspbian-download]: https://www.raspberrypi.org/software/operating-systems/
 [raspbian-installation]: https://www.raspberrypi.org/documentation/installation/installing-images/README.md
 [rpi]: https://www.raspberrypi.org/
 
@@ -296,7 +296,7 @@ tutorial.
   example.
 - A slightly less expensive alternative to the DHT22 is the [DHT11][dht-alt].
 - If you encounter issues while installing the packages from `requirements-pi.txt`, make sure you are on the latest version
-  of Raspbian. In addition, [updating some packages could solve the issue][installation-issue].
+  of Raspberry Pi OS. In addition, [updating some packages could solve the issue][installation-issue].
 
         sudo apt-get install build-essential libssl-dev libffi-dev python-dev
 
