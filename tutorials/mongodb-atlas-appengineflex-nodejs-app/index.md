@@ -22,6 +22,13 @@ multi-regional cluster on Google Cloud as our primary database.
 4.  Push your application to App Engine flexible environment on Google Cloud.
 5.  Visit our new application from any web-enabled client terminal, including
     mobile devices.
+    
+## Costs
+
+This tutorial uses billable components of Google Cloud, including
+[App Engine flexible environment](https://cloud.google.com/appengine/pricing#flexible-environment-pricing).
+
+Use the [pricing calculator](/products/calculator) to generate a cost estimate based on your projected usage.
 
 ## Part 1: Configuring the MongoDB Atlas
 
