@@ -120,99 +120,91 @@ In this section, you create a Dataflow job that generates logs. This tutorial us
 
 In this section, you create a log sink to send relevant logs to a Cloud Function.
 
-1. Go to the [Logs Router](https://console.cloud.google.com/logs/router) page.
+1.  Go to the [**Logs Router** page](https://console.cloud.google.com/logs/router).
+1.  Click **Create Sink**.
+1.  Enter `dataflow-failure` in the **Sink name** field, and click **Next**.
+1.  In the **Sink destination** section, do the following:
+    1.  Select **Cloud Pub/sub topic** as the sink service.
+    1.  Select **Create new Cloud Pub/Sub topic** in the **Select Cloud Pub/Sub topic** field.
+    1.  Enter `dataflow-failure` in the **Name** field.
+    1.  Click **Create**.
+    1.  Click **Next**.
+1.  In the **Build inclusion filter** field, enter the following query, replacing `[PROJECT_ID]` with your project ID:
+
+        resource.type="dataflow_step" AND logName=("projects/[PROJECT_ID]/logs/dataflow.googleapis.com%2Fjob-message") AND ((severity=ERROR AND textPayload=~"^Workflow failed.*$") OR (severity=DEBUG AND textPayload=~"^Executing success step success.*$"))
+
 1. Click **Create Sink**.
-1. Enter `dataflow-failure` in the “Sink name” field, and click **Next**.
-1. For the “Sink destination” section:
-    1. Select **Cloud Pub/sub topic** as sink service.
-    1. Select **Create new Cloud Pub/Sub** topic in the “Select Cloud Pub/Sub topic” field.
-    1. Enter `dataflow-failure` in the Name field.
-    1. Click **Create**.
-    1. Click **Next**.
-1. In the “Build inclusion filter” field, enter the following query, replacing `[PROJECT_ID]` by your project ID:
-
-    ```
-    resource.type="dataflow_step" AND logName=("projects/[PROJECT_ID]/logs/dataflow.googleapis.com%2Fjob-message") AND ((severity=ERROR AND textPayload=~"^Workflow failed.*$") OR (severity=DEBUG AND textPayload=~"^Executing success step success.*$"))
-    ```
-
-6. Click **Create Sink**.
 
 ## Create a webhook for Slack
 
 In this section, you create the Slack webhook used to send notifications.
 
-**Note:** Alternatively, you can create a Google Chat webhook. The webhook APIs for Slack and Google Chat are similar, and the rest of the tutorial should work without any modification.
+**Note:** Alternatively, you can create a Google Chat webhook. The webhook APIs for Slack and Google Chat are similar, and the rest of the tutorial should
+work without any modification.
 
-1. Create a webhook for slack following the [official documentation](https://api.slack.com/messaging/webhooks).
-1. In Cloud Shell, test your webhook with a curl request, replacing `[WEBOOK_URL]` by your webhook’s URL.
+1.  Create a webhook for Slack following the [Slack documentation](https://api.slack.com/messaging/webhooks).
+1.  In Cloud Shell, test your webhook, replacing `[WEBOOK_URL]` with your webhook’s URL:
 
-   ```
-   curl -d '{"text":"Hello world"}' -H "Content-Type:application/json; charset=UTF-8" "[WEBHOOK_URL]"
-   ```
+        curl -d '{"text":"Hello, world"}' -H "Content-Type:application/json; charset=UTF-8" "[WEBHOOK_URL]"
 
-1. Check the configured Slack channel for the new “Hello world” message 
+1. Check the configured Slack channel for the new “Hello, world” message.
 
 ## Create the Cloud Function
 
 In this section, you create a Cloud Function that reads the Dataflow error messages from Cloud Pub/Sub and calls the Slack webhook.
 
-1. Go to the [Cloud Functions](https://console.cloud.google.com/functions/list) page.
-1. Click **Create Function**.
-1. Enter `slack-webhook` in the “Function name” field.
-1. Select **Cloud Pub/sub** as the Trigger type.
-1. Choose the topic you created in the previous section (it should end by “dataflow-failure”) in the “Select a Cloud Pub/Sub topic” field.
-1. Click **Save**.
-1. Click on **Variables, Networking and Advanced Settings**.
-1. Select the **Environment Variables** tab.
-1. Click **Add Variable** in the “Runtime environment variables” section (NOT in the “Build environment variables” section).
-1. Enter `SLACK_WEBHOOK` as in the Name field.
-1. Enter your Slack webhook URL in the Value field.
-1. Click **Next**.
-1. Select **Node.js 12** as Runtime.
-1. Copy the following code in the `index.js` file using the provided Inline Editor.
+1.  Go to the [**Cloud Functions** page](https://console.cloud.google.com/functions/list).
+1.  Click **Create Function**.
+1.  Enter `slack-webhook` in the **Function name** field.
+1.  Select **Cloud Pub/sub** as for **Trigger type**.
+1.  Choose the topic that you created in the previous section (which should end with `dataflow-failure`) in the **Select a Cloud Pub/Sub topic** field.
+1.  Click **Save**.
+1.  Click **Variables, Networking, and Advanced Settings**.
+1.  Select the **Environment Variables** tab.
+1.  Click **Add Variable** in the **Runtime environment variables** section (_not_ in the **Build environment variables** section).
+1.  Enter `SLACK_WEBHOOK` in the **Name** field.
+1.  Enter your Slack webhook URL in the **Value** field.
+1.  Click **Next**.
+1.  Select **Node.js 12** for **Runtime**.
+1.  Copy the following code into the `index.js` file using the provided inline editor.
 
-    ```
-    exports.helloPubSub = (message, context) => {
-      const https = require('https');
-      const url = require('url');
-      const msg = Buffer.from(message.data, 'base64').toString()
-      const msgObj = JSON.parse(msg)
-      const data = JSON.stringify({text: msgObj.resource.labels.job_name + ": " + msgObj.textPayload})
-      const uri = url.parse(process.env.SLACK_WEBHOOK);
-      var options = {
-        host: uri.hostname,
-        path: `${uri.pathname}${uri.search}`,
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-          'Content-Length': data.length
-        }
-      };
+        exports.helloPubSub = (message, context) => {
+          const https = require('https');
+          const url = require('url');
+          const msg = Buffer.from(message.data, 'base64').toString()
+          const msgObj = JSON.parse(msg)
+          const data = JSON.stringify({text: msgObj.resource.labels.job_name + ": " + msgObj.textPayload})
+          const uri = url.parse(process.env.SLACK_WEBHOOK);
+          var options = {
+            host: uri.hostname,
+            path: `${uri.pathname}${uri.search}`,
+            method: "POST",
+            headers: {
+              'Content-Type': 'application/json',
+              'Content-Length': data.length
+            }
+          };
 
-      const req = https.request(options).on("error", (err) => {
-        console.error("Error: ", err.message);
-      });
-      req.write(data);
-      req.end();
+          const req = https.request(options).on("error", (err) => {
+            console.error("Error: ", err.message);
+          });
+          req.write(data);
+          req.end();
 
-    };
-
-    ```
+        };
 
 1. Click **Deploy**.
 
 ## Test the notification pipeline
 
-In this section, you test the whole system end-to-end.
+In this section, you test the whole system from end to end.
 
-1. In Cloud Shell, run once again a Dataflow job that is going to fail.
+1.  In Cloud Shell, run a Dataflow job that will fail:
 
-   ```
-   gcloud dataflow jobs run wordcount-fail \
-     --gcs-location gs://dataflow-templates/latest/Word_Count \
-     --parameters \
-     inputFile=gs://non-existing-path,output=gs://$(gcloud config get-value project)-wordcount/output/my_output
-   ```
+        gcloud dataflow jobs run wordcount-fail \
+          --gcs-location gs://dataflow-templates/latest/Word_Count \
+          --parameters \
+          inputFile=gs://non-existing-path,output=gs://$(gcloud config get-value project)-wordcount/output/my_output
 
 1. Wait for the error message to appear in the Slack channel. This should take no more than 5 minutes.
 
@@ -220,60 +212,52 @@ In this section, you test the whole system end-to-end.
 
 If you need to troubleshoot the pipeline, you can simulate a Dataflow log message using the API explorer.
 
-1. Go to the [API explorer for the Cloud Logging API](https://cloud.google.com/logging/docs/reference/v2/rest/v2/entries/write).
-1. Enter the following JSON in the “Request body” field, replacing  `[PROJECT_ID]` by your project ID:
+1.  Go to the [API explorer for the Cloud Logging API](https://cloud.google.com/logging/docs/reference/v2/rest/v2/entries/write).
+1.  Enter the following JSON in the **Request body** field, replacing  `[PROJECT_ID]` with your project ID:
 
-   ```
-   {
-     "entries": [
-       {
-         "logName": "projects/[PROJECT_ID]/logs/dataflow.googleapis.     com%2Fjob-message",
-         "textPayload": "Executing success step success",
-         "severity": "DEBUG",
-         "resource": {
-           "type": "dataflow_step",
-           "labels": {
-             "job_name": "SUCCESSFUL_JOB_NAME"
-           }
-         }
-       }
-     ]
-   }
-   ```
+        {
+          "entries": [
+            {
+              "logName": "projects/[PROJECT_ID]/logs/dataflow.googleapis.     com%2Fjob-message",
+              "textPayload": "Executing success step success",
+              "severity": "DEBUG",
+              "resource": {
+                "type": "dataflow_step",
+                "labels": {
+                  "job_name": "SUCCESSFUL_JOB_NAME"
+                }
+              }
+            }
+          ]
+        }
 
-1. Wait for the message to appear in the Slack channel. This should take no more than a few seconds. 
+1.  Wait for the message to appear in the Slack channel. This should take no more than a few seconds. 
 
 ## Cleaning up
 
-You can cleanup all the resources created in this tutorial by [shutting down the project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#shutting_down_projects). However, if you used an existing project, that contains resources other than the one created in this tutorial, you should remove the resources one by one instead:
+You can clean up all of the resources created in this tutorial by
+[shutting down the project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#shutting_down_projects). However, if you used an existing
+project that contains resources that you want to keep, you should remove the resources created in this tutorial instead.
 
-1. In Cloud Shell, delete the log sink.
+1.  In Cloud Shell, delete the log sink:
 
-   ```
-   gcloud logging sinks delete dataflow-failure -q
-   ````
+        gcloud logging sinks delete dataflow-failure -q
 
-1. Delete the Cloud Pub/Sub topic.
+1.  Delete the Cloud Pub/Sub topic:
 
-   ```
-   gcloud pubsub topics delete projects/$(gcloud config get-value project)/topics/dataflow-failure -q
-   ```
+        gcloud pubsub topics delete projects/$(gcloud config get-value project)/topics/dataflow-failure -q
 
-1. Delete the Cloud Function.
+1.  Delete the Cloud Function:
 
-   ```
-   gcloud functions delete slack-webhook -q
-   ```
+        gcloud functions delete slack-webhook -q
 
-1. Delete the Cloud Storage bucket.
+1.  Delete the Cloud Storage bucket:
 
-   ```
-   gsutil rm -r gs://$(gcloud config get-value project)-wordcount
-   ```
+        gsutil rm -r gs://$(gcloud config get-value project)-wordcount
 
 ## What’s next
 
-- Learn how to [Troubleshoot and debug your Dataflow pipeline](https://cloud.google.com/dataflow/docs/guides/troubleshooting-your-pipeline)
-- Learn how to [Update an existing pipeline](https://cloud.google.com/dataflow/docs/guides/updating-a-pipeline)
-- Learn more about [Google Chat webhooks](https://developers.google.com/hangouts/chat/how-tos/webhooks)
+- Learn how to [troubleshoot and debug your Dataflow pipeline](https://cloud.google.com/dataflow/docs/guides/troubleshooting-your-pipeline).
+- Learn how to [update an existing pipeline](https://cloud.google.com/dataflow/docs/guides/updating-a-pipeline).
+- Learn more about [Google Chat webhooks](https://developers.google.com/hangouts/chat/how-tos/webhooks).
 - Try out other Google Cloud features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
