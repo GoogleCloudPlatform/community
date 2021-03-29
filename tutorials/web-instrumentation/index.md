@@ -392,7 +392,7 @@ The steps in this section create the Kubernetes cluster and deploy the OpenTelem
 
 1.  Change the project ID in the file `k8s/ot-service.yaml` with the `sed` command:
 
-        sed -i.bak "s/{{PROJECT-ID}}/$GOOGLE_CLOUD_PROJECT/" k8s/ot-service.yaml
+        sed -i.bak "s/[YOUR_PROJECT_ID]/$GOOGLE_CLOUD_PROJECT/" k8s/ot-service.yaml
 
 1.  Deploy the OpenTelemetry Collector to the Kubernetes cluster:
 
@@ -440,7 +440,7 @@ This section uses Cloud Build to build the test app, and then the app is deploye
 
 1.  Change the project ID in the file `k8s/deployment.yaml` with the `sed` command:
 
-        sed -i.bak "s/{{PROJECT-ID}}/$GOOGLE_CLOUD_PROJECT/" k8s/deployment.yaml
+        sed -i.bak "s/[YOUR_PROJECT_ID]/$GOOGLE_CLOUD_PROJECT/" k8s/deployment.yaml
 
 1.  Add a deployment for the app to the cluster:
 
