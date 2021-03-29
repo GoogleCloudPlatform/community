@@ -606,7 +606,7 @@ latency that you can use to compare against the result of the load spike.
 
     ![Screenshot: CPU for the Kubernetes Pod](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/pod_cpu_spike.png)
 
-The request chart and browser summary showed errors. One convenient place to look for error summaries in the Error Reporting user interface:
+The request chart and browser summary showed errors. One convenient place to look for error summaries is the Error Reporting user interface:
 
 ![Screenshot: Error Reporting](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/error_reporting_spike.png)
 
