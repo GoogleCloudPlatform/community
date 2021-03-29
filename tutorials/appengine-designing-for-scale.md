@@ -8,7 +8,7 @@ date_published: 2017-01-27
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-App Engine is a scalable system which will automatically add more capacity as
+App Engine is a scalable system that automatically adds more capacity as
 workloads increase.
 
 Here are some best practices to ensure that your app will scale to high load.

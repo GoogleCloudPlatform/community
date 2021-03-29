@@ -10,12 +10,8 @@ Alan Blount | Product Solutions Engineer | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-This tutorial demonstrates using
-[Cloud Functions][functions]
-to store and retrieve data to
-[Firestore][firestore].
-The Cloud Function is
-implemented in [Node.js][node] version 6 or 8.
+This tutorial demonstrates using [Cloud Functions][functions] to store and retrieve data with
+[Firestore][firestore]. The Cloud Function is implemented in [Node.js][node] version 6 or 8.
 
 [functions]: https://cloud.google.com/functions
 [firestore]: https://cloud.google.com/firestore/
