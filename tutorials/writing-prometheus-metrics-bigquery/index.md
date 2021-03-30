@@ -1,22 +1,30 @@
 ---
-title: Writing Prometheus metrics to BigQuery
-description: Learn how to use Prometheus's remote write feature to write metrics to BigQuery
+title: Write Prometheus metrics to BigQuery
+description: Learn how to use the Prometheus remote write feature to write metrics to BigQuery.
 author: tzehon
 tags: monitoring, prometheus, metrics, bigquery
-date_published: 2021-02-24
+date_published: 2021-03-29
 ---
 
 Tze Hon | Solutions Architect | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-This tutorial describes a solution that uses [Kohl's](https://www.kohls.com/) [Prometheus to BigQuery remote storage adapter](https://github.com/KohlsTechnology/prometheus_bigquery_remote_storage_adapter) to enable [Prometheus](https://prometheus.io/) to write metrics to [BigQuery](https://cloud.google.com/bigquery) using [remote write and remote read integration](https://prometheus.io/docs/operating/integrations/#remote-endpoints-and-storage).
+This tutorial describes a solution that uses [Kohl's](https://www.kohls.com/)
+[Prometheus to BigQuery remote storage adapter](https://github.com/KohlsTechnology/prometheus_bigquery_remote_storage_adapter) to enable
+[Prometheus](https://prometheus.io/) to write metrics to [BigQuery](https://cloud.google.com/bigquery) using
+[remote write and remote read integration](https://prometheus.io/docs/operating/integrations/#remote-endpoints-and-storage).
 
-You might want to access your Prometheus data for various purposes like machine learning or anomaly detection. These are difficult to do inside Prometheus, so it's useful to have this data in remote storage such as BigQuery. This also means that your metrics can be stored for much longer retention periods. BigQuery can also provide a global querying view by accepting data from multiple Prometheus instances across datacenters or multiple cloud providers. This is useful for building global dashboards for multi-datacenter/multi-cloud setups.
+You might want to access your Prometheus data for various purposes like machine learning or anomaly detection. These are difficult to do inside Prometheus, so 
+it's useful to have this data in remote storage such as BigQuery. This also means that your metrics can be stored for much longer retention periods. BigQuery can
+also provide a global querying view by accepting data from multiple Prometheus instances across datacenters or multiple cloud providers. This is useful for 
+building global dashboards for multi-datacenter/multi-cloud setups.
 
-In this tutorial, you learn how to deploy Prometheus to a [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine) (GKE) cluster using the [Prometheus Operator](https://github.com/prometheus-operator/prometheus-operator), and write metrics to BigQuery directly.
+In this tutorial, you learn how to deploy Prometheus to a [Google Kubernetes Engine (GKE)](https://cloud.google.com/kubernetes-engine) cluster using the 
+[Prometheus Operator](https://github.com/prometheus-operator/prometheus-operator), and write metrics to BigQuery directly.
 
-For this tutorial, basic knowledge of GKE, [Kubernetes Operators](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/), Prometheus and BigQuery is assumed.
+For this tutorial, basic knowledge of GKE, [Kubernetes Operators](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/), Prometheus, and BigQuery is 
+assumed.
 
 ## Objectives
 
