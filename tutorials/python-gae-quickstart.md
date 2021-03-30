@@ -62,7 +62,7 @@ For details, see
 
 ## Using Cloud Shell
 
-Cloud Shell is a built-in command-line tool for the console. We're going to use
+Cloud Shell is a built-in command-line tool for the Cloud Console. We're going to use
 Cloud Shell to deploy our app.
 
 ### Open Cloud Shell
