@@ -3,7 +3,7 @@ title: Label resources automatically based on Cloud Asset Inventory real-time no
 description: Learn how to trigger actions automatically based on Cloud Asset Inventory real-time notifications.
 author: kylgoog
 tags: asset-inventory,cloud-asset-inventory,labeling
-date_published: 2021-03-10
+date_published: 2021-03-30
 ---
 
 KaYun Lam | Customer Engineer | Google
@@ -14,10 +14,10 @@ KaYun Lam | Customer Engineer | Google
 [real-time notifications](https://cloud.google.com/asset-inventory/docs/monitoring-asset-changes) when asset configuration changes occur. This is convenient when
 a set of common tasks needs to be done upon resource creation or modification, which is a common scenario for governance of cloud resources in enterprises.  
 
-In this tutorial, automatic labeling of Compute Engine VMs, Google Kubernetes Engine (GKE) clusters, Cloud SQL instances, and Cloud Storage buckets is done upon
-creation of these assets across any projects in the selected folder or organization. You set up a Cloud Pub/Sub topic to get real-time updates on changes to 
-configurations for any of these assets. You then deploy a Cloud Function to perform the labeling of resources automatically using the resource names in near real 
-time.  This example is useful if more fine-grained visibility is needed on
+In this tutorial, labels are automatically applied for Compute Engine VM instances, Google Kubernetes Engine (GKE) clusters, Cloud SQL instances, and Cloud 
+Storage buckets upon creation of these assets across any projects in the selected folder or organization. You set up a Cloud Pub/Sub topic to get real-time 
+updates on changes to configurations for any of these assets. You then deploy a Cloud Function to perform the labeling of resources automatically using the 
+resource names in near real time.  This example is useful if more fine-grained visibility is needed on
 [Google Cloud Billing reports](https://cloud.google.com/billing/docs/how-to/reports) or
 [Cloud Billing export to BigQuery](https://cloud.google.com/billing/docs/how-to/export-data-bigquery), in which the data can be
 [filtered by labels](https://cloud.google.com/billing/docs/how-to/bq-examples#query-with-labels).
@@ -31,7 +31,7 @@ To customize Cloud Functions to automatically perform actions other than automat
 
 The following Google Cloud resources are automatically labeled in this tutorial: 
 
-* **Compute Engine VM**: Labels are applied to newly created VMs.
+* **Compute Engine VM**: Labels are applied to newly created virtual machine (VM) instances.
 * **GKE cluster**: Cluster labels are applied to newly created GKE clusters. The labels are
   [propagated down to the individual resources](https://cloud.google.com/kubernetes-engine/docs/how-to/creating-managing-labels#about_labeling_clusters).
 * **Cloud Storage bucket**: Labels are applied to newly created buckets.
@@ -47,7 +47,7 @@ code in this tutorial overrides that existing label value.
 The labeling mechanism in this tutorial uses the following billable components of Google Cloud:
 
 * [Cloud Asset Inventory](https://cloud.google.com/asset-inventory/pricing)
-* [Cloud Pub/Sub](https://cloud.google.com/pubsub/pricing)
+* [Pub/Sub](https://cloud.google.com/pubsub/pricing)
 * [Cloud Functions](https://cloud.google.com/functions/pricing)
 
 The labeling function in this tutorial monitors changes to configurations for the following billable components of Google Cloud:
@@ -62,7 +62,7 @@ the testing. Use the [pricing calculator](https://cloud.google.com/products/calc
 
 ## Before you begin
 
-You must set up a Google Cloud project (with billing enabled) to host the resources in this tutorial. This tutorial uses Cloud Shell to run shell commands.
+To host the resources in this tutorial, you must set up a Google Cloud project with billing enabled. This tutorial uses Cloud Shell to run shell commands.
 
 1.  Use the Cloud Console to [create a new project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#creating_a_project) to host the 
     Pub/Sub and Cloud Functions resources in this tutorial. Choose a billing account to enable billing for the project. Note the project ID; you use it in a 
@@ -74,7 +74,7 @@ You must set up a Google Cloud project (with billing enabled) to host the resour
 
 ### Set the organization ID environment variable
 
-1.  Set the `ORGANIZATION_ID` environment, using the Google Cloud project ID as input:
+1.  Set the `ORGANIZATION_ID` environment variable, using the Google Cloud project ID as input:
 
         ORGANIZATION_ID=$(gcloud projects get-ancestors ${GOOGLE_CLOUD_PROJECT} --format="csv[no-heading](id,type)" | grep ",organization$" | cut -d"," -f1 )
 
@@ -218,7 +218,6 @@ These commands add the project-level IAM bindings that allow the execution of th
 **Note**: If the steps in this section are to be done by a different person due to separation of duties, make sure that the `PROJECT_ID`, `PROJECT_NUMBER`, and 
 `ORGANIZATION_ID` variables are set, as described in the preliminary procedures of this tutorial.
 
-
 1.  Give a name for the Pub/Sub topic:
 
         TOPIC_NAME="asset-changes"
@@ -345,8 +344,8 @@ Functions resources.
 Deleting a project has the following consequences:
 
 * If you used an existing project, you will also delete any other work that you have done in the project.
-* You cannot reuse the project ID of a deleted project. If you created a custom project ID that you plan to use in the future, delete the resources inside the
-*  project instead.
+* You can't reuse the project ID of a deleted project. If you created a custom project ID that you plan to use in the future, delete the resources inside the
+  project instead.
 
 To delete a project, do the following:
 
