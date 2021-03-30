@@ -275,7 +275,7 @@ The sample code for this tutorial is in the
 
 1. Click the **Web preview** icon in Cloud Shell and click **Preview on port 8080** to open the Prometheus UI:
 
-    ![web-preview](web_preview.png)
+    ![web-preview](https://storage.googleapis.com/gcp-community/tutorials/writing-prometheus-metrics-bigquery/web_preview.png)
 
 1. Enter a query to return the number of successful HTTP requests as measured over the last 5 minutes for the `example-app` job and click `Execute`:
 
@@ -283,7 +283,7 @@ The sample code for this tutorial is in the
           increase(http_requests_total{job="example-app", code="200"}[5m])
         )
 
-    ![prom-ui](prom-ui.png)
+    ![prom-ui](https://storage.googleapis.com/gcp-community/tutorials/writing-prometheus-metrics-bigquery/prom-ui.png)
 
 1. Prometheus fetches data from local storage and BigQuery, processes the data and displays it. Return to your terminal and enter `Ctrl-c` to stop port-forwarding. After a few seconds, you can check Cloud Logging to see the actual query used by Prometheus's BigQuery remote read integration:
 
