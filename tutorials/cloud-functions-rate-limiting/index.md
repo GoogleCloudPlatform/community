@@ -298,7 +298,7 @@ of Firestore, which can't be deleted from a project.
     gcloud functions delete IPRateDemo --quiet && \
     gcloud functions delete counterLimit --quiet && \
     gcloud beta compute instances delete redis --zone=${REGION}-a --quiet && \
-    gcloud beta compute networks vpc-access connectors create functions-connector --quiet && \
+    gcloud beta compute networks vpc-access connectors delete functions-connector --region $REGION --quiet && \
     gcloud compute networks delete $NETWORK --quiet
 
 [console]: https://console.cloud.google.com/
