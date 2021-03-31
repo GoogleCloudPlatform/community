@@ -11,12 +11,12 @@ Preston Holmes | Solution Architect | Google
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This tutorial demonstrates several rate limiting techniques that can be used with Serverless runtimes. Specifically, you
-will learn how to use private networking and [Redis](https://redis.io/) to perform synchronized global rate-limiting state 
+will learn how to use private networking and [Redis](https://redis.io/) to perform synchronized global rate-limiting state
 to otherwise stateless serverless functions.
 
 ## Objectives
 
-* Use [Serverless VPC Access](https://cloud.google.com/vpc/docs/configure-serverless-vpc-access) to connect functions to 
+* Use [Serverless VPC Access](https://cloud.google.com/vpc/docs/configure-serverless-vpc-access) to connect functions to
 [Redis](https://redis.io/) in a private VPC network.
 * Use a Node.js and [Redis](https://redis.io/) rate-limiting library in a Cloud Function to limit function invocations.
 * Use these technique to limit function invocations by the IP address of the caller.
@@ -28,16 +28,16 @@ to otherwise stateless serverless functions.
 1.  Create a project in the [Cloud Console][console].
 
     **Important**: This tutorial uses Firestore, which can't be removed from a project or combined with Datastore
-    after it has been configured for the project. Keep this in mind when deciding whether to use an existing project for 
-    this tutorial. 
-    
+    after it has been configured for the project. Keep this in mind when deciding whether to use an existing project for
+    this tutorial.
+
 1.  [Enable billing for your project](https://cloud.google.com/billing/docs/how-to/modify-project).
 1.  Open [Cloud Shell][shell], which is a command-line interface built into the Cloud Console that handles many
     environment setup tasks for you.
 
     If you prefer to use the Cloud SDK instead of Cloud Shell, you can install the [Cloud SDK][sdk] and run commands
     from the local command line.
-    
+
 1.  Set environment variables:
 
         # this is automatic in Cloud Shell
@@ -63,15 +63,15 @@ to otherwise stateless serverless functions.
 
 ## Create a network and VPC connector
 
-For this tutorial, you create a dedicated VPC network and an associated serverless connector. You use the VPC Serverless 
-connector to allow a Serverless function to reach a Redis service on a private IP address, because Redis is not designed to 
+For this tutorial, you create a dedicated VPC network and an associated serverless connector. You use the VPC Serverless
+connector to allow a Serverless function to reach a Redis service on a private IP address, because Redis is not designed to
 be exposed to the public internet.
 
 1.  Create the network:
 
         export NETWORK=rate-limiting-demo
 
-        gcloud compute networks create $NETWORK 
+        gcloud compute networks create $NETWORK
 
 1.  Create the VPC connector:
 
@@ -82,7 +82,7 @@ be exposed to the public internet.
         --region ${REGION} \
         --range 10.8.0.0/28
 
-### Set permissions 
+### Set permissions
 
 Your project's Cloud Functions service account needs appropriate permissions in order for your function to use a Serverless
 VPC Access connector. You only need to grant these permissions once per project. Alternative console instructions are
@@ -99,7 +99,7 @@ VPC Access connector. You only need to grant these permissions once per project.
 [Redis](https://redis.io/) provides very low latency KV storage, along with a number of basic data structures and operations
 that make it one of the more preferred backing stores for rate-limiting implementations.
 
-Google Cloud offers a fully managed Redis service in the form of [Memorystore](https://cloud.google.com/memorystore/), which 
+Google Cloud offers a fully managed Redis service in the form of [Memorystore](https://cloud.google.com/memorystore/), which
 allows for large and highly available memory pools. This tutorial uses a small container-based instance as an alternative,
 to quickly set up a demo-capable Redis Service.
 
@@ -112,7 +112,7 @@ to quickly set up a demo-capable Redis Service.
     --subnet=${NETWORK} \
     --scopes=https://www.googleapis.com/auth/devstorage.read_only
 
-Container VMs are configured to use a Google Docker Hub mirror, so this instance does not need any public internet 
+Container VMs are configured to use a Google Docker Hub mirror, so this instance does not need any public internet
 access.
 
 ## Get the IP address of the Redis service
@@ -212,8 +212,8 @@ You should see output that looks something like the following:
         others - 0
       Throughput:    17.04KB/s
 
-Note that the 2xx versus 4xx responses may change if you run this several times, because requests are delayed and buffered 
-in the Cloud Functions infrastructure during function cold start, which results in an apparent rate of > 12QPS to the 
+Note that the 2xx versus 4xx responses may change if you run this several times, because requests are delayed and buffered
+in the Cloud Functions infrastructure during function cold start, which results in an apparent rate of > 12QPS to the
 function and therefore a higher 429 response rate.
 
 You can try changing the rate to see that the ratio of 4xx responses increases as you increase the rate.
@@ -239,7 +239,7 @@ rate-limiting key:
         redis: client,
         key: function (requestObj: any) { return requestObj.ip },
         rate: '10/second'
-    }); 
+    });
 
 To prove that this is working as intended, you will need to install Bombardier into a second location
 (for example, if you are using Cloud Shell, either create a temporary VM, or use your developer workstation).
@@ -250,7 +250,7 @@ From each of these locations, run this command at the same time:
 
     bombardier -r 8 -d 30s $URL
 
-You should see that each location should get nearly all 2xx responses back, even though the total request load to the 
+You should see that each location should get nearly all 2xx responses back, even though the total request load to the
 function would be 2 x 8 = 16 QPS which is > 10.
 
 ## Set up a counter with Firestore
@@ -259,7 +259,7 @@ In this section, you combine a rate limiter with a Redis-backed counter to provi
 
 In Firestore, you can only update a single document about once per second, which might be too low for some
 high-traffic applications. One solution to this problem is to
-[distribute the counter](https://firebase.google.com/docs/firestore/solutions/counters) update load to different document 
+[distribute the counter](https://firebase.google.com/docs/firestore/solutions/counters) update load to different document
 shards and sum them when a total is needed.
 
 In this section, you use a high-speed Redis counter to increment a value at a very high rate and combine this with a rate
@@ -290,8 +290,8 @@ visible in the `demo` collection, you should see the value increase in large inc
 
 ## Clean up
 
-The simplest way to clean up the resources used in the tutorial is to delete the project that you created just for this 
-tutorial. Alternatively, the  following compound command will delete resources created in this tutorial, with the exception 
+The simplest way to clean up the resources used in the tutorial is to delete the project that you created just for this
+tutorial. Alternatively, the  following compound command will delete resources created in this tutorial, with the exception
 of Firestore, which can't be deleted from a project.
 
     gcloud functions delete basicRateDemo --quiet && \
