@@ -1,6 +1,6 @@
 ---
 title: Using Google Cloud Storage with BigQuery
-description: A simple interactive tutorial that walks someone through ingesting content in BigQuery from Cloud Storage
+description: A simple interactive tutorial that walks someone through ingesting content in BigQuery from Cloud Storage.
 author: tpryan
 tags: Cloud Storage, BigQuery, Interactive Tutorial
 date_published: 2020-04-28
