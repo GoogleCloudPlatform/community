@@ -17,7 +17,22 @@ Storage into BigQuery.  There will be step by step instructions on the right of
 the Cloud Console to guide you. 
 
 
+
+
+
 [![Open in Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=bigquery_import_data_from_cloud_storage)
+
+## What you'll do
+
+In this tutorial you’ll:
+
+* Create a Google Cloud Storage bucket
+* Add public dataset files to the bucket
+* Import data into BigQuery
+* Run a test query
+* Clean up by deleting the bucket
+
+
     
 [![Open in Cloud Console](./tutorial.png)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=bigquery_import_data_from_cloud_storage)
     
