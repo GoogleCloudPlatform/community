@@ -117,6 +117,7 @@ A Cloud Build trigger listens to changes in your code repository. Follow the ste
     trigger.
 1.  Choose **Cloud Build configuration (yaml or json)** as your build
     configuration.
+1. In the **Cloud Build configuration file location** field, type `cloudbuild.yaml` after the `/`.
 1.  Click **Create** to save your build trigger.
 1.  (Optional) To manually test a build trigger, click **Run trigger** on your trigger's entry in the triggers list.
 
