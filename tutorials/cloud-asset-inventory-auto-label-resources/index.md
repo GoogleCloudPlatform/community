@@ -290,7 +290,7 @@ It may take a few minutes for the labels to be effective.
 
 * Compute Engine VM instances are labeled when transitioning into the `PROVISIONING` state.
 * GKE clusters are labeled when transitioning into the `RUNNING` state.
-* Cloud Storage buckets are labled when coming from `priorAssetState=DOES_NOT_EXIST`.
+* Cloud Storage buckets are labeled when coming from `priorAssetState=DOES_NOT_EXIST`.
 * Cloud SQL instances are labeled when transitioning into the `RUNNABLE` state.
 
 ## Limitations and known issues
