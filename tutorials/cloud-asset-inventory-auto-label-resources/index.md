@@ -174,16 +174,15 @@ you want monitor asset changes in a specified folder.
 1.  Give the `MEMBER` user permission to create the asset feed, using one or the other of the following sets of commands, depending on whether you want
     to monitor at the organization level or the folder level:
 
-    - Organization-level IAM bindings:
+    -   Organization-level IAM bindings:
 
-          gcloud organizations add-iam-policy-binding ${ORGANIZATION_ID} --member="${MEMBER}" --role="roles/cloudasset.owner"
-          gcloud organizations add-iam-policy-binding ${ORGANIZATION_ID} --member="serviceAccount:${GCF_SERVICE_ACCOUNT}" --role="organizations/${ORGANIZATION_ID}/roles/ResourceLabelerRole"
+            gcloud organizations add-iam-policy-binding ${ORGANIZATION_ID} --member="${MEMBER}" --role="roles/cloudasset.owner"
+            gcloud organizations add-iam-policy-binding ${ORGANIZATION_ID} --member="serviceAccount:${GCF_SERVICE_ACCOUNT}" --role="organizations/${ORGANIZATION_ID}/roles/ResourceLabelerRole"
 
-    - Folder-level IAM bindings on the folder under which the assets (such as Compute Engine VMs) are to be monitored:
+    -   Folder-level IAM bindings on the folder under which the assets (such as Compute Engine VMs) are to be monitored:
 
-          gcloud resource-manager folders add-iam-policy-binding ${FOLDER_ID} --member="${MEMBER}" --role="roles/cloudasset.owner"
-          gcloud resource-manager folders add-iam-policy-binding ${FOLDER_ID} --member="serviceAccount:${GCF_SERVICE_ACCOUNT}" --role="organizations/${ORGANIZATION_ID}/roles/ResourceLabelerRole"
-
+            gcloud resource-manager folders add-iam-policy-binding ${FOLDER_ID} --member="${MEMBER}" --role="roles/cloudasset.owner"
+            gcloud resource-manager folders add-iam-policy-binding ${FOLDER_ID} --member="serviceAccount:${GCF_SERVICE_ACCOUNT}" --role="organizations/${ORGANIZATION_ID}/roles/ResourceLabelerRole"
 
 ### Enable the APIs in the project issuing the Asset APIs, hosting the Pub/Sub and Cloud Functions resources
 
@@ -242,23 +241,23 @@ These commands add the project-level IAM bindings that allow the execution of th
 
 1.  Create the feed.
 
-    - For the entire organization:
+    -   For the entire organization:
 
-          gcloud asset feeds create "feed-resources-${ORGANIZATION_ID}" --organization="${ORGANIZATION_ID}" --content-type=resource --asset-types="${ASSET_TYPES}" --pubsub-topic="projects/${PROJECT_ID}/topics/${TOPIC_NAME}" --billing-project ${PROJECT_ID}
+            gcloud asset feeds create "feed-resources-${ORGANIZATION_ID}" --organization="${ORGANIZATION_ID}" --content-type=resource --asset-types="${ASSET_TYPES}" --pubsub-topic="projects/${PROJECT_ID}/topics/${TOPIC_NAME}" --billing-project ${PROJECT_ID}
 
-    - For a folder:
+    -   For a folder:
 
-          gcloud asset feeds create "feed-resources-${FOLDER_ID}" --folder="${FOLDER_ID}" --content-type=resource --asset-types="${ASSET_TYPES}" --pubsub-topic="projects/${PROJECT_ID}/topics/${TOPIC_NAME}" --billing-project ${PROJECT_ID}
+            gcloud asset feeds create "feed-resources-${FOLDER_ID}" --folder="${FOLDER_ID}" --content-type=resource --asset-types="${ASSET_TYPES}" --pubsub-topic="projects/${PROJECT_ID}/topics/${TOPIC_NAME}" --billing-project ${PROJECT_ID}
 
 1.  Confirm the feed creation.
 
-    - For the entire organization:
+    -   For the entire organization:
 
-          gcloud asset feeds list --organization ${ORGANIZATION_ID} --format="flattened(feeds[].name)" --billing-project ${PROJECT_ID}
+            gcloud asset feeds list --organization ${ORGANIZATION_ID} --format="flattened(feeds[].name)" --billing-project ${PROJECT_ID}
           
-    - For a folder:
+    -   For a folder:
     
-          gcloud asset feeds list --folder ${FOLDER_ID} --format="flattened(feeds[].name)" --billing-project ${PROJECT_ID}
+            gcloud asset feeds list --folder ${FOLDER_ID} --format="flattened(feeds[].name)" --billing-project ${PROJECT_ID}
 
 ### Deploy the Cloud Function that processes the Cloud Asset Inventory real-time notifications
 
@@ -310,13 +309,13 @@ You can revert changes made throughout the tutorial.
 
 1.  Confirm the feed ID.
 
-    - For an organization:
+    -   For an organization:
     
-          gcloud asset feeds list --organization ${ORGANIZATION_ID} --format="flattened(feeds[].name)" 
+            gcloud asset feeds list --organization ${ORGANIZATION_ID} --format="flattened(feeds[].name)" 
           
-    - For a folder:
+    -   For a folder:
 
-          gcloud asset feeds list --folder ${FOLDER_ID} --format="flattened(feeds[].name)"
+            gcloud asset feeds list --folder ${FOLDER_ID} --format="flattened(feeds[].name)"
 
     The feed ID is the portion of the feed name after `.*/feeds/${FEED_ID}`.
 
@@ -328,13 +327,13 @@ You can revert changes made throughout the tutorial.
 
 1.  Delete the feed.
 
-    - For an organization:
+    -   For an organization:
     
-          gcloud asset feeds delete ${FEED_ID} --organization ${FOLDER_ID}        
+            gcloud asset feeds delete ${FEED_ID} --organization ${FOLDER_ID}        
          
-    - For a folder:
+    -   For a folder:
 
-          gcloud asset feeds delete ${FEED_ID} --folder ${FOLDER_ID}
+            gcloud asset feeds delete ${FEED_ID} --folder ${FOLDER_ID}
 
 ### Delete the project
 
