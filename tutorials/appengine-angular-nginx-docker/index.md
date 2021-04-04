@@ -6,209 +6,217 @@ tags: App Engine, Docker, nginx, angular
 date_published: 2021-04-05
 ---
 
-This tutorial shows you how to deploy a sample angular application to App Engine using the `gcloud` command.
+Sandeep Parmar
 
-![image](https://user-images.githubusercontent.com/13769236/111533886-5096ab00-8735-11eb-8580-9a81cf47f7f5.png)
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
-## Assumptions
+This tutorial shows you how to deploy a sample angular application to App Engine using the `gcloud` command-line tool.
 
-You have google cloud project created. You have enabled app engine, cloud builds, container registry apis.
+After following this tutorial, you will be able to deploy an Angular user interface in App Engine using Cloud Build, nginx, and Docker. Using this, you can have
+dynamic API URLs or configuration directly defined in an `app.yaml` file so that you can use the same Docker image and deploy it in different environments like 
+development, testing, staging, and production. All that you have to do is have a separate `app.yaml` file per environment.
 
-## Steps
+This technique can be integrated into GitLab CI/CD pipelines as separated build steps of build (Angular UI using `ng build`), publish (using Cloud Build),
+and deploy (using `gcloud app deploy`).
 
-Here are the steps you will be taking.
+This tutorial assumes that you know the basics of the following products and services:
 
-*   **Create an angular project using angular quick start**
+  - [App Engine](https://cloud.google.com/appengine/docs)
+  - [Cloud Build](https://cloud.google.com/build/docs)
+  - [`gcloud`](https://cloud.google.com/sdk/docs)
+  - [Docker](https://docs.docker.com/engine/reference/commandline/run)
+  - [Nginx](https://docs.nginx.com/nginx/admin-guide/web-server/web-server)
 
-    How to create and setup angular project using angular-cli
+## Objectives
 
-*   **Build and run your sample app**
+*   Create and set up an Angular project using the [Angular CLI](https://cli.angular.io/).
+*   Build and containerize your app using the [Cloud SDK](https://cloud.google.com/sdk).
+*   Deploy your app to the web using the [`gcloud` command-line tool](https://cloud.google.com/sdk/gcloud).
 
-    You'll learn how to build and containerize your app using Cloud SDK. At the end, you'll deploy your app to the web using the `gcloud`
-    command.
+## Before you begin
 
-*   **After the tutorial...**
+1.  Select or create a Google Cloud project.
 
-    Your app will be real and you'll be able to experiment with it after you
-    deploy, or you can remove it and start fresh.
+    [Go to the **Manage resources** page.](https://console.cloud.google.com/cloud-resource-manager)
 
-## Angular Project Setup
+1.  Enable the App Engine, Cloud Build, and Container Registry APIs. For details, see
+    [Enabling APIs](https://cloud.google.com/apis/docs/getting-started#enabling_apis).
 
-* Follow this page to create a sample angular application https://angular.io/guide/setup-local
-* Once you have a project created and verify that it's working on http://localhost:4200 as per above guide
-* We are also going to learn, how to use environment variable of app engine to use dynamic API urls in UI application. For that follow below steps
-  - Under src/assets folder add env.js and env.template.js files
-  - Copy this content in env.js
-  
-    ```
-    (function(window) {
-          window["env"] = window["env"] || {};
+## Angular project and App Engine environment variable setup
 
-          // Environment variables
-          window["env"]["apiurl"] = "http://localhost:8080/api";
-    })(this);
-    ```
-   - Copy this content in env.template.js
-   
-     ```
-     (function(window) {
-           window.env = window.env || {};
+In this section, you create a sample Angular application and use App Engine environment variables to use dynamic API URLs in for your application interface.
 
-           // Environment variables
-           window["env"]["apiurl"] = "${API_URL}";           
-     })(this);
-     ```
-   - Add reference of env.js file in index.html
-   - Remove `/` from index.html <base href="">. This will be useful when you want to use dispatch.yaml later.
-* Update environment.ts with this.
+You can see the sample code in
+[this tutorial's GitHub repository](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/appengine-angular-nginx-docker/).
 
-     ```
-     export const environment = {
-          production: false,
-          webapiurl: (window as any)["env"]["apiurl"] || "default"                   
-     };
-     ```
-* For testing whether API_URL working or not add usage of this environment.webapiurl anywhere in the application. For example I have added that in app.componennt.html and         app.component.ts
+1.  Follow these instructions to create a sample Angular application: [Setting up the local environment and workspace](https://angular.io/guide/setup-local).
+1.  Verify that that the sample Angular application is working by going to `http://localhost:4200`.
+1.  In the `src/assets` folder, add `env.js` and `env.template.js` files.
+1.  Copy the following code into the `env.js`file :
 
-     ```
-     <span>webapiurl : {{ webapiurl }}</span>
-     ```
-     
-     ```  
-     export class AppComponent {
-           title = 'sample-app';
-           webapiurl = environment.webapiurl;
-     }
-     ```
-* Update outputPath in build section of angular.json with `"outputPath": "dist"`
-* Now build your angular project again and verify you are able to see the webapiurl as http://localhost:8080/api when you open the app in browser. If everything is       working well then you can go to next step of doing the cloud build.
+        (function(window) {
+              window["env"] = window["env"] || {};
+
+              // Environment variables
+              window["env"]["apiurl"] = "http://localhost:8080/api";
+        })(this);
+
+1.  Copy the following code into the `env.template.js` file:
+
+        (function(window) {
+              window.env = window.env || {};
+
+              // Environment variables
+              window["env"]["apiurl"] = "${API_URL}";           
+        })(this);
+
+1.  Add a reference to the `env.js` file in `index.html`.
+1.  Remove `/` from `index.html` `<base href="">`. This will be useful when you want to use `dispatch.yaml` later.
+1.  Update the `environment.ts` file with this code:
+
+        export const environment = {
+             production: false,
+             webapiurl: (window as any)["env"]["apiurl"] || "default"                   
+        };
+
+1.  For testing whether `API_URL` is working or not, add usage of this `environment.webapiurl` anywhere in the application. 
+
+    For example, you can add it as shown in the sample code in
+    [`app.component.html`](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/appengine-angular-nginx-docker/sample-app/src/app/app.component.html)
+    and [`app.component.ts`](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/appengine-angular-nginx-docker/sample-app/src/app/app.component.ts).
+
+1.  Update `outputPath` in the build section of `angular.json` with `"outputPath": "dist"`.
+
+1.  Build your Angular project again and verify that you are able to see the `webapiurl` value as `http://localhost:8080/api` when you open the app in a browser.
+
+    If everything is working well, then you can go to the next steps using Cloud Build.
      
 ## Cloud Build
-* Assumption is you know basics of app engine, cloud builds, gcloud sdk, docker and nginx. If not please refer following documentations.
-  - https://cloud.google.com/appengine/docs
-  - https://cloud.google.com/build/docs
-  - https://cloud.google.com/sdk/docs
-  - https://docs.docker.com/engine/reference/commandline/run 
-  - https://docs.nginx.com/nginx/admin-guide/web-server/web-server
-* There could be many ways of doing cloud build for any application. For simplicity of this tutorial we will use just output `dist` folder of sample app.
-* Add `Dockerfile, cloudbuild.yaml, app.yaml and nginx` files under `dist` folder and copy the following contents.
-  - Dockerfile 
+
+There are many ways of using Cloud Build for any application. For simplicity, this tutorial uses the `dist` folder of the sample app for output.
+
+1.  Add a `Dockerfile` file in the `dist` folder, and copy the following code into the file:
   
+        # The standard nginx container just runs nginx. The configuration file added
+        # below will be used by nginx.
+        FROM nginx
+
+        # Copy the nginx configuration file. This sets up the behavior of nginx, most
+        # importantly, it ensure nginx listens on port 8080. Google App Engine expects
+        # the runtime to respond to HTTP requests at port 8080.
+        COPY nginx.conf /etc/nginx/nginx.conf
+
+        # create log dir configured in nginx.conf
+        RUN mkdir -p /var/log/app_engine
+
+        # Create a simple file to handle heath checks. Health checking can be disabled
+        # in app.yaml, but is highly recommended. Google App Engine will send an HTTP
+        # request to /_ah/health and any 2xx or 404 response is considered healthy.
+        # Because 404 responses are considered healthy, this could actually be left
+        # out as nginx will return 404 if the file isn't found. However, it is better
+        # to be explicit.
+        RUN mkdir -p /usr/share/nginx/www/_ah && \
+            echo "healthy" > /usr/share/nginx/www/_ah/health
+
+        # Finally, all static assets.
+        ADD dist/ /usr/share/nginx/www/sampleapp
+
+        CMD ["/bin/sh",  "-c",  "envsubst < /usr/share/nginx/www/sampleapp/assets/env.template.js > /usr/share/nginx/www/sampleapp/assets/env.js && exec nginx -g 'daemon off;'"]
     ```
-    # The standard nginx container just runs nginx. The configuration file added
-    # below will be used by nginx.
-    FROM nginx
 
-    # Copy the nginx configuration file. This sets up the behavior of nginx, most
-    # importantly, it ensure nginx listens on port 8080. Google App Engine expects
-    # the runtime to respond to HTTP requests at port 8080.
-    COPY nginx.conf /etc/nginx/nginx.conf
+1.  Add an `nginx` file in the `dist` folder, and copy the following code into the file:
 
-    # create log dir configured in nginx.conf
-    RUN mkdir -p /var/log/app_engine
-
-    # Create a simple file to handle heath checks. Health checking can be disabled
-    # in app.yaml, but is highly recommended. Google App Engine will send an HTTP
-    # request to /_ah/health and any 2xx or 404 response is considered healthy.
-    # Because 404 responses are considered healthy, this could actually be left
-    # out as nginx will return 404 if the file isn't found. However, it is better
-    # to be explicit.
-    RUN mkdir -p /usr/share/nginx/www/_ah && \
-        echo "healthy" > /usr/share/nginx/www/_ah/health
-
-    # Finally, all static assets.
-    ADD dist/ /usr/share/nginx/www/sampleapp
-
-    CMD ["/bin/sh",  "-c",  "envsubst < /usr/share/nginx/www/sampleapp/assets/env.template.js > /usr/share/nginx/www/sampleapp/assets/env.js && exec nginx -g 'daemon off;'"]
-    ```
-  - nginx
-  
-    ```
-    events {
-       worker_connections 768;
-    }
-
-    http {
-        sendfile on;
-        tcp_nopush on;
-        tcp_nodelay on;
-        keepalive_timeout 65;
-        types_hash_max_size 2048;
-        include /etc/nginx/mime.types;
-        default_type application/octet-stream;
-
-        # Logs will appear on the Google Developer's Console when logged to this
-        # directory.
-        access_log /var/log/app_engine/app.log;
-        error_log /var/log/app_engine/app.log;
-
-        gzip on;
-        gzip_disable "msie6";
-
-        server {
-            # Google App Engine expects the runtime to serve HTTP traffic from port 8080.
-            listen 8080;  
-
-	        # Root directory and index files
-            index index.html index.htm;
-
-            location / {
-		            root /usr/share/nginx/www/sampleapp;
-	          }
-
-	          location /sampleapp/ {
-		            root /usr/share/nginx/www;
-	          }
+        events {
+           worker_connections 768;
         }
-    }
-    ```
-  - cloudbuld.yaml
+
+        http {
+            sendfile on;
+            tcp_nopush on;
+            tcp_nodelay on;
+            keepalive_timeout 65;
+            types_hash_max_size 2048;
+            include /etc/nginx/mime.types;
+            default_type application/octet-stream;
+
+            # Logs will appear on the Google Developer's Console when logged to this
+            # directory.
+            access_log /var/log/app_engine/app.log;
+            error_log /var/log/app_engine/app.log;
+
+            gzip on;
+            gzip_disable "msie6";
+
+            server {
+                # Google App Engine expects the runtime to serve HTTP traffic from port 8080.
+                listen 8080;  
+
+                # Root directory and index files
+                index index.html index.htm;
+
+                location / {
+                    root /usr/share/nginx/www/sampleapp;
+                }
+
+    	        location /sampleapp/ {
+   	            root /usr/share/nginx/www;
+                }
+            }
+        }
+
+1.  Add a `cloudbuild.yaml` file in the `dist` folder, and copy the following code into the file:
   
-    ```
-    steps:
-    - name: 'gcr.io/cloud-builders/docker'
-      args: ['build', '-t', 'us.gcr.io/$PROJECT_ID/angular-nginx-container', '.']
-    - name: 'gcr.io/cloud-builders/docker'
-      args: ['push', 'us.gcr.io/$PROJECT_ID/angular-nginx-container']
-    images: ['us.gcr.io/$PROJECT_ID/angular-nginx-container']
-    ```
-  - app.yaml
-  
-    ```
-    runtime: custom
-    env: flex
-    service: angular-ui-dev
-    threadsafe: true
+        steps:
+        - name: 'gcr.io/cloud-builders/docker'
+          args: ['build', '-t', 'us.gcr.io/$PROJECT_ID/angular-nginx-container', '.']
+        - name: 'gcr.io/cloud-builders/docker'
+          args: ['push', 'us.gcr.io/$PROJECT_ID/angular-nginx-container']
+        images: ['us.gcr.io/$PROJECT_ID/angular-nginx-container']
 
-    env_variables:
-      API_URL: "https://webapi-dev.appname.com"
-    ```
-* At this point you can just use docker commands if you want to verify on your local docker. To do that run following two commands on dist folder and verify on      http://localhost:8080, if everything works. To make this work you have to comment out `listen 8080;` from nginx.
+1.  Add an `app.yaml` file in the `dist` folder, and copy the following code into the file:
 
-  ```
-  docker build -t sampleapp .
-  docker run --env API_URL="https://webapi-dev.appname.com" -dp 8080:80 sampleapp
-  ```
-* You can directly use above four files to deploy your app in app engine using gcloud sdk. For that run following commands
-  - `gcloud builds submit` This will create the docker image on the specified path in cloudbuild.yaml file. Once done verify you have a container image created at https://console.cloud.google.com/gcr/images/yourprojectid?project=yourprojectid
-  - `gcloud app deploy --image-url us.gcr.io/yourprojectid/angular-nginx-container` This will deploy your image to app engine with the service name you have provided in app.yaml.
-* Your UI will looks like this once you access it using version url of the service. Check the webapiurl you have provided in environment variable.
+        runtime: custom
+        env: flex
+        service: angular-ui-dev
+        threadsafe: true
 
-![image](https://user-images.githubusercontent.com/13769236/111523863-bed57080-8729-11eb-8175-ef27c97504b4.png)
+        env_variables:
+          API_URL: "https://webapi-dev.appname.com"
 
-* After following this tutorial you will be able to deploy angular ui in app engine using cloud build, nginx and docker. Using this you can have dynamic api urls or configuration directly defined in app.yaml so you can use same docker image and deploy it in different environments like dev, testing, staging or prod. All you have to do is have separate app.yaml per environment. 
-* This can be easily integrated in GitLab CI/CD pipelines as separated build steps of `build (angular ui using ng build)`, `publish (using cloud build)` and `deploy (using gcloud app deploy)`
+1.  If you want to verify the setup in your local Docker environment, you can do so with the following two commands on the `dist` folder.
+    (To make this work you have to comment out `listen 8080;` in the `nginx` file.)
+
+        docker build -t sampleapp .
+        docker run --env API_URL="https://webapi-dev.appname.com" -dp 8080:80 sampleapp
+
+     Verify on `http://localhost:8080` that everything works.
+     
+1.  You can directly use the above four files to deploy your app in App Engine using the `gcloud` command-line tool. To do so, run the following commands:
+
+    1.  Create the Docker image on the specified path in the `cloudbuild.yaml` file.
+
+            gcloud builds submit
+	    
+        After this command, verify that you have a container image created at `https://console.cloud.google.com/gcr/images/yourprojectid?project=yourprojectid`.
+
+    1.  Deploy your image to App Engine with the service name that you provided in the `app.yaml` file:
+
+              gcloud app deploy --image-url us.gcr.io/yourprojectid/angular-nginx-container
+     
+1.  Verfy that the `webapiurl` matches what you provided in the environment variable.
 
 ## App Engine dispatch
-* You can extend the above solution for dispatch.yaml (https://cloud.google.com/appengine/docs/standard/python/reference/dispatch-yaml).  This deployment using nginx supports additional location so that when you do dispatch as per below example you should be able to access your application using root url of your project as well. But to make this work you have to update `nginx` location with your service name as a location `angular-ui-dev` and you should be able to access your application using https://your-project-id.uc.r.appspot.com/angular-dev-ui/
 
-  ```
-  dispatch:
-  # Default service serves simple hostname request.
-  - url: "your-project-id.uc.r.appspot.com/"
-    service: default
+You can extend the solution for [`dispatch.yaml`](https://cloud.google.com/appengine/docs/standard/python/reference/dispatch-yaml). This deployment using nginx
+supports additional locations so that when you use `dispatch` as shown in the following example, you should be able to access your application using the root URL
+of your project. To make this work, you have to update the `nginx` location with your service name as a location `angular-ui-dev` and you should be able to 
+access your application using the `https://your-project-id.uc.r.appspot.com/angular-dev-ui/` URL.
+
+      dispatch:
+      # Default service serves simple hostname request.
+      - url: "your-project-id.uc.r.appspot.com/"
+        service: default
   
-  # Dispatch UI
-  - url: "*/angular-ui-dev/*"
-    service: angular-ui-dev
-  ```
+      # Dispatch UI
+      - url: "*/angular-ui-dev/*"
+        service: angular-ui-dev
