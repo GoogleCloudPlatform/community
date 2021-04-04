@@ -1,16 +1,12 @@
 ---
-title: App Engine with angular, nginx, docker and cloud build
-description: Learn how to deploy a sample angular application to App Engine using nginx and docker with cloud build.
+title: App Engine deployment with Angular, Nginx, Docker, and Cloud Build
+description: Learn how to deploy a sample Angular application to App Engine using Nginx and Docker with Cloud Build.
 author: livesankp
 tags: App Engine, Docker, nginx, angular
-date_published: 2021-03-16
+date_published: 2021-04-05
 ---
 
-# App Engine multi environment deployment using angular, nginx, docker, cloud build in custom flex env
-
-## Introduction
-
-This tutorial shows you how to deploy a sample angular application to App Engine using the `gcloud` command for builds and app engine.
+This tutorial shows you how to deploy a sample angular application to App Engine using the `gcloud` command.
 
 ![image](https://user-images.githubusercontent.com/13769236/111533886-5096ab00-8735-11eb-8580-9a81cf47f7f5.png)
 
