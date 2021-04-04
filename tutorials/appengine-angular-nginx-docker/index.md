@@ -101,15 +101,15 @@ There are many ways of using Cloud Build for any application. For simplicity, th
         # below will be used by nginx.
         FROM nginx
 
-        # Copy the nginx configuration file. This sets up the behavior of nginx, most
-        # importantly, it ensure nginx listens on port 8080. Google App Engine expects
+        # Copy the nginx configuration file. This sets up the behavior of nginx. Most
+        # important, it ensures that nginx listens on port 8080. Google App Engine expects
         # the runtime to respond to HTTP requests at port 8080.
         COPY nginx.conf /etc/nginx/nginx.conf
 
         # create log dir configured in nginx.conf
         RUN mkdir -p /var/log/app_engine
 
-        # Create a simple file to handle heath checks. Health checking can be disabled
+        # Create a simple file to handle health checks. Health checking can be disabled
         # in app.yaml, but is highly recommended. Google App Engine will send an HTTP
         # request to /_ah/health and any 2xx or 404 response is considered healthy.
         # Because 404 responses are considered healthy, this could actually be left
