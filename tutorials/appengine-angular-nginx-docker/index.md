@@ -10,11 +10,11 @@ Sandeep Parmar
 
 <p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
-This tutorial shows you how to deploy a sample angular application to App Engine using the `gcloud` command-line tool.
+This tutorial shows you how to deploy a sample Angular application to App Engine using the `gcloud` command-line tool.
 
-After following this tutorial, you will be able to deploy an Angular user interface in App Engine using Cloud Build, nginx, and Docker. Using this, you can have
-dynamic API URLs or configuration directly defined in an `app.yaml` file so that you can use the same Docker image and deploy it in different environments like 
-development, testing, staging, and production. All that you have to do is have a separate `app.yaml` file per environment.
+After following this tutorial, you will be able to deploy an Angular user interface in App Engine using Cloud Build, Nginx, and Docker. Using this technique, you
+can have dynamic API URLs or configuration directly defined in an `app.yaml` file so that you can use the same Docker image and deploy it in different 
+environments like development, testing, staging, and production. All that you have to do is have a separate `app.yaml` file for each environment.
 
 This technique can be integrated into GitLab CI/CD pipelines as separated build steps of build (Angular UI using `ng build`), publish (using Cloud Build),
 and deploy (using `gcloud app deploy`).
@@ -52,7 +52,7 @@ You can see the sample code in
 1.  Follow these instructions to create a sample Angular application: [Setting up the local environment and workspace](https://angular.io/guide/setup-local).
 1.  Verify that that the sample Angular application is working by going to `http://localhost:4200`.
 1.  In the `src/assets` folder, add `envconfig.js` and `envconfig.template.js` files.
-1.  Copy the following code into the `envconfig.js`file :
+1.  Copy the following code into the `envconfig.js` file:
 
         (function(window) {
               window["envconfig"] = window["envconfig"] || {};
@@ -71,7 +71,7 @@ You can see the sample code in
         })(this);
 
 1.  Add a reference to the `envconfig.js` file in `index.html`.
-1.  Remove `/` from `index.html` `<base href="">`. This will be useful when you want to use `dispatch.yaml` later.
+1.  Remove `/` from `<base href="">` in the `index.html` file. This will be useful when you want to use `dispatch.yaml` later.
 1.  Update the `environment.ts` file with this code:
 
         export const environment = {
@@ -85,11 +85,11 @@ You can see the sample code in
     [`app.component.html`](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/appengine-angular-nginx-docker/sample-app/src/app/app.component.html)
     and [`app.component.ts`](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/appengine-angular-nginx-docker/sample-app/src/app/app.component.ts).
 
-1.  Update `outputPath` in the build section of `angular.json` with `"outputPath": "dist"`.
+1.  Update `outputPath` in the build section of the `angular.json` file with `"outputPath": "dist"`.
 
 1.  Build your Angular project again and verify that you are able to see the `webapiurl` value as `http://localhost:8080/api` when you open the app in a browser.
 
-    If everything is working well, then you can go to the next steps using Cloud Build.
+    If everything is working, then you can go to the next steps using Cloud Build.
      
 ## Cloud Build
 
@@ -122,7 +122,6 @@ There are many ways of using Cloud Build for any application. For simplicity, th
         ADD dist/ /usr/share/nginx/www/sampleapp
 
         CMD ["/bin/sh",  "-c",  "envsubst < /usr/share/nginx/www/sampleapp/assets/envconfig.template.js > /usr/share/nginx/www/sampleapp/assets/envconfig.js && exec nginx -g 'daemon off;'"]
-    ```
 
 1.  Add an `nginx` file in the `dist` folder, and copy the following code into the file:
 
@@ -201,7 +200,7 @@ There are many ways of using Cloud Build for any application. For simplicity, th
 
     1.  Deploy your image to App Engine with the service name that you provided in the `app.yaml` file:
 
-              gcloud app deploy --image-url us.gcr.io/yourprojectid/angular-nginx-container
+            gcloud app deploy --image-url us.gcr.io/yourprojectid/angular-nginx-container
      
 1.  Verfy that the `webapiurl` matches what you provided in the environment variable.
 
