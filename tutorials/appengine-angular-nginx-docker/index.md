@@ -51,8 +51,8 @@ You can see the sample code in
 
 1.  Follow these instructions to create a sample Angular application: [Setting up the local environment and workspace](https://angular.io/guide/setup-local).
 1.  Verify that that the sample Angular application is working by going to `http://localhost:4200`.
-1.  In the `src/assets` folder, add `envconfig.js` and `envconfig.template.js` files.
-1.  Copy the following code into the `envconfig.js`file :
+1.  In the `src/assets` folder, add `env.js` and `env.template.js` files.
+1.  Copy the following code into the `env.js`file :
 
         (function(window) {
               window["env"] = window["env"] || {};
@@ -61,7 +61,7 @@ You can see the sample code in
               window["env"]["apiurl"] = "http://localhost:8080/api";
         })(this);
 
-1.  Copy the following code into the `envconfig.template.js` file:
+1.  Copy the following code into the `env.template.js` file:
 
         (function(window) {
               window.env = window.env || {};
@@ -70,7 +70,7 @@ You can see the sample code in
               window["env"]["apiurl"] = "${API_URL}";           
         })(this);
 
-1.  Add a reference to the `envconfig.js` file in `index.html`.
+1.  Add a reference to the `env.js` file in `index.html`.
 1.  Remove `/` from `index.html` `<base href="">`. This will be useful when you want to use `dispatch.yaml` later.
 1.  Update the `environment.ts` file with this code:
 
@@ -121,7 +121,7 @@ There are many ways of using Cloud Build for any application. For simplicity, th
         # Finally, all static assets.
         ADD dist/ /usr/share/nginx/www/sampleapp
 
-        CMD ["/bin/sh",  "-c",  "envsubst < /usr/share/nginx/www/sampleapp/assets/envconfig.template.js > /usr/share/nginx/www/sampleapp/assets/envconfig.js && exec nginx -g 'daemon off;'"]
+        CMD ["/bin/sh",  "-c",  "envsubst < /usr/share/nginx/www/sampleapp/assets/env.template.js > /usr/share/nginx/www/sampleapp/assets/env.js && exec nginx -g 'daemon off;'"]
     ```
 
 1.  Add an `nginx` file in the `dist` folder, and copy the following code into the file:
