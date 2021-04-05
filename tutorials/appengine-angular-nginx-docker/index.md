@@ -55,19 +55,19 @@ You can see the sample code in
 1.  Copy the following code into the `envconfig.js`file :
 
         (function(window) {
-              window["env"] = window["env"] || {};
+              window["envconfig"] = window["envconfig"] || {};
 
               // Environment variables
-              window["env"]["apiurl"] = "http://localhost:8080/api";
+              window["envconfig"]["apiurl"] = "http://localhost:8080/api";
         })(this);
 
 1.  Copy the following code into the `envconfig.template.js` file:
 
         (function(window) {
-              window.env = window.env || {};
+              window.envconfig = window.envconfig || {};
 
               // Environment variables
-              window["env"]["apiurl"] = "${API_URL}";           
+              window["envconfig"]["apiurl"] = "${API_URL}";           
         })(this);
 
 1.  Add a reference to the `envconfig.js` file in `index.html`.
@@ -76,7 +76,7 @@ You can see the sample code in
 
         export const environment = {
              production: false,
-             webapiurl: (window as any)["env"]["apiurl"] || "default"                   
+             webapiurl: (window as any)["envconfig"]["apiurl"] || "default"                   
         };
 
 1.  For testing whether `API_URL` is working or not, add usage of this `environment.webapiurl` anywhere in the application. 
