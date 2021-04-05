@@ -266,11 +266,11 @@ includes the complete working source code of the Cloud Function for the tutorial
 
 1.  Clone the repository:
 
-        git clone https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/cloud-asset-inventory-auto-label-resources/cloud-function-auto-resource-labeler/
+        git clone https://github.com/GoogleCloudPlatform/community.git
 
 1.  Go to the directory containing the Cloud Functions code:
 
-        cd GoogleCloudPlatform-community/tutorials/cloud-asset-inventory-auto-label-resources/cloud-function-auto-resource-labeler
+        cd community/tutorials/cloud-asset-inventory-auto-label-resources/cloud-function-auto-resource-labeler
 
 1.  Confirm that you still have the correct variables for the deployment:
 
@@ -329,7 +329,7 @@ You can revert changes made throughout the tutorial.
 
     -   For an organization:
     
-            gcloud asset feeds delete ${FEED_ID} --organization ${FOLDER_ID}        
+            gcloud asset feeds delete ${FEED_ID} --organization ${ORGANIZATION_ID}
          
     -   For a folder:
 
