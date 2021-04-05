@@ -1,38 +1,31 @@
 ---
-title: Using Google Cloud Storage with BigQuery
+title: Import data from Cloud Storage to BigQuery
 description: A simple interactive tutorial that walks someone through ingesting content in BigQuery from Cloud Storage.
 author: tpryan
 tags: Cloud Storage, BigQuery, Interactive Tutorial
 date_published: 2020-04-28
 ---
 
-# Import Data from Cloud Storage with BigQuery
+# Import data from Cloud Storage to BigQuery
 
 Terrence Ryan | Developer Advocate | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-Use this interactive tutorial to walk through the steps of importing Cloud 
-Storage into BigQuery.  There will be step by step instructions on the right of 
-the Cloud Console to guide you. 
+Use this interactive tutorial to walk through the steps of importing data from Cloud 
+Storage into BigQuery. There are step-by-step instructions in the **Learn** panel
+on the right side of the Cloud Console to guide you. 
 
-
-
-
-
-[![Open in Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=bigquery_import_data_from_cloud_storage)
+[![Open tutorial in the Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=bigquery_import_data_from_cloud_storage)
 
 ## What you'll do
 
-In this tutorial you’ll:
+In this tutorial you’ll do the following:
 
-* Create a Google Cloud Storage bucket
-* Add public dataset files to the bucket
-* Import data into BigQuery
-* Run a test query
-* Clean up by deleting the bucket
+* Create a Google Cloud Storage bucket.
+* Add public dataset files to the bucket.
+* Import data into BigQuery.
+* Run a test query.
+* Clean up by deleting the bucket.
 
-
-    
 [![Open in Cloud Console](./tutorial.png)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=bigquery_import_data_from_cloud_storage)
-    
