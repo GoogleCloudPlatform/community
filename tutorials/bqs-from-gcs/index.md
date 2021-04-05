@@ -26,4 +26,4 @@ In this tutorial you’ll do the following:
 * Run a test query.
 * Clean up by deleting the bucket.
 
-[![Open in Cloud Console](./tutorial.png)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=bigquery_import_data_from_cloud_storage)
+[![Open in Cloud Console](https://storage.googleapis.com/gcp-community/tutorials/bqs-from-gcs/tutorial.png)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=bigquery_import_data_from_cloud_storage)
