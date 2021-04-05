@@ -6,8 +6,6 @@ tags: Cloud Storage, BigQuery, Interactive Tutorial
 date_published: 2020-04-28
 ---
 
-# Import data from Cloud Storage to BigQuery
-
 Terrence Ryan | Developer Advocate | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
