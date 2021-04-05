@@ -38,7 +38,8 @@ For details, see
 
 In this tutorial, you do much of your work in Cloud Shell, which is a built-in command-line tool for the Cloud Console.
 
-Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
+Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>[**Activate Cloud Shell**][spotlight-open-devshell] button in the
+navigation bar in the upper-right corner of the Cloud Console.
 
 ## Create your first topic
 
