@@ -33,6 +33,10 @@ This tutorial assumes that you know the basics of the following products and ser
 *   Build and containerize your app using the [Cloud SDK](https://cloud.google.com/sdk).
 *   Deploy your app to the web using the [`gcloud` command-line tool](https://cloud.google.com/sdk/gcloud).
 
+## Flow Diagram
+
+![image](https://user-images.githubusercontent.com/13769236/113624795-b20bb480-9625-11eb-83cc-d1e76a3edff6.png)
+
 ## Before you begin
 
 1.  Select or create a Google Cloud project.
@@ -202,7 +206,7 @@ There are many ways of using Cloud Build for any application. For simplicity, th
 
             gcloud app deploy --image-url us.gcr.io/yourprojectid/angular-nginx-container
      
-1.  Verfy that the `webapiurl` matches what you provided in the environment variable.
+1.  Verfy that the `webapiurl` matches what you provided in the environment variable as shown in flow diagram.
 
 ## App Engine dispatch
 
