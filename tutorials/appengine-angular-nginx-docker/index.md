@@ -35,7 +35,7 @@ This tutorial assumes that you know the basics of the following products and ser
 
 ## Flow Diagram
 
-![image](https://user-images.githubusercontent.com/13769236/113627875-bb971b80-9629-11eb-8565-488b55468e5a.png)
+![image](https://github.com/livesankp/community/blob/tutorial-appengine-angular/tutorials/appengine-angular-nginx-docker/flow%20diagram.PNG)
 
 ## Before you begin
 
