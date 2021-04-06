@@ -10,9 +10,9 @@ Tze Hon | Solutions Architect | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-This tutorial describes a solution that uses [Kohl's](https://www.kohls.com/)
-[Prometheus to BigQuery remote storage adapter](https://github.com/KohlsTechnology/prometheus_bigquery_remote_storage_adapter) to enable
-[Prometheus](https://prometheus.io/) to write metrics to [BigQuery](https://cloud.google.com/bigquery) using
+This tutorial describes a solution that uses the
+[Prometheus to BigQuery remote storage adapter](https://github.com/KohlsTechnology/prometheus_bigquery_remote_storage_adapter) from
+[Kohl's](https://www.kohls.com/) to enable [Prometheus](https://prometheus.io/) to write metrics to [BigQuery](https://cloud.google.com/bigquery) using
 [remote write and remote read integration](https://prometheus.io/docs/operating/integrations/#remote-endpoints-and-storage).
 
 You might want to access your Prometheus data for various purposes like machine learning or anomaly detection. These are difficult to do inside Prometheus, so 
@@ -119,7 +119,7 @@ The sample code for this tutorial is in the
 
         bq mk --table ${BIGQUERY_DATASET}.${BIGQUERY_TABLE} ./bigquery_schema.json
 
-### Create a GKE cluster
+### Create and connect to your GKE cluster
 
 1.  Create a GKE cluster:
 
@@ -225,7 +225,8 @@ service account keys and storing them as Kubernetes Secrets.
             ${SERVICE_ACCOUNT}@${PROJECT_ID}.iam.gserviceaccount.com
 
     `[default/prometheus]` is a combination of the Kubernetes namespace where you
-    [created the Kubernetes service account and the service account name](#deploy-rbac-resources) in the form of `[namespace/service account name]`.
+    created the Kubernetes service account and the service account name (in "Deploy RBAC (role-based access control) resources") in the form of 
+    `[namespace/service account name]`.
 
 1.  Give your service account the necessary permissions to read and write data and submit jobs to BigQuery:
 
@@ -257,8 +258,9 @@ service account keys and storing them as Kubernetes Secrets.
         envsubst < query_template.sql > query.sql
         bq query --use_legacy_sql=false < query.sql
 
-1.  The query in [query_template.sql](query_template.sql) shows how to get all of metrics belonging to the `example-app` service that have an HTTP 200 response
-    code:
+1.  The query in
+    [query_template.sql](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/exporting-prometheus-metrics-bigqueryquery_template.sql) shows 
+    how to get all of metrics belonging to the `example-app` service that have an HTTP 200 response code:
 
         SELECT
           metricname,
@@ -298,9 +300,9 @@ tutorial, this means that Prometheus queries BigQuery remotely and merges the re
 
     ![prom-ui](https://storage.googleapis.com/gcp-community/tutorials/writing-prometheus-metrics-bigquery/prom-ui.png)
 
-    Prometheus fetches data from local storage and BigQuery, processes the data and displays it.
+    Prometheus fetches data from local storage and BigQuery, processes the data, and displays it.
     
-1.  Return to your terminal and press `Ctrl-C` to stop port-forwarding.
+1.  Return to your terminal and press `Ctrl-C` to stop port forwarding.
 
 1.  Check Cloud Logging to see the actual query used by Prometheus's BigQuery remote read integration:
 
