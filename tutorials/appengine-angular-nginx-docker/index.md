@@ -35,7 +35,7 @@ This tutorial assumes that you know the basics of the following products and ser
 
 ## Flow Diagram
 
-![flow diagram](flow%20diagram.PNG)
+![flow-diagram](flow-diagram.PNG)
 
 ## Before you begin
 
