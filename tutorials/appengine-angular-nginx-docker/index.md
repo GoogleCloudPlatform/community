@@ -19,6 +19,8 @@ environments like development, testing, staging, and production. All that you ha
 This technique can be integrated into GitLab CI/CD pipelines as separated build steps of build (Angular UI using `ng build`), publish (using Cloud Build),
 and deploy (using `gcloud app deploy`).
 
+![flow-diagram](https://storage.googleapis.com/gcp-community/tutorials/appengine-angular-nginx-docker/flow-diagram.png)
+
 This tutorial assumes that you know the basics of the following products and services:
 
   - [App Engine](https://cloud.google.com/appengine/docs)
@@ -32,10 +34,6 @@ This tutorial assumes that you know the basics of the following products and ser
 *   Create and set up an Angular project using the [Angular CLI](https://cli.angular.io/).
 *   Build and containerize your app using the [Cloud SDK](https://cloud.google.com/sdk).
 *   Deploy your app to the web using the [`gcloud` command-line tool](https://cloud.google.com/sdk/gcloud).
-
-## Flow Diagram
-
-![flow-diagram](flow-diagram.PNG)
 
 ## Before you begin
 
