@@ -19,6 +19,8 @@ environments like development, testing, staging, and production. All that you ha
 This technique can be integrated into GitLab CI/CD pipelines as separated build steps of build (Angular UI using `ng build`), publish (using Cloud Build),
 and deploy (using `gcloud app deploy`).
 
+![flow-diagram](https://storage.googleapis.com/gcp-community/tutorials/appengine-angular-nginx-docker/flow-diagram.png)
+
 This tutorial assumes that you know the basics of the following products and services:
 
   - [App Engine](https://cloud.google.com/appengine/docs)
@@ -202,7 +204,7 @@ There are many ways of using Cloud Build for any application. For simplicity, th
 
             gcloud app deploy --image-url us.gcr.io/yourprojectid/angular-nginx-container
      
-1.  Verfy that the `webapiurl` matches what you provided in the environment variable.
+1.  Verfy that the `webapiurl` matches what you provided in the environment variable as shown in the flow diagram at the beginning of this tutorial.
 
 ## App Engine dispatch
 
