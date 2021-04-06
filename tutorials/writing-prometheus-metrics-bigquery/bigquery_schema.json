@@ -1,0 +1,22 @@
+[
+    {
+      "name": "metricname",
+      "type": "STRING",
+      "mode": "NULLABLE"
+    },
+    {
+      "name": "tags",
+      "type": "STRING",
+      "mode": "NULLABLE"
+    },
+    {
+      "name": "value",
+      "type": "FLOAT",
+      "mode": "NULLABLE"
+    },
+    {
+      "name": "timestamp",
+      "type": "TIMESTAMP",
+      "mode": "NULLABLE"
+    }
+  ]
