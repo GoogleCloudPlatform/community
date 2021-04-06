@@ -2,7 +2,7 @@
 title: Import data from Cloud Storage to BigQuery
 description: A simple interactive tutorial that walks someone through ingesting content in BigQuery from Cloud Storage.
 author: tpryan
-tags: Cloud Storage, BigQuery, Interactive Tutorial
+tags: Cloud Storage, BigQuery, Walkthrough
 date_published: 2020-04-05
 ---
 
