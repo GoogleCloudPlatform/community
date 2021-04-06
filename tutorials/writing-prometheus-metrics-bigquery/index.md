@@ -3,7 +3,7 @@ title: Write Prometheus metrics to BigQuery
 description: Learn how to use the Prometheus remote write feature to write metrics to BigQuery.
 author: tzehon
 tags: monitoring, prometheus, metrics, bigquery
-date_published: 2021-03-29
+date_published: 2021-04-07
 ---
 
 Tze Hon | Solutions Architect | Google
@@ -17,22 +17,22 @@ This tutorial describes a solution that uses [Kohl's](https://www.kohls.com/)
 
 You might want to access your Prometheus data for various purposes like machine learning or anomaly detection. These are difficult to do inside Prometheus, so 
 it's useful to have this data in remote storage such as BigQuery. This also means that your metrics can be stored for much longer retention periods. BigQuery can
-also provide a global querying view by accepting data from multiple Prometheus instances across datacenters or multiple cloud providers. This is useful for 
-building global dashboards for multi-datacenter/multi-cloud setups.
+also provide a global querying view by accepting data from multiple Prometheus instances across data centers or multiple cloud providers. This is useful for 
+building global dashboards for setups across multiple data centers and multiple clouds.
 
 In this tutorial, you learn how to deploy Prometheus to a [Google Kubernetes Engine (GKE)](https://cloud.google.com/kubernetes-engine) cluster using the 
-[Prometheus Operator](https://github.com/prometheus-operator/prometheus-operator), and write metrics to BigQuery directly.
+[Prometheus Operator](https://github.com/prometheus-operator/prometheus-operator) and write metrics to BigQuery directly.
 
-For this tutorial, basic knowledge of GKE, [Kubernetes Operators](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/), Prometheus, and BigQuery is 
-assumed.
+This tutorial assumes that you have basic knowledge of GKE, [Kubernetes Operators](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/), Prometheus, 
+and BigQuery.
 
 ## Objectives
 
-*   Deploy Prometheus using the Prometheus Operator
-*   Configure Prometheus to write to BigQuery remotely
-*   Update the Prometheus configuration using the Prometheus operator
-*   Query metrics from BigQuery
-*   Query metrics from Prometheus
+*   Deploy Prometheus using the Prometheus Operator.
+*   Configure Prometheus to write to BigQuery remotely.
+*   Update the Prometheus configuration using the Prometheus Operator.
+*   Query metrics from BigQuery.
+*   Query metrics from Prometheus.
 
 ## Costs
 
@@ -73,7 +73,7 @@ Shell, so that you don't need to install these packages locally.
 
 ### Open Cloud Shell
 
-Open Cloud Shell by clicking the **Activate Cloud Shell** button in the navigation bar in the upper-right corner of the console.
+Open Cloud Shell by clicking the **Activate Cloud Shell** button in the upper-right corner of the Cloud Console.
 
 ### Get the sample code
 
@@ -109,7 +109,7 @@ The sample code for this tutorial is in the
           container.googleapis.com \
           bigquery.googleapis.com
 
-### Create BQ dataset and table
+### Create a BigQuery dataset and table
 
 1.  Create a BigQuery dataset:
 
@@ -134,63 +134,66 @@ The sample code for this tutorial is in the
 
 ### Deploy the Prometheus Operator
 
-1. Deploy the Prometheus Operator into your cluster:
+1.  Deploy the Prometheus Operator into your cluster:
 
         kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.46.0/bundle.yaml
 
-
 ### Deploy the sample application
 
-1. Deploy three instances of a simple example application, which listens and exposes metrics on port 8080:
+1.  Deploy three instances of a simple example application, which listens and exposes metrics on port 8080:
 
         kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.46.0/example/user-guides/getting-started/example-app-deployment.yaml
 
-1. Deploy the Service:
+1.  Deploy the Service:
 
         kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.46.0/example/user-guides/getting-started/example-app-service.yaml
 
-   This Service object is discovered by a `ServiceMonitor`, which selects in the same way. The `app` label must have the value `example-app`.
+    This Service object is discovered by a `ServiceMonitor`, which selects in the same way. The `app` label must have the value `example-app`.
 
-1. Deploy the Service Monitor:
+1.  Deploy the Service Monitor:
 
         kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.46.0/example/user-guides/getting-started/example-app-service-monitor.yaml
 
-### Deploy RBAC resources
+### Deploy RBAC (role-based access control) resources
 
-1. Deploy the Kubernetes Service Account called `prometheus` to the `default` namespace :
+1.  Deploy the Kubernetes Service Account called `prometheus` to the `default` namespace:
 
         kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.46.0/example/rbac/prometheus/prometheus-service-account.yaml
 
-1. Deploy the `ClusterRole`:
+1.  Deploy the `ClusterRole`:
 
         kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.46.0/example/rbac/prometheus/prometheus-cluster-role.yaml
 
-1. Deploy the `ClusterRoleBinding`:
+1.  Deploy the `ClusterRoleBinding`:
 
         kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.46.0/example/rbac/prometheus/prometheus-cluster-role-binding.yaml
 
 ### Deploy Prometheus
 
-1. Using the Prometheus Operator lets us configure and manage Prometheus with familiar Kubernetes APIs in a declarative approach. Deploy Prometheus with a default Prometheus configuration:
+Using the Prometheus Operator, you configure and manage Prometheus with familiar Kubernetes APIs in a declarative approach. 
+
+1.  Deploy Prometheus with a default Prometheus configuration:
 
         kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.46.0/example/rbac/prometheus/prometheus.yaml
 
 ### Expose Prometheus
 
-1. Expose Prometheus using a `NodePort` Service:
+1.  Expose Prometheus using a `NodePort` Service:
 
         kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.46.0/example/user-guides/getting-started/prometheus-service.yaml
 
 ### Check that Prometheus is successfully deployed
 
-1. Forward a local port to the Prometheus port so we  can access it locally in Cloud Shell:
+1.  Forward a local port to the Prometheus port so that you can access it locally in Cloud Shell:
 
         PORT=$(kubectl get -o jsonpath="{.spec.ports[0].port}" services prometheus) \
           && kubectl port-forward service/prometheus 8080:$PORT
 
-      `kubectl port-forward` does not return. Click the **+** tab in Cloud Shell to open a new terminal for the next step.
+    `kubectl port-forward` does not return.
+    
+1.  Click the **+** tab in Cloud Shell to open a new terminal for the next step.
 
-1. In the new terminal, check that you have deployed Prometheus successfully:
+1.  In the new terminal, check that you have deployed Prometheus successfully:
 
         curl http://localhost:8080/metrics
 
@@ -202,24 +205,29 @@ The sample code for this tutorial is in the
         promhttp_metric_handler_requests_total{code="500"} 0
         promhttp_metric_handler_requests_total{code="503"} 0
 
-1. Close this terminal and return to your previous terminal. Enter `Ctrl-c` to stop port forwarding.
+1.  Close this terminal and return to your previous terminal. Press `Ctrl-C` to stop port forwarding.
 
 ### Deploy an updated Prometheus configuration
 
-1. Create a Google service account that Prometheus will use to write metrics to BigQuery:
+This solution uses [Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity) to access BigQuery from GKE instead of exporting
+service account keys and storing them as Kubernetes Secrets.
+
+1.  Create a Google service account that Prometheus will use to write metrics to BigQuery:
 
         gcloud iam service-accounts create ${SERVICE_ACCOUNT}
 
-1. We use [Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity) to access BigQuery from GKE instead of exporting service account keys and storing them as Kubernetes Secrets. Allow the Kubernetes service account to impersonate the Google service account by creating an IAM policy binding between the two. This binding allows the Kubernetes Service account to act as the Google service account:
+1.  Allow the Kubernetes service account to impersonate the Google service account by creating an IAM policy binding between the two, which allows the Kubernetes
+    Service account to act as the Google service account:
 
         gcloud iam service-accounts add-iam-policy-binding \
             --role roles/iam.workloadIdentityUser \
             --member "serviceAccount:${PROJECT_ID}.svc.id.goog[default/prometheus]" \
             ${SERVICE_ACCOUNT}@${PROJECT_ID}.iam.gserviceaccount.com
 
-    `[default/prometheus]` is a combination of the Kubernetes namespace where you [created the Kubernetes service account and the service account name](#deploy-rbac-resources) in the form of `[namespace/service account name]`
+    `[default/prometheus]` is a combination of the Kubernetes namespace where you
+    [created the Kubernetes service account and the service account name](#deploy-rbac-resources) in the form of `[namespace/service account name]`.
 
-1. Give your service account the necessary permissions to read/write data and submit jobs to BigQuery:
+1.  Give your service account the necessary permissions to read and write data and submit jobs to BigQuery:
 
         gcloud projects add-iam-policy-binding ${PROJECT_ID}  \
             --member="serviceAccount:${SERVICE_ACCOUNT}@${PROJECT_ID}.iam.gserviceaccount.com" \
@@ -229,26 +237,28 @@ The sample code for this tutorial is in the
             --member="serviceAccount:${SERVICE_ACCOUNT}@${PROJECT_ID}.iam.gserviceaccount.com" \
             --role="roles/bigquery.jobUser"
 
-1. Add the `iam.gke.io/gcp-service-account=${SERVICE_ACCOUNT}@${PROJECT_ID}.iam.gserviceaccount.com` annotation to the Kubernetes service account, using the email address of the Google service account:
+1.  Add the `iam.gke.io/gcp-service-account=${SERVICE_ACCOUNT}@${PROJECT_ID}.iam.gserviceaccount.com` annotation to the Kubernetes service account, using the
+    email address of the Google service account:
 
         kubectl annotate serviceaccount \
             --namespace default \
             prometheus \
             iam.gke.io/gcp-service-account=${SERVICE_ACCOUNT}@${PROJECT_ID}.iam.gserviceaccount.com
 
-1. Deploy the updated Prometheus configuration:
+1.  Deploy the updated Prometheus configuration:
 
         envsubst < custom_prometheus_template.yaml > custom_prometheus.yaml
         kubectl apply -f custom_prometheus.yaml
 
 ### Query metrics from BigQuery
 
-1. You can query metrics directly from BigQuery after the Prometheus configuration is updated in a minute:
+1.  You can query metrics directly from BigQuery after the Prometheus configuration is updated, which takes about a minute:
 
         envsubst < query_template.sql > query.sql
         bq query --use_legacy_sql=false < query.sql
 
-1. The query in [query_template.sql](query_template.sql) shows how to get all metrics belonging to the `example-app` service that have a HTTP 200 response code:
+1.  The query in [query_template.sql](query_template.sql) shows how to get all of metrics belonging to the `example-app` service that have an HTTP 200 response
+    code:
 
         SELECT
           metricname,
@@ -269,15 +279,18 @@ The sample code for this tutorial is in the
 
 ### Query metrics from Prometheus
 
-1. You can also query metrics from Prometheus. When configured, Prometheus queries are sent to both local and remote storage, and the results are merged. In this tutorial, this means that Prometheus queries BigQuery remotely, and merges the returned results with results from local storage for you. Forward a local port to the Prometheus port:
+You can also query metrics from Prometheus. When configured, Prometheus queries are sent to both local and remote storage, and the results are merged. In this 
+tutorial, this means that Prometheus queries BigQuery remotely and merges the returned results with results from local storage for you. 
+
+1.  Forward a local port to the Prometheus port:
 
         kubectl port-forward service/prometheus 8080:$PORT
 
-1. Click the **Web preview** icon in Cloud Shell and click **Preview on port 8080** to open the Prometheus UI:
+1.  Click the **Web preview** button in Cloud Shell and click **Preview on port 8080** to open the Prometheus UI:
 
     ![web-preview](https://storage.googleapis.com/gcp-community/tutorials/writing-prometheus-metrics-bigquery/web_preview.png)
 
-1. Enter a query to return the number of successful HTTP requests as measured over the last 5 minutes for the `example-app` job and click `Execute`:
+1.  Enter a query to return the number of successful HTTP requests as measured over the last 5 minutes for the `example-app` job, and click **Execute**:
 
         sum by (job, code) (
           increase(http_requests_total{job="example-app", code="200"}[5m])
@@ -285,14 +298,18 @@ The sample code for this tutorial is in the
 
     ![prom-ui](https://storage.googleapis.com/gcp-community/tutorials/writing-prometheus-metrics-bigquery/prom-ui.png)
 
-1. Prometheus fetches data from local storage and BigQuery, processes the data and displays it. Return to your terminal and enter `Ctrl-c` to stop port-forwarding. After a few seconds, you can check Cloud Logging to see the actual query used by Prometheus's BigQuery remote read integration:
+    Prometheus fetches data from local storage and BigQuery, processes the data and displays it.
+    
+1.  Return to your terminal and press `Ctrl-C` to stop port-forwarding.
+
+1.  Check Cloud Logging to see the actual query used by Prometheus's BigQuery remote read integration:
 
         gcloud logging read "resource.type=bigquery_resource \
             AND protoPayload.serviceData.jobQueryRequest.projectId=${PROJECT_ID} \
             AND severity=INFO" \
             --limit 1 --format json | jq '.[].protoPayload.serviceData.jobQueryRequest.query'
 
-1. You should see the translated query in the returned result:
+    You should see the translated query in the returned result:
 
         SELECT
           metricname,
@@ -348,6 +365,7 @@ If you don't want to delete the project, you can delete the provisioned resource
 
 ## What's next
 
--  Learn how to [manage Cloud Monitoring dashboards with the Cloud Monitoring API](https://cloud.google.com/solutions/managing-monitoring-dashboards-automatically-using-the-api)
--  Learn more about to [export metrics from multiple projects](https://cloud.google.com/solutions/stackdriver-monitoring-metric-export).
+-  Learn how to
+   [manage Cloud Monitoring dashboards with the Cloud Monitoring API](https://cloud.google.com/solutions/managing-monitoring-dashboards-automatically-using-the-api).
+-  Learn more about how to [export metrics from multiple projects](https://cloud.google.com/solutions/stackdriver-monitoring-metric-export).
 -  Try out other Google Cloud features for yourself. Have a look at those [tutorials](https://cloud.google.com/docs/tutorials).
