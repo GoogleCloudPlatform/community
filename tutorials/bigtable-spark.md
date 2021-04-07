@@ -69,16 +69,16 @@ Install and create the resources that are used in this tutorial:
           createtable $BIGTABLE_SPARK_WORDCOUNT_TABLE \
           "families=cf"
 
-1.  Ensure that the table was created by running this command and looking for `wordcount`:
+1.  To ensure that the table was created, run this command and look for `wordcount`:
 
         cbt \
           -project=$BIGTABLE_SPARK_PROJECT_ID \
           -instance=$BIGTABLE_SPARK_INSTANCE_ID \
           ls
 
-## Run the Wordcount example
+## Run the Wordcount job
 
-This section contains the Spark Wordcount job that you'll be running. After it has counted the words, it writes a row with the word as
+This section contains the Spark Wordcount job that you'll be running. After the job has counted the words, it writes a row with the word as
 the key with a column count containing the number of occurrences. You can view the
 [full code on GitHub](https://github.com/GoogleCloudPlatform/java-docs-samples/blob/master/bigtable/spark/src/main/scala/example/Wordcount.scala). 
 
