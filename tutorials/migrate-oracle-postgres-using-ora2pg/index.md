@@ -343,12 +343,11 @@ PG_USER                 <PG_USER>
 PG_PWD                  <PG_PWD>
 EXPORT_SCHEMA           1
 SCHEMA                  HR
-STOP_ON_ERROR	        0
-USE_ORAFCE		        0
-EXTERNAL_TO_FDW	        0
-PG_SUPPORTS_PROCEDURE	1
+STOP_ON_ERROR           0
+USE_ORAFCE              0
+EXTERNAL_TO_FDW         0
+PG_SUPPORTS_PROCEDURE   1
 ```
-
 
 
 ## Generate Database Migration Report
