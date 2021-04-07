@@ -1,6 +1,6 @@
 ---
 title: Migrating from Oracle to Cloud SQL PostgreSQL using Ora2pg
-description: How to use Ora2PG to perform schema conversion and data migration from Oracle to Cloud SQL for PostgreSQL migration 
+description: How to use Ora2PG to perform schema conversion and data migration from Oracle to Cloud SQL for PostgreSQL migration.
 author: ktchana
 tags: cloud sql, database migration, postgresql, ora2pg, oracle
 date_published: 2021-04-07
