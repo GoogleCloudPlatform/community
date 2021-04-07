@@ -3,7 +3,7 @@ title: Migrating from Oracle to Cloud SQL PostgreSQL using Ora2pg
 description: How to use Ora2PG to perform schema conversion and data migration from Oracle to Cloud SQL for PostgreSQL migration 
 author: ktchana
 tags: cloud sql, database migration, postgresql, ora2pg, oracle
-date_published: 2020-04-07
+date_published: 2021-04-07
 ---
 
 Thomas Chan | Solutions Architect | Google
@@ -13,8 +13,10 @@ Thomas Chan | Solutions Architect | Google
 This document focuses on the schema conversion aspect of an Oracle to Cloud SQL for PostgreSQL database migration while also providing steps to perform offline data migration. For more in-depth discussions on other aspects of the migration, check out the following document series:
 
 *   [Setting up Cloud SQL for PostgreSQL for production use](https://docs.google.com/document/u/0/d/1L7F3EDpYpiAwJdNU9rQTSPm3SkM_Whp1kDN2HKqdP04/edit)
-*   [Cloud SQL PostgreSQL for Oracle users](https://docs.google.com/document/u/0/d/1U2AIoL5sduKCaOZLGRRXmv8po-KS4tGvRiLNARtwfKA/edit)
-*   [Migrating users and schemas from Oracle to Cloud SQL for PostgreSQL](https://docs.google.com/document/u/0/d/1JDK1f0lAsq2G2W2At5axrNZX49yPwwL-hDi6OqBsNKc/edit)
+*  [Migrating Oracle users to Cloud SQL for PostgreSQL: Terminology and functionality](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-terminology)
+*  [Migrating Oracle users to Cloud SQL for PostgreSQL: Data types, users, and tables](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-data-types)
+*  [Migrating Oracle users to Cloud SQL for PostgreSQL: Queries, stored procedures, functions, and triggers](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-queries)
+*  [Migrating Oracle users to Cloud SQL for PostgreSQL: Security, operations, monitoring, and logging](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-security)
 
 This document is intended for a technical audience whose is responsible for database management and migration. This document assumes that you're familiar with concepts around database administration, schema conversions, some familiarity with shell scripts and basic knowledge of Google Cloud. 
 
@@ -250,7 +252,7 @@ To configure and test the connectivity between Ora2pg and the source Oracle data
     SCHEMA          <SCHEMA_NAME>
     ```
 
-    Replace the <code><em>ORACLE_IP</em></code>, <code><em>DB_SERVICE_NAME</em></code>, <code><em>LISTENER_PORT</em></code>, <code><em>ORACLE_USER</em></code> and <code><em>ORACLE_PWD</em></code> with the actual connection details. Replace <code><em>SCHEMA_NAME</em></code> with the actual name of the source schema to be migrated.
+    Replace the `ORACLE_IP`, `DB_SERVICE_NAME`, `LISTENER_PORT`, `ORACLE_USER` and `ORACLE_PWD` with the actual connection details. Replace `SCHEMA_NAME` with the actual name of the source schema to be migrated.
 
 2. Execute the following command to retrieve the verify connectivity:
 
@@ -275,9 +277,9 @@ To configure the connectivity between Ora2pg and the target Cloud SQL for Postgr
     PG_PWD          <PG_PWD>
     ```
 
-    Replace the <code><em>DB_NAME</em></code>, <code><em>PG_IP</em></code>, <code><em>PG_USER</em></code> and <code><em>PG_PWD</em></code> with the actual connection details.
+    Replace the `DB_NAME`, `PG_IP`, `PG_USER` and `PG_PWD` with the actual connection details.
 
-3. Ora2pg also makes use of the [psql client](https://www.postgresql.org/docs/12/app-psql.html) to perform various operations. To prevent psql from repeatedly prompting for password during import operations, create a [password file](https://www.postgresql.org/docs/12/libpq-pgpass.html)  $HOME/.pgpass with the following content:
+3. Ora2pg also makes use of the [psql client](https://www.postgresql.org/docs/12/app-psql.html) to perform various operations. To prevent psql from repeatedly prompting for password during import operations, create a [password file](https://www.postgresql.org/docs/12/libpq-pgpass.html) `$HOME/.pgpass` with the following content:
 
     ```
     <PG_IP>:5432:<DB_NAME>:<PG_USER>:<PG_PWD>
@@ -645,7 +647,7 @@ To delete a project, do the following:
 ## What's next
 
 -   Learn about migrating an Oracle database to Cloud SQL PostgreSQL with the following series:
-    -  [Migrating Oracle users to Cloud SQL for PostgreSQL: Terminology and functionality (this document)](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-terminology)
+    -  [Migrating Oracle users to Cloud SQL for PostgreSQL: Terminology and functionality](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-terminology)
     -  [Migrating Oracle users to Cloud SQL for PostgreSQL: Data types, users, and tables](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-data-types)
     -  [Migrating Oracle users to Cloud SQL for PostgreSQL: Queries, stored procedures, functions, and triggers](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-queries)
     -  [Migrating Oracle users to Cloud SQL for PostgreSQL: Security, operations, monitoring, and logging](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-security)
