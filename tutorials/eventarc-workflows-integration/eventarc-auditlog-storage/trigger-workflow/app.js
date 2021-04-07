@@ -15,11 +15,11 @@
 const express = require('express');
 const app = express();
 
-const {ExecutionsClient} = require('@google-cloud/workflows');
+const { ExecutionsClient } = require('@google-cloud/workflows');
 const client = new ExecutionsClient();
 
-const { HTTP } = require("cloudevents");
-const {toLogEntryData} = require('@google/events/cloud/audit/v1/LogEntryData');
+const { HTTP } = require('cloudevents');
+const { toLogEntryData } = require('@google/events/cloud/audit/v1/LogEntryData');
 
 const GOOGLE_CLOUD_PROJECT = process.env.GOOGLE_CLOUD_PROJECT;
 const WORKFLOW_REGION = process.env.WORKFLOW_REGION;
@@ -27,12 +27,11 @@ const WORKFLOW_NAME = process.env.WORKFLOW_NAME;
 
 app.use(express.json());
 app.post('/', async (req, res) => {
-
   const cloudEvent = HTTP.toEvent({ headers: req.headers, body: req.body });
   console.log('Received CloudEvent:');
   console.log(cloudEvent);
 
-  //"protoPayload" : {"resourceName":"projects/_/buckets/events-atamel-images-input/objects/atamel.jpg}";
+  // "protoPayload" : {"resourceName":"projects/_/buckets/events-atamel-images-input/objects/atamel.jpg}";
   const logEntryData = toLogEntryData(cloudEvent.data);
   console.log(logEntryData);
 
@@ -45,7 +44,7 @@ app.post('/', async (req, res) => {
     const execResponse = await client.createExecution({
       parent: client.workflowPath(GOOGLE_CLOUD_PROJECT, WORKFLOW_REGION, WORKFLOW_NAME),
       execution: {
-        argument: JSON.stringify({bucket: bucket, file: file})
+        argument: JSON.stringify({ bucket: bucket, file: file })
       }
     });
     console.log(`Execution response: ${JSON.stringify(execResponse)}`);
@@ -54,7 +53,6 @@ app.post('/', async (req, res) => {
     console.log(`Created execution: ${execName}`);
 
     res.status(200).send(`Created execution: ${execName}`);
-
   } catch (e) {
     console.error(`Error executing workflow: ${e}`);
     res.status(500).send(`Error executing workflow: ${e}`);
