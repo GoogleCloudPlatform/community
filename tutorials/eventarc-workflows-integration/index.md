@@ -1,6 +1,6 @@
 ---
 title: Eventarc and Workflows Integration
-description: In this tutorial, you will see how to integrate Eventarc and Worklows
+description: Learn how to integrate Eventarc and Worklows
 author: meteatamel
 tags: Eventarc, Workflows, Pub/Sub, AuditLog, Cloud Storage
 date_published: 2021-04-07
