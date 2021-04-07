@@ -1,5 +1,5 @@
 ---
-title: Running a Cloud Bigtable Spark job on Dataproc 
+title: Run a Cloud Bigtable Spark job on Dataproc 
 description: Run a Spark job on Dataproc that reads from and writes to Cloud Bigtable.
 author: billyjacobson
 tags: bigtable, spark, database, big table, apache spark, hbase, dataproc
@@ -14,16 +14,16 @@ In this tutorial, you run a Spark job on Dataproc that reads from and writes to 
 
 ## Prerequisites
 
-This is a follow up to [Using Spark with Cloud Bigtable](https://cloud.google.com/community/tutorials/bigtable-spark),
+This is a followup to [Using Spark with Cloud Bigtable](https://cloud.google.com/community/tutorials/bigtable-spark),
 so follow the steps in that tutorial before beginning this one. The previous tutorial walks you through setting up the environment
 variables, creating the Bigtable instance and table, and running the Spark job locally.
 
-The examples in this tutorial use Dataproc 1.4. For the list of available Dataproc image versions visit
-[Dataproc Image version list](https://cloud.google.com/dataproc/docs/concepts/versioning/dataproc-versions).
+The examples in this tutorial use Dataproc 1.4. For the list of available Dataproc image versions see the
+[Dataproc image version list](https://cloud.google.com/dataproc/docs/concepts/versioning/dataproc-versions).
 
-## Create Dataproc cluster
+## Create the Dataproc cluster
 
-1.  Set the necessary environment variables for configuring your Dataproc cluster:
+1.  Set the environment variables for configuring your Dataproc cluster:
 
         BIGTABLE_SPARK_DATAPROC_CLUSTER=your-dataproc-cluster
         BIGTABLE_SPARK_DATAPROC_REGION=your-dataproc-region
@@ -53,11 +53,11 @@ Because you're running the Spark job in the cloud, you need to upload your the f
 
 For information about `gsutil`, see [Quickstart: Using the gsutil tool](https://cloud.google.com/storage/docs/quickstart-gsutil).
 
-1.  Select a bucket name and set it as an environment variable:
+1.  Choose a bucket name and set it as an environment variable:
     
         BIGTABLE_SPARK_BUCKET_NAME=gs://your-bucket-name-12345
     
-    Bucket names must be unique across all Google Cloud projects, so you may want to append a few random digits, so you don't run into name conflicts during 
+    Bucket names must be unique across all Google Cloud projects, so you may want to append a few digits, so you don't run into name conflicts during 
     creation.
 
 1.  Create the bucket:
@@ -80,9 +80,9 @@ For information about `gsutil`, see [Quickstart: Using the gsutil tool](https://
 
         gs://[your-bucket-name]/Romeo-and-Juliet-prologue.txt
 
-## Submit Wordcount
+## Submit the Wordcount job
 
-Submit Wordcount to the Dataproc instance:
+Submit the Wordcount job to the Dataproc instance:
 
     gcloud dataproc jobs submit spark \
       --cluster=$BIGTABLE_SPARK_DATAPROC_CLUSTER \
@@ -110,7 +110,7 @@ Read the database:
       -instance=$BIGTABLE_SPARK_INSTANCE_ID \
       read $BIGTABLE_SPARK_WORDCOUNT_TABLE
 
-If you ran wordcount locally, you will see duplicate entries for words, since Bigtable supports data versioning.
+If you ran the Wordcount job locally, you will see duplicate entries for words, since Bigtable supports data versioning.
 
 ## Cleaning up
 
