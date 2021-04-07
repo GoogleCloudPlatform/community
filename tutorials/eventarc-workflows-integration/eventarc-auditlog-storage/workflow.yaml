@@ -1,0 +1,13 @@
+main:
+  params: [args]
+  steps:
+    - init:
+        assign:
+          - bucket: ${args.bucket}
+          - file: ${args.file}
+    - log:
+        call: sys.log
+        args:
+            text: ${"Workflows received event from bucket " + bucket + " for file " + file}
+            severity: INFO
+
