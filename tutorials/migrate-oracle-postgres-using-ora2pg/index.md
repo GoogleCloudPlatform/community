@@ -315,9 +315,8 @@ To configure the connectivity between Ora2pg and the target Cloud SQL for Postgr
 
 Ora2pg provides many [parameters](http://ora2pg.darold.net/documentation.html#CONFIGURATION) to control various aspects of the migration process. It is important to understand the effect each parameter has and configure them properly for a successful migration. Below are a few common parameters, their meanings and suggested values:
 
-||||
-|--- |--- |--- |
 | Ora2pg parameter | Description | Suggested value |
+|--- |--- |--- |
 |DATA_TYPE|Controls the data type mappings between Oracle and PostgreSQL. Ora2pg comes with a set of data type mappings by default. Change this parameter if you want to custom the mappings.|(Modify only if needed)|
 |MODIFY_TYPE|Force Ora2pg to use a data type for a particular table column.|(Modify only if needed)|
 |EXPORT_SCHEMA|By default, Ora2pg generates schema creation scripts that will import objects into the public schema of the target PostgreSQL database. Applications that explicitly reference schema name could run into problems when an object does not exist in the target schema. Setting this parameter to 1 instructs Ora2pg to export the schema and create all objects under the correct schema name.|1|
