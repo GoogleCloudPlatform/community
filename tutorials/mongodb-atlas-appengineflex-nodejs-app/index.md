@@ -22,6 +22,13 @@ multi-regional cluster on Google Cloud as our primary database.
 4.  Push your application to App Engine flexible environment on Google Cloud.
 5.  Visit our new application from any web-enabled client terminal, including
     mobile devices.
+    
+## Costs
+
+This tutorial uses billable components of Google Cloud, including
+[App Engine flexible environment](https://cloud.google.com/appengine/pricing#flexible-environment-pricing).
+
+Use the [pricing calculator](/products/calculator) to generate a cost estimate based on your projected usage.
 
 ## Part 1: Configuring the MongoDB Atlas
 
@@ -230,8 +237,8 @@ multi-regional cluster on Google Cloud as our primary database.
 
     ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-appengineflex-nodejs-app/image6.png)
 
-4.  Configure your instance for Node.js and MongoDB client by executing
-    following comments.
+4.  Configure your instance for Node.js and MongoDB client by executing the
+    following commands.
 
         sudo apt-get update
 
@@ -240,6 +247,8 @@ multi-regional cluster on Google Cloud as our primary database.
         sudo apt-get install -y nodejs
 
         sudo apt-get install -y build-essential
+        
+        sudo apt-get install npm
 
         npm install nconf
 

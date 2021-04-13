@@ -8,7 +8,7 @@ date_published: 2017-01-27
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-App Engine is a scalable system which will automatically add more capacity as
+App Engine is a scalable system that automatically adds more capacity as
 workloads increase.
 
 Here are some best practices to ensure that your app will scale to high load.
@@ -88,10 +88,6 @@ you can hit this problem:
 * You will also see this problem if you create new entities at a high rate with
   a monotonically increasing indexed property like a timestamp, because these
   properties are the keys for rows in the index tables in Bigtable.
-
-For a more detailed explanation of this issue, see [Ikai Lan's blog posting on saving monotonically increasing values in the Datastore][ikaisays].
-
-[ikaisays]: http://ikaisays.com/2011/01/25/app-engine-datastore-tip-monotonically-increasing-values-are-bad/
 
 ## Do not set a spending limit that could be exceeded
 

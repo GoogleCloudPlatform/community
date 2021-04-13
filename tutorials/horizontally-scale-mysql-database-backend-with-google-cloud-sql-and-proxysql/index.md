@@ -26,7 +26,7 @@ configuration, allows you to dynamically scale MySQL database backend without
 modifying application logic.
 
 This tutorial assumes that you have set up an application, such as a
-Django or Flask app or a WordPress blog, using a MySQL database as database
+Django or Flask app or a WordPress blog, using a MySQL database as the database
 backend. The application itself does not need to run on Google Cloud,
 though deploying both your application and the database backend in the same
 region of Google Cloud may greatly improve performance. For options for
@@ -51,11 +51,11 @@ generate a cost estimate based on your projected usage.
 
 ## Before you begin
 
-1.  Select a project from the [Cloud Console](https://console.cloud.google.com/). 
+1.  Select a project from the [Cloud Console](https://console.cloud.google.com/).
 
     If you have never used Google Cloud before, sign up or log in with your existing Google account, then follow the on-screen instructions to start using Google
     Cloud.
-    
+
 1.  [Enable billing](https://cloud.google.com/billing/docs/how-to/modify-project) for your account.
 
 1.  (Optional) Install the [Cloud SDK](https://cloud.google.com/sdk/).
@@ -148,7 +148,8 @@ to create a Cloud SQL for MySQL instance. You can also create an instance with t
 [Cloud SDK](https://cloud.google.com/sdk/gcloud/reference/sql/instances/create)
 or using the [Cloud SQL API](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/).
 
-1.  Go to the [Cloud SQL instances page](https://console.cloud.google.com/sql/) of the Cloud Console and click **Create instance**.
+1.  Go to the [Cloud SQL instances page](https://console.cloud.google.com/sql/)
+    of the Cloud Console and click **Create instance**.
 1.  Choose `MySQL` as the database engine and `Second Generation` as the instance type.
 1.  Enter an instance ID and set the root password.
 1.  Choose the [location of your Cloud SQL instance](https://cloud.google.com/compute/docs/regions-zones/).
@@ -161,7 +162,7 @@ or using the [Cloud SQL API](https://cloud.google.com/sql/docs/mysql/admin-api/v
     zone as your application.
 
     By default Cloud SQL creates an instance using one CPU core, 3.75 GB of memory,
-    and 10GB of SSD storage. Depending on the scale of your database backend, you
+    and 10 GB of SSD storage. Depending on the scale of your database backend, you
     may need to use a more powerful machine type and further increase the
     storage capacity. Click **Show configuration options** to update those
     settings. It is also possible to upgrade (or downgrade) after deployment.
@@ -184,7 +185,7 @@ follow the steps below:
 1.  [Connect to your Compute Engine instance](https://cloud.google.com/compute/docs/instances/connecting-to-instance).
 
     The following steps should be executed on your Compute Engine instance.
-    
+
 1.  Download the package:
 
         wget https://github.com/sysown/proxysql/releases/download/v1.4.4/proxysql_1.4.4-debian9_amd64.deb
@@ -332,8 +333,8 @@ or [using the Cloud SQL API](https://cloud.google.com/sql/docs/mysql/admin-api/v
 1.  Click **Create**. It may take a while to create the instance and replicate
     the data.
 1.  After the read replica comes online, click its name and write down the
-    **IPv4 address** in the **Connect to this instance** card of its Instance
-    Details page.
+    **IPv4 address** in the **Connect to this instance** card of its instance
+    details page.
 1.  Repeat the steps once to create another read replica. Write down its IPv4
     address as well.
 
@@ -370,7 +371,7 @@ distribution.
 
 1.  Declare rules with the following SQL queries:
 
-        INSERT INTO mysql_rules (rule_id, active, match_digest, destination_hostgroup, apply) VALUES (1,1,'^SELECT.*FOR UPDATE',0,1), (2,1,'^SELECT',1,1);
+        INSERT INTO mysql_query_rules (rule_id, active, match_digest, destination_hostgroup, apply) VALUES (1,1,'^SELECT.*FOR UPDATE',0,1), (2,1,'^SELECT',1,1);
         LOAD MYSQL RULES TO RUNTIME;
         SAVE MYSQL RULES TO DISK;
 
@@ -440,7 +441,7 @@ it. Removing a read replica, however, takes a few additional steps:
 
     Then remove it from Cloud SQL:
 
-    1.  Go to the [Cloud SQL Instances page](https://console.cloud.google.com/sql/instances) and click the read replica you would like to remove.
+    1.  Go to the [Cloud SQL instances page](https://console.cloud.google.com/sql/instances) and click the read replica you would like to remove.
 
     1.  Click **Delete**. Follow the instructions on screen to delete the instance.
 
@@ -468,7 +469,7 @@ If you have Cloud SDK installed in the system, you can also [use the `gcloud` co
 
 ### Deleting the master instance
 
-Go to the [Cloud SQL Instances page](https://console.cloud.google.com/sql/instances).
+Go to the [Cloud SQL instances page](https://console.cloud.google.com/sql/instances).
 If there are still read replicas, remove them one by one. For each one, click
 the kebab icon (three vertical dots) and choose **Delete** in the drop down
 menu. After all the read replicas are removed, delete the master instance in the

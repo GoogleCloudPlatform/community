@@ -56,7 +56,8 @@ If you do not have a repository on GitHub, you can fork
 7. Choose **Cloud build configuration (yaml or json)** as your build configuration
    file type.
 
-8. Set the file location to `cloudbuild.yaml`.
+8. In the **Cloud Build configuration file location** field, set the file location
+   to `cloudbuild.yaml` after the `/`.
 
 9. Click **Create** to save your build trigger.
 

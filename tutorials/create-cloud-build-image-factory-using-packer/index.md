@@ -22,7 +22,7 @@ This tutorial includes instructions for creating Packer images for Linux and Win
 - For building a Linux image, this tutorial uses Packer to create a new image from a CentOS 7 VM with Nginx.
 - For building a Windows image, this tutorial uses Packer to create a new image from a Windows Server 2019 VM with Python 3, Git, and 7-Zip,
   using Chocolatey as a package manager.
-  
+
 Secret Manager is only used for the Windows option.
 
 ## Prerequisites
@@ -170,7 +170,7 @@ Create your secrets using the following commands:
     echo -n "default" | gcloud secrets create image_factory-network --replication-policy="automatic" --data-file=-
 
     echo -n "allow-winrm-ingress-to-packer" | gcloud secrets create image_factory-tags --replication-policy="automatic" --data-file=-
-    
+
 Optionally, you can customize the values using the [documentation](https://cloud.google.com/secret-manager/docs/creating-and-accessing-secrets).
 
 ## (Windows image only) Create a new VPC firewall to allow WinRM for Packer
@@ -369,7 +369,7 @@ In this section, you verify that your deployment has worked correctly.
 
 1.  Wait a few minutes and open the browser to the IP address of the instance to see the special message.
 
-1.  Retrieve the instace IP address:
+1.  Retrieve the instance IP address:
 
         gcloud compute instances list --filter="name:helloworld*" --format="value(networkInterfaces[0].accessConfigs[0].natIP)"
 
@@ -427,7 +427,7 @@ If you don't want to keep the resources after this tutorial, you can delete them
 1.  Delete the repository:
 
         gcloud source repos delete --quiet windows-image-factory
- 
+
     Only do this if you don't want to perform the tutorial in this project again. The repository name won't be usable
     again for up to 7 days.
 
@@ -443,7 +443,7 @@ contains the [googlecompute builder template](https://www.packer.io/docs/builder
 Because of the way Packer uses WinRM as the communicator to connect and configure Windows, this template achieves the following:
 
 -   `"variables"` contains placeholder values such as `_PROJECT_ID` that are dynamically changed by Cloud Build sourced from both built-in variables (project)
-    and custom user variables (Secret Manager). By using `"source_image_family"`, Packer automatically retrieves the latest version available for 
+    and custom user variables (Secret Manager). By using `"source_image_family"`, Packer automatically retrieves the latest version available for
     the machine image.
 -   Configures WinRM to use HTTPS for connecting Packer and the staging Windows VM (creates a temporary, local self-signed certificate).
 -   Using [Compute Engine metadata](https://cloud.google.com/compute/docs/startupscript#providing_a_startup_script_for_windows_instances)
@@ -467,8 +467,9 @@ undo WinRM configurations, and then remove the shutdown script itself.
 [**`windows/scripts/disable-uac.ps1`**](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/create-cloud-build-image-factory-using-packer/windows/scripts/disable-uac.ps1) installs the latest version of Chocolatey, a package management binary for PowerShell.
 
 [**`windows/scripts/packages.config`**](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/create-cloud-build-image-factory-using-packer/windows/scripts/packages.config) contains a list of packages in an XML manifest for Chocolatey to install. This is where you can define
-[any supported packages](https://chocolatey.org/packages) to install, as well as versioning, options, and switches. For details, see the 
+[any supported packages](https://chocolatey.org/packages) to install, as well as versioning, options, and switches. For details, see the
 [Chocolatey documentation](https://chocolatey.org/docs/commandsinstall#packagesconfig). 
 
-[**`windows/scripts/run-chocolatey.ps1`**](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/create-cloud-build-image-factory-using-packer/windows/scripts/run-chocolatey.ps1) invokes Chocolatey to install the packages defined in the XML manifest, including error handling. Because some Windows 
-software requires a restart to complete the installation, this script allows it (exit code `3010`) as Packer will shut down and sysprep the image as the final step.
+[**`windows/scripts/run-chocolatey.ps1`**](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/create-cloud-build-image-factory-using-packer/windows/scripts/run-chocolatey.ps1) invokes Chocolatey to install the packages defined in the XML manifest, including error handling. Because some Windows
+software requires a restart to complete the installation, this script allows it (exit code `3010`) as Packer will shut down and sysprep the image as the final
+step.

@@ -8,8 +8,6 @@ date_published: 2019-07-31
 
 # Use Pub/Sub to send and receive real-time messages
 
-<walkthrough-devshell-precreate></walkthrough-devshell-precreate>
-
 <walkthrough-alt>
 Take the interactive version of this tutorial, which runs in the Cloud Console:
 
@@ -40,7 +38,8 @@ For details, see
 
 In this tutorial, you do much of your work in Cloud Shell, which is a built-in command-line tool for the Cloud Console.
 
-Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
+Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>[**Activate Cloud Shell**][spotlight-open-devshell] button in the
+navigation bar in the upper-right corner of the Cloud Console.
 
 ## Create your first topic
 
