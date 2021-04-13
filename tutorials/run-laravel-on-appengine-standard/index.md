@@ -551,7 +551,7 @@ to App Engine, e.g., on commit to the `main` branch.
 [laravel-welcome]: welcome-page.png
 [cloud_sdk]: https://cloud.google.com/sdk/
 [cloudsql-create]: https://cloud.google.com/sql/docs/mysql/create-instance
-[cloudsql-install]: https://cloud.google.com/sql/docs/mysql/connect-external-app#install
+[cloudsql-install]: https://cloud.google.com/sql/docs/mysql/connect-admin-proxy#install
 [cloudsql-admin-api]: https://console.cloud.google.com/flows/enableapi?apiid=sqladmin
 [laravel-framework-sample]: https://github.com/GoogleCloudPlatform/php-docs-samples/tree/master/appengine/standard/laravel-framework
 [bootstrap-app-php]: https://github.com/GoogleCloudPlatform/php-docs-samples/blob/master/appengine/standard/laravel-framework/bootstrap/app.php

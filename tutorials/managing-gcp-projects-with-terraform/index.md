@@ -1,6 +1,6 @@
 ---
-title: Managing Google Cloud projects with Terraform
-description: Learn how to manage projects within an organization and project resources with Terraform.
+title: Creating Google Cloud projects with Terraform
+description: Learn how to create projects within an organization and project resources with Terraform.
 author: danisla
 tags: Terraform
 date_published: 2017-06-19
@@ -14,6 +14,9 @@ This tutorial demonstrates how to create and manage projects on [Google Cloud wi
 With Terraform, many of your resources such as projects, IAM policies, networks, Compute Engine instances, and Kubernetes Engine clusters can be managed,
 versioned, and easily recreated for your organization or teams. The state that Terraform generates is saved to Cloud Storage
 for persistence.
+
+**Note**: This tutorial is focused on creating [projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects). For a general introduction
+to Terraform on Google Cloud, see the [provider documentation](https://www.terraform.io/docs/providers/google/guides/getting_started.html).
 
 ## Objectives
 

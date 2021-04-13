@@ -10,12 +10,8 @@ Alan Blount | Product Solutions Engineer | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-This tutorial demonstrates using
-[Cloud Functions][functions]
-to store and retrieve data to
-[Firestore][firestore].
-The Cloud Function is
-implemented in [Node.js][node] version 6 or 8.
+This tutorial demonstrates using [Cloud Functions][functions] to store and retrieve data with
+[Firestore][firestore]. The Cloud Function is implemented in [Node.js][node] version 6 or 8.
 
 [functions]: https://cloud.google.com/functions
 [firestore]: https://cloud.google.com/firestore/
@@ -145,8 +141,6 @@ You now have a `package.json` file listing your dependencies
 and you have an `index.js` file which will respond to an HTTP trigger.
 
 You will use the `gcloud` command-line tool to deploy our function, and configure it to listen to HTTP requests.
-(there are other ways to deploy including
-[git-push CI/CD tooling](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/cloud-functions-github-auto-deployer/index.md)).
 
 ### (optional) Install functions-emulator for local testing
 
