@@ -267,7 +267,7 @@ You should now be able to access the web application by going to the `$NGINX_ING
 
     http://$NGINX_INGRESS_IP.xip.io/hello
 
-![image](/community/tutorials/nginx-ingress-gke/hello-app-v1.png)
+![image](/tutorials/nginx-ingress-gke/hello-app-v1.png)
 
 You can also access the `hello-app` using the `curl` command in Cloud Shell.
 
