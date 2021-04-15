@@ -97,7 +97,7 @@ To use the different features of the Cloud Natural Language, see the following C
 
 [alice]:https://www.gutenberg.org/files/11/11-h/11-h.htm
 [annotate]:https://apis-explorer.appspot.com/apis-explorer/#search/natural/language/v1/language.documents.annotateText
-[annotateapi]:https://cloud.google.com/natural-language/docs/reference/rest/v1beta1/documents/annotateText
+[annotateapi]:https://cloud.google.com/natural-language/docs/reference/rest/v1/documents/annotateText
 [auth]:https://cloud.google.com/natural-language/docs/common/auth
 [console]:https://console.cloud.google.com/
 [explorer]:https://apis-explorer.appspot.com/apis-explorer/#search/natural/language/v1/
