@@ -39,7 +39,7 @@ Some important design considerations when building a workflow include the follow
 
 This tutorial uses billable components of Google Cloud, including the following:
 
-*   [Pub/Sub](https://cloud.google.com/Pub/Sub/)
+*   [Pub/Sub](https://cloud.google.com/pubsub)
 *   [Cloud Storage](https://cloud.google.com/storage/)
 *   [Memorystore](https://cloud.google.com/memorystore/) (not used in the local development scenario)
 
