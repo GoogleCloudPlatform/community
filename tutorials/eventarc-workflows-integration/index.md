@@ -3,7 +3,7 @@ title: Eventarc and Workflows Integration
 description: Learn how to integrate Eventarc and Worklows.
 author: meteatamel
 tags: Eventarc, Workflows, PubSub, AuditLog, Cloud Storage
-date_published: 2021-04-07
+date_published: 2021-04-15
 ---
 
 Mete Atamel | Developer Advocate | Google
@@ -65,7 +65,7 @@ workflow with whole HTTP request from Eventarc passed to the workflow.
 
 ### Deploy a workflow
 
-First, deploy the [workflow.yaml](eventarc-pubsub/workflow.yaml). It simply
+First, deploy the [workflow.yaml](https://github.com/GoogleCloudPlatform/eventarc-samples/tree/main/eventarc-workflows-integration/eventarc-pubsub/workflow.yaml). It simply
 decodes and logs out the received Pub/Sub message.
 
 Deploy workflow:
@@ -78,7 +78,7 @@ Deploy workflow:
 
 Next, deploy a Cloud Run service to execute workflow. It simply executes the
 workflow with the HTTP request. You can see the source code in
-[trigger-workflow](eventarc-pubsub/trigger-workflow).
+[trigger-workflow](https://github.com/GoogleCloudPlatform/eventarc-samples/tree/main/eventarc-workflows-integration/eventarc-pubsub/trigger-workflow).
 
 Build the container:
 
@@ -129,7 +129,7 @@ executes a workflow with the bucket and file name.
 
 ### Deploy a workflow
 
-First, deploy the [workflow.yaml](eventarc-auditlog-storage/workflow.yaml). It
+First, deploy the [workflow.yaml](https://github.com/GoogleCloudPlatform/eventarc-samples/tree/main/eventarc-workflows-integration/eventarc-auditlog-storage/workflow.yaml). It
 simply logs out the bucket and file name for the storage event.
 
 Deploy workflow:
@@ -142,7 +142,7 @@ Deploy workflow:
 
 Next, deploy a Cloud Run service to execute workflow. It simply executes the
 workflow with the bucket and file name. You can see the source code in
-[trigger-workflow](eventarc-auditlog-storage/trigger-workflow).
+[trigger-workflow](https://github.com/GoogleCloudPlatform/eventarc-samples/tree/main/eventarc-workflows-integration/eventarc-auditlog-storage/trigger-workflow).
 
 Build the container:
 
