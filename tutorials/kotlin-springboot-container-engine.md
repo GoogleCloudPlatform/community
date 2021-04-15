@@ -74,8 +74,6 @@ you already have an app to deploy, you can use it instead.
 
 1.  Use [start.spring.io](https://start.spring.io) to generate a Spring Boot
     application using Kotlin as the language, Gradle as the build system.
-    Alternatively, you can [download](https://github.com/jetbrains/gcp-samples)
-    the sample application.
 
 2.  Download the generated project and save it to a local folder.
 
@@ -131,9 +129,7 @@ used by this tutorial builds a release and runs it with Alpine Linux.
 If you are experienced with Docker, you can customize your image.
 
 1.  Create a file called `Dockerfile` in your project directory and copy the
-    following content into it. Alternately, you can
-    [download](https://github.com/JetBrains/gcp-samples/blob/master/Dockerfile)
-    the Dockerfile to study and customize.
+    following content into it:
 
         FROM openjdk:8-jdk-alpine
         VOLUME /tmp
@@ -145,9 +141,7 @@ If you are experienced with Docker, you can customize your image.
         ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/work/app.jar"]
 
 2.  Create a file called `.dockerignore` in your project directory and copy the
-    following content into it. Alternately, you can
-    [download](https://github.com/JetBrains/gcp-samples/blob/master/.dockerignore)
-    the Dockerfile file to study and customize.
+    following content into it:
 
         .gradle
         build
