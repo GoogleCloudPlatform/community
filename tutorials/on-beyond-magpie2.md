@@ -72,7 +72,7 @@ The complete code to call the API and put the results in a string is below:
 
 The results of the POST call are returned using JSON format. There are numerous libraries which will do JSON parsing in Java but currently there is no standard library. This tutorial will use the GSON library, available at [Github] (https://github.com/google/gson) and for [download as a jar file](https://repo1.maven.org/maven2/com/google/code/gson/gson/2.6.2/).
 
-Once a string representing the JSON data is created, it can be sent to the GSON library, which will return an object that represents the data. You will need to create a class that represents the data you are interested in, based on the return types of the [Cloud Natural Language API](https://cloud.google.com/natural-language/docs/reference/rest/v1beta1/documents/analyzeEntities). This object is an instance of the class  `AnalyzeEntitiesResponse`, shown below. You will need to define this class in your `Magpie` class.
+Once a string representing the JSON data is created, it can be sent to the GSON library, which will return an object that represents the data. You will need to create a class that represents the data you are interested in, based on the return types of the [Cloud Natural Language API](https://cloud.google.com/natural-language/docs/reference/rest/v1/documents/analyzeEntities). This object is an instance of the class  `AnalyzeEntitiesResponse`, shown below. You will need to define this class in your `Magpie` class.
 
 ```java
 public class AnalyzeEntitiesResponse {
