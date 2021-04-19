@@ -1,26 +1,29 @@
 ---
-title: Catchpoint data pipeline to Google Cloud Monitoring
-description: Learn to ingest data from Catchpoint into Google Cloud Monitoring for visualization and analysis via Metrics Explorer.
+title: Catchpoint data pipeline to Cloud Monitoring
+description: Learn to ingest data from Catchpoint into Cloud Monitoring for visualization and analysis with Metrics Explorer.
 author: drit
 tags: telemetry, probes, monitors
-date_published: 2021-02-16
+date_published: 2021-04-20
 ---
 
 Dritan Suljoti | Chief Product and Technology Officer | Catchpoint Systems, Inc.
 
 <p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
-[Catchpoint’s digital experience monitoring platform](https://www.catchpoint.com/platform) provides instant insight into the performance of networks, apps, and digital services. The following tutorials provide two methods of ingesting and visualizing data from Catchpoint within GCP. The first method delivers data to Grafana for the visualization and analysis, and the second uses Metrics Explorer in Google Cloud Monitoring.
+[Catchpoint’s digital experience monitoring platform](https://www.catchpoint.com/platform) provides an extensive fleet of network telemetry probes, as well as 
+tools for capturing real user experience metrics, which give instant insight into the performance of networks, apps, and digital services.
+[Cloud Monitoring](https://cloud.google.com/monitoring) provides visibility into the performance, uptime, and overall health of applications.
 
-[Method 1 - Catchpoint to Grafana](.\Catchpoint%20to%20Grafana.md)
+This tutorial and its companion tutorial provide two methods of ingesting and visualizing data from Catchpoint within Google Cloud:
 
-[Method 2 - Catchpoint to Cloud Monitoring](.\Catchpoint%20to%20GCM.md)
-
-[Google Cloud Monitoring](https://cloud.google.com/monitoring) provides visibility into the performance, uptime, and overall health of applications. [Catchpoint’s digital experience monitoring platform](https://www.catchpoint.com/platform) provides the most extensive fleet of network telemetry probes in the world, as well as tools for capturing real user experience metrics. In this tutorial, you will learn how to set up a pipeline that takes data captured by Catchpoint and processes it to Google Cloud Monitoring for visualization and analysis in Metrics Explorer.  
+- This tutorial shows you how to set up a pipeline that ingests data captured by Catchpoint into Cloud Monitoring and use Metrics Explorer for visualization and
+  analysis.
+- The [companion tutorial](https://cloud.google.com/community/tutorials/catchpoint-to-google-cloud/catchpoint-to-grafana) shows you how to deliver data to 
+  Grafana for visualization and analysis.
 
 The dataflow from Catchpoint to Cloud Monitoring works as follows:
 
-![data-ingestion-pipeline](data-ingestion-pipeline.png)
+![data-ingestion-pipeline](https://storage.googleapis.com/gcp-community/tutorials/catchpoint/data-ingestion-pipeline.png)
 
 1.	Catchpoint posts data to a Cloud Function (HTTP Webhook).
 1.	The Cloud Function uses Pub/Sub to propagate the data to configured channels.
