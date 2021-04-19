@@ -20,21 +20,23 @@ This tutorial and its companion tutorial provide two methods of ingesting and vi
   analysis.
 - The [companion tutorial](https://cloud.google.com/community/tutorials/catchpoint-to-google-cloud/catchpoint-to-grafana) shows you how to deliver data to 
   Grafana for visualization and analysis.
+  
+This tutorial uses Node.js, the Cloud Console, and the Cloud SDK command line.
 
-The dataflow from Catchpoint to Cloud Monitoring works as follows:
+The dataflow from Catchpoint to Cloud Monitoring is illustrated in the following diagram:
 
 ![data-ingestion-pipeline](https://storage.googleapis.com/gcp-community/tutorials/catchpoint/data-ingestion-pipeline.png)
 
-1.	Catchpoint posts data to a Cloud Function (HTTP Webhook).
-1.	The Cloud Function uses Pub/Sub to propagate the data to configured channels.
-1.	Cloud Monitoring receives the data from the Pub/Sub channel, where it is available for visualization using Metrics Explorer
+1.  Catchpoint posts data to a Cloud Function (HTTP webhook).
+1.  The Cloud Function uses Pub/Sub to propagate the data to configured channels.
+1.  Cloud Monitoring receives the data from the Pub/Sub channel, where it is available for visualization using Metrics Explorer
 
 ## Objectives
 
-1.	Set up GCP data pipeline
-1.	Configure Catchpoint
-1.	Set up Cloud Monitoring
-1.	Configure Metric Explorer in Cloud Monitoring
+1.  Set up the Google Cloud data pipeline.
+1.  Configure Catchpoint.
+1.  Set up Cloud Monitoring.
+1.  Configure Metrics Explorer in Cloud Monitoring.
 
 ## Costs
 
@@ -47,23 +49,38 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
 
 ## Before you begin
 
-### 1. Create a new project in Google Console or reuse an existing project
-Refer to [Creating and managing projects | Resource Manager Documentation](https://cloud.google.com/resource-manager/docs/creating-managing-projects) for steps to create a new project. You will need the Google Project ID when configuring the Catchpoint script.
-### 2. Install the Monitoring Client Libraries
-Please refer to [Monitoring Cloud Libraries | Cloud Monitoring](https://cloud.google.com/monitoring/docs/reference/libraries) for instructions on installing the client libraries and setting up authentication. 
-### 3. Enable Monitoring API
-The Monitoring API must be enabled and have authorized users. Follow the steps in [Enabling the Monitoring API | Cloud Monitoring](https://cloud.google.com/monitoring/api/enable-api) to enable and authorize use of the Monitoring API v3 using either the Cloud SDK or the Cloud console. 
-### 4. Enable Cloud Functions
-Follow the steps in the [Cloud Pub/Sub Tutorial | Cloud Functions](https://cloud.google.com/functions/docs/tutorials/pubsub) to enable the use of Cloud Functions and Cloud Pub/Sub APIs. This tutorial leverages Node.js.
+1.  Create a new Google Cloud project or select an existing project.
 
-*Some steps in this tutorial are performed via the Google Cloud Console, and others via the Cloud SDK Shell. The tutorial assumes you are familiar with accessing and using these tools.*
+    For information about creating and selecting projects, see
+    [Creating and managing projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects)
+    
+    You need the Google Cloud project ID when you configure the Catchpoint script.
 
-## Tutorial body
+1.  Install the Cloud Monitoring Client Libraries and set up authentication.
 
-### Set up GCP data pipeline
-1.	Clone the Catchpoint Stackdriver integration repository to your local machine from [here](https://github.com/catchpoint/Integrations.GoogleCloudMonitoring). The Stackdriver-Webhook folder has the required Node.js script to set up the ingestion of data and writing of data to Cloud Monitoring.
-1.	Edit [Stackdriver-Webhook/.env](https://github.com/catchpoint/Integrations.GoogleCloudMonitoring/blob/master/Stackdriver-Webhook/.env) and update the GoogleProjectId to your project’s Project ID. Refer to [Using Environment Variables](https://cloud.google.com/functions/docs/env-var) for more information on environment variables.
-1.	Open Google Cloud SDK Shell and navigate to the directory where the Node.js scripts were cloned:
+    For details, see [Cloud Monitoring Client Libraries](https://cloud.google.com/monitoring/docs/reference/libraries).
+
+1.  Enable the Monitoring API v3 and authorize users.
+
+    For details, see [Enabling the Monitoring API](https://cloud.google.com/monitoring/api/enable-api).
+
+1.  Enable the Cloud Functions and Pub/Sub APIs.
+
+    For details, see [Cloud Pub/Sub Tutorial](https://cloud.google.com/functions/docs/tutorials/pubsub).
+
+## Set up the Google Cloud data pipeline
+
+1.  Clone [the repository with the integration between Catchpoint and Cloud Monitoring](https://github.com/catchpoint/Integrations.GoogleCloudMonitoring) 
+    (formerly _Stackdriver_) to your local machine.
+
+    The `Stackdriver-Webhook` folder has the required Node.js script to set up the ingestion of data and writing of data to Cloud Monitoring.
+    
+1. Edit [`Stackdriver-Webhook/.env`](https://github.com/catchpoint/Integrations.GoogleCloudMonitoring/blob/master/Stackdriver-Webhook/.env) and update the
+   `GoogleProjectId` to the project ID for your Google Cloud project.
+   
+    For more information about environment variables, see [Using environment variables](https://cloud.google.com/functions/docs/env-var).
+
+5.	Open Google Cloud SDK Shell and navigate to the directory where the Node.js scripts were cloned:
 
         cd <path to cloned directory>
 
