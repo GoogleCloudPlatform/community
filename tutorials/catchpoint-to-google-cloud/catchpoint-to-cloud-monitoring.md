@@ -75,81 +75,109 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
 
     The `Stackdriver-Webhook` folder has the required Node.js script to set up the ingestion of data and writing of data to Cloud Monitoring.
     
-1. Edit [`Stackdriver-Webhook/.env`](https://github.com/catchpoint/Integrations.GoogleCloudMonitoring/blob/master/Stackdriver-Webhook/.env) and update the
-   `GoogleProjectId` to the project ID for your Google Cloud project.
+1.  Edit [`Stackdriver-Webhook/.env`](https://github.com/catchpoint/Integrations.GoogleCloudMonitoring/blob/master/Stackdriver-Webhook/.env) and update the
+    value of the `GoogleProjectId` variable to the project ID for your Google Cloud project.
    
     For more information about environment variables, see [Using environment variables](https://cloud.google.com/functions/docs/env-var).
 
-5.	Open Google Cloud SDK Shell and navigate to the directory where the Node.js scripts were cloned:
+1.  On the Cloud SDK command line, go to the directory where you cloned the Node.js scripts:
 
-        cd <path to cloned directory>
+        cd [PATH_TO_CLONED_DIRECTORY]
 
-1.	Set/change the project property in the core section to the current project:
+1.  Set the project property to the current project:
 
-        gcloud config set project <your project ID>
+        gcloud config set project [YOUR_PROJECT_ID]
 
-1.	Run the following command to deploy the Publish Function:  
+1.  Deploy the Catchpoint publish function:
 
         gcloud functions deploy catchpointPublish \
-            --trigger-http \
-            --runtime nodejs10 \
-            --trigger-http \
-            --allow-unauthenticated
+          --trigger-http \
+          --runtime nodejs10 \
+          --trigger-http \
+          --allow-unauthenticated
 
-    ***Note:** this function creates a topic using the TopicName value from the .env file. By default this name is “catchpoint-webhook”. If you want to use a different name then you must change this value in the .env file before running the command.*
-1.	Capture the HTTP Trigger URL after the deployment is successful. You will need this when configuring Catchpoint.
- ![sample-publish-function](sample-publish-function.png)
-1.	Run the following command to deploy the Subscribe Function: 
-            gcloud functions deploy catchpointSubscribe \
-            --trigger-topic catchpoint-webhook \
-            --runtime nodejs10 \
-            --allow-unauthenticated \
+    This function creates a topic using the `TopicName` value from the `.env` file. By default, this name is `catchpoint-webhook`. If you want to use a different
+    name, then you must change this value in the `.env` file before running the command.
+    
+1.  Capture the HTTP Trigger URL after the deployment is successful.
+
+    ![sample-publish-function](sample-publish-function.png)
+    
+    You need this when configuring Catchpoint.
+
+1.  Deploy the Catchpoint subscribe function:
+
+        gcloud functions deploy catchpointSubscribe \
+          --trigger-topic catchpoint-webhook \
+          --runtime nodejs10 \
+          --allow-unauthenticated \
  
-    ***Note:** This command assumes you have used the default topic name, “catchpoint-webhook”. If you used a different topic name, then replace the topic name in this command with yours.*
-	![sample-subscribe-function](sample-subscribe-function.png)
-### Configure Catchpoint
-1.	Navigate to [Catchpoint API Detail](https://portal.catchpoint.com/ui/Content/Administration/ApiDetail.aspx). (See [Catchpoint Webhook document](https://support.catchpoint.com/hc/en-us/articles/115005282906) for additional information.)
-1.	Click Add URL under Test Data Webhook
-1.	Input the HTTP Trigger URL you generated in the previous section in the URL field.
-1.	Under "Format" you can choose “JSON” to have Catchpoint send its default data payload in JSON format, or you can choose “Template” if you want to customize the data payload. Steps 5-8 are only necessary if you choose Template.
-1.	Click "Select Template"
-1.	Click "Add New"
-1.	Input a Name for this template and select "JSON" as the format.
-1.	Input valid JSON specifying the format of the payload that will be posted to the Webhook. Each value in the template is set using a Macro, which will be replaced with actual data at runtime. See [Test Data Webhook Macros]((https://support.catchpoint.com/hc/en-us/articles/360008476571)) for all available options. Here is a sample JSON template containing recommended macros:
-        {
-        "TestName": "${TestName}",
-        "TestURL": "${testurl}",
-        "TimeStamp": "${timestamp}",
-        "NodeName": "${nodeName}",
-        "PacketLoss": "${pingpacketlosspct}",
-        "RTTAvg": "${pingroundtriptimeavg}",
-        "DNSTime": "${timingdns}", 
-        "Connect": "${timingconnect}", 
-        "SSL": "${timingssl}", 
-        "SendTime": "${timingsend}",
-        "WaitTime": "${timingwait}", 
-        "Total": "${timingtotal}"
-        }
-1.	Click “Save” at the bottom of the page.
-### Set up Cloud Monitoring
-1. Create a Workspace: open Google Cloud Console, go to Monitoring, and select Overview. This creates a workspace for you automatically.
-1. Select Metrics Explorer in the Monitoring navigation pane.
-1. Enter the monitored resource name in the "Find resource type and metric" text box.
+    This command assumes that you have used the default topic name, `catchpoint-webhook`. If you used a different topic name, then replace the topic name in this
+    command with yours.
     
-![GCM Metrics](gcm-metrics.png)
-    Catchpoint metrics are represented in Metrics Explorer using Custom Metrics with “catchpoint_” prepended to their original name. For example, if a metric is named “DNS” in Catchpoint, the corresponding Custom Metric in Metric Explorer will be named “catchpoint_DNS”.
+    ![sample-subscribe-function](sample-subscribe-function.png)
+
+## Configure Catchpoint
+
+1.  Go to [Catchpoint API Detail](https://portal.catchpoint.com/ui/Content/Administration/ApiDetail.aspx).
+
+    For more information, see [Catchpoint Webhook document](https://support.catchpoint.com/hc/en-us/articles/115005282906).
     
-    You can filter your query results based on the Catchpoint Node Name and Test ID, which are included as labels on each data point.
+1.  Click **Add URL** under **Test Data Webhook**.
+1.  In the URL field, enter the HTTP Trigger URL that you generated in the previous section.
+1.  Under **Format** either choose **JSON** to have Catchpoint send its default data payload in JSON format, or choose **Template** to customize the data 
+    payload.
     
-    For more information on Custom Metrics, see [Creating custom metrics | Cloud Monitoring](https://cloud.google.com/monitoring/custom-metrics/creating-metrics)
-At this point your data pipeline is fully configured and you can create custom Charts and Dashboards in Google Cloud Monitoring to visualize your Catchpoint Data. Please refer to [ Creating charts | Cloud Monitoring](https://cloud.google.com/monitoring/charts/) for more information.
+    If you chose **Template**, then do the following:
+    
+    1.  Click **Select Template**
+    1.  Click **Add New**
+    1.  Enter a name for this template and select **JSON** as the format.
+    1.  Enter valid JSON specifying the format of the payload that will be posted to the webhook. Each value in the template is set using a macro, which will be
+        replaced with actual data at run time. See [Test Data Webhook Macros]((https://support.catchpoint.com/hc/en-us/articles/360008476571)) for all available
+	options.
+	
+	Here is a sample JSON template containing recommended macros:
+	
+            {
+            "TestName": "${TestName}",
+            "TestURL": "${testurl}",
+            "TimeStamp": "${timestamp}",
+            "NodeName": "${nodeName}",
+            "PacketLoss": "${pingpacketlosspct}",
+            "RTTAvg": "${pingroundtriptimeavg}",
+            "DNSTime": "${timingdns}", 
+            "Connect": "${timingconnect}", 
+            "SSL": "${timingssl}", 
+            "SendTime": "${timingsend}",
+            "WaitTime": "${timingwait}", 
+            "Total": "${timingtotal}"
+            }
+	    
+1.  Click **Save** at the bottom of the page.
+ 
+## Set up Cloud Monitoring
+
+1.  In the Cloud Console, go to the **Monitoring** page, and select **Overview**, which creates a Workspace.
+1.  Select **Metrics Explorer** in the **Monitoring** navigation pane.
+1.  Enter the monitored resource name in the **Find resource type and metric** text box.
+    
+    ![GCM Metrics](gcm-metrics.png)
+    
+    Catchpoint metrics are represented in Metrics Explorer using custom metrics with `catchpoint_` prepended to their original names. For example, if a metric is
+    named `DNS` in Catchpoint, the corresponding custom metric in Metrics Explorer is named `catchpoint_DNS`.
+    
+    You can filter your query results based on the Catchpoint node name and test ID, which are included as labels on each data point.
+    
+    For more information on custom metrics, see [Creating custom metrics](https://cloud.google.com/monitoring/custom-metrics/creating-metrics).
+    
+At this point your data pipeline is fully configured and you can create custom [charts and dashboards](https://cloud.google.com/monitoring/charts/) in Cloud
+Monitoring to visualize your Catchpoint data.
     
 ## Cleaning up
-To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project.
-Deleting a project has the following consequences:
-- If you used an existing project, you'll also delete any other work that you've done in the project.
-- You can't reuse the project ID of a deleted project. If you created a custom project ID that you plan to use in the future, delete the resources inside the project instead. This ensures that URLs that use the project ID, such as an appspot.com URL, remain available.
-To delete a project, do the following:
-1.	In the Cloud Console, go to the Projects page.
-1.	In the project list, select the project you want to delete and click Delete.
-1.	In the dialog, type the project ID, and then click Shut down to delete the project.
+
+To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project:
+
+1.  In the Cloud Console, go to the Projects page.
+1.  In the project list, select the project you want to delete and click Delete.
+1.  In the dialog, type the project ID, and then click Shut down to delete the project.
