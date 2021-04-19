@@ -10,6 +10,12 @@ Dritan Suljoti | Chief Product and Technology Officer | Catchpoint Systems, Inc.
 
 <p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
+[Catchpoint’s digital experience monitoring platform](https://www.catchpoint.com/platform) provides instant insight into the performance of networks, apps, and digital services. The following tutorials provide two methods of ingesting and visualizing data from Catchpoint within GCP. The first method delivers data to Grafana for the visualization and analysis, and the second uses Metrics Explorer in Google Cloud Monitoring.
+
+[Method 1 - Catchpoint to Grafana](.\Catchpoint%20to%20Grafana.md)
+
+[Method 2 - Catchpoint to Cloud Monitoring](.\Catchpoint%20to%20GCM.md)
+
 [Google Cloud Monitoring](https://cloud.google.com/monitoring), in conjunction with the open-source analytics and interactive visualization web application [Grafana](https://grafana.com/oss/), can be used to realize the vision of a single pane for all network performance monitoring and analysis. [Catchpoint’s digital experience monitoring platform](https://www.catchpoint.com/platform) provides the most extensive fleet of network telemetry probes in the world, as well as tools for capturing Real User experience metrics. In this tutorial, you will learn how to set up a pipeline that takes data captured by Catchpoint and processes it to Google Cloud Platform for visualization and analysis in Grafana.
 
 The fully configured data pipeline from Catchpoint to Grafana will work as follows:
