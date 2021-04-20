@@ -137,108 +137,121 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
 
 1.  Deploy Grafana and the BigQuery Plugin for Grafana.
 
-    For details about deploying Grafana and adding the BigQuery Plugin for Grafana, see 
-    [Deploy Grafana Guide](https://console.cloud.google.com/marketplace/details/click-to-deploy-images/grafana) and
-    [BigQuery Grafana plugin](https://grafana.com/grafana/plugins/doitintl-bigquery-datasource).
+    For details about deploying Grafana and adding the BigQuery plugin for Grafana, see the 
+    [Grafana deployment guide](https://console.cloud.google.com/marketplace/details/click-to-deploy-images/grafana) and
+    [BigQuery Grafana plugin guide](https://grafana.com/grafana/plugins/doitintl-bigquery-datasource/?tab=installation).
 
 
 ## Create a Pub/Sub topic
 
-This section covers publishing and subscribing to a topic with Google Cloud Console. It is also possible to configure Pub/Sub using the gcloud command-line tool or the API. Refer to [gcloud pubsub reference](https://cloud.google.com/sdk/gcloud/reference/pubsub) for more information on these methods.
+This section covers publishing and subscribing to a topic with the Cloud Console. You can also configure Pub/Sub using the `gcloud` command-line tool or the API.
+For more information about these methods, see the [`gcloud` documentation](https://cloud.google.com/sdk/gcloud/reference/pubsub).
 
 1. Go to the [Pub/Sub topics page](https://console.cloud.google.com/cloudpubsub/topicList) in the Cloud Console.
-1. Click Create a Topic.
-1. Input a unique topic name in the Topic ID. We will use “catchpoint-topic” for our example.
-1. Click Save. 
-1. Display the menu for the topic you just created, and click New Subscription.
-1. Type a name for the Subscription. We will call ours “catchpoint-bq-dataset”.
-1. Leave the delivery type as Pull.
-1. Click Create.
+1. Click **Create a Topic**.
+1. Enter a unique topic name in the **Topic ID** field. This example uses `catchpoint-topic`.
+1. Click **Save**. 
+1. Display the menu for the topic you just created, and click **New Subscription**.
+1. Enter a name for the subscription. This example uses `catchpoint-bq-dataset`.
+1. Leave the delivery type set to **Pull**.
+1. Click **Create**.
 
-Need additional help configuring Pub/Sub in the Cloud Console? See [Quickstart: using the Google Cloud Console](https://cloud.google.com/pubsub/docs/quickstart-console).
+For more information about configuring Pub/Sub in the Cloud Console, see
+[Quickstart: Using the Cloud Console](https://cloud.google.com/pubsub/docs/quickstart-console).
 
 ## Build a webhook in Google Cloud
 
-A webhook (web application) provides a URL where vendors can post data to your application. The app will listen on the defined URL and push posted data to the Pub/Sub Topic created in the previous step.
+A webhook (web application) provides a URL where vendors can post data to your application. The app listens on the defined URL and pushes posted data to the 
+Pub/Sub topic created in the previous step.
 
-1. Download the go script in the GCS bucket [here](https://storage.googleapis.com/webhook-catchpoint/main.go).
-1. Edit the script and replace the DefaultCloudProjectName value with your project's Project ID.
-1. If you chose a different Pub/Sub topic name than "catchpoint-topic", change the CatchpointTopicProd value to your chosen topic name. 
+1.  Download the Go script in the Cloud Storage bucket [here](https://storage.googleapis.com/webhook-catchpoint/main.go).
+1.  Edit the script and replace the `DefaultCloudProjectName` value with your project ID.
+1.  If you chose a Pub/Sub topic name other than `catchpoint-topic`, change the `CatchpointTopicProd` value to your chosen topic name. 
 
-***Note:** You may keep "/cppush" as the CatchpointPushURL value or use another value of your choosing. After deploying the script, be sure to capture the entire Webhook URL, as you will need this when configuring Catchpoint.*
+    You may keep `/cppush` as the `CatchpointPushURL` value or use another value of your choosing. After deploying the script, be sure to capture the entire 
+    webhook URL, which you need when configuring Catchpoint.
 
-1. Deploy the script on App Engine per the instructions in [App Engine Deployment](https://cloud.google.com/appengine/docs/standard/go/building-app#deploying_your_web_service_on).
+1.  Deploy the script on App Engine by following the 
+    [App Engine deployment](https://cloud.google.com/appengine/docs/standard/go/building-app#deploying_your_web_service_on) instructions.
 
 ## Configure Catchpoint
 
-1. Navigate to [Catchpoint API Detail](https://portal.catchpoint.com/ui/Content/Administration/ApiDetail.aspx). 
-1. Select Add URL under Test Data Webhook
-1. Input the entire URL for your Webhook in the URL field.
-1. Select a data payload format. Choose “JSON” to have Catchpoint send its default data payload in JSON format, or choose “Template” if you want to customize the data payload. Steps 5-8 are only necessary if you choose Template.
-1. Click Select Template
-1. Click Add New
-1. Input a Name for this template and select "JSON" as the format.
-1. Input valid JSON specifying the format of the payload that will be posted to the Webhook. Each value in the template is set using a Macro, which will be replaced with actual data at runtime. See [Test Data Webhook Macros](https://support.catchpoint.com/hc/en-us/articles/360008476571) for all available options.
-
-    Here is a sample JSON template containing recommended macros:
+1.  Go to [Catchpoint API Detail](https://portal.catchpoint.com/ui/Content/Administration/ApiDetail.aspx). 
+1.  Select **Add URL** under **Test Data Webhook**.
+1.  Enter the entire URL for your webhook in the URL field.
+1.  Under **Format** either choose **JSON** to have Catchpoint send its default data payload in JSON format, or choose **Template** to customize the data 
+    payload.
     
-        {
-        "TestName": "${TestName}",
-        "TestURL": "${testurl}",
-        "TimeStamp": "${timestamp}",
-        "NodeName": "${nodeName}",
-        "PacketLoss": "${pingpacketlosspct}",
-        "RTTAvg": "${pingroundtriptimeavg}",
-        "DNSTime": "${timingdns}", 
-        "Connect": "${timingconnect}", 
-        "SSL": "${timingssl}", 
-        "SendTime": "${timingsend}",
-        "WaitTime": "${timingwait}", 
-        "Total": "${timingtotal}"
-        }
+    If you chose **Template**, then do the following:
+    
+    1.  Click **Select Template**.
+    1.  Click **Add New**.
+    1.  Enter a name for this template and select **JSON** as the format.
+    1.  Enter valid JSON specifying the format of the payload that will be posted to the webhook. Each value in the template is set using a macro, which will be
+        replaced with actual data at run time. See [Test Data Webhook Macros]((https://support.catchpoint.com/hc/en-us/articles/360008476571)) for all available
+	options.
+	
+	Here is a sample JSON template containing recommended macros:
+	
+            {
+            "TestName": "${TestName}",
+            "TestURL": "${testurl}",
+            "TimeStamp": "${timestamp}",
+            "NodeName": "${nodeName}",
+            "PacketLoss": "${pingpacketlosspct}",
+            "RTTAvg": "${pingroundtriptimeavg}",
+            "DNSTime": "${timingdns}", 
+            "Connect": "${timingconnect}", 
+            "SSL": "${timingssl}", 
+            "SendTime": "${timingsend}",
+            "WaitTime": "${timingwait}", 
+            "Total": "${timingtotal}"
+            }
+	    
+1.  Click **Save** at the bottom of the page.
+ 
+For more information about configuring Catchpoint, see the [Catchpoint webhook document](https://support.catchpoint.com/hc/en-us/articles/115005282906).
 
-9. Click Save at the bottom of the page.
+## Build your pipeline
 
-For more help configuring Catchpoint, see the [Catchpoint Webhook document](https://support.catchpoint.com/hc/en-us/articles/115005282906).
-
-## Build your Pipeline
-
-1. Clone the [Cloud DataFlow repository](https://github.com/pupamanyu/beam-pipelines/tree/master/perf-data-loader).
-2. Change the Metric.java file to match Catchpoint’s test data schema. You can download a ready metric.java file [here](https://storage.cloud.google.com/netperf-bucket/CatchPoint%20-%20metric.java).
-3. Switch to Java8 on cloud shell by running this command:
+1.  Clone the [data loader repository](https://github.com/pupamanyu/beam-pipelines/tree/master/perf-data-loader).
+1.  Change the `metric.java` file to match Catchpoint’s test data schema. You can download a ready `metric.java` file
+    from [this Cloud Storage bucket](https://storage.cloud.google.com/netperf-bucket/CatchPoint%20-%20metric.java).
+1.  Switch to Java 8 in Cloud Shell:
 
         sudo update-java-alternatives \
-        -s java-1.8.0-openjdk-amd64 && \
-        export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/jre
+          -s java-1.8.0-openjdk-amd64 && \
+          export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/jre
 
-4. Build the Fat Jar by executing the following command from within the project root directory:
+1.  Build the uber JAR file (the JAR file with dependencies) by running the following command in the project root directory:
 
-		./gradlew clean && ./gradlew shadowJar
+        ./gradlew clean && ./gradlew shadowJar
 
-5. Replace the placeholders in the following command with valid values, then execute it from within the project root directory:
+1.  Replace the placeholders in the following command with values for your environment, and then run the command it in the project root directory:
 
         cd build/libs && java -jar perf-data-loader-1.0.jar \
-        --dataSet=<target-dataset> \
-        --table=<target-table> \
-        --deadLetterDataSet=<dead-letter-dataset> \
-        --deadLetterTable=<dead-letter-table> \
-        --runner=DataflowRunner \
-        --project=<gcp-project-name> \
-        --subscription=projects/<gcp-project- name>/subscriptions/<pub-sub-subscription> \
-        --jobName=<pipeline-job-name>
+          --dataSet=[TARGET_DATASET] \
+          --table=[TARGET_TABLE] \
+          --deadLetterDataSet=[DEAD_LETTER_DATASET] \
+          --deadLetterTable=[DEAD_LETTER_TABLE] \
+          --runner=DataflowRunner \
+          --project=[GOOGLE_CLOUD_PROJECT_NAME] \
+          --subscription=projects/[GOOGLE_CLOUD_PROJECT_NAME]/subscriptions/[PUBSUB_SUBSCRIPTION] \
+          --jobName=[PIPELINE_JOB_NAME]
 
-    ***Note:** If you need to update/change the pipeline, run the above command with updated values and include --update as an additional argument.*
+    If you need to update or change the pipeline, run the command with updated values and include `--update` as an additional argument.
 
-If the job deployed successfully then you should see it listed in the Jobs view as in this example:
+If the job deployed successfully, then you should see it listed in the **Jobs** view:
 
 ![sample-deployed-job](https://storage.googleapis.com/gcp-community/tutorials/catchpoint/sample-deployed-job.png)
  
-At this point your data pipeline configuration is complete. Data posted to the Webhook by Catchpoint should be propagating to your BigQuery tables and available for visualization in Grafana. Please refer to the [Grafana Documentation](https://grafana.com/docs) for details on its visualization/analytics capabilities.
+At this point, your data pipeline configuration is complete. Data posted to the webhook by Catchpoint should be propagating to your BigQuery tables and available 
+for visualization in Grafana. For details, see the [Grafana documentation](https://grafana.com/docs).
     
 ## Cleaning up
 
 To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project:
 
-1. In the Cloud Console, go to the Projects page.
-1. In the project list, select the project you want to delete and click Delete.
-1. In the dialog, type the project ID, and then click Shut down to delete the project.
+1. In the Cloud Console, go to the **Projects** page.
+1. In the project list, select the project that you want to delete and click **Delete**.
+1. In the dialog, type the project ID, and then click **Shut down** to delete the project.
