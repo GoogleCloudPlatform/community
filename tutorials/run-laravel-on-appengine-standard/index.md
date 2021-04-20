@@ -28,7 +28,7 @@ All code for the original version of this tutorial is available in the
 
 ## Prepare
 
-Follow the official documentation for [installing Laravel][laravel-install]
+Follow the official documentation for [installing the Laravel CLI tool][laravel-install]
 from laravel.com.
 
 ## Run
@@ -547,7 +547,7 @@ to App Engine, e.g., on commit to the `main` branch.
 
 [php-gcp]: https://cloud.google.com/php
 [laravel]: http://laravel.com
-[laravel-install]: https://laravel.com/docs/8.x/installation
+[laravel-install]: https://laravel.com/docs/8.x/installation#the-laravel-installer
 [laravel-welcome]: welcome-page.png
 [cloud_sdk]: https://cloud.google.com/sdk/
 [cloudsql-create]: https://cloud.google.com/sql/docs/mysql/create-instance
