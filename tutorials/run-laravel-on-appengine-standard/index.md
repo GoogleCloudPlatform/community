@@ -427,7 +427,7 @@ You can send error reports to Stackdriver Error Reporting from PHP applications 
 
         use Google\Cloud\ErrorReporting\Bootstrap;
 
-1.  Edit the `report` function in the same file `app/Exceptions/Handler.php` as 
+1.  Add the `report` function in the same file `app/Exceptions/Handler.php` as 
     follows:
 
         public function report(Throwable $e)
