@@ -1,26 +1,29 @@
 ---
-title: Restricting GKE Workload Identity with Kyverno
-description: Learn how to configure Workload Identity on GKE and how to use Kyverno to enforce identity security with policies.
+title: Restrict Google Kubernetes Engine Workload Identity with Kyverno
+description: Learn how to configure Workload Identity on Google Kubernetes Engine (GKE) and how to use Kyverno to enforce identity security with policies.
 author: soeirosantos
 tags: gcp, gke, google kubernetes engine, workload identity, cloud-native security, policy management, policy engine, kyverno
-date_published: 2021-03-21
+date_published: 2021-04-21
 ---
 
 Romulo Santos
 
 <p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
-In this tutorial, we are going to create a GKE cluster and configure [Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity) to access Google Cloud services from applications running within the cluster. Then we will use Kyverno, a Kubernetes policy engine, to enforce the workload identity, which will improve security and prevent configuration errors.
+In this tutorial, you create a GKE cluster and configure Workload Identity to access Google Cloud services from applications running within the cluster. 
+You use Kyverno, a Kubernetes policy engine, to enforce admission policies, which improves security and prevents configuration errors.
 
-## Workload Identity
+[Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity) is the recommended way to access Google Cloud services from 
+applications running within GKE due to its improved security properties and manageability. With Workload Identity, you can configure a Kubernetes service account 
+to act as a Google service account. Pod resources running as the Kubernetes service account will automatically authenticate as the Google service account when 
+accessing Google Cloud APIs.
 
-From the [GKE documentation](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity):
-
-> Workload Identity is the recommended way to access Google Cloud services from applications running within GKE due to its improved security properties and manageability. [...] With Workload Identity, you can configure a Kubernetes service account to act as a Google service account. Pod resources running as the Kubernetes service account will automatically authenticate as the Google service account when accessing Google Cloud APIs.
-
-## Kyverno
-
-Kyverno is a policy engine designed for Kubernetes. It runs as a [dynamic admission controller](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/) in a Kubernetes cluster validating and mutating admission webhook HTTP callbacks from the kube-apiserver. Kyverno applies matching policies to return results that enforce admission policies or reject requests. In this tutorial, we are going to apply a cluster-wide policy to ensure that our Kubernetes Service Account can only be used by a specific application in a particular namespace. For more details about Kyverno, check the [official docs](https://kyverno.io/docs/).
+Kyverno is a policy engine designed for Kubernetes. It runs as a
+[dynamic admission controller](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/) in a Kubernetes cluster, validating and
+mutating admission webhook HTTP callbacks from the
+[Kubernetes API server](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-apiserver/). Kyverno applies matching policies to return results 
+that enforce admission policies or reject requests. In this tutorial, you apply a cluster-wide policy to ensure that your Kubernetes service account can only be
+used by a specific application in a particular namespace. For more information, see the [Kyverno documentation](https://kyverno.io/docs/).
 
 ## Before you begin
 
