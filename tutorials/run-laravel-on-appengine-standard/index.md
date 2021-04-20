@@ -28,20 +28,13 @@ All code for the original version of this tutorial is available in the
 
 ## Prepare
 
-Follow the official documentation for [installing the Laravel CLI tool][laravel-install]
-from laravel.com.
+Follow the official documentation for [installing Laravel][laravel-install]
+and create a sample laravel app with one of the methods provided on the
+installation page.
 
 ## Run
 
-1. Create a new Laravel project using the laravel installer.
-
-        laravel new blog
-
-1. Go to the blog directory
-
-        cd blog
-
-1. Run the app with the following command:
+1. From your Laravel project run the app with the following command:
 
         php artisan serve
 
@@ -547,7 +540,7 @@ to App Engine, e.g., on commit to the `main` branch.
 
 [php-gcp]: https://cloud.google.com/php
 [laravel]: http://laravel.com
-[laravel-install]: https://laravel.com/docs/8.x/installation#the-laravel-installer
+[laravel-install]: https://laravel.com/docs/8.x/installation
 [laravel-welcome]: welcome-page.png
 [cloud_sdk]: https://cloud.google.com/sdk/
 [cloudsql-create]: https://cloud.google.com/sql/docs/mysql/create-instance
