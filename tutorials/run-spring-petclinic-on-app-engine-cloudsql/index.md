@@ -120,9 +120,6 @@ Spring Integration for Cloud SQL. The following sections demonstrate both option
 
 ### Using Spring Cloud integration for Cloud SQL
 
-You can also now use the [Spring Cloud SQL starter](https://github.com/spring-cloud/spring-cloud-gcp/tree/master/spring-cloud-gcp-starters/spring-cloud-gcp-starter-sql)
-to configure Cloud SQL in your application.
-
 This is currently a SNAPSHOT release, add the dependency from [Spring SNAPSHOT repository](http://maven.springframework.org/snapshot/).
 
 You also need to add the [Spring Boot JDBC](https://mvnrepository.com/artifact/org.springframework/spring-jdbc/4.3.10.RELEASE)
@@ -155,7 +152,7 @@ This dependency enables your application to use the JDBC API to connect to the d
 [api]: https://console.cloud.google.com/flows/enableapi?apiid=sqladmin
 [instructions]: /sql/docs/mysql/create-instance#create-2nd-gen
 [socket]: https://mvnrepository.com/artifact/com.google.cloud.sql/mysql-socket-factory
-[profile]: http://docs.spring.io/spring-boot/docs/current/maven-plugin/examples/run-profiles.html
+[profile]: https://docs.spring.io/spring-boot/docs/current/maven-plugin/reference/htmlsingle/
 [shell]: /sql/docs/mysql/quickstart#connect_to_your_instance_using_the_db_client_client_in_the_cloud_shell
 
 ## Deploying to App Engine flexible environment on Google Cloud
