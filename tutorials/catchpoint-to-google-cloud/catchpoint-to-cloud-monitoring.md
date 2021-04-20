@@ -23,7 +23,7 @@ This tutorial and its companion tutorial provide two methods of ingesting and vi
   
 This tutorial uses Node.js, the Cloud Console, and the Cloud SDK command line.
 
-The dataflow from Catchpoint to Cloud Monitoring is illustrated in the following diagram:
+The data flow from Catchpoint to Cloud Monitoring is illustrated in the following diagram:
 
 ![data-ingestion-pipeline](https://storage.googleapis.com/gcp-community/tutorials/catchpoint/data-ingestion-pipeline.png)
 
@@ -52,7 +52,7 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
 1.  Create a new Google Cloud project or select an existing project.
 
     For information about creating and selecting projects, see
-    [Creating and managing projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects)
+    [Creating and managing projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
     
     You need the Google Cloud project ID when you configure the Catchpoint script.
 
@@ -101,7 +101,7 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
     
 1.  Capture the HTTP Trigger URL after the deployment is successful.
 
-    ![sample-publish-function](sample-publish-function.png)
+    ![sample-publish-function](https://storage.googleapis.com/gcp-community/tutorials/catchpoint/sample-publish-function.png)
     
     You need this when configuring Catchpoint.
 
@@ -115,7 +115,7 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
     This command assumes that you have used the default topic name, `catchpoint-webhook`. If you used a different topic name, then replace the topic name in this
     command with yours.
     
-    ![sample-subscribe-function](sample-subscribe-function.png)
+    ![sample-subscribe-function](https://storage.googleapis.com/gcp-community/tutorials/catchpoint/sample-subscribe-function.png)
 
 ## Configure Catchpoint
 
@@ -130,8 +130,8 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
     
     If you chose **Template**, then do the following:
     
-    1.  Click **Select Template**
-    1.  Click **Add New**
+    1.  Click **Select Template**.
+    1.  Click **Add New**.
     1.  Enter a name for this template and select **JSON** as the format.
     1.  Enter valid JSON specifying the format of the payload that will be posted to the webhook. Each value in the template is set using a macro, which will be
         replaced with actual data at run time. See [Test Data Webhook Macros]((https://support.catchpoint.com/hc/en-us/articles/360008476571)) for all available
@@ -158,11 +158,11 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
  
 ## Set up Cloud Monitoring
 
-1.  In the Cloud Console, go to the **Monitoring** page, and select **Overview**, which creates a Workspace.
+1.  In the Cloud Console, go to the [**Monitoring** page](https://console.cloud.google.com/monitoring), and select **Overview**, which creates a Workspace.
 1.  Select **Metrics Explorer** in the **Monitoring** navigation pane.
 1.  Enter the monitored resource name in the **Find resource type and metric** text box.
     
-    ![GCM Metrics](gcm-metrics.png)
+    ![GCM Metrics](https://storage.googleapis.com/gcp-community/tutorials/catchpoint/gcm-metrics.png)
     
     Catchpoint metrics are represented in Metrics Explorer using custom metrics with `catchpoint_` prepended to their original names. For example, if a metric is
     named `DNS` in Catchpoint, the corresponding custom metric in Metrics Explorer is named `catchpoint_DNS`.
