@@ -1,6 +1,6 @@
 ---
 title: Exporting Google Cloud Security data to your SIEM
-description: Learn how to deploy unified export pipeline to stream your Google Cloud logs, asset changes and security findings to your existing SIEM.
+description: Learn how to deploy unified export pipeline to stream your Google Cloud logs, asset changes and security findings to your existing SIEM
 author: rarsan
 tags: logging, monitoring, alerts, security, siem, dataflow, scc
 date_published: 2021-04-17
@@ -10,17 +10,17 @@ Roy Arsan | Solutions Architect | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-This tutorial is for security paractitioners who need to aggregate all security-relevant data (logs, alerts, and assets metadata) from their Google Cloud environment into their existing Security Information & Event Management (SIEM) tools in order to power their security operations. You will deploy a Cloud PubSub & Dataflow-based pipeline to aggregate and stream in near real-time logs from Cloud Logging, security findings from Security Command Center and assets changes from Cloud Asset Inventory all in a unified cloud-native export pipeline.
+This tutorial is for security practitioners who need to aggregate all security-relevant data (logs, alerts, and assets metadata) from their Google Cloud environment into their existing Security Information & Event Management (SIEM) tools in order to power their security operations. You will deploy a Cloud PubSub & Dataflow-based pipeline to aggregate and stream in near real-time logs from Cloud Logging, security findings from Security Command Center and assets changes from Cloud Asset Inventory all in a unified cloud-native export pipeline.
 
 ![Google Cloud data export to SIEM diagram](./images/siem-unified-export-pipeline.png)
 
 ## Objectives
 
-*   Create a Pub/Sub topic and subscription to aggregate data
-*   Set up log sinks in Cloud Logging to export logs
-*   Set up notifications feed in Security Command Center to export security findings
-*   Set up asset feed in Cloud Asset Inventory to export assets changes
-*   Deploy a Dataflow job to stream data from Pub/Sub to your SIEM tool (if applicable)
+*   [Create a Pub/Sub topic and subscription to aggregate data](#create-a-pubsub-topic-and-subscription-for-aggregation)
+*   [Set up log sinks in Cloud Logging to export logs](#set-up-org-wide-log-sink-in-cloud-logging)
+*   [Set up notifications feed in Security Command Center to export security findings](#set-up-notification-feed-in-security-command-center)
+*   [Set up asset feed in Cloud Asset Inventory to export assets changes](#set-up-asset-changes-feed-in-cloud-asset-inventory)
+*   [Deploy a Dataflow job to stream data from Pub/Sub to your SIEM tool](#deploy-a-dataflow-job-to-stream-data-from-pubsub)
 
 ## Costs
 
