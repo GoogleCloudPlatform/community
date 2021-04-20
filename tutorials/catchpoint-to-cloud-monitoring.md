@@ -18,7 +18,7 @@ This tutorial and its companion tutorial provide two methods of ingesting and vi
 
 - This tutorial shows you how to set up a pipeline that ingests data captured by Catchpoint into Cloud Monitoring and use Metrics Explorer for visualization and
   analysis.
-- The [companion tutorial](https://cloud.google.com/community/tutorials/catchpoint-to-google-cloud/catchpoint-to-grafana) shows you how to deliver data to 
+- The [companion tutorial](https://cloud.google.com/community/tutorials/catchpoint-to-grafana) shows you how to deliver data to 
   Grafana for visualization and analysis.
   
 This tutorial uses Node.js, the Cloud Console, and the Cloud SDK command line.
