@@ -131,7 +131,7 @@ Your MongoDB Atlas cluster will now be secured and restricted to only the `10.8.
 
 1.  Enter the Project ID of your GCP project. 
 
-1.  Enter the VPC Name. The tuturial will use **default** here.
+1.  Enter the VPC Name. The tutorial will use **default** here.
 
 1.  Click **Initiate Peering**.
 
