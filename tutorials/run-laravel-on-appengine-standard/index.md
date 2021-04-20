@@ -422,10 +422,11 @@ You can write logs to Stackdriver Logging from PHP applications by using the Sta
 You can send error reports to Stackdriver Error Reporting from PHP applications by using the
 [Stackdriver Error Reporting library for PHP][stackdriver-error-reporting-php].
 
-1.  Add the following `use` statement at the beginning of the file
+1.  Add the following `use` statements at the beginning of the file
     [`app/Exceptions/Handler.php`][app-exceptions-handler-php]:
 
         use Google\Cloud\ErrorReporting\Bootstrap;
+        use Illuminate\Support\Reflector;
 
 1.  Add the `report` function in the same file `app/Exceptions/Handler.php` as 
     follows:
