@@ -18,12 +18,12 @@ You can use [Cloud Monitoring](https://cloud.google.com/monitoring), in conjunct
 This tutorial and its companion tutorial provide two methods of ingesting and visualizing data from Catchpoint within Google Cloud:
 
 - This tutorial shows you how to deliver data to Grafana for visualization and analysis.
-- The [companion tutorial](https://cloud.google.com/community/tutorials/catchpoint-to-google-cloud/catchpoint-to-grafana) shows you how to set up a pipeline that
-  ingests data captured by Catchpoint into Cloud Monitoring and use Metrics Explorer for visualization and analysis.
+- The [companion tutorial](https://cloud.google.com/community/tutorials/catchpoint-to-google-cloud/catchpoint-to-cloud-monitoring) shows you how to set up a   
+  pipeline that ingests data captured by Catchpoint into Cloud Monitoring and use Metrics Explorer for visualization and analysis.
 
 This tutorial uses Node.js, the Cloud Console, and `gcloud` commands on the Cloud SDK command line.
 
-The fully configured data pipeline from Catchpoint to Grafana works as follows:
+The fully configured data pipeline from Catchpoint to Grafana is illustrated in the following diagram:
 
 ![integration pipeline](https://storage.googleapis.com/gcp-community/tutorials/catchpoint/integration-pipeline.png)
 
@@ -50,7 +50,7 @@ This tutorial uses billable components of Google Cloud, including the following:
 
 Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage.
 
-## Before you begin
+## Initial setup
 
 1.  Create a new Google Cloud project or select an existing project.
 
@@ -188,7 +188,7 @@ Pub/Sub topic created in the previous step.
     1.  Click **Add New**.
     1.  Enter a name for this template and select **JSON** as the format.
     1.  Enter valid JSON specifying the format of the payload that will be posted to the webhook. Each value in the template is set using a macro, which will be
-        replaced with actual data at run time. See [Test Data Webhook Macros]((https://support.catchpoint.com/hc/en-us/articles/360008476571)) for all available
+        replaced with actual data at run time. See [Test Data Webhook Macros](https://support.catchpoint.com/hc/en-us/articles/360008476571) for all available
 	options.
 	
 	Here is a sample JSON template containing recommended macros:
@@ -227,7 +227,7 @@ For more information about configuring Catchpoint, see the [Catchpoint webhook d
 
         ./gradlew clean && ./gradlew shadowJar
 
-1.  Replace the placeholders in the following command with values for your environment, and then run the command it in the project root directory:
+1.  Replace the placeholders in the following command with values for your environment, and then run the command in the project root directory:
 
         cd build/libs && java -jar perf-data-loader-1.0.jar \
           --dataSet=[TARGET_DATASET] \
