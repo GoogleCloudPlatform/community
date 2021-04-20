@@ -29,7 +29,7 @@ The data flow from Catchpoint to Cloud Monitoring is illustrated in the followin
 
 1.  Catchpoint posts data to a Cloud Function (HTTP webhook).
 1.  The Cloud Function uses Pub/Sub to propagate the data to configured channels.
-1.  Cloud Monitoring receives the data from the Pub/Sub channel, where it is available for visualization using Metrics Explorer
+1.  Cloud Monitoring receives the data from the Pub/Sub channel, where it's available for visualization using Metrics Explorer
 
 ## Objectives
 
@@ -47,7 +47,7 @@ This tutorial uses billable components of Google Cloud, including the following:
 
 Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage.
 
-## Before you begin
+## Initial setup
 
 1.  Create a new Google Cloud project or select an existing project.
 
@@ -134,7 +134,7 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
     1.  Click **Add New**.
     1.  Enter a name for this template and select **JSON** as the format.
     1.  Enter valid JSON specifying the format of the payload that will be posted to the webhook. Each value in the template is set using a macro, which will be
-        replaced with actual data at run time. See [Test Data Webhook Macros]((https://support.catchpoint.com/hc/en-us/articles/360008476571)) for all available
+        replaced with actual data at run time. See [Test Data Webhook Macros](https://support.catchpoint.com/hc/en-us/articles/360008476571) for all available
 	options.
 	
 	Here is a sample JSON template containing recommended macros:
