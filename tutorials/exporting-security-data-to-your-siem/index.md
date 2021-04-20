@@ -74,9 +74,9 @@ This tutorial assumes that you already have your security analytics tool set up 
           pubsub.googleapis.com/projects/$PROJECT_ID/topics/export-topic \
           --organization=$ORG_ID \
           --include-children \
-          --log-filter="logName:'log/cloudaudit.googleapis.com'
+          --log-filter="logName:logs/cloudaudit.googleapis.com"
 
-Note the `log-filter` option specifies that Cloud Audit logs to be routed to the Pub/Sub topic `export-topic`. You may want to edit the log filter or create additional log sinks to export additional logs such as VPC flow logs, LB request logs or VM logs like application logs and syslog.
+Note the `log-filter` option specifies that Cloud Audit logs to be routed to the Pub/Sub topic `export-topic`. You may want to edit the log filter or create additional log sinks to export more logs such as VPC flow logs, LB request logs or VM logs like application logs and syslog, depending on your security requirements.
 
 This command returns the service account of the log sink writer, usually in the form `o#####-####@gcp-sa-logging.iam.gserviceaccount.com`
 
@@ -95,6 +95,7 @@ This command returns the service account of the log sink writer, usually in the 
 ## Set up notification feed in Security Command Center
 
 1. Set the `gcloud` tool account that you are using:
+
         export GCLOUD_ACCOUNT=[EMAIL]
 
 1. Set up temporary permissions for the `gcloud` tool account that you are using. This lets you create org-wide finding notifications feed in the subsequent step:
@@ -191,9 +192,9 @@ To verify:
 
 Depending on your SIEM tool's support for Pub/Sub, it may retrieve messages directly from Pub/Sub subscription either as a [pull or push delivery](https://cloud.google.com/pubsub/docs/subscriber).
 
-For a more flexible, managed and scalable approach with exactly-once processing of Pub/Sub message streams, you can use [Cloud Dataflow](https://cloud.google.com/dataflow) which is a fully-managed data streaming service with multiple supported sources and sinks including Pub/Sub, GCS, BigQuery and some third-party tools. There are purpose-built [Dataflow templates](https://cloud.google.com/dataflow/docs/guides/templates/provided-streaming) that handles the reliable delivery of data at scale including autoscaling, batching, retries, exponential backoff, and fallback to deadletter for any undeliverable messages.
+For a more flexible, managed and scalable approach with exactly-once processing of Pub/Sub message streams, you can use [Cloud Dataflow](https://cloud.google.com/dataflow) which is a fully-managed data streaming service with multiple supported sources and sinks including Pub/Sub, GCS, BigQuery and some third-party products. There are purpose-built [Dataflow templates](https://cloud.google.com/dataflow/docs/guides/templates/provided-streaming) that handle the reliable delivery of data to specific destinations, including batching, retries, exponential backoff, and fallback to deadletter for any undeliverable messages.
 
-For example, if using Splunk as SIEM tool, you can deploy a Dataflow job to pull from Pub/Sub and deliver to Splunk HTTP Event Collector (HEC) as follows:
+For example, if using Splunk as SIEM tool, you can deploy the [Pub/Sub to Splunk Dataflow template](https://cloud.google.com/blog/products/data-analytics/connect-to-splunk-with-a-dataflow-template) to deliver messages to Splunk HTTP Event Collector (HEC). The following steps walk you through that final stage:
 
 1. Back to your shell environment, create special-purpose Pub/Sub topic and subscription to be used for holding any undeliverable messages:
 
@@ -223,7 +224,8 @@ For example, if using Splunk as SIEM tool, you can deploy a Dataflow job to pull
         url=${SPLUNK_HEC_URL},\
         token=${SPLUNK_HEC_TOKEN}
 
-For a more comprehensive guide on deploying log export to Splunk, refer to [Deploying production-ready log exports to Splunk using Dataflow](https://cloud.google.com/architecture/deploying-production-ready-log-exports-to-splunk-using-dataflow)
+Within a few minutes, the Dataflow pipeline workers will be provisioned and start streaming data. You can then search and analyze these events in your Splunk Search UI.
+For a more comprehensive guide on deploying log export to Splunk, refer to [Deploying production-ready log exports to Splunk using Dataflow](https://cloud.google.com/architecture/deploying-production-ready-log-exports-to-splunk-using-dataflow).
 
 
 ## Cleaning up
