@@ -164,12 +164,12 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
     
     ![GCM Metrics](https://storage.googleapis.com/gcp-community/tutorials/catchpoint/gcm-metrics.png)
     
-    Catchpoint metrics are represented in Metrics Explorer using custom metrics with `catchpoint_` prepended to their original names. For example, if a metric is
-    named `DNS` in Catchpoint, the corresponding custom metric in Metrics Explorer is named `catchpoint_DNS`.
+Catchpoint metrics are represented in Metrics Explorer using custom metrics with `catchpoint_` prepended to their original names. For example, if a metric is
+named `DNS` in Catchpoint, the corresponding custom metric in Metrics Explorer is named `catchpoint_DNS`.
     
-    You can filter your query results based on the Catchpoint node name and test ID, which are included as labels on each data point.
+You can filter your query results based on the Catchpoint node name and test ID, which are included as labels on each data point.
     
-    For more information on custom metrics, see [Creating custom metrics](https://cloud.google.com/monitoring/custom-metrics/creating-metrics).
+For more information on custom metrics, see [Creating custom metrics](https://cloud.google.com/monitoring/custom-metrics/creating-metrics).
     
 At this point your data pipeline is fully configured and you can create custom [charts and dashboards](https://cloud.google.com/monitoring/charts/) in Cloud
 Monitoring to visualize your Catchpoint data.
