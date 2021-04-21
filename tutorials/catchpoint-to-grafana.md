@@ -18,8 +18,8 @@ You can use [Cloud Monitoring](https://cloud.google.com/monitoring), in conjunct
 This tutorial and its companion tutorial provide two methods of ingesting and visualizing data from Catchpoint within Google Cloud:
 
 - This tutorial shows you how to deliver data to Grafana for visualization and analysis.
-- The [companion tutorial](https://cloud.google.com/community/tutorials/catchpoint-to-cloud-monitoring) shows you how to set up a   
-  pipeline that ingests data captured by Catchpoint into Cloud Monitoring and use Metrics Explorer for visualization and analysis.
+- The [companion tutorial](https://cloud.google.com/community/tutorials/catchpoint-to-cloud-monitoring) shows you how to set up a pipeline that ingests data
+  captured by Catchpoint into Cloud Monitoring and use Metrics Explorer for visualization and analysis.
 
 This tutorial uses Node.js, the Cloud Console, and `gcloud` commands on the Cloud SDK command line.
 
