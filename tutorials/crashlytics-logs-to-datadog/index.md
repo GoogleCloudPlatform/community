@@ -182,6 +182,10 @@ The pipeline supports following options:
 
 Use only one of `sourceBigQueryTableId` or `bigQuerySqlQuery`.
 
+Define the Crashlytics exported BigQuery table name
+
+    export CRASHLYTICS_BIGQUERY_TABLE="<projectId>:<datasetId>.<tableId>"
+
 You can directly launch the pipeline from the shell using following command:
 
     bq_2_datadog_pipeline \
@@ -217,10 +221,6 @@ Build Dataflow Flex template
     --env="FLEX_TEMPLATE_JAVA_MAIN_CLASS=\"com.google.cloud.solutions.bqtodatadog.BigQueryToDatadogPipeline\""    
     
 ### Launch pipeline using flex-template
-
-Define the Crashlytics exported BigQuery table name
-
-    export CRASHLYTICS_BIGQUERY_TABLE="<projectId>:<datasetId>.<tableId>"
 
 Launch the pipeline using the flex template created in the previous step.
 
