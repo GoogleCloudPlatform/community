@@ -155,7 +155,7 @@ With the GKE Workload Identity feature, all Kubernetes service accounts that sha
 In this section, you use a Kyverno policy to restrict the usage of the Kubernetes service account in this namespace to a specific application. This tutorial
 uses the `google/cloud-sdk:slim` image, but in practice you would replace this with your application's image.
 
-1.  Start installing Kyverno in the GKE cluster:
+1.  Install Kyverno in the GKE cluster:
 
         kubectl create -f https://raw.githubusercontent.com/kyverno/kyverno/main/definitions/release/install.yaml
 
