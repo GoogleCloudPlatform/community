@@ -1,12 +1,13 @@
 ---
 title: Infrastructure Automation with Config Connector, Config Sync and Gatekeeper
 description: An end-to-end workflow of provisioning and managing Google Cloud resources using Config Connector, Config Sync and OPA Gatekeeper
-author: nardosm
+author: nardosm, caseytin
 tags: kubernetes config connector, kcc, config sync, gate keeper
 date_published: 2021-01-01
 ---
 
 Nardos Megersa | Stratigic Cloud Engineer | Google
+Casety Tin | Cloud Technical Residency | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
