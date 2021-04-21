@@ -10,8 +10,8 @@ Romulo Santos
 
 <p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
-In this tutorial, you create a GKE cluster and configure Workload Identity to access Google Cloud services from applications running within the cluster. 
-You use Kyverno, a Kubernetes policy engine, to enforce admission policies, which improves security and prevents configuration errors.
+In this tutorial, you create a Google Kubernetes Engine (GKE) cluster and configure Workload Identity to access Google Cloud services from applications running 
+in the cluster. You use Kyverno, a Kubernetes policy engine, to enforce admission policies, which improves security and prevents configuration errors.
 
 [Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity) is the recommended way to access Google Cloud services from 
 applications running within GKE due to its improved security properties and manageability. With Workload Identity, you can configure a Kubernetes service account 
@@ -23,15 +23,17 @@ Kyverno is a policy engine designed for Kubernetes. It runs as a
 mutating admission webhook HTTP callbacks from the
 [Kubernetes API server](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-apiserver/). Kyverno applies matching policies to return results 
 that enforce admission policies or reject requests. In this tutorial, you apply a cluster-wide policy to ensure that your Kubernetes service account can only be
-used by a specific application in a particular namespace. For more information, see the [Kyverno documentation](https://kyverno.io/docs/).
+used by a specific application in a specific namespace. For more information, see the [Kyverno documentation](https://kyverno.io/docs/).
 
 ## Before you begin
 
-For this tutorial, you need a [Google Cloud project](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#projects). You can create a new one, or select a project that you have already created.
+For this tutorial, you need a [Google Cloud project](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#projects). You can create a
+new one, or select a project that you have already created.
 
 1.  Create a [Google Cloud project](https://console.cloud.google.com/cloud-resource-manager).
 1.  [Enable billing](https://support.google.com/cloud/answer/6293499#enable-billing) for your project.
-1.  For the commands in this tutorial, you will use the `gcloud` command-line interface. To install the Cloud SDK, which includes the `gcloud` tool, follow [these instructions](https://cloud.google.com/sdk/gcloud/#downloading_the_gcloud_command-line_tool).
+1.  For the commands in this tutorial, you use the `gcloud` command-line interface. To install the Cloud SDK, which includes the `gcloud` tool, follow
+    [these instructions](https://cloud.google.com/sdk/gcloud/#downloading_the_gcloud_command-line_tool).
 
 ## Costs
 
@@ -44,52 +46,56 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
 
 ## Preparing the GKE cluster
 
-Let's get started creating the basic resources needed.
+In this section, you create the basic resources, including a fictitious application with read access to a Cloud Storage bucket.
 
-1. Set some variables that will be used throughout the tutorial (change the values accordingly) and configure the GCP project.
+1.  Set some variables that are used throughout the tutorial (changing the values for your environment) and configure the Google Cloud project:
 
-        gcp_project=your-project
-        cluster_name=your-cluster
+        gcp_project=[YOUR_PROJECT_NAME]
+        cluster_name=[YOUR_CLUSTER_NAME]
         cluster_region=us-east1
-        gcs_bucket_name="$gcp_project"_app-storage # append the project name to prevent collision
-        gsa_name=gcs-viewer-staging # the Google Service Account
-        ksa_name=gcs-viewer # the Kubernetes Service Account
+        gcs_bucket_name="$gcp_project"_app-storage # appends the project name to prevent collision
+        gsa_name=gcs-viewer-staging # the Google service account
+        ksa_name=gcs-viewer # the Kubernetes service account
 
         gcloud config set project $gcp_project
 
-    Notice that the Google Service Account (GSA) is environment aware and will have limited access only to the resources necessary to the application, ensuring the principle of least privilege.
+    The Google service account is environment-aware and has limited access to the resources necessary for the application, ensuring the principle of least 
+    privilege.
 
-1. Create the GKE cluster.
+1.  Create the GKE cluster:
 
         gcloud beta container clusters create "$cluster_name" \
-            --release-channel regular \
-            --enable-ip-alias \
-            --region "$cluster_region" \
-            --workload-pool="${gcp_project}".svc.id.goog
+          --release-channel regular \
+          --enable-ip-alias \
+          --region "$cluster_region" \
+          --workload-pool="${gcp_project}".svc.id.goog
 
-1. You shoud have your kubeconfig configured. Check with:
+1.  Check the Kubernetes configuration (kubeconfig):
 
         kubectl config current-context
 
-1. If your current context doesn't match the cluster you just created use the `get-credentials` command to configure your local access to the cluster.
+1.  If your current context doesn't match the cluster that you just created, use the `get-credentials` command to configure your local access to the cluster:
 
         gcloud container clusters get-credentials "$cluster_name" --region "$cluster_region"
 
-1. Create the Google Service Account.
+1.  Create the Google service account:
 
         gcloud iam service-accounts create "$gsa_name"
 
-1. In our example we are going to consider a fictitious application that requires read access to a GCS bucket. So, let's create the bucket and write a file to it:
+1.  Create the Cloud Storage bucket and write a file to it:
 
         gsutil mb -p $gcp_project gs://"$gcs_bucket_name"
         echo foo > my_application_file
         gsutil cp my_application_file gs://"$gcs_bucket_name"
 
-1. Grant the `objectViewer` role to the Google Service Account at the bucket level. See the [Cloud Storage roles doc](https://cloud.google.com/storage/docs/access-control/iam-roles) for more details about IAM roles for Cloud Storage.
+1.  Grant the `objectViewer` role to the Google service account at the bucket level:
 
         gsutil iam ch serviceAccount:"$gsa_name"@"$gcp_project".iam.gserviceaccount.com:objectViewer gs://"$gcs_bucket_name"
 
-    Notice that, alternatively, we could grant the role at the project level but remember that we want to keep the least privilege.
+    Alternatively, you could grant the role at the project level, it's recommended to the permission more constrained, according to the principle of
+    least privilege.
+    
+    For more information, see [IAM roles for Cloud Storage](https://cloud.google.com/storage/docs/access-control/iam-roles).
 
 ## Configure and validate the Workload Identity
 
