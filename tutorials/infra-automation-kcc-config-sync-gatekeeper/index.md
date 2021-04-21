@@ -7,7 +7,7 @@ date_published: 2021-01-01
 ---
 
 Nardos Megersa | Stratigic Cloud Engineer | Google
-Casety Tin | Cloud Technical Residency | Google
+Casey Tin | Cloud Technical Residency | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
