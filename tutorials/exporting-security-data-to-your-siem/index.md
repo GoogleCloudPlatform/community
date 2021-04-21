@@ -1,6 +1,6 @@
 ---
 title: Exporting Google Cloud Security data to your SIEM
-description: Learn how to deploy unified export pipeline to stream your Google Cloud logs, asset changes and security findings to your existing SIEM
+description: Learn how to deploy unified export pipeline to stream your Google Cloud logs, asset changes and security findings to your existing SIEM.
 author: rarsan
 tags: logging, monitoring, alerts, security, siem, dataflow, scc
 date_published: 2021-04-17
