@@ -85,73 +85,84 @@ In this section, you create the basic resources, including a fictitious applicat
 1.  Create the Cloud Storage bucket and write a file to it:
 
         gsutil mb -p $gcp_project gs://"$gcs_bucket_name"
-        echo foo > my_application_file
+        echo hello > my_application_file
         gsutil cp my_application_file gs://"$gcs_bucket_name"
 
 1.  Grant the `objectViewer` role to the Google service account at the bucket level:
 
         gsutil iam ch serviceAccount:"$gsa_name"@"$gcp_project".iam.gserviceaccount.com:objectViewer gs://"$gcs_bucket_name"
 
-    Alternatively, you could grant the role at the project level, it's recommended to the permission more constrained, according to the principle of
+    Alternatively, you could grant the role at the project level, but it's recommended to make the permission more constrained, according to the principle of
     least privilege.
     
     For more information, see [IAM roles for Cloud Storage](https://cloud.google.com/storage/docs/access-control/iam-roles).
 
-## Configure and validate the Workload Identity
+## Configure and validate Workload Identity
 
-Now we are going to work on the Kubernetes cluster to configure and validate the workload identity.
+In this section, you work on the Kubernetes cluster to configure and validate Workload Identity.
 
-With the GKE Workload Identity feature, all Kubernetes service accounts that share a name, namespace name, and workload identity pool resolve to the same [IAM member](https://cloud.google.com/iam/docs/overview#concepts_related_identity) name, and therefore share access to Google Cloud resources. In the next steps we are going to configure the workload identity:
+With the GKE Workload Identity feature, all Kubernetes service accounts that share a name, namespace, and workload identity pool resolve to the same
+[IAM member](https://cloud.google.com/iam/docs/overview#concepts_related_identity) name, and therefore share access to Google Cloud resources.
 
-1. Create a namespace named `staging`. This simulates a staging environment.
+1.  Create a namespace named `staging`:
 
         kubectl create namespace staging
+        
+    This simulates a staging environment.
 
-1. Create the Kubernetes Service Account (KSA).
+1.  Create the Kubernetes service account:
 
         kubectl create serviceaccount "$ksa_name" -n staging
 
-1. Annotate your Kubernetes Service Account with the Google Service Account.
+1.  Annotate your Kubernetes service account with the Google service account:
 
         kubectl annotate serviceaccount \
-            "$ksa_name" \
-            iam.gke.io/gcp-service-account="$gsa_name"@$gcp_project.iam.gserviceaccount.com \
-            -n staging
+          "$ksa_name" \
+          iam.gke.io/gcp-service-account="$gsa_name"@$gcp_project.iam.gserviceaccount.com \
+          -n staging
 
-1. Now we need to allow the Kubernetes service account to impersonate the Google service account by creating an IAM policy binding between the two. This binding allows the Kubernetes service account to act as the Google service account.
+1.  Allow the Kubernetes service account to impersonate the Google service account by creating an IAM policy binding between the two:
 
         gcloud iam service-accounts add-iam-policy-binding \
-            --role roles/iam.workloadIdentityUser \
-            --member "serviceAccount:${gcp_project}.svc.id.goog[staging/${ksa_name}]" \
-            "$gsa_name"@"$gcp_project".iam.gserviceaccount.com
+          --role roles/iam.workloadIdentityUser \
+          --member "serviceAccount:${gcp_project}.svc.id.goog[staging/${ksa_name}]" \
+          "$gsa_name"@"$gcp_project".iam.gserviceaccount.com
+          
+    This binding allows the Kubernetes service account to act as the Google service account.
 
-1. We are ready to test the configuration. Create a Pod using the KSA previously defined. For the purposes of this tutorial, we are going to use a standalone Pod running the `google/cloud-sdk:slim` image to validate our configuration. In the real world this would be your application image deployed through a [Kubernetes Workload Controller](https://kubernetes.io/docs/concepts/architecture/controller/) such as a [Deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/).
+1.  To test the configuration, create a Pod using the Kubernetes service account previously defined:
 
         kubectl run -it --rm --image google/cloud-sdk:slim bb8 \
-            --serviceaccount "$ksa_name" \
-            --env gcs_bucket_name="$gcs_bucket_name" \
-            -n staging \
-            --restart=Never
+          --serviceaccount "$ksa_name" \
+          --env gcs_bucket_name="$gcs_bucket_name" \
+          -n staging \
+          --restart=Never
+            
+    This command creates a standalone Pod running the `google/cloud-sdk:slim` image to validate your configuration. In the real world, this would be your
+    application image deployed through a [Kubernetes Workload Controller](https://kubernetes.io/docs/concepts/architecture/controller/) such as a
+    [Deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/).
 
-1. From inside the container run:
+1.  From inside the container, run the following commands:
 
-        root@bb8:/# gsutil cp gs://$gcs_bucket_name/my_application_file .
-        root@bb8:/# cat my_application_file
-        root@bb8:/# exit
+        gsutil cp gs://$gcs_bucket_name/my_application_file .
+        cat my_application_file
+        exit
 
-    You should see the content we wrote to GCS in a previous step, "foo".
+    You should see the content that you wrote to Cloud Storage in a previous step, `hello`.
 
-## Using Kyverno to restrict the workload identity
+## Use Kyverno to restrict the workload identity
 
-Now we are going to use a Kyverno policy to restrict the usage of the Kubernetes service account in this namespace to a specific application. Remember that for the purpose of this tutorial we are using the `google/cloud-sdk:slim` image but in a real situation, we would replace this with our application's image.
+In this section, you use a Kyverno policy to restrict the usage of the Kubernetes service account in this namespace to a specific application. This tutorial
+uses the `google/cloud-sdk:slim` image, but in practice you would replace this with your application's image.
 
-1. Start installing Kyverno in the GKE cluster.
+1.  Start installing Kyverno in the GKE cluster:
 
         kubectl create -f https://raw.githubusercontent.com/kyverno/kyverno/main/definitions/release/install.yaml
 
-    In this tutorial we are using the simplest way to install Kyverno to get it up and running quickly. Check the [Kyverno Installation docs] for more details about how to install, configure and customize Kyverno.
+    This tutorial uses the simplest way to install Kyverno to get it up and running quickly. For more information about installing, configuring, and customizing
+    Kyverno, see the [Kyverno documentation](https://kyverno.io/docs/installation/).
 
-1. Create the Kyverno policy.
+1.  Create the Kyverno policy:
 
         kubectl create -f- << EOF
         apiVersion: kyverno.io/v1
@@ -159,7 +170,7 @@ Now we are going to use a Kyverno policy to restrict the usage of the Kubernetes
         metadata:
           name: staging-restrict-gcs-viewer-sa
           annotations:
-            policies.kyverno.io/title: Restrict GCS Viewer Service Account in Staging
+            policies.kyverno.io/title: Restrict Cloud Storage Viewer service account in Staging
             policies.kyverno.io/category: Pod Security
             policies.kyverno.io/description: >-
               Restrict Pod resources in staging to use a known service account.
@@ -198,15 +209,19 @@ Now we are going to use a Kyverno policy to restrict the usage of the Kubernetes
                   - =(image): "google/cloud-sdk:slim"
         EOF
 
-    This policy validates that all Pod resources created in the `staging` namespace and using the `google/cloud-sdk:slim` image will have a service account explicitly configured and this service account should match the name of our KSA. It also prevents that Pod resources using other images use this service account.
+    This policy validates that all Pod resources created in the `staging` namespace and using the `google/cloud-sdk:slim` image have a service account explicitly
+    configured, and this service account should match the name of your Kubernetes service account. It also prevents Pod resources using other images from using
+    this service account.
 
-1. Let's start trying to launch a Pod with a different image and our Kubernetes service account.
+1.  Try to launch a Pod with a different image and your Kubernetes service account:
 
         kubectl run -it --rm --image alpine bb8 \
-            --serviceaccount "$ksa_name" \
-            --env gcs_bucket_name="$gcs_bucket_name" \
-            -n staging \
-            --restart=Never
+          --serviceaccount "$ksa_name" \
+          --env gcs_bucket_name="$gcs_bucket_name" \
+          -n staging \
+          --restart=Never
+          
+    You should see the following output:
 
         Error from server: admission webhook "validate.kyverno.svc" denied the request:
 
@@ -216,12 +231,14 @@ Now we are going to use a Kyverno policy to restrict the usage of the Kubernetes
           require-service-account: 'validation error: Service account required. Rule require-service-account failed at path /spec/containers/0/image/'
           validate-service-account: 'validation error: Invalid service account. Rule validate-service-account failed at path /spec/containers/0/image/''
 
-1. Now let's try to create a Pod with the default service account.
+1.  Try to create a Pod with the default service account:
 
         kubectl run -it --rm --image google/cloud-sdk:slim bb8 \
-            --env gcs_bucket_name="$gcs_bucket_name" \
-            -n staging \
-            --restart=Never
+          --env gcs_bucket_name="$gcs_bucket_name" \
+          -n staging \
+          --restart=Never
+          
+    You should see the following output:
 
         Error from server: admission webhook "validate.kyverno.svc" denied the request:
 
@@ -230,25 +247,27 @@ Now we are going to use a Kyverno policy to restrict the usage of the Kubernetes
         staging-restrict-gcs-viewer-sa:
           validate-service-account: 'validation error: Invalid service account. Rule validate-service-account failed at path /spec/serviceAccountName/'
 
-1. Finally, run our original command to verify that the admission controller will allow the Pod creation.
+1.  Run the original command to verify that the admission controller allows the Pod creation:
 
         kubectl run -it --rm --image google/cloud-sdk:slim bb8 \
-            --serviceaccount "$ksa_name" \
-            --env gcs_bucket_name="$gcs_bucket_name" \
-            -n staging \
-            --restart=Never
+          --serviceaccount "$ksa_name" \
+          --env gcs_bucket_name="$gcs_bucket_name" \
+          -n staging \
+          --restart=Never
 
-    To learn more about how we can adapt and extend this policy to match different criteria check the [Kyverno Write Policies documentation](https://kyverno.io/docs/writing-policies/).
+To learn more about how to adapt and extend this policy to match different criteria, see the
+[Kyverno Write Policies documentation](https://kyverno.io/docs/writing-policies/).
 
 ## Optional: Restrict the Kubernetes service account annotation to the Google service account
 
-Let's create a policy to restrict that the Kubernetes service account could only be annotated with our Google service account. This policy will also prevent that other Kubernetes service accounts in this namespace could be annotated with our Google service account.
+In this section, you create a policy to restrict that the Kubernetes service account so that it can only be annotated with your Google service account. This
+policy also prevents other Kubernetes service accounts in this namespace from being annotated with your Google service account.
 
-1. Remove the existing KSA.
+1.  Remove the existing Kubernetes service account:
 
         kubectl delete sa $ksa_name -n staging
 
-1. Create the policy.
+1.  Create the policy:
 
         kubectl create -f- << EOF
         apiVersion: kyverno.io/v1
@@ -259,8 +278,8 @@ Let's create a policy to restrict that the Kubernetes service account could only
             policies.kyverno.io/title: Restrict Workload Identity Annotation Staging
             policies.kyverno.io/category: Pod Security
             policies.kyverno.io/description: >-
-              Restrict the Object Viewer Service Account to be annotated with the
-              corresponding Google Service Account in Staging
+              Restrict the Object Viewer service account to be annotated with the
+              corresponding Google service account in Staging
         spec:
           validationFailureAction: enforce
           rules:
@@ -280,9 +299,11 @@ Let's create a policy to restrict that the Kubernetes service account could only
                     =(iam.gke.io/gcp-service-account): $gsa_name@$gcp_project.iam.gserviceaccount.com
         EOF
 
-1. Try to create the service account.
+1.  Try to create the service account:
 
         kubectl create serviceaccount "$ksa_name" -n staging
+        
+    You should see the following output:
 
         Error from server: admission webhook "validate.kyverno.svc" denied the request:
 
@@ -291,9 +312,10 @@ Let's create a policy to restrict that the Kubernetes service account could only
         staging-restrict-gcs-viewer-sa-annotation:
           validate-annotation: 'validation error: Invalid workload identity annotation. Rule validate-annotation failed at path /metadata/annotations/'
 
-    Using our initial approach (create then annotate) won't work because now the KSA is required to have the `iam.gke.io/gcp-service-account` annotation with the specified value.
+    Using the initial approach (create then annotate) won't work because now the Kubernetes service account is required to have the
+    `iam.gke.io/gcp-service-account` annotation with the specified value.
 
-1. Try to create the service account with a wrong value.
+1.  Try to create the service account with a wrong value:
 
         kubectl create -f- << EOF
         apiVersion: v1
@@ -305,6 +327,8 @@ Let's create a policy to restrict that the Kubernetes service account could only
             iam.gke.io/gcp-service-account: foo@$gcp_project.iam.gserviceaccount.com
         EOF
 
+    You should see the following output:
+
         Error from server: error when creating "STDIN": admission webhook "validate.kyverno.svc" denied the request:
 
         resource ServiceAccount/staging/gcs-viewer was blocked due to the following policies
@@ -312,7 +336,7 @@ Let's create a policy to restrict that the Kubernetes service account could only
         staging-restrict-gcs-viewer-sa-annotation:
           validate-annotation: 'validation error: Invalid workload identity annotation. Rule validate-annotation failed at path /metadata/annotations/iam.gke.io/gcp-service-account/'
 
-1. Finally, create the service account with the proper annotation
+1.  Create the service account with the proper annotation:
 
         kubectl create -f- << EOF
         apiVersion: v1
@@ -328,17 +352,17 @@ Let's create a policy to restrict that the Kubernetes service account could only
 
 To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, remove the following resources:
 
-1. Delete the GKE cluster
+1.  Delete the GKE cluster:
 
         gcloud container clusters delete "$cluster_name" --region "$cluster_region"
 
-1. Delete the Google Service Account
+1.  Delete the Google service account:
 
         gcloud iam service-accounts delete "$gsa_name"@"$gcp_project".iam.gserviceaccount.com
 
-1. Delete the Cloud Storage Bucket
+1.  Delete the Cloud Storage bucket:
 
         gsutil rm  gs://"$gcs_bucket_name"/my_application_file
         gsutil rb gs://"$gcs_bucket_name"
 
-If you created a project specifically for this tutorial you can remove it by using the [Resource Manager](https://console.cloud.google.com/cloud-resource-manager).
+If you created a project specifically for this tutorial, you can remove it in the [Resource Manager](https://console.cloud.google.com/cloud-resource-manager).
