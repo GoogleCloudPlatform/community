@@ -1,6 +1,6 @@
 ---
 title: Export Firebase Crashlytics BigQuery logs to Datadog using Dataflow
-description: Bulk export Crashlytics BigQuery logs to Datadog on a daily basis using Dataflow.   
+description: Bulk export Crashlytics BigQuery logs to Datadog on a daily basis using Dataflow
 author: anantdamle
 tags: log analytics, monitoring
 date_published: 2021-04-23
