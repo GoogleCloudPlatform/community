@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: gcs-viewer
+  namespace: staging
+  annotations:
+    iam.gke.io/gcp-service-account: gcs-viewer-staging@[gcp-project-id].iam.gserviceaccount.com
