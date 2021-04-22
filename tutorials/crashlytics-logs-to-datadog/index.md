@@ -186,12 +186,15 @@ Define the Crashlytics exported BigQuery table name
 
     export CRASHLYTICS_BIGQUERY_TABLE="<projectId>:<datasetId>.<tableId>"
 
+> **Note:** Make sure the serviceAccount has access to this BigQuery table.
+
 You can directly launch the pipeline from the shell using following command:
 
     bq_2_datadog_pipeline \
     --project="${PROJECT_ID}" \
     --region="${REGION_ID}" \
     --runner="DataflowRunner" \
+    --serviceAccount="${PIPELINE_SERVICE_ACCOUNT_EMAIL}" \
     --gcpTempLocation="gs://${GCS_BUCKET}/temp" \
     --stagingLocation="gs://${GCS_BUCKET}/staging" \
     --tempLocation="gs://${GCS_BUCKET}/bqtemp" \
@@ -202,9 +205,12 @@ You can monitor the Dataflow job on Cloud Console. The pipeline DAG looks as fol
 
 ![Pipeline DAG](pipeline_dag.png)
 
+
 ### Create Dataflow flex template
-   
-Define the location to store template spec file containing all the necessary information to run the job.
+
+[Dataflow templates](https://cloud.google.com/dataflow/docs/concepts/dataflow-templates) allow you to use the Google Cloud Console, the gcloud command-line tool, or REST API calls to set up your pipelines on Google Cloud and run them. Classic templates are staged as execution graphs on Cloud Storage while Flex Templates bundle the pipeline as a container image in your project’s Container Registry. This allows you to decouple building and running pipelines, as well as integrate with orchestration systems for daily execution. You can learn more about [differences between classis and flex templates](https://cloud.google.com/dataflow/docs/concepts/dataflow-templates#comparing-templated-jobs).
+
+To build a flex template, define the location to store template spec file containing all the necessary information to run the job:
 
     export TEMPLATE_PATH="gs://${GCS_BUCKET}/dataflow/templates/bigquery-to-datadog.json"
     export TEMPLATE_IMAGE="us.gcr.io/${PROJECT_ID}/dataflow/bigquery-to-datadog:latest"
