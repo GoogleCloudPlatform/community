@@ -51,104 +51,104 @@ this document.
 
 ## Overview of migration using Ora2pg
 
-[Ora2pg](http://ora2pg.darold.net/) is an open source tool used to migrate an Oracle database to a PostgreSQL database. The tool scans and extracts both schema and data and then generates PostgreSQL compatible SQL scripts that you can use to populate the database.
+[Ora2pg](http://ora2pg.darold.net/) is an open source tool used to migrate an Oracle database to a PostgreSQL database. The tool scans and extracts the database 
+schema and data and then generates PostgreSQL-compatible SQL scripts that you can use to populate the database.
 
-Here is a high level overview of the migration procedure using Ora2pg:
+High-level overview of the migration procedure using Ora2pg:
 
-1. Install Ora2pg and initialize migration project
-2. Setup source and target database connectivity
-3. Configure Ora2pg migration parameters
-4. Generate database migration report
-5. Export database schema from Oracle database
-6. Import database schema into Cloud SQL for PostgreSQL
-7. Perform data migration
-8. Import indexes, constraints, foreign keys and triggers into Cloud SQL for PostgreSQL
-9. Verify data integrity after the migration
+1. Install Ora2pg and initialize migration project.
+2. Set up source and target database connectivity.
+3. Configure Ora2pg migration parameters.
+4. Generate database migration report.
+5. Export database schema from Oracle database.
+6. Import database schema into Cloud SQL for PostgreSQL.
+7. Perform data migration.
+8. Import indexes, constraints, foreign keys, and triggers into Cloud SQL for PostgreSQL.
+9. Verify data integrity after the migration.
 
-This tutorial focuses on the schema migration aspects of an Oracle to Cloud SQL for PostgreSQL migration project using Ora2pg. While Ora2pg supports exporting data from Oracle database and importing them into Cloud SQL for PostgreSQL, it is an offline migration where the database has to be taken out of service during the whole data migration process. It is common to leverage data migration tools that support real-time replication, such as Striim or Oracle GoldenGate, for migrations that require minimal downtime. 
+This tutorial focuses on the schema migration aspects of an Oracle to Cloud SQL for PostgreSQL migration project using Ora2pg. Though Ora2pg supports exporting 
+data from Oracle database and importing them into Cloud SQL for PostgreSQL, it is an offline migration in which the database has to be taken out of service 
+during the whole data migration process. It is common to use data migration tools that support real-time replication, such as Striim or Oracle GoldenGate for 
+migrations that require minimal downtime. 
 
-## Install Ora2pg and Initialize Migration Project
+## Install Ora2pg and initialize migration project
 
-Ora2pg uses Oracle client libraries to connect to the source Oracle database to perform scans and exports. While it is possible to install and use Ora2pg on the same machine as the source Oracle database, it is recommended to use a dedicated machine for Ora2pg installation and runtime to prevent potential interruptions to the source database. Here is an example of installing Ora2pg on a Compute Engine instance:
+Ora2pg uses Oracle client libraries to connect to the source Oracle database to perform scans and exports. Though it is possible to install and use Ora2pg on the
+same machine as the source Oracle database, it is recommended to use a dedicated machine for Ora2pg installation and runtime to prevent potential interruptions 
+to the source database. 
 
-1. In the Cloud Console, create a [create a Compute Engine instance](https://cloud.google.com/compute/docs/instances/create-start-instance#publicimage). 
+This section shows an example of creating a [Compute Engine instance](https://cloud.google.com/compute/docs/instances/create-start-instance#publicimage) and
+installing Ora2pg on that instance. 
 
-```
-    # Specify the GCP Project ID for VM creation
-    export PROJECT_ID="$(gcloud config get-value project -q)"
+1.  Set a variable for the Google Cloud project ID for VM creation:
 
-    # Select a GCP Zone that is close to your source database for optimal performance
-    export GCP_ZONE=us-central1-a
+        export PROJECT_ID="$(gcloud config get-value project -q)"
 
-    # Allocate enough disk space for the following:
-    #  1. Oracle client library installation
-    #  2. PostgreSQL client library installation
-    #  3. Working directory for Ora2pg (usually less than 1GB, excluding data)
-    #  4. Data axport files from source database (optional)
-    export PD_SIZE=40GB
+1.  Set a variable to specify a Google Cloud zone that is close to your source database for optimal performance:
 
-    gcloud compute instances create ora2pg-vm \
-      --project=${PROJECT_ID} \
-      --zone=${GCP_ZONE} \
-      --machine-type=e2-medium \
-      --subnet=default \
-      --network-tier=PREMIUM \
-      --image-family=rhel-7 \
-      --image-project=rhel-cloud \
-      --boot-disk-size=${PD_SIZE} \
-      --boot-disk-type=pd-balanced \
-      --boot-disk-device-name=ora2pg-pd
-```
+        export GCP_ZONE=us-central1-a
 
-2. [Connect to the Compute Instance](https://cloud.google.com/compute/docs/instances/connecting-to-instance) once it is ready.
+1.  Set a variable for the disk size that allocates enough disk space for the following:
 
-    ```
-    gcloud compute ssh --zone ${GCP_ZONE} ora2pg-vm --project ${PROJECT_ID}
-    ```
+    -   Oracle client library installation
+    -   PostgreSQL client library installation
+    -   Working directory for Ora2pg (usually less than 1GB, excluding data)
+    -   Data axport files from source database (optional)
 
-3. Install an [Oracle instant client](https://www.oracle.com/database/technologies/instant-client/linux-x86-64-downloads.html) version that supports your source Oracle database version.
-    1. To query the Oracle database version, connect to the source database and issue the following SQL statement:
+            export PD_SIZE=40GB
 
-        ```
-        select banner from v$version;
-        ```
-    2. For Oracle database version 19c, download the following files. Note that the version number (e.g., 19.9.0.0.0) changes over time as Oracle updates them so always refer to the download page for the most up-to-date file names.
+1.  Create the Compute Engine instance:
 
-		- instantclient-basic-linux.x64-19.9.0.0.0dbru.zip
-		- instantclient-sdk-linux.x64-19.9.0.0.0dbru.zip
-		- instantclient-sqlplus-linux.x64-19.9.0.0.0dbru.zip
-  
-    3. Unzip the files to the HOME directory to finish the installation:
+        gcloud compute instances create ora2pg-vm \
+          --project=${PROJECT_ID} \
+          --zone=${GCP_ZONE} \
+          --machine-type=e2-medium \
+          --subnet=default \
+          --network-tier=PREMIUM \
+          --image-family=rhel-7 \
+          --image-project=rhel-cloud \
+          --boot-disk-size=${PD_SIZE} \
+          --boot-disk-type=pd-balanced \
+          --boot-disk-device-name=ora2pg-pd
 
-        ```
-        sudo yum install -y unzip
-        unzip 'instantclient*'
-        ```
+1.  [Connect to the Compute Engine instance](https://cloud.google.com/compute/docs/instances/connecting-to-instance):
 
-4. Install PostgreSQL Client Library.
+        gcloud compute ssh --zone ${GCP_ZONE} ora2pg-vm --project ${PROJECT_ID}
 
-    ```
-    sudo yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
-    sudo yum install -y postgresql12-libs.x86_64 postgresql12.x86_64
-    ```
+1.  Install an [Oracle instant client](https://www.oracle.com/database/technologies/instant-client/linux-x86-64-downloads.html) version that supports your source
+    Oracle database version.
+    
+    1.  To query the Oracle database version, connect to the source database and issue the following SQL statement:
 
+            select banner from v$version;
 
-5. Install Ora2pg Dependencies.
+    1.  For Oracle database version 19c, download the following files. The version number (e.g., 19.9.0.0.0) changes over time as Oracle updates them, so always 
+        refer to the download page for the most up-to-date filenames.
 
-    ```
-    sudo yum install -y devtoolset-8 perl-CPAN perl-DBD-Pg libaio perl-Test-Simple perl-Test-NoWarnings
-    ```
+        * instantclient-basic-linux.x64-19.9.0.0.0dbru.zip
+	* instantclient-sdk-linux.x64-19.9.0.0.0dbru.zip
+	* instantclient-sqlplus-linux.x64-19.9.0.0.0dbru.zip
 
+    1.  Extract the files to the HOME directory to finish the installation:
 
-6. As root, [download Ora2pg](https://github.com/darold/ora2pg/releases). In this example, we use Ora2pg v21.0. 
+            sudo yum install -y unzip
+            unzip 'instantclient*'
 
-    ```
-    yum install -y wget
-    wget https://github.com/darold/ora2pg/archive/v21.0.zip
-    ```
+1.  Install the PostgreSQL client library:
 
+        sudo yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+        sudo yum install -y postgresql12-libs.x86_64 postgresql12.x86_64
 
-7. As `root`, [install Ora2pg](http://ora2pg.darold.net/documentation.html#Installing-Ora2Pg). 
+1.  Install Ora2pg dependencies:
+
+        sudo yum install -y devtoolset-8 perl-CPAN perl-DBD-Pg libaio perl-Test-Simple perl-Test-NoWarnings
+
+1.  As root, [download Ora2pg](https://github.com/darold/ora2pg/releases). This example uses Ora2pg v21.0. 
+
+        yum install -y wget
+        wget https://github.com/darold/ora2pg/archive/v21.0.zip
+
+1.  As root, [install Ora2pg](http://ora2pg.darold.net/documentation.html#Installing-Ora2Pg). 
     1. Make sure that the following environment variables are set before installing. These environment variables are required whenever Ora2pg is used.
 
         ```
