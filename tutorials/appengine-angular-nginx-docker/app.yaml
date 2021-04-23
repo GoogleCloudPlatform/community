@@ -1,0 +1,9 @@
+runtime: custom
+env: flex
+service: angular-ui-dev
+threadsafe: true
+
+env_variables:
+  API_URL: "https://webapi-dev.appname.com"
+  VARIABLE_ONE: "Variable One"
+  VARIABLE_TWO: "Variable Two"

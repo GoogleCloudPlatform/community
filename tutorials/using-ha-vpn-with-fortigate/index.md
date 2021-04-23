@@ -505,7 +505,7 @@ Edit tunnel interfaces for each VPN tunnel. Change `ip` and `remote-ip` values a
             set remote-ip 169.254.142.153 255.255.255.252
         next
         edit GCP-HA-VPN-INT1
-            set ip 169.254.92.230 255.255.255.252
+            set ip 169.254.92.230 255.255.255.255
             set remote-ip 169.254.92.229 255.255.255.252
         next
     end
@@ -619,7 +619,7 @@ through the VPN tunnel.
 ## Troubleshooting IPSec on Fortigate
 
 For troubleshooting information, see
-the [Foritgate VPN troubleshooting guide](https://cookbook.fortinet.com/ipsec-vpn-troubleshooting).
+the [Foritgate VPN troubleshooting guide](https://docs.fortinet.com/).
 
 ## Reference documentation
 

@@ -55,8 +55,6 @@ application in one place.
 
 Begin by creating a new project or selecting an existing project for this tutorial.
 
-<walkthrough-devshell-precreate></walkthrough-devshell-precreate>
-
 <walkthrough-project-setup></walkthrough-project-setup>
 
 For details, see
@@ -64,7 +62,7 @@ For details, see
 
 ## Using Cloud Shell
 
-Cloud Shell is a built-in command-line tool for the console. We're going to use
+Cloud Shell is a built-in command-line tool for the Cloud Console. We're going to use
 Cloud Shell to deploy our app.
 
 ### Open Cloud Shell
@@ -194,7 +192,8 @@ gcloud app deploy app.yaml --project {{project_id}}
 
 Congratulations! Your app has been deployed.
 The default URL of your app is a subdomain on appspot.com that starts with your project's ID:
-[{{project_gae_url}}](http://{{project_gae_url}}).
+
+`YOUR_PROJECT_ID.appspot.com`
 
 Try visiting your deployed application.
 

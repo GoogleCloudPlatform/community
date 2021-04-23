@@ -1,6 +1,6 @@
 ---
 title: On Beyond Magpie 0 - Setup and API Exploration
-description: An introduction to the Cloud Natural Language API, aimed at Advanced Placement Computer Science classes who have worked on the Magpie lab, but suitable for most people starting with the Cloud Natural Language API. Demonstrates how to access the Cloud Natural Language API interatively and create credentials for use with later tutorials in this sequence.
+description: An introduction to the Cloud Natural Language API, aimed at Advanced Placement Computer Science classes who have worked on the Magpie lab, but suitable for most people starting with the Cloud Natural Language API. Demonstrates how to access the Cloud Natural Language API interactively and create credentials for use with later tutorials in this sequence.
 author: Annie29
 tags: Cloud Natural Language API, APCS, REST, Magpie, education
 date_published: 2017-03-28
@@ -97,7 +97,7 @@ To use the different features of the Cloud Natural Language, see the following C
 
 [alice]:https://www.gutenberg.org/files/11/11-h/11-h.htm
 [annotate]:https://apis-explorer.appspot.com/apis-explorer/#search/natural/language/v1/language.documents.annotateText
-[annotateapi]:https://cloud.google.com/natural-language/docs/reference/rest/v1beta1/documents/annotateText
+[annotateapi]:https://cloud.google.com/natural-language/docs/reference/rest/v1/documents/annotateText
 [auth]:https://cloud.google.com/natural-language/docs/common/auth
 [console]:https://console.cloud.google.com/
 [explorer]:https://apis-explorer.appspot.com/apis-explorer/#search/natural/language/v1/

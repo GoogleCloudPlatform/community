@@ -268,7 +268,7 @@ For more information on how the Java runtime works, see
 As shown in the previous app engine configuration file, the app uses Jetty.
 
 Grails is built on top of SpringBoot. Following SpringBoot’s documentation, you
-need to do the following changes to [deploy to Jetty instead of Tomcat][boot].
+need to do the following changes to [deploy to Jetty instead of Tomcat](https://docs.spring.io/spring-boot/docs/current/reference/html/howto.html#howto-embedded-web-servers).
 
 1.  Replace:
 
@@ -290,8 +290,6 @@ need to do the following changes to [deploy to Jetty instead of Tomcat][boot].
             compile.exclude module: "tomcat-juli"
             compile.exclude module: "spring-boot-starter-tomcat"
         }
-
-[boot]: https://docs.spring.io/spring-boot/docs/current/reference/html/howto-embedded-servlet-containers.html
 
 ## Cloud SQL
 

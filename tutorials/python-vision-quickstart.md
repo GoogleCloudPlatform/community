@@ -11,7 +11,6 @@ date_published: 2019-07-31
 <!-- {% setvar repo_url "https://github.com/GoogleCloudPlatform/python-docs-samples.git" %} -->
 <!-- {% setvar repo_name "python-docs-samples" %} -->
 <!-- {% setvar project_id "<your-project>" %} -->
-<walkthrough-devshell-precreate></walkthrough-devshell-precreate>
 
 <walkthrough-alt>
 Take the interactive version of this tutorial, which runs in the Cloud Console:
@@ -60,7 +59,7 @@ https://console.cloud.google.com/flows/enableapi?apiid=vision.googleapis.com
 
 In this tutorial, you do much of your work in Cloud Shell, which is a built-in command-line tool for the Cloud Console.
 
-Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
+Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the Cloud Console.
 
 ## Clone the sample code
 
@@ -161,7 +160,7 @@ Here's what you can do next:
 *   Download the [Cloud SDK][get-cloud-sdk] to run on your local machine.
 
 [auth-doc]: https://cloud.google.com/vision/docs/auth
-[cat-picture]: https://raw.githubusercontent.com/GoogleCloudPlatform/python-docs-samples/master/vision/cloud-client/quickstart/resources/wakeupcat.jpg
+[cat-picture]: https://raw.githubusercontent.com/googleapis/python-vision/master/samples/snippets/quickstart/resources/wakeupcat.jpg
 [document-text-tutorial]: https://cloud.google.com/vision/docs/fulltext-annotations
 [face-tutorial]: https://cloud.google.com/vision/docs/face-tutorial
 [get-cloud-sdk]: https://cloud.google.com/sdk/

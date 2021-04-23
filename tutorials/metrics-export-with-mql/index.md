@@ -24,7 +24,7 @@ This tutorial uses billable components of Google Cloud, including the following:
 -  [Cloud Functions](https://cloud.google.com/functions/pricing)
 -  [Pub/Sub](https://cloud.google.com/pubsub/pricing)
 -  [Cloud Scheduler](https://cloud.google.com/scheduler/pricing)
--  [Google BigQuery](https://cloud.google.com/bigquery/pricing)
+-  [BigQuery](https://cloud.google.com/bigquery/pricing)
 
 Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage.
 
@@ -35,7 +35,7 @@ new project or select a project that you have already created. When you finish t
 created. To make cleanup easiest, you may want to create a new project for this tutorial, so that you can delete the project when you're done. For details, see
 the  "Cleaning up" section at the end of the tutorial.
 
-1.  [Select or create a Google Cloud project.](https://cloud.console.google.com/projectselector2/home/dashboard)
+1.  [Select or create a Google Cloud project.](https://console.cloud.google.com/projectselector2/home/dashboard)
 
 1.  [Enable billing for your project.](https://support.google.com/cloud/answer/6293499#enable-billing)
 
