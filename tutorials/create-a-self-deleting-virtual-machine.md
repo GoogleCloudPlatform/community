@@ -199,9 +199,9 @@ instead, see the next section.
 
 1.  On the **VM instances** page, click **Create Instance**.
 
-1.  You may be prompted to enable the **Compute Engine API**. If so, Click **ENABLE**.
-    After a minute or two you will be redirected to the **VM Instances** page
-    where you should click **Create Instance**.
+1.  If you are prompted to enable the **Compute Engine API**, click **Enable**.
+
+    When you are redirected to the **VM Instances** page, click **Create Instance**.
 
 1.  In the **New VM instance** form, leave most values at the default values,
     but change the following values:
