@@ -203,7 +203,7 @@ Deploy the sample apps to demonstrate using and not using the init container to 
 
 ## Customizing the mitmproxy Python script
 
-This tutorial uses a Python script to filter traffic to a specific Cloud Storage bucket. The Python script is installed as a [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configmap/) resource, and mitmproxy can live-reload the script when it changes without restarting.
+This tutorial uses a Python script to filter traffic to a specific Cloud Storage bucket. The Python script is installed as a [ConfigMap](https://kubernetes.io/docs/concepts/configuration/configmap/) resource, and mitmproxy can live-reload the script when it changes without restarting.
 
 1. Modify the script to change the "access denied" status code:
 
@@ -249,5 +249,5 @@ This tutorial uses a Python script to filter traffic to a specific Cloud Storage
 
 - [Transparent Proxy and Filtering on Kubernetes with Initializers tutorial](https://cloud.google.com/community/tutorials/transparent-proxy-and-filtering-on-k8s-with-initializers) - Same approach but simplified using a deployment initializer to inject the InitContainer and ConfigMap.
 - [tproxy helm chart](https://github.com/danisla/kubernetes-tproxy/blob/master/charts/tproxy/README.md) - See all configuration options and deployment methods.
-- [Istio](https://isio.io/) - A more broad approach to traffic filtering and network policy.
+- [Istio](https://istio.io/) - A more broad approach to traffic filtering and network policy.
 - [Calico Egress NetworkPolicy](https://docs.projectcalico.org/v2.0/getting-started/kubernetes/tutorials/advanced-policy) - Another way to filter egress traffic at the pod level.
