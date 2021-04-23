@@ -197,7 +197,11 @@ instead, see the next section.
 1.  Click the **Navigation menu** in the upper-left corner of the console, and 
     then select **Compute Engine** > **VM instances**. 
 
-1.  On the **VM instances** page, click **Create**.
+1.  On the **VM instances** page, click **Create Instance**.
+
+1.  You may be prompted to enable the **Compute Engine API**. If so, Click **ENABLE**.
+    After a minute or two you will be redirected to the **VM Instances** page
+    where you should click **Create Instance**.
 
 1.  In the **New VM instance** form, leave most values at the default values,
     but change the following values:
