@@ -1,30 +1,32 @@
 ---
 title: Migrating from Oracle to Cloud SQL PostgreSQL using Ora2pg
-description: How to use Ora2PG to perform schema conversion and data migration from Oracle to Cloud SQL for PostgreSQL migration.
+description: Learn how to use Ora2PG to perform schema conversion and data migration from Oracle to Cloud SQL for PostgreSQL migration.
 author: ktchana
 tags: cloud sql, database migration, postgresql, ora2pg, oracle
-date_published: 2021-04-07
+date_published: 2021-04-23
 ---
 
 Thomas Chan | Solutions Architect | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-This document focuses on the schema conversion aspect of an Oracle to Cloud SQL for PostgreSQL database migration while also providing steps to perform offline data migration. For more in-depth discussions on other aspects of the migration, check out the following document series:
+This document focuses on the schema conversion aspect of an Oracle to Cloud SQL for PostgreSQL database migration while also providing steps to perform offline 
+data migration. For more in-depth discussions of other aspects of the migration, see the following document series:
 
-*   [Setting up Cloud SQL for PostgreSQL for production use](https://docs.google.com/document/u/0/d/1L7F3EDpYpiAwJdNU9rQTSPm3SkM_Whp1kDN2HKqdP04/edit)
-*  [Migrating Oracle users to Cloud SQL for PostgreSQL: Terminology and functionality](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-terminology)
-*  [Migrating Oracle users to Cloud SQL for PostgreSQL: Data types, users, and tables](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-data-types)
-*  [Migrating Oracle users to Cloud SQL for PostgreSQL: Queries, stored procedures, functions, and triggers](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-queries)
-*  [Migrating Oracle users to Cloud SQL for PostgreSQL: Security, operations, monitoring, and logging](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-security)
+*   [Setting up Cloud SQL for PostgreSQL for production use](https://cloud.google.com/solutions/setting-up-cloud-sql-for-postgresql-for-production)
+*   [Migrating Oracle users to Cloud SQL for PostgreSQL: Terminology and functionality](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-terminology)
+*   [Migrating Oracle users to Cloud SQL for PostgreSQL: Data types, users, and tables](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-data-types)
+*   [Migrating Oracle users to Cloud SQL for PostgreSQL: Queries, stored procedures, functions, and triggers](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-queries)
+*   [Migrating Oracle users to Cloud SQL for PostgreSQL: Security, operations, monitoring, and logging](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-security)
 
-This document is intended for a technical audience whose is responsible for database management and migration. This document assumes that you're familiar with concepts around database administration, schema conversions, some familiarity with shell scripts and basic knowledge of Google Cloud. 
+This document is intended for a technical audience who is responsible for database management and migration. This document assumes that you're familiar with 
+database administration and schema conversions, and that you have basic knowledge of using shell scripts and Google Cloud. 
 
 ## Objectives
 
-*   Learn how to perform Oracle to PostgreSQL schema conversion using Ora2pg
-*   Perform an offline data migration from Oracle to PostgreSQL using Ora2pg
-*   Understand the downtime requirements and data integrity considerations during data migration
+*   Learn how to perform Oracle to PostgreSQL schema conversion using Ora2pg.
+*   Perform an offline data migration from Oracle to PostgreSQL using Ora2pg.
+*   Understand the downtime requirements and data integrity considerations during data migration.
 
 ## Costs
 
@@ -44,9 +46,10 @@ cleanup easiest at the end of the tutorial, we recommend that you create a new p
 1.  Make sure that [billing is enabled](https://support.google.com/cloud/answer/6293499#enable-billing) for your Google
     Cloud project.
 
-When you finish this tutorial, you can avoid continued billing by deleting the resources you created. See [Cleaning up](https://docs.google.com/document/d/1G8k6nHTmnrSyxrxqKWQleTzldETAQ02Di_pLW4OXYJ8/edit?ts=6012cb3f#heading=h.2fjojvpg205m) for more detail.
+When you finish this tutorial, you can avoid continued billing by deleting the resources you created, as described in the "Cleaning up" section at the end of
+this document.
 
-## Overview of Migration using Ora2pg
+## Overview of migration using Ora2pg
 
 [Ora2pg](http://ora2pg.darold.net/) is an open source tool used to migrate an Oracle database to a PostgreSQL database. The tool scans and extracts both schema and data and then generates PostgreSQL compatible SQL scripts that you can use to populate the database.
 
