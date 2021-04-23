@@ -126,8 +126,8 @@ installing Ora2pg on that instance.
         refer to the download page for the most up-to-date filenames.
 
         * instantclient-basic-linux.x64-19.9.0.0.0dbru.zip
-	* instantclient-sdk-linux.x64-19.9.0.0.0dbru.zip
-	* instantclient-sqlplus-linux.x64-19.9.0.0.0dbru.zip
+        * instantclient-sdk-linux.x64-19.9.0.0.0dbru.zip
+        * instantclient-sqlplus-linux.x64-19.9.0.0.0dbru.zip
 
     1.  Extract the files to the HOME directory to finish the installation:
 
