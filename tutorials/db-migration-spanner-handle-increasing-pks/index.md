@@ -37,44 +37,134 @@ This tutorial uses billable components of Google Cloud, including the following:
 *   Striim License, which includes a trial period through the [Cloud Marketplace](https://console.cloud.google.com/marketplace/details/striim/striim)
 
 Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage.   
-When you finish this tutorial, you can avoid continued billing by deleting the resources you created.
 
 ## Before you begin
 
-Give a numbered sequence of procedural steps that the reader must take to set up their environment before getting into the main tutorial.
+For this tutorial, you need a Google Cloud [project](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#projects). You can create a
+new one, or you can select a project that you already created.
 
-Don't assume anything about the reader's environment. You can include simple installation instructions of only a few steps, but provide links to installation
-instructions for anything more complex.
+1.  [Select or create a Google Cloud project.](https://console.cloud.google.com/projectselector2/home/dashboard)
+2.  [Enable billing for your project.](https://support.google.com/cloud/answer/6293499#enable-billing)
+3.  [Enable API](https://console.cloud.google.com/flows/enableapi?apiid=compute.googleapis.com,spanner.googleapis.com) for Compute Engine and Spanner.
 
-### Example: Before you begin
+When you finish this tutorial, you can avoid continued billing by deleting the resources that you created. For details, see the "Cleaning up" 
+section at the end of this tutorial.
 
-This tutorial assumes that you're using the Microsoft Windows operating system.
+## Setup Source Database (MySQL)
+1. Create Cloud SQL Instance, in a cloud shell.
 
-1.  Create an account with the BigQuery free tier. See
-    [this video from Google](https://www.youtube.com/watch?v=w4mzE--sprY&list=PLIivdWyY5sqI6Jd0SbqviEgoA853EvDsq&index=2) for detailed instructions.
-1.  Create a Google Cloud project in the [Cloud Console](https://console.cloud.google.com/).
-1.  Install [DBeaver Community for Windows](https://dbeaver.io/download/).
+        gcloud sql instances create mysql-57  \
+            --database-version=MYSQL_5_7 \
+            --tier=db-n1-standard-1  \
+            --region=us-central1 \
+            --root-password=password123
 
-## Tutorial body
+2. Enable binary logging (for CDC).
 
-Break the tutorial body into as many sections and subsections as needed, with concise headings.
+        gcloud sql instances patch mysql-57 --backup-start-time 00:00
+        gcloud sql instances patch mysql-57 --enable-bin-log    
 
-### Use short numbered lists for procedures
+3. Connect to mysql instance. Type in password *password123* when prompted.
 
-Use numbered lists of steps for procedures. Each action that the reader must take should be its own step. Start each step with the action, such as *Click*, 
-*Run*, or *Enter*.
+        gcloud sql connect mysql-57 --user=root
 
-Keep procedures to 7 steps or less, if possible. If a procedure is longer than 7 steps, consider how it might be separated into sub-procedures, each in its
-own subsection.
+4. Create database and tables.
 
-### Provide context, but don't overdo the screenshots
+        create database employeedb;
+        use employeedb;
+        CREATE TABLE `signin_log` (
+          `id` int not null AUTO_INCREMENT,
+          `employee_email` varchar(200) DEFAULT NULL,
+          `details` varchar(500) DEFAULT NULL,
+          PRIMARY KEY (`id`)
+        );
+    
+5. Insert sample data rows.
 
-Provide context and explain what's going on.
+        insert into signin_log (employee_email, details) values ('test-1@email.com', 'ip address a.b.c.d');
+        insert into signin_log (employee_email, details) values ('test-2@email.com', 'new ip address 1');
 
-Use screenshots only when they help the reader. Don't provide a screenshot for every step.
+## Setup Target Database (Cloud Spanner)
+1. Create a cloud spanner instance
 
-Help the reader to recognize what success looks like along the way. For example, describing the result of a step helps the reader to feel like they're doing
-it right and helps them know things are working so far.
+        gcloud spanner instances create spanner-tgt \
+            --config=regional-us-central1 \
+            --nodes=1 \
+            --description=spanner-tgt
+
+2. Create database and empty table.
+
+        gcloud spanner databases create employeedb \
+        --instance=spanner-tgt \
+        --ddl='CREATE TABLE signin_log (id STRING(36), employee_email STRING(200), details STRING(500)) PRIMARY KEY (id)'
+        
+**NOTE** You might have noticed that employee_id has been changed to STRING in the above example. As discussed previously, this is done so that application can generate UUID keys post migration.
+
+## Setup Middleware (Striim)
+
+### Deploy Striim
+
+1. Create striim instance from market-place. Visit [this link](https://console.cloud.google.com/marketplace/product/striim/striim-spanner) from gcp market-place to get striim installed.
+
+![Striim Marketplace](1_striim_market_place.png)
+
+2. Click launch and then on the next screen keep everything as defaults and click deploy.
+
+![Striim Deploy Screen](2_striim_deployment.png)
+
+3. Once deployed you will get a link to striim instance along with userid and password.  
+   *NOTE: Using Deployment manager page you can get access to same information again if you forgot your credentials.*
+
+![Striim Credentials](3_striim_deployment_manager.png)
+
+### Configure Striim
+
+1. To allow Striim to communicate with Cloud SQL for MySQL, [add the Striim server's IP address](https://cloud.google.com/sql/docs/mysql/connect-external-app)
+ to the Cloud SQL for MySQL instance's authorized networks. 
+ 
+        STRIIMVM_ZONE=us-central1-f
+        gcloud sql instances patch mysql-57 \
+            --authorized-networks=$(gcloud compute instances describe striim-spanner-1-vm \
+            --format='get(networkInterfaces[0].accessConfigs[0].natIP)' \
+            --zone=$STRIIMVM_ZONE)
+
+Update STRIIMVM_ZONE with the right value.
+
+2. Deploy mysql driver as described [here](https://cloud.google.com/architecture/partners/continuous-data-replication-cloud-spanner-striim#setting_up_mysql_connector_j)
+
+    SSH into Striim VM
+    
+        gcloud compute ssh striim-spanner-1-vm
+
+    Execute below comannds to download and deploy mysql driver inside striim.
+    
+        wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.49.tar.gz
+        tar -xvzf mysql-connector-java-5.1.49.tar.gz
+        sudo cp ~/mysql-connector-java-5.1.49/mysql-connector-java-5.1.49.jar /opt/striim/lib
+        sudo chmod +x /opt/striim/lib/mysql-connector-java-5.1.49.jar
+        sudo chown striim /opt/striim/lib/mysql-connector-java-5.1.49.jar
+        sudo systemctl stop striim-node
+        sudo systemctl stop striim-dbms
+        sudo systemctl start striim-dbms
+        sudo systemctl start striim-node
+
+3. Create a service account key for striim to communicate with cloud spanner. Execute below commands in cloud shell. 
+
+        export PROJECT=$(gcloud info --format='value(config.project)')        
+        export PROJECT_NUMBER=$(gcloud projects list \
+            --filter="projectId=$PROJECT" --format="value(projectNumber)")
+            
+        export compute_sa=$PROJECT_NUMBER-compute@developer.gserviceaccount.com
+        gcloud iam service-accounts keys create ~/striim-spanner-key.json --iam-account $compute_sa
+
+   A key called striim-spanner-key.json is created in your home path.
+
+4. Move the service account key into striim server.
+
+        gcloud compute scp ~/striim-spanner-key.json striim-spanner-1-vm:~
+        gcloud compute ssh striim-spanner-1-vm \
+            -- 'sudo cp ~/striim-spanner-key.json /opt/striim && \
+            sudo chown striim /opt/striim/striim-spanner-key.json'
 
 ## Cleaning up
 
