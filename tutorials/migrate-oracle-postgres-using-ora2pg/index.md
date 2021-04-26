@@ -175,12 +175,12 @@ installing Ora2pg on that instance.
         
 1.  Set the `ORACLE_HOME` and `LD_LIBRARY_PATH` environment variables:
 
-            export ORACLE_HOME=[PATH_TO_INSTANT_CLIENT_DIRECTORY]
-            export LD_LIBRARY_PATH=$ORACLE_HOME
+        export ORACLE_HOME=[PATH_TO_INSTANT_CLIENT_DIRECTORY]
+        export LD_LIBRARY_PATH=$ORACLE_HOME
             
 1.  Run Ora2pg:
 
-            ora2pg --help
+        ora2pg --help
 
 1.  Initialize an Ora2pg project:
 
@@ -230,7 +230,7 @@ This section focuses on how to configure Ora2pg to connect to the source and tar
 various components. For details of the connectivity options and detailed setup instructions, see
 [Configure connectivity](https://cloud.google.com/database-migration/docs/postgres/configure-connectivity).
 
-### Setup for the source Oracle database
+### Set up connectivity for the source Oracle database
 
 By default, Ora2pg uses a configuration file located at `/etc/ora2pg/ora2pg.conf`. All of the source Oracle database connectivity settings are configured in this
 file. You can also specify your own configuration file by using the `-c` flag when running Ora2pg. Throughout this document, the configuration file generated 
@@ -256,15 +256,14 @@ To configure and test the connectivity between Ora2pg and the source Oracle data
 
     If the connection is successful, the output of the this command is the source Oracle version.
 
-
-### Setup for THE Target Cloud SQL for PostgreSQL Database
+### Set up connectivity for the target Cloud SQL for PostgreSQL database
 
 To configure the connectivity between Ora2pg and the target Cloud SQL for PostgreSQL database, do the following:
 
 1.  Configure the [authorized network](https://cloud.google.com/sql/docs/mysql/authorize-networks#console) to allow the Compute Engine instance to connect to 
     your Cloud SQL for PostgreSQL database.
 
-2.  Edit $HOME/migration\_project/config/ora2pg.conf. Locate the following parameters in the file and modify their values:
+1.  Edit the `$HOME/migration\_project/config/ora2pg.conf` file to set the values of these parameters as shown:
 
         PG_DSN          dbi:Pg:dbname=[DB_NAME];host=[PG_IP_ADDRESS];port=5432
         PG_USER         [PG_USERNAME]
@@ -295,131 +294,128 @@ To configure the connectivity between Ora2pg and the target Cloud SQL for Postgr
 
     If the password file is set up correctly, no password prompt should appear.
 
-## Configure Ora2pg Migration Parameters
+## Configure Ora2pg migration parameters
 
-Ora2pg provides many [parameters](http://ora2pg.darold.net/documentation.html#CONFIGURATION) to control various aspects of the migration process. It is important to understand the effect each parameter has and configure them properly for a successful migration. Below are a few common parameters, their meanings and suggested values:
+Ora2pg provides many [parameters](http://ora2pg.darold.net/documentation.html#CONFIGURATION) to control various aspects of the migration process. It is important 
+to understand the effect each parameter has and configure them properly for a successful migration. 
 
-
-| Ora2pg parameter | Description | Suggested value |
-|--- |--- |--- |
-|DATA_TYPE|Controls the data type mappings between Oracle and PostgreSQL. Ora2pg comes with a set of data type mappings by default. Change this parameter if you want to custom the mappings.|(Modify only if needed)|
-|MODIFY_TYPE|Force Ora2pg to use a data type for a particular table column.|(Modify only if needed)|
-|EXPORT_SCHEMA|By default, Ora2pg generates schema creation scripts that will import objects into the public schema of the target PostgreSQL database. Applications that explicitly reference schema name could run into problems when an object does not exist in the target schema. Setting this parameter to 1 instructs Ora2pg to export the schema and create all objects under the correct schema name.|1|
-|SCHEMA|Controls the schema(s) exported by Ora2pg. If not specified, Ora2pg exports all objects from all schemas.|(Application schema names)|
-|EXCLUDE|Defines a list of objects to be excluded from export. Objects that are flagged as  not supported by Ora2pg in the migration report should be added to this list and manually handled if needed.|(Space or comma-separated list of object name to be excluded)|
-|PG_SUPPORTS_PROCEDURE|Procedures are supported since PostgreSQL 11. Setting this parameter to 1 instructs Ora2pg to use PostgreSQL procedures during conversion.|1 (for PostgreSQL 11 or above) 0 (otherwise)|
-|EXTERNAL_TO_FDW|By default, external tables in Oracle databases are converted by Ora2pg to foreign tables in PostgreSQL using file_fdw extension. However, file_fdw extension is not supported by Cloud SQL for PostgreSQL and errors will be returned during import. Setting this parameter to 0 instructs Ora2pg to exclude these tables.|0|
-|USE_ORAFCE|[orafce](https://github.com/orafce/orafce) is an open-source PostgreSQL extension that provides a subset of functions and packages from Oracle RDBMS. Setting this parameter to 1 instructs Ora2pg to translate Oracle RDBMS function references to reference orafce functions. Cloud SQL for PostgreSQL does not currently support orafce extension.|0|
-|STOP_ON_ERROR|By default, `\set ON_ERROR_STOP ON` is included in all SQL scripts generated by Ora2pg. This stops import operations on any errors. Setting it to 0 to disable this behavior and allow import to continue even if error happens.|0|
-|NLS_LANG / NLS_NCHAR|Controls the `NLS_LANG` and `NLS_NCHAR` environment variables used by Oracle client library. Set these parameters to match the source database character set settings to avoid potential character conversion issues.|(Use source database NLS settings)|
+Here are a few common parameters, their meanings, and suggested values:
 
 
+| Ora2pg parameter        | Description | Suggested value |
+|-------------------------|-------------|-----------------|
+| `DATA_TYPE`             | Controls the data type mappings between Oracle and PostgreSQL. Ora2pg comes with a set of data type mappings by default. Change this parameter if you want to custom the mappings. | Modify only if needed. |
+| `MODIFY_TYPE`           | Force Ora2pg to use a data type for a particular table column. | Modify only if needed. |
+| `EXPORT_SCHEMA`         | By default, Ora2pg generates schema creation scripts that will import objects into the public schema of the target PostgreSQL database. Applications that explicitly reference the schema name could run into problems when an object does not exist in the target schema. Setting this parameter to `1` instructs Ora2pg to export the schema and create all objects under the correct schema name. | `1` |
+| `SCHEMA`                | Controls the schemas exported by Ora2pg. If not specified, Ora2pg exports all objects from all schemas. | Application schema names |
+| `EXCLUDE`               | Defines a list of objects to be excluded from export. Objects that are flagged as not supported by Ora2pg in the migration report should be added to this list and manually handled if needed.| Space-separated or comma-separated list of object names to be excluded |
+| `PG_SUPPORTS_PROCEDURE` | Procedures are supported since PostgreSQL 11. Setting this parameter to `1` instructs Ora2pg to use PostgreSQL procedures during conversion.| `1` for PostgreSQL 11 or above; `0` otherwise|
+| `EXTERNAL_TO_FDW`       | By default, external tables in Oracle databases are converted by Ora2pg to foreign tables in PostgreSQL using the `file_fdw` extension. However, the `file_fdw` extension is not supported by Cloud SQL for PostgreSQL, and errors will be returned during import. Setting this parameter to `0` instructs Ora2pg to exclude these tables. | `0` |
+| `USE_ORAFCE`            | [Orafce](https://github.com/orafce/orafce) is an open-source PostgreSQL extension that provides a subset of functions and packages from Oracle RDBMS. Setting this parameter to `1` instructs Ora2pg to translate Oracle RDBMS function references to reference Orafce functions. Cloud SQL for PostgreSQL does not support Orafce extension. | `0` |
+| `STOP_ON_ERROR`         | By default, `\set ON_ERROR_STOP ON` is included in all SQL scripts generated by Ora2pg. This stops import operations on any errors. Set it to `0` to disable this behavior and allow import to continue even if errors occur. | `0` |
+| `NLS_LANG`, `NLS_NCHAR` | Controls the `NLS_LANG` and `NLS_NCHAR` environment variables used by Oracle client library. Set these parameters to match the source database character set settings to avoid potential character conversion issues. | Use source database NLS settings. |
 
-To configure these parameters, modify $HOME/migration\_project/config/ora2pg.conf. Below is a sample configuration file for migrating the Oracle [HR sample schema](https://docs.oracle.com/en/database/oracle/oracle-database/19/comsc/introduction-to-sample-schemas.html#GUID-4DE9844F-0B28-4713-9AFC-CCD8D6249D76) (follow [these steps](https://docs.oracle.com/en/database/oracle/oracle-database/19/comsc/installing-sample-schemas.html#GUID-4D4984DD-A5F7-4080-A6F8-6306DA88E9FC) to install Oracle HR sample schema):
+To configure these parameters, modify the `$HOME/migration\_project/config/ora2pg.conf` file. 
 
+The following is an example configuration file for migrating the Oracle
+[HR sample schema](https://docs.oracle.com/en/database/oracle/oracle-database/19/comsc/introduction-to-sample-schemas.html).
 
-```
-ORACLE_DSN              dbi:Oracle:host=<ORACLE_IP>;service_name=<DB_SERVICE_NAME>;port=<LISTENER_PORT>
-ORACLE_USER             <ORACLE_USER>
-ORACLE_PWD              <ORACLE_PWD>
-PG_DSN                  dbi:Pg:dbname=<DB_NAME>;host=<PG_IP>;port=5432
-PG_USER                 <PG_USER>
-PG_PWD                  <PG_PWD>
-EXPORT_SCHEMA           1
-SCHEMA                  HR
-STOP_ON_ERROR           0
-USE_ORAFCE              0
-EXTERNAL_TO_FDW         0
-PG_SUPPORTS_PROCEDURE   1
-```
+    ORACLE_DSN              dbi:Oracle:host=[ORACLE_IP_ADDRESS];service_name=[DB_SERVICE_NAME];port=[LISTENER_PORT]
+    ORACLE_USER             [ORACLE_USERNAME]
+    ORACLE_PWD              [ORACLE_PWD]
+    PG_DSN                  dbi:Pg:dbname=[DB_NAME];host=[PG_IP_ADDRESS];port=5432
+    PG_USER                 [PG_USERNAME]
+    PG_PWD                  [PG_PWD]
+    EXPORT_SCHEMA           1
+    SCHEMA                  HR
+    STOP_ON_ERROR           0
+    USE_ORAFCE              0
+    EXTERNAL_TO_FDW         0
+    PG_SUPPORTS_PROCEDURE   1
 
+To install the Oracle HR sample schema, follow the instructions in [Installing Sample Schemas](https://docs.oracle.com/en/database/oracle/oracle-database/19/comsc/installing-sample-schemas.html).
 
-## Generate Database Migration Report
+## Generate a database migration report
 
-Before performing the actual migration, it is a good idea to generate a [database migration report](http://ora2pg.darold.net/documentation.html#Migration-cost-assessment) using Ora2pg. By generating this report, Ora2pg inspect all database objects and codes and report if there are anything that could not be automatically converted.
+Before performing the actual migration, it is a good idea to generate a
+[database migration report](http://ora2pg.darold.net/documentation.html#Migration-cost-assessment) using Ora2pg. When you generate this report, 
+Ora2pg inspects all database objects and codes and reports whether there is anything that couldn't be automatically converted.
 
-Use the following command to generate this report:
+1.  Generate the report:
 
+        ora2pg -t SHOW_REPORT -c $HOME/migration_project/config/ora2pg.conf --estimate_cost --dump_as_html > $HOME/migration_report.html
 
-```
-ora2pg -t SHOW_REPORT -c $HOME/migration_project/config/ora2pg.conf --estimate_cost --dump_as_html > $HOME/migration_report.html
-```
+1.  Review the report, and take note of any objects that require manual conversion, add these objects to the `EXCLUDE` parameter, and handle them manually if 
+    needed.
 
+## Export the database schema from the Oracle database
 
-Review the report and take note of any objects that require manual conversion. Add these objects to the `EXCLUDE` parameter and handle them manually if needed.
-
-
-## Export database schema from Oracle database
-
-Exporting schema from Oracle database involves running the Ora2pg command, specifying the ora2pg.conf file with the correct settings and supplying various command line arguments specifying the type of objects to be exported. This requires multiple commands and a good knowledge of the tool itself. To ease this process, a shell script called `export_schema.sh` is generated during the project initialization step above. This is a wrapper script that takes the ora2pg.conf as input and then issues the required Ora2pg commands to export the actual schema from the source database. Use the following command to perform schema export from an Oracle database:
-
-
-```
-$HOME/migration_project/export_schema.sh 
-```
-
-
-The exported schema definitions are converted to PostgreSQL syntax and located in the `schema` directory as SQL files. These are the files that are going to be used during import. You can examine and make changes to the files if needed. The `sources` directory contains the schema definitions in source Oracle syntax.
-
-
-```
-.
-├── config
-│   └── ora2pg.conf
-├── data
-├── export_schema.sh
-├── import_all.sh
-├── reports
-│   ├── columns.txt
-│   ├── report.html
-│   └── tables.txt
-├── schema
-│   ├── dblinks
-│   ├── directories
-│   ├── functions
-│   ├── grants
-│   ├── mviews
-│   ├── packages
-│   ├── partitions
-│   ├── procedures
-│   │   ├── ADD_JOB_HISTORY_procedure.sql
-│   │   ├── procedure.sql
-│   │   └── SECURE_DML_procedure.sql
-│   ├── sequences
-│   │   └── sequence.sql
-│   ├── synonyms
-│   ├── tables
-│   │   ├── CONSTRAINTS_table.sql
-│   │   ├── FKEYS_table.sql
-│   │   ├── INDEXES_table.sql
-│   │   └── table.sql
-│   ├── tablespaces
-│   ├── triggers
-│   │   ├── trigger.sql
-│   │   └── UPDATE_JOB_HISTORY_trigger.sql
-│   ├── types
-│   └── views
-│       ├── EMP_DETAILS_VIEW_view.sql
-│       └── view.sql
-└── sources
-    ├── functions
-    ├── mviews
-    ├── packages
-    ├── partitions
-    ├── procedures
-    │   ├── ADD_JOB_HISTORY_procedure.sql
-    │   ├── procedure.sql
-    │   └── SECURE_DML_procedure.sql
-    ├── triggers
-    │   ├── trigger.sql
-    │   └── UPDATE_JOB_HISTORY_trigger.sql
-    ├── types
-    └── views
-        ├── EMP_DETAILS_VIEW_view.sql
-        └── view.sql
-```
+Exporting a schema from an Oracle database involves running the Ora2pg command, specifying the `ora2pg.conf` file with the correct settings, and supplying 
+command-line arguments specifying the type of objects to be exported. This requires multiple commands and a good knowledge of the tool itself. To ease this 
+process, a shell script called `export_schema.sh` is generated during the project initialization step above. This is a wrapper script that takes the 
+`ora2pg.conf` as input and then issues the required Ora2pg commands to export the actual schema from the source database. Use the following command to perform 
+schema export from an Oracle database:
 
 
+    $HOME/migration_project/export_schema.sh
+
+The exported schema definitions are converted to PostgreSQL syntax and located in the `schema` directory as SQL files. These are the files that are 
+used during import. You can examine and make changes to the files if needed. The `sources` directory contains the schema definitions in source Oracle syntax.
+
+    .
+    ├── config
+    │   └── ora2pg.conf
+    ├── data
+    ├── export_schema.sh
+    ├── import_all.sh
+    ├── reports
+    │   ├── columns.txt
+    │   ├── report.html
+    │   └── tables.txt
+    ├── schema
+    │   ├── dblinks
+    │   ├── directories
+    │   ├── functions
+    │   ├── grants
+    │   ├── mviews
+    │   ├── packages
+    │   ├── partitions
+    │   ├── procedures
+    │   │   ├── ADD_JOB_HISTORY_procedure.sql
+    │   │   ├── procedure.sql
+    │   │   └── SECURE_DML_procedure.sql
+    │   ├── sequences
+    │   │   └── sequence.sql
+    │   ├── synonyms
+    │   ├── tables
+    │   │   ├── CONSTRAINTS_table.sql
+    │   │   ├── FKEYS_table.sql
+    │   │   ├── INDEXES_table.sql
+    │   │   └── table.sql
+    │   ├── tablespaces
+    │   ├── triggers
+    │   │   ├── trigger.sql
+    │   │   └── UPDATE_JOB_HISTORY_trigger.sql
+    │   ├── types
+    │   └── views
+    │       ├── EMP_DETAILS_VIEW_view.sql
+    │       └── view.sql
+    └── sources
+        ├── functions
+        ├── mviews
+        ├── packages
+        ├── partitions
+        ├── procedures
+        │   ├── ADD_JOB_HISTORY_procedure.sql
+        │   ├── procedure.sql
+        │   └── SECURE_DML_procedure.sql
+        ├── triggers
+        │   ├── trigger.sql
+        │   └── UPDATE_JOB_HISTORY_trigger.sql
+        ├── types
+        └── views
+            ├── EMP_DETAILS_VIEW_view.sql
+            └── view.sql
 
 ## Import database schema into Cloud SQL for PostgreSQL
 
