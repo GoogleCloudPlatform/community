@@ -166,6 +166,53 @@ Update STRIIMVM_ZONE with the right value.
             -- 'sudo cp ~/striim-spanner-key.json /opt/striim && \
             sudo chown striim /opt/striim/striim-spanner-key.json'
 
+## Migrate data using Striim
+Data migration is divided into two jobs as below. 
+Both the jobs will make use of customer functions written in Java for data manipulations i.e. bit reverse and string conversion.
+
+1. Initial Load
+2. Continuous Replication (CDC)
+
+### Plugin BitReverse Function into Striim
+We will write code, compile, package and deploy java code for bitreversal into striim. This is custom function been plugged into striim 
+
+1. SSH into VM
+
+        gcloud compute ssh striim-spanner-1-vm
+
+2. Write java code
+
+        cat > CustomFunctions.java << EOF
+        public abstract class CustomFunctions {
+                
+        //used by STRIIM to convert MySQL's int ids to bit reversed strings
+        public static String bitReverseInt(Integer id) {
+                return String.valueOf(Integer.reverse(id));
+                }
+        }
+        EOF
+
+3. Compile and package it.
+
+        javac CustomFunctions.java
+        jar -cf CustomFunctions.jar CustomFunctions.class CustomFunctions.java
+
+4. Deploy jar into striim’s lib folder.
+
+        sudo cp CustomFunctions.jar /opt/striim/lib/
+        sudo chown striim /opt/striim/lib/CustomFunctions.jar
+        sudo chmod +x /opt/striim/lib/CustomFunctions.jar
+
+5. Restart striim application
+
+        sudo systemctl stop striim-node
+        sudo systemctl stop striim-dbms
+        sudo systemctl start striim-dbms
+        sudo systemctl start striim-node
+
+### Create Initial load pipeline
+
+
 ## Cleaning up
 
 Tell the reader how to shut down what they built to avoid incurring further costs.
