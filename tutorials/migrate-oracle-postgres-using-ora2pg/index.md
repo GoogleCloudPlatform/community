@@ -224,86 +224,76 @@ installing Ora2pg on that instance.
 
 ## Set up source and target database connectivity
 
-This section focuses on how to configure Ora2pg to connect to the source and target database. This assumes that the necessary network setup, such as [VPC](https://cloud.google.com/vpc), [Cloud VPN](https://cloud.google.com/network-connectivity/docs/vpn/concepts/overview) or [Cloud Interconnect](https://cloud.google.com/network-connectivity/docs/interconnect/concepts/overview), is already in-place to allow network traffic among various components. Refer to this [guide](https://cloud.google.com/database-migration/docs/postgres/configure-connectivity) on the various connectivity options and detailed setup instructions.
+This section focuses on how to configure Ora2pg to connect to the source and target database. This section assumes that the necessary network setup—such as
+[VPC](https://cloud.google.com/vpc), [Cloud VPN](https://cloud.google.com/network-connectivity/docs/vpn/concepts/overview), or
+[Cloud Interconnect](https://cloud.google.com/network-connectivity/docs/interconnect/concepts/overview)—is already in place to allow network traffic among 
+various components. For details of the connectivity options and detailed setup instructions, see
+[Configure connectivity](https://cloud.google.com/database-migration/docs/postgres/configure-connectivity).
 
+### Setup for the source Oracle database
 
-### Setup for Source Oracle Database
+By default, Ora2pg uses a configuration file located at `/etc/ora2pg/ora2pg.conf`. All of the source Oracle database connectivity settings are configured in this
+file. You can also specify your own configuration file by using the `-c` flag when running Ora2pg. Throughout this document, the configuration file generated 
+during Ora2pg project initialization is used: `$HOME/migration\_project/config/ora2pg.conf`.
 
-By default, Ora2pg uses a configuration file located at /etc/ora2pg/ora2pg.conf. All the source Oracle database connectivity settings are configured in this file. You can also specify your own configuration file by using the `-c` flag when running Ora2pg. The configuration file generated during Ora2pg project initialization, $HOME/migration\_project/config/ora2pg.conf, will be used throughout this document.
+To configure and test the connectivity between Ora2pg and the source Oracle database, do the following:
 
-To configure and test the connectivity between Ora2pg and the source Oracle database:
+1.  Edit the `$HOME/migration\_project/config/ora2pg.conf` file to set the values of these parameters as shown:
 
+        ORACLE_HOME     [PATH_TO_INSTANT_CLIENT_DIRECTORY]
+        ORACLE_DSN      dbi:Oracle:host=[ORACLE_IP_ADDRESS];service_name=[DB_SERVICE_NAME];port=[LISTENER_PORT]
+        ORACLE_USER     [ORACLE_USERNAME]
+        ORACLE_PWD      [ORACLE_PWD]
 
+        SCHEMA          [SCHEMA_NAME]
 
-1. Edit $HOME/migration\_project/config/ora2pg.conf. Locate the following parameters in the file and modify their values:
+    Replace `[ORACLE_IP_ADDRESS]`, `[DB_SERVICE_NAME]`, `[LISTENER_PORT]`, `[ORACLE_USERNAME]` and `[ORACLE_PWD]` with the actual connection details. Replace
+    `[SCHEMA_NAME]` with the actual name of the source schema to be migrated.
 
-    ```
-    ORACLE_HOME     <PATH_TO_INSTANT_CLIENT_DIRECTORY>
-    ORACLE_DSN      dbi:Oracle:host=<ORACLE_IP>;service_name=<DB_SERVICE_NAME>;port=<LISTENER_PORT>
-    ORACLE_USER     <ORACLE_USER>
-    ORACLE_PWD      <ORACLE_PWD>
+1.  Verify connectivity:
 
-    SCHEMA          <SCHEMA_NAME>
-    ```
-
-    Replace the `ORACLE_IP`, `DB_SERVICE_NAME`, `LISTENER_PORT`, `ORACLE_USER` and `ORACLE_PWD` with the actual connection details. Replace `SCHEMA_NAME` with the actual name of the source schema to be migrated.
-
-2. Execute the following command to retrieve the verify connectivity:
-
-    ```
-    ora2pg -t SHOW_VERSION -c $HOME/migration_project/config/ora2pg.conf
-    ```
+        ora2pg -t SHOW_VERSION -c $HOME/migration_project/config/ora2pg.conf
 
     If the connection is successful, the output of the this command is the source Oracle version.
 
 
-### Setup for Target Cloud SQL for PostgreSQL Database
+### Setup for THE Target Cloud SQL for PostgreSQL Database
 
-To configure the connectivity between Ora2pg and the target Cloud SQL for PostgreSQL database:
+To configure the connectivity between Ora2pg and the target Cloud SQL for PostgreSQL database, do the following:
 
-1. Configure [Authorized Network](https://cloud.google.com/sql/docs/mysql/authorize-networks#console) to allow the Compute Engine instance to connect to your Cloud SQL for PostgreSQL database.
+1.  Configure the [authorized network](https://cloud.google.com/sql/docs/mysql/authorize-networks#console) to allow the Compute Engine instance to connect to 
+    your Cloud SQL for PostgreSQL database.
 
-2. Edit $HOME/migration\_project/config/ora2pg.conf. Locate the following parameters in the file and modify their values:
+2.  Edit $HOME/migration\_project/config/ora2pg.conf. Locate the following parameters in the file and modify their values:
 
-    ```
-    PG_DSN          dbi:Pg:dbname=<DB_NAME>;host=<PG_IP>;port=5432
-    PG_USER         <PG_USER>
-    PG_PWD          <PG_PWD>
-    ```
+        PG_DSN          dbi:Pg:dbname=[DB_NAME];host=[PG_IP_ADDRESS];port=5432
+        PG_USER         [PG_USERNAME]
+        PG_PWD          [PG_PWD]
 
-    Replace the `DB_NAME`, `PG_IP`, `PG_USER` and `PG_PWD` with the actual connection details.
+    Replace `[DB_NAME]`, `[PG_IP_ADDRESS]`, `[PG_USERNAME]` and `[PG_PWD]` with the actual connection details.
 
-3. Ora2pg also makes use of the [psql client](https://www.postgresql.org/docs/12/app-psql.html) to perform various operations. To prevent psql from repeatedly prompting for password during import operations, create a [password file](https://www.postgresql.org/docs/12/libpq-pgpass.html) `$HOME/.pgpass` with the following content:
+1.  Ora2pg uses the [psql client](https://www.postgresql.org/docs/12/app-psql.html) to perform various operations. To prevent psql from repeatedly prompting for
+    a password during import operations, create a [password file](https://www.postgresql.org/docs/12/libpq-pgpass.html) `$HOME/.pgpass` with the following 
+    content:
 
-    ```
-    <PG_IP>:5432:<DB_NAME>:<PG_USER>:<PG_PWD>
-    ```
+        [PG_IP_ADDRESS]:5432:[DB_NAME]:[PG_USERNAME]:[PG_PWD]
 
-    Then execute the following command the secure the file:
+1.  Restrict the read and write permissions for the password file:
 
-    ```
-    chmod 600 $HOME/.pgpass
-    ```
+        chmod 600 $HOME/.pgpass
 
-4. Setup the following environment variables to facilitate the connection to the target Cloud SQL for PostgreSQL database:
+1.  Set environment variables to facilitate the connection to the target Cloud SQL for PostgreSQL database:
 
-    ```
-    export PGDATABASE=<DB_NAME>
-    export PGUSER=<PG_USER>
-    export PGHOST=<PG_IP>
-    export PGPORT=5432
-    ```
+        export PGDATABASE=[DB_NAME]
+        export PGUSER=[PG_USERNAME]
+        export PGHOST=[PG_IP_ADDRESS]
+        export PGPORT=5432
 
+1.  Verify connectivity between the Compute Engine instance and the Cloud SQL for PostgreSQL database:
 
-5. Verify connectivity between the Compute Engine instance and the Cloud SQL for PostgreSQL database. Execute the following command:
+        psql
 
-    ```
-    psql
-    ```
-
-    No password prompts should appear if the password file is set up properly.
-
-
+    If the password file is set up correctly, no password prompt should appear.
 
 ## Configure Ora2pg Migration Parameters
 
