@@ -211,13 +211,136 @@ We will write code, compile, package and deploy java code for bitreversal into s
         sudo systemctl start striim-node
 
 ### Create Initial load pipeline
+Initial load is meant to bulk load existing data. It reads data as on job start time and once finished it will quiesce (pause).
+Any further changes in data after job start time will not be read by this job.
+
+1. Save below code as file `mysql_to_spanner_initial_load.tql` on your local computer. You will import it into striim.
+
+        drop APPLICATION mysql_to_spanner_initial_load CASCADE;
+        
+        IMPORT STATIC CustomFunctions.*;
+        
+        CREATE APPLICATION mysql_to_spanner_initial_load;
+        
+        CREATE FLOW sample1;
+        
+        CREATE OR REPLACE SOURCE mysql_dbreader USING Global.DatabaseReader (
+          Username: 'root',
+          DatabaseProviderType: 'Default',
+          FetchSize: 10,
+          adapterName: 'DatabaseReader',
+          QuiesceOnILCompletion: true,
+          Password_encrypted: 'false',
+          ConnectionURL: 'jdbc:mysql://PRIMARY_IP:3306/employeedb',
+          Tables: 'employeedb.signin_log',
+          Password: 'password123',
+          ReturnDateTimeAs: 'String')
+        OUTPUT TO sample_raw;
+        
+        CREATE STREAM SampleModifiedData OF Global.WAEvent;
+        
+        CREATE CQ POPULATE_SAMPLE_TABLE
+        INSERT INTO SampleModifiedData
+        SELECT * from sample_raw
+        MODIFY(data[0] = bitReverseInt(data[0]));
+        
+        CREATE TARGET spanner_sample USING Global.SpannerWriter (
+          InstanceID: 'spanner-tgt',
+          ServiceAccountKey: '/opt/striim/striim-spanner-key.json',
+          BatchPolicy: 'EventCount: 100, Interval: 10s',
+          ParallelThreads: '',
+          Tables: 'employeedb.signin_log,employeedb.signin_log' )
+        INPUT FROM SampleModifiedData;
+        
+        END FLOW sample1;
+        
+        END APPLICATION mysql_to_spanner_initial_load;
+
+2. Login to striim web ui. If needed, visit [deployment manager page](https://console.cloud.google.com/dm/deployments)
+ access striim web ui link and credentials. 
+3. Click on Apps > + Add App (on top right).
+4. Click import existing app and choose the mysql_to_spanner_initial_load.tql created in step 1. And click import.
+5. In the workflow, replace Primary_IP with MySQL’s ip address. Click mysql_dbreader component and change the Primary_IP 
+in the right window showing connection url (screenshot below). And click save
+![initial load](4_striim_initial_load.png)
+
+6. Created > Deploy App > Deploy
+![initial load deploy](5_striim_deploy.png)
+
+7. Deploy > Start App. 
+8. You will soon observe rows flowing through striim and data being inserted inside the cloud spanner.
+9. On spanner gui verify that rows have been written with bit reversed id values.
+![initial complete](6_spanner_il_complete.png)
+
+### Create continuous replication (CDC) pipeline
+Once initial load is complete, then using CDC pipeline you can keep replicating the new changes into Spanner.  
+Keeping MySQL and Spanner in sync. It reads data from mysql's binary logs using Striim's MysqlReader component.  
+
+In production you would use `StartTimestamp` property to specify binary log position (i.e. time at which initial load started).  
+Also, you might like to create a `CheckpointTable` so that [striim can recover](https://www.striim.com/docs/en/spanner-writer.html) from a crash.
+However these concepts are out of scope for this tutorial.
+
+1. Similar to previous, import below code for CDC Pipeline and change Primary_IP with mysql’s ip. Then deploy and start the app.
+
+        drop APPLICATION mysql_to_spanner_cdc CASCADE;
+        
+        IMPORT STATIC CustomFunctions.*;
+        
+        CREATE APPLICATION mysql_to_spanner_cdc;
+        
+        CREATE FLOW sample1_cdc;
+        
+        
+        CREATE SOURCE mysql_cdc_source USING MysqlReader  (
+        ConnectionURL: 'jdbc:mysql://PRIMARY_IP:3306/employeedb',
+          Username: 'root',
+          Compression: false,
+          Password_encrypted: 'false',
+          connectionRetryPolicy: 'retryInterval=30, maxRetries=3',
+          FilterTransactionBoundaries: true,
+          Tables: 'employeedb.signin_log',
+          Password: 'password123',
+          SendBeforeImage: true
+          --change this timestamp
+          --,StartTimestamp: '2021-MAR-19 13:00:00'
+          )
+        OUTPUT TO sample_raw_cdc;
+        
+        
+        CREATE STREAM SampleModifiedDataCDC OF Global.WAEvent;
+        
+        CREATE CQ POPULATE_SAMPLE_TABLE_CDC
+        INSERT INTO SampleModifiedDataCDC
+        SELECT * FROM sample_raw_cdc
+        MODIFY(data[0] = bitReverseInt(data[0]));
+        
+        
+        CREATE TARGET spanner_sample_cdc USING Global.SpannerWriter (
+          InstanceID: 'spanner-tgt',
+          --CheckpointTable: 'CHKPOINT',
+          BatchPolicy: 'EventCount: 100, Interval: 10s',
+          ParallelThreads: '',
+          ServiceAccountKey: '/opt/striim/striim-spanner-key.json',
+          Tables: 'employeedb.signin_log,employeedb.signin_log' )
+        INPUT FROM SampleModifiedDataCDC;
+        
+        END FLOW sample1_cdc;
+        
+        END APPLICATION mysql_to_spanner_cdc;
+
+2. Connect to mysql and insert a few rows.
+
+        insert into signin_log (employee_email, details) values ('cdc-test-3@email.com', 'ip 3333 ');
+        insert into signin_log (employee_email, details) values ('cdc-test-4@email.com', 'ip 4444');
+        insert into signin_log (employee_email, details) values ('cdc-test-5@email.com', 'ip 5555');
+
+
+3. Verify data has been replicated into Cloud Spanner.
+
+![spanner cdc complete](7_spanner_cdc_complete.png)
 
 
 ## Cleaning up
-
-Tell the reader how to shut down what they built to avoid incurring further costs.
-
-### Example: Cleaning up
 
 To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project.
 
@@ -235,12 +358,6 @@ To delete a project, do the following:
 1.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
 
 ## What's next
-
-Tell the reader what they should read or watch next if they're interested in learning more.
-
-### Example: What's next
-
-- Watch this tutorial's [Google Cloud Level Up episode on YouTube](https://youtu.be/uBzp5xGSZ6o).
-- Learn more about [AI on Google Cloud](https://cloud.google.com/solutions/ai/).
-- Learn more about [Cloud developer tools](https://cloud.google.com/products/tools).
+- [Choosing primary key in Cloud Spanner](https://cloud.google.com/spanner/docs/schema-and-data-model#choosing_a_primary_key)
+- [Continuous data replication to Cloud Spanner using Striim](https://cloud.google.com/solutions/partners/continuous-data-replication-cloud-spanner-striim)
 - Try out other Google Cloud features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
