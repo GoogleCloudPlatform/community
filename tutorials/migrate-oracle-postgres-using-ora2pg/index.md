@@ -15,7 +15,7 @@ This tutorial focuses on the schema migration aspects of an offline migration fr
 [Ora2pg](http://ora2pg.darold.net/) is an open source tool used to migrate an Oracle database to a PostgreSQL database. The tool scans and extracts the database 
 schema and data and then generates PostgreSQL-compatible SQL scripts that you can use to populate the database.
 
-Though Ora2pg supports exporting data from Oracle database and importing them into Cloud SQL for PostgreSQL, it is an offline migration in which the database has
+Though Ora2pg supports exporting data from Oracle database and importing it into Cloud SQL for PostgreSQL, it is an offline migration in which the database has
 to be taken out of service during the whole data migration process. It is common to use data migration tools that support real-time replication, such as Striim
 or Oracle GoldenGate for migrations that require minimal downtime.
 
@@ -446,7 +446,7 @@ Optionally, use the `-D` flag to enable dry-run mode without actually changing t
 ## Perform data migration
 
 After the schema is imported into the target Cloud SQL for PostgreSQL database, you can start the actual data migration. Ora2pg supports exporting data from 
-an Oracle database and importing them into Cloud SQL for PostgreSQL. 
+an Oracle database and importing it into Cloud SQL for PostgreSQL. 
 
 To export data from source the Oracle database and import the data directly into the target PostgreSQL database, use the following command:
 
@@ -472,70 +472,53 @@ After data has been loaded into the target database, the next step is to import 
 
         psql -f $HOME/migration_project/schema/triggers/trigger.sql
 
-## Verifying data integrity after the migration
+## Verify data integrity after the migration
 
-In this phase, you want to identify any problems and inconsistencies with the target PostgreSQL environment so that you can rapidly resolve any discrepancies between the data. Follow these steps:
+After the data has been imported, you need to identify any problems and inconsistencies with the target PostgreSQL environment so that you can rapidly resolve 
+any discrepancies in the data.
 
-
-
-1. Compare the number of rows between the source and target database tables to identify any gaps. In addition to running `count`, also run `sum`, `avg`, `min`, and `max` on the same set of tables. 
+1.  Compare the number of rows between the source and target database tables to identify any gaps. In addition to running `count`, also run `sum`, `avg`, `min`,
+    and `max` on the same set of tables.
 
     Ora2pg comes with a test mode that compares the source Oracle database and target PostgreSQL database in terms of row counts and object counts:
 
-    ```
-    ora2pg -t TEST -c config/ora2pg.conf
-    ```
+        ora2pg -t TEST -c config/ora2pg.conf
 
     Here is an excerpt of the command output showing one of the many test results that passed the verification:
 
-    ```
-    [TEST TABLE COUNT]
-    ORACLEDB:TABLE:7
-    POSTGRES:TABLE:7
-    [ERRORS TABLE COUNT]
-    OK, Oracle and PostgreSQL have the same number of TABLE.
-    ```
+        [TEST TABLE COUNT]
+        ORACLEDB:TABLE:7
+        POSTGRES:TABLE:7
+        [ERRORS TABLE COUNT]
+        OK, Oracle and PostgreSQL have the same number of TABLE.
 
-    In case a discrepancy is found between the source and target database, the result will look similar to the one below:
+    If a discrepancy is found between the source and target databases, the result looks similar to the following:
 
-    ```
-    [TEST TRIGGER COUNT]
-    ORACLEDB:TRIGGER:1
-    POSTGRES:TRIGGER:0
-    [ERRORS TRIGGER COUNT]
-    TRIGGER does not have the same count in source database (1) and in PostgreSQL (0).
-    ```
+        [TEST TRIGGER COUNT]
+        ORACLEDB:TRIGGER:1
+        POSTGRES:TRIGGER:0
+        [ERRORS TRIGGER COUNT]
+        TRIGGER does not have the same count in source database (1) and in PostgreSQL (0).
 
-    In such cases, check if the result is expected and create the missing objects manually in the target Cloud SQL for PostgreSQL database as necessary.
+    In such cases, check whether the result is expected and create the missing objects manually in the target Cloud SQL for PostgreSQL database as necessary.
 
-2. Run frequently used SQL statements against the target PostgreSQL environment to ensure that the data matches the source Oracle database.
+1.  Run frequently used SQL statements against the target PostgreSQL environment to ensure that the data matches the source Oracle database.
 
-3. Connect the application to both the source and target databases and verify that the results match. 
-
+1.  Connect the application to both the source and target databases and verify that the results match. 
 
 ## Cleaning up
 
-To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project.
-
-Deleting a project has the following consequences:
-
-- If you used an existing project, you'll also delete any other work that you've done in the project.
-- You can't reuse the project ID of a deleted project. If you created a custom project ID that you plan to use in the
-  future, delete the resources inside the project instead. This ensures that URLs that use the project ID, such as
-  an `appspot.com` URL, remain available.
-
-To delete a project, do the following:
+To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project:
 
 1.  In the Cloud Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
-1.  In the project list, select the project you want to delete and click **Delete**.
+1.  In the project list, select the project that you want to delete, and click **Delete**.
 1.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
 
 ## What's next
 
--   Learn about migrating an Oracle database to Cloud SQL PostgreSQL with the following series:
-    -  [Migrating Oracle users to Cloud SQL for PostgreSQL: Terminology and functionality](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-terminology)
-    -  [Migrating Oracle users to Cloud SQL for PostgreSQL: Data types, users, and tables](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-data-types)
-    -  [Migrating Oracle users to Cloud SQL for PostgreSQL: Queries, stored procedures, functions, and triggers](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-queries)
-    -  [Migrating Oracle users to Cloud SQL for PostgreSQL: Security, operations, monitoring, and logging](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-security)
- 
+Learn about migrating an Oracle database to Cloud SQL PostgreSQL with the following series:
 
+-  [Migrating Oracle users to Cloud SQL for PostgreSQL: Terminology and functionality](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-terminology)
+-  [Migrating Oracle users to Cloud SQL for PostgreSQL: Data types, users, and tables](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-data-types)
+-  [Migrating Oracle users to Cloud SQL for PostgreSQL: Queries, stored procedures, functions, and triggers](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-queries)
+-  [Migrating Oracle users to Cloud SQL for PostgreSQL: Security, operations, monitoring, and logging](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-security)
