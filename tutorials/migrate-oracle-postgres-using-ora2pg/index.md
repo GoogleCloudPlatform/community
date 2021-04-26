@@ -19,14 +19,6 @@ Though Ora2pg supports exporting data from Oracle database and importing them in
 to be taken out of service during the whole data migration process. It is common to use data migration tools that support real-time replication, such as Striim
 or Oracle GoldenGate for migrations that require minimal downtime.
 
-For more in-depth discussions of other aspects of the migration, see the following document series:
-
-*   [Setting up Cloud SQL for PostgreSQL for production use](https://cloud.google.com/solutions/setting-up-cloud-sql-for-postgresql-for-production)
-*   [Migrating Oracle users to Cloud SQL for PostgreSQL: Terminology and functionality](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-terminology)
-*   [Migrating Oracle users to Cloud SQL for PostgreSQL: Data types, users, and tables](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-data-types)
-*   [Migrating Oracle users to Cloud SQL for PostgreSQL: Queries, stored procedures, functions, and triggers](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-queries)
-*   [Migrating Oracle users to Cloud SQL for PostgreSQL: Security, operations, monitoring, and logging](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-security)
-
 This document is intended for a technical audience who is responsible for database management and migration. This document assumes that you're familiar with 
 database administration and schema conversions, and that you have basic knowledge of using shell scripts and Google Cloud.
 
@@ -41,6 +33,14 @@ High-level overview of the migration procedure using Ora2pg:
 7. Perform data migration.
 8. Import indexes, constraints, foreign keys, and triggers into Cloud SQL for PostgreSQL.
 9. Verify data integrity after the migration.
+
+For more in-depth discussions of other aspects of the migration, see the following document series:
+
+*   [Setting up Cloud SQL for PostgreSQL for production use](https://cloud.google.com/solutions/setting-up-cloud-sql-for-postgresql-for-production)
+*   [Migrating Oracle users to Cloud SQL for PostgreSQL: Terminology and functionality](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-terminology)
+*   [Migrating Oracle users to Cloud SQL for PostgreSQL: Data types, users, and tables](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-data-types)
+*   [Migrating Oracle users to Cloud SQL for PostgreSQL: Queries, stored procedures, functions, and triggers](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-queries)
+*   [Migrating Oracle users to Cloud SQL for PostgreSQL: Security, operations, monitoring, and logging](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-security)
 
 ## Objectives
 
@@ -173,12 +173,12 @@ installing Ora2pg on that instance.
 
         After installation, Ora2pg should be available to all users.
         
-    1.  Set the `ORACLE_HOME` and `LD_LIBRARY_PATH` environment variables:
+1.  Set the `ORACLE_HOME` and `LD_LIBRARY_PATH` environment variables:
 
-            export ORACLE_HOME=<PATH_TO_INSTANT_CLIENT_DIRECTORY>
+            export ORACLE_HOME=[PATH_TO_INSTANT_CLIENT_DIRECTORY]
             export LD_LIBRARY_PATH=$ORACLE_HOME
             
-    1.  Run Ora2pg:
+1.  Run Ora2pg:
 
             ora2pg --help
 
