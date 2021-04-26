@@ -1,5 +1,5 @@
 ---
-title: Migrating from Oracle to Cloud SQL PostgreSQL using Ora2pg
+title: Migrating from Oracle to Cloud SQL for PostgreSQL using Ora2pg
 description: Learn how to use Ora2PG to perform schema conversion and data migration from Oracle to Cloud SQL for PostgreSQL migration.
 author: ktchana
 tags: cloud sql, database migration, postgresql, ora2pg, oracle
@@ -10,8 +10,16 @@ Thomas Chan | Solutions Architect | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-This document focuses on the schema conversion aspect of an Oracle to Cloud SQL for PostgreSQL database migration while also providing steps to perform offline 
-data migration. For more in-depth discussions of other aspects of the migration, see the following document series:
+This tutorial focuses on the schema migration aspects of an offline migration from Oracle to Cloud SQL for PostgreSQL using Ora2pg. 
+
+[Ora2pg](http://ora2pg.darold.net/) is an open source tool used to migrate an Oracle database to a PostgreSQL database. The tool scans and extracts the database 
+schema and data and then generates PostgreSQL-compatible SQL scripts that you can use to populate the database.
+
+Though Ora2pg supports exporting data from Oracle database and importing them into Cloud SQL for PostgreSQL, it is an offline migration in which the database has
+to be taken out of service during the whole data migration process. It is common to use data migration tools that support real-time replication, such as Striim
+or Oracle GoldenGate for migrations that require minimal downtime.
+
+For more in-depth discussions of other aspects of the migration, see the following document series:
 
 *   [Setting up Cloud SQL for PostgreSQL for production use](https://cloud.google.com/solutions/setting-up-cloud-sql-for-postgresql-for-production)
 *   [Migrating Oracle users to Cloud SQL for PostgreSQL: Terminology and functionality](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-terminology)
@@ -20,7 +28,19 @@ data migration. For more in-depth discussions of other aspects of the migration,
 *   [Migrating Oracle users to Cloud SQL for PostgreSQL: Security, operations, monitoring, and logging](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-security)
 
 This document is intended for a technical audience who is responsible for database management and migration. This document assumes that you're familiar with 
-database administration and schema conversions, and that you have basic knowledge of using shell scripts and Google Cloud. 
+database administration and schema conversions, and that you have basic knowledge of using shell scripts and Google Cloud.
+
+High-level overview of the migration procedure using Ora2pg:
+
+1. Install Ora2pg and initialize the migration project.
+2. Set up source and target database connectivity.
+3. Configure Ora2pg migration parameters.
+4. Generate a database migration report.
+5. Export the database schema from Oracle database.
+6. Import the database schema into Cloud SQL for PostgreSQL.
+7. Perform data migration.
+8. Import indexes, constraints, foreign keys, and triggers into Cloud SQL for PostgreSQL.
+9. Verify data integrity after the migration.
 
 ## Objectives
 
@@ -46,35 +66,13 @@ cleanup easiest at the end of the tutorial, we recommend that you create a new p
 1.  Make sure that [billing is enabled](https://support.google.com/cloud/answer/6293499#enable-billing) for your Google
     Cloud project.
 
-When you finish this tutorial, you can avoid continued billing by deleting the resources you created, as described in the "Cleaning up" section at the end of
-this document.
+When you finish this tutorial, you can avoid continued billing by deleting the resources that you created, as described in the "Cleaning up" section at the end 
+of this document.
 
-## Overview of migration using Ora2pg
-
-[Ora2pg](http://ora2pg.darold.net/) is an open source tool used to migrate an Oracle database to a PostgreSQL database. The tool scans and extracts the database 
-schema and data and then generates PostgreSQL-compatible SQL scripts that you can use to populate the database.
-
-High-level overview of the migration procedure using Ora2pg:
-
-1. Install Ora2pg and initialize migration project.
-2. Set up source and target database connectivity.
-3. Configure Ora2pg migration parameters.
-4. Generate database migration report.
-5. Export database schema from Oracle database.
-6. Import database schema into Cloud SQL for PostgreSQL.
-7. Perform data migration.
-8. Import indexes, constraints, foreign keys, and triggers into Cloud SQL for PostgreSQL.
-9. Verify data integrity after the migration.
-
-This tutorial focuses on the schema migration aspects of an Oracle to Cloud SQL for PostgreSQL migration project using Ora2pg. Though Ora2pg supports exporting 
-data from Oracle database and importing them into Cloud SQL for PostgreSQL, it is an offline migration in which the database has to be taken out of service 
-during the whole data migration process. It is common to use data migration tools that support real-time replication, such as Striim or Oracle GoldenGate for 
-migrations that require minimal downtime. 
-
-## Install Ora2pg and initialize migration project
+## Install Ora2pg and initialize the migration project
 
 Ora2pg uses Oracle client libraries to connect to the source Oracle database to perform scans and exports. Though it is possible to install and use Ora2pg on the
-same machine as the source Oracle database, it is recommended to use a dedicated machine for Ora2pg installation and runtime to prevent potential interruptions 
+same machine as the source Oracle database, we recommend that you use a dedicated machine for Ora2pg installation and runtime to prevent potential interruptions 
 to the source database. 
 
 This section shows an example of creating a [Compute Engine instance](https://cloud.google.com/compute/docs/instances/create-start-instance#publicimage) and
@@ -90,12 +88,14 @@ installing Ora2pg on that instance.
 
 1.  Set a variable for the disk size that allocates enough disk space for the following:
 
+        export PD_SIZE=40GB
+
+    Allocate enough disk space for the following:
+
     -   Oracle client library installation
     -   PostgreSQL client library installation
     -   Working directory for Ora2pg (usually less than 1GB, excluding data)
-    -   Data axport files from source database (optional)
-
-            export PD_SIZE=40GB
+    -   Data export files from source database (optional)
 
 1.  Create the Compute Engine instance:
 
@@ -122,7 +122,7 @@ installing Ora2pg on that instance.
 
             select banner from v$version;
 
-    1.  For Oracle database version 19c, download the following files. The version number (e.g., 19.9.0.0.0) changes over time as Oracle updates them, so always 
+    1.  For Oracle database version 19c, download the following files. The version number (e.g., 19.9.0.0.0) changes, so always 
         refer to the download page for the most up-to-date filenames.
 
         * instantclient-basic-linux.x64-19.9.0.0.0dbru.zip
@@ -148,90 +148,81 @@ installing Ora2pg on that instance.
         yum install -y wget
         wget https://github.com/darold/ora2pg/archive/v21.0.zip
 
-1.  As root, [install Ora2pg](http://ora2pg.darold.net/documentation.html#Installing-Ora2Pg). 
-    1. Make sure that the following environment variables are set before installing. These environment variables are required whenever Ora2pg is used.
+1.  As root, [install Ora2pg](http://ora2pg.darold.net/documentation.html#Installing-Ora2Pg).
 
-        ```
-        export ORACLE_HOME=<PATH_TO_INSTANT_CLIENT_DIRECTORY>
-        export LD_LIBRARY_PATH=$ORACLE_HOME
-        ```
-    2. Verify source database connectivity using the instant client:
+    1.  Make sure that the following environment variables are set before installing. These environment variables are required whenever Ora2pg is used.
 
-        ```
-        $ORACLE_HOME/sqlplus <ORACLE_USER>@//<ORACLE_IP>:<LISTENER_PORT>/<DB_SERVICE_NAME>
-        ```
+            export ORACLE_HOME=[PATH_TO_INSTANT_CLIENT_DIRECTORY]
+            export LD_LIBRARY_PATH=$ORACLE_HOME
+ 
+    1.  Verify source database connectivity using the instant client:
 
-    3. Install the DBD::Oracle perl module:
-
-    ```
-    perl -MCPAN -e 'install DBD::Oracle'
-    ```
-
-    4. Unzip and build Ora2pg:
-
-        ```
-        unzip v21.0.zip
-        cd ora2pg-21.0
-        perl Makefile.PL
-        make && make install
-
-        ```
-
-8. After installation, Ora2pg should be available to all users. To run it, set the `ORACLE_HOME` and `LD_LIBRARY_PATH` environment variables above and run the following command:
-
-    ```
-    export ORACLE_HOME=<PATH_TO_INSTANT_CLIENT_DIRECTORY>
-    export LD_LIBRARY_PATH=$ORACLE_HOME
-    ora2pg --help
-    ```
+            $ORACLE_HOME/sqlplus [ORACLE_USERNAME]@//[ORACLE_IP_ADDRESS]:[LISTENER_PORT]/[DB_SERVICE_NAME]
 
 
-9. Initialize an Ora2pg project:
+    1.  Install the `DBD::Oracle` Perl module:
 
-    ```
-    ora2pg --project_base $HOME --init_project migration_project
-    ```
+            perl -MCPAN -e 'install DBD::Oracle'
 
-    This creates a directory structure, generic configuration file and migration scripts that will be used throughout the whole migration:
+    1.  Extract and build Ora2pg:
 
-    ```
-    .
-    └── migration_project
-        ├── config
-        │   └── ora2pg.conf
-        ├── data
-        ├── export_schema.sh
-        ├── import_all.sh
-        ├── reports
-        ├── schema
-        │   ├── dblinks
-        │   ├── directories
-        │   ├── functions
-        │   ├── grants
-        │   ├── mviews
-        │   ├── packages
-        │   ├── partitions
-        │   ├── procedures
-        │   ├── sequences
-        │   ├── synonyms
-        │   ├── tables
-        │   ├── tablespaces
-        │   ├── triggers
-        │   ├── types
-        │   └── views
-        └── sources
-            ├── functions
-            ├── mviews
-            ├── packages
-            ├── partitions
-            ├── procedures
-            ├── triggers
-            ├── types
-            └── views
-    ```
+            unzip v21.0.zip
+            cd ora2pg-21.0
+            perl Makefile.PL
+            make && make install
 
+        After installation, Ora2pg should be available to all users.
+        
+    1.  Set the `ORACLE_HOME` and `LD_LIBRARY_PATH` environment variables:
 
-## Setup Source and Target Database Connectivity
+            export ORACLE_HOME=<PATH_TO_INSTANT_CLIENT_DIRECTORY>
+            export LD_LIBRARY_PATH=$ORACLE_HOME
+            
+    1.  Run Ora2pg:
+
+            ora2pg --help
+
+1.  Initialize an Ora2pg project:
+
+        ora2pg --project_base $HOME --init_project migration_project
+
+    This creates a directory structure, generic configuration file, and migration scripts that are used throughout the migration:
+
+        .
+        └── migration_project
+            ├── config
+            │   └── ora2pg.conf
+            ├── data
+            ├── export_schema.sh
+            ├── import_all.sh
+            ├── reports
+            ├── schema
+            │   ├── dblinks
+            │   ├── directories
+            │   ├── functions
+            │   ├── grants
+            │   ├── mviews
+            │   ├── packages
+            │   ├── partitions
+            │   ├── procedures
+            │   ├── sequences
+            │   ├── synonyms
+            │   ├── tables
+            │   ├── tablespaces
+            │   ├── triggers
+            │   ├── types
+            │   └── views
+            └── sources
+                ├── functions
+                ├── mviews
+                ├── packages
+                ├── partitions
+                ├── procedures
+                ├── triggers
+                ├── types
+                └── views
+
+## Set up source and target database connectivity
 
 This section focuses on how to configure Ora2pg to connect to the source and target database. This assumes that the necessary network setup, such as [VPC](https://cloud.google.com/vpc), [Cloud VPN](https://cloud.google.com/network-connectivity/docs/vpn/concepts/overview) or [Cloud Interconnect](https://cloud.google.com/network-connectivity/docs/interconnect/concepts/overview), is already in-place to allow network traffic among various components. Refer to this [guide](https://cloud.google.com/database-migration/docs/postgres/configure-connectivity) on the various connectivity options and detailed setup instructions.
 
