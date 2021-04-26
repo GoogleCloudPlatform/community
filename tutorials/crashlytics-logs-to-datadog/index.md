@@ -3,7 +3,7 @@ title: Export Firebase Crashlytics BigQuery logs to Datadog using Dataflow
 description: Bulk export Crashlytics BigQuery logs to Datadog on a daily basis using Dataflow.
 author: anantdamle
 tags: log analytics, monitoring
-date_published: 2021-04-23
+date_published: 2021-04-30
 ---
 
 Anant Damle | Solutions Architect | Google
@@ -12,30 +12,28 @@ Anant Damle | Solutions Architect | Google
 
 This document discusses how to export [Firebase Crashlytics](https://firebase.google.com/docs/crashlytics) logs from BigQuery tables to [Datadog](https://www.datadoghq.com/).
 
-Firebase Crashlytics is a lightweight, realtime crash reporter that helps you track, prioritize, 
-and fix stability issues that erode your app quality. 
-Crashlytics saves you troubleshooting time by intelligently grouping crashes and highlighting the 
-circumstances that lead up to them.
+Firebase Crashlytics is a lightweight, realtime crash reporter that helps you track, prioritize, and fix stability issues that erode your app quality.
+Crashlytics saves you troubleshooting time by intelligently grouping crashes and highlighting the circumstances that lead up to them.
 
 Firebase Crashlytics provides [BigQuery exports](https://firebase.google.com/docs/crashlytics/bigquery-export) 
-to enable further analysis in BigQuery, that allows combining your [Cloud logging exports](https://cloud.google.com/logging/docs/export/bigquery) 
-or your own first-party data. you can then [use Data Studio dashboard](https://firebase.googleblog.com/2018/11/using-google-data-studio-with-crashlytics.html) to visualize this data.
+to enable further analysis in BigQuery, that allows combining your [Cloud logging exports](https://cloud.google.com/logging/docs/export/bigquery) or your own first-party data. You can then [use Data Studio dashboard](https://firebase.googleblog.com/2018/11/using-google-data-studio-with-crashlytics.html) to visualize this data.
 
-Datadog is a popular log monitoring platform and Google Cloud partner that provides application  or 
+Datadog is a log monitoring platform and Google Cloud partner that provides application  or 
 infrastructure monitoring service, it has native [integration with Google Cloud](https://console.cloud.google.com/marketplace/details/datadog-saas/datadog). 
-If you need to combine logs data in Datadog instead of BigQuery, you need to export the Crashlytics events data from BigQuery table to Datadog using the API.
 
-It is intended for a technical audience whose responsibilities include logs management or data analytics. 
-This document assumes that you're familiar with Dataflow without the need to be an expert and 
-assumes some familiarity with shell scripts and basic knowledge of Google Cloud.
+This document is intended for a technical audience whose responsibilities include logs management or data analytics. 
+This document assumes that you're familiar with [Dataflow](https://cloud.google.com/dataflow), have some familiarity with Bash scripts and basic knowledge of Google Cloud.
 
 ## Architecture
+
 ![Architecture Diagram](crashlytics_bq_datadog_arch.svg)
  
- The batch Dataflow pipeline reads the BigQuery table (or partition), 
- it then transforms the BigQuery TableRow into a JSON, that can be sent to Datadog as log entry.
- The pipeline then batches the JSON messages into 5Mb (or 1000 entries) batches to reduce the number
-  of API calls for optimization. The pipeline GZips the request to reduce network bandwidth.  
+ The batch Dataflow pipeline process the Crashlytics logs in BigQuery as follows:
+ 1.  Read the BigQuery table (or partition) 
+ 2.  Transform the BigQuery TableRow into a JSON string, and incorporate into Datadog log entry format. 
+ 3.  The pipeline uses two optimizations 
+     *  Batch log messages into 5Mb (or 1000 entries) batches to reduce the number of API calls
+     *  GZip the request to reduce network bandwidth  
 
 ## Objectives
 
@@ -117,15 +115,13 @@ The tutorial uses following resources:
 
 ### Create service accounts
 
-We recommend that you run pipelines with fine-grained access control to improve access partitioning. If your project doesn't have a user-created service account,
-create one using following instructions.
-
-You can use your browser by going to [**Service accounts**](https://console.cloud.google.com/projectselector/iam-admin/serviceaccounts?supportedpurview=project)
-page in the Cloud Console.
+We recommend that you run pipelines with fine-grained access control to improve access partitioning,
+by provisioning the least permissions required for each service-account.
+If your project doesn't have a user-created service account, create one using following instructions.
 
 1.  Create a service account to use as the user-managed controller service account for Dataflow:
 
-        gcloud iam service-accounts create  ${PIPELINE_SERVICE_ACCOUNT_NAME} \
+        gcloud iam service-accounts create  "${PIPELINE_SERVICE_ACCOUNT_NAME}" \
         --project="${PROJECT_ID}" \
         --description="Service Account for Datadog export pipelines." \
         --display-name="Datadog logs exporter"
@@ -134,27 +130,27 @@ page in the Cloud Console.
 
         export DATADOG_SENDER_ROLE_NAME="datadog_sender"
 
-        gcloud iam roles create ${DATADOG_SENDER_ROLE_NAME} \
-        --project=${PROJECT_ID} \
+        gcloud iam roles create "${DATADOG_SENDER_ROLE_NAME}" \
+        --project="${PROJECT_ID}" \
         --file=datadog_sender_permissions.yaml
 
 1.  Apply the custom role to the service account:
 
-        gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+        gcloud projects add-iam-policy-binding "${PROJECT_ID}" \
         --member="serviceAccount:${PIPELINE_SERVICE_ACCOUNT_EMAIL}" \
-        --role=projects/${PROJECT_ID}/roles/${DATADOG_SENDER_ROLE_NAME}
+        --role="projects/${PROJECT_ID}/roles/${DATADOG_SENDER_ROLE_NAME}"
 
-1.  Assign the `dataflow.worker` role to allow the service account to allow it to run as a Dataflow worker:
+1.  Assign the `dataflow.worker` role to allow a Dataflow worker to run with the service-account credentials:
 
-        gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+        gcloud projects add-iam-policy-binding "${PROJECT_ID}" \
         --member="serviceAccount:${PIPELINE_SERVICE_ACCOUNT_EMAIL}" \
-        --role=roles/dataflow.worker
+        --role="roles/dataflow.worker"
         
 ### Create the Cloud Storage bucket
 
 Create a Cloud Storage bucket for storing test data and Dataflow staging location:
 
-    gsutil mb -p ${PROJECT_ID} -l ${REGION_ID} "gs://${GCS_BUCKET}"
+    gsutil mb -p "${PROJECT_ID}" -l "${REGION_ID}" "gs://${GCS_BUCKET}"
 
 
 ## Build and launch Dataflow pipeline
@@ -162,9 +158,6 @@ Create a Cloud Storage bucket for storing test data and Dataflow staging locatio
 Test and compile the pipeline code.
 
     ./gradlew clean build shadowJar
-
-
-> Add `-x test` flag to skip running tests.
 
 The pipeline supports following options:
 
@@ -217,7 +210,7 @@ To build a flex template, define the location to store template spec file contai
 
 Build Dataflow Flex template
 
-    gcloud dataflow flex-template build ${TEMPLATE_PATH} \
+    gcloud dataflow flex-template build "${TEMPLATE_PATH}" \
     --image-gcr-path="${TEMPLATE_IMAGE}" \
     --sdk-language="JAVA" \
     --flex-template-base-image=JAVA11 \
