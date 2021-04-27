@@ -55,20 +55,22 @@ You need to define several variables that control where elements of the infrastr
     ZONE=${REGION}-b
     PROJECT_ID=[YOUR_PROJECT_ID]
     ```
-1.  Run the following commands to set the default zone and project ID so you don't have to specify these values in every subsequent command:
-    ```bash
-    gcloud config set project ${PROJECT_ID}
-    gcloud config set compute/zone ${ZONE}
-    ```
-
 1. Enable all necessary services:
     ```bash
+    gcloud services enable compute.googleapis.com
     gcloud services enable run.googleapis.com
     gcloud services enable monitoring.googleapis.com
     gcloud services enable bigquery.googleapis.com
     gcloud services enable logging.googleapis.com
     gcloud services enable cloudbuild.googleapis.com
     gcloud services enable cloudscheduler.googleapis.com
+    ```
+1.  Run the following commands to set the default zone and project ID so you don't have to specify these values in every subsequent command:
+    ```bash
+    gcloud config set project ${PROJECT_ID}
+    gcloud config set compute/zone ${ZONE}
+    gcloud config set run/platform managed
+    gcloud config set run/region ${REGION}
     ```
 
 ## Preparing your environment
@@ -148,6 +150,12 @@ The sample code for this tutorial is in the Google Cloud Community GitHub reposi
 
 1.  Create Cloud Scheduler job
 
+    Currently, there is a dependency for App Engine. If App Engine is never used in the project, we need run the following:
+
+    ```bash
+    gcloud app create --region=us-central
+    ```
+
     Here we create a Cloud Scheduler job that runs every hour. You can change the schedule based on your needs and data granularity.
 
     ```bash
@@ -222,7 +230,8 @@ If you have never used Cloud Monitoring, then on your first access of **Monitori
     You might have to refresh the page to see the metric name.
 1.  For the resource, enter **Global** and  select it
 1.  In the **Group By** drop-down list, select `item`.
-1.  At the top of the diagram, select **Stacked Bar**
+1.  At the top of the diagram, select **Stacked Bar**. Wait for a few moments and
+    you should have a chart like the following:
 
 ![Metric chart](monitoring-chart.png)
 
