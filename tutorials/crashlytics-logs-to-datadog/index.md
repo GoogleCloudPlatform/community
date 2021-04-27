@@ -18,8 +18,7 @@ Crashlytics saves you troubleshooting time by intelligently grouping crashes and
 Firebase Crashlytics provides [BigQuery exports](https://firebase.google.com/docs/crashlytics/bigquery-export) 
 to enable further analysis in BigQuery, that allows combining your [Cloud logging exports](https://cloud.google.com/logging/docs/export/bigquery) or your own first-party data. You can then [use Data Studio dashboard](https://firebase.googleblog.com/2018/11/using-google-data-studio-with-crashlytics.html) to visualize this data.
 
-Datadog is a log monitoring platform and Google Cloud partner that provides application  or 
-infrastructure monitoring service, it has native [integration with Google Cloud](https://console.cloud.google.com/marketplace/details/datadog-saas/datadog). 
+Datadog is a log monitoring platform and Google Cloud partner that provides application and infrastructure monitoring service, it has native [integration with Google Cloud](https://console.cloud.google.com/marketplace/details/datadog-saas/datadog). 
 
 This document is intended for a technical audience whose responsibilities include logs management or data analytics. 
 This document assumes that you're familiar with [Dataflow](https://cloud.google.com/dataflow), have some familiarity with Bash scripts and basic knowledge of Google Cloud.
