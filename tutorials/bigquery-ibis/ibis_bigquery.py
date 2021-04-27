@@ -18,8 +18,9 @@ YOUR_PROJECT_ID = os.environ['GOOGLE_CLOUD_PROJECT']
 
 # [START bigquery_ibis_connect]
 import ibis
+import ibis_bigquery
 
-conn = ibis.bigquery.connect(
+conn = ibis_bigquery.connect(
     project_id=YOUR_PROJECT_ID,
     dataset_id='bigquery-public-data.stackoverflow')
 # [END bigquery_ibis_connect]
