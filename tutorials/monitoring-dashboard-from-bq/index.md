@@ -1,6 +1,6 @@
 ---
 title: Creating a Cloud Monitoring Chart Using Data From BigQuery
-description: Learn how to create Cloud Monitoring charts and dashboard using data from BigQuery
+description: Learn how to create Cloud Monitoring charts and dashboard using data from BigQuery.
 author: xiangshen-dk
 tags: monitoring, stackdriver, bigquery, cloud run
 date_published: 2021-04-26
