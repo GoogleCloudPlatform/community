@@ -263,9 +263,6 @@ wish to explore how to build more complex queries with Ibis.
 
 ### Write a UDF
 
-**Note**: [UDF functionality is broken](https://github.com/ibis-project/ibis-bigquery/issues/6) in the latest
-version of Ibis (1.4.0).
-
 Ibis supports [user defined functions in BigQuery](https://ibis-project.org/backends/bigquery.html) by compiling Python
 code into JavaScript. This means that you can write UDFs for BigQuery in
 Python!
