@@ -33,11 +33,11 @@ High-level overview of the migration procedure using Ora2pg:
 This document focuses on the schema migration aspects of an offline migration. For more in-depth discussions of other aspects of the migration, see the following
 document series:
 
-*   [Setting up Cloud SQL for PostgreSQL for production use](https://cloud.google.com/architecture/setting-up-cloud-sql-for-postgresql-for-production)
-*   [Migrating Oracle users to Cloud SQL for PostgreSQL: Terminology and functionality](https://cloud.google.com/architecture/migrating-oracle-users-to-cloud-sql-for-postgresql-terminology)
-*   [Migrating Oracle users to Cloud SQL for PostgreSQL: Data types, users, and tables](https://cloud.google.com/architecture/migrating-oracle-users-to-cloud-sql-for-postgresql-data-types)
-*   [Migrating Oracle users to Cloud SQL for PostgreSQL: Queries, stored procedures, functions, and triggers](https://cloud.google.com/architecture/migrating-oracle-users-to-cloud-sql-for-postgresql-queries)
-*   [Migrating Oracle users to Cloud SQL for PostgreSQL: Security, operations, monitoring, and logging](https://cloud.google.com/architecture/migrating-oracle-users-to-cloud-sql-for-postgresql-security)
+*   [Setting up Cloud SQL for PostgreSQL for production use](https://cloud.google.com/solutions/setting-up-cloud-sql-for-postgresql-for-production)
+*   [Migrating Oracle users to Cloud SQL for PostgreSQL: Terminology and functionality](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-terminology)
+*   [Migrating Oracle users to Cloud SQL for PostgreSQL: Data types, users, and tables](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-data-types)
+*   [Migrating Oracle users to Cloud SQL for PostgreSQL: Queries, stored procedures, functions, and triggers](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-queries)
+*   [Migrating Oracle users to Cloud SQL for PostgreSQL: Security, operations, monitoring, and logging](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-security)
 
 Though Ora2pg supports exporting data from Oracle database and importing it into Cloud SQL for PostgreSQL, it is an offline migration in which the database must
 be taken out of service during the data migration process. It's common to use data migration tools that support real-time replication, such as Striim
@@ -520,7 +520,7 @@ To avoid incurring charges to your Google Cloud account for the resources used i
 
 Learn about migrating an Oracle database to Cloud SQL PostgreSQL with the following series:
 
--  [Migrating Oracle users to Cloud SQL for PostgreSQL: Terminology and functionality](https://cloud.google.com/architecture/migrating-oracle-users-to-cloud-sql-for-postgresql-terminology)
--  [Migrating Oracle users to Cloud SQL for PostgreSQL: Data types, users, and tables](https://cloud.google.com/architecture/migrating-oracle-users-to-cloud-sql-for-postgresql-data-types)
--  [Migrating Oracle users to Cloud SQL for PostgreSQL: Queries, stored procedures, functions, and triggers](https://cloud.google.com/architecture/migrating-oracle-users-to-cloud-sql-for-postgresql-queries)
--  [Migrating Oracle users to Cloud SQL for PostgreSQL: Security, operations, monitoring, and logging](https://cloud.google.com/architecture/migrating-oracle-users-to-cloud-sql-for-postgresql-security)
+-  [Migrating Oracle users to Cloud SQL for PostgreSQL: Terminology and functionality](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-terminology)
+-  [Migrating Oracle users to Cloud SQL for PostgreSQL: Data types, users, and tables](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-data-types)
+-  [Migrating Oracle users to Cloud SQL for PostgreSQL: Queries, stored procedures, functions, and triggers](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-queries)
+-  [Migrating Oracle users to Cloud SQL for PostgreSQL: Security, operations, monitoring, and logging](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-security)
