@@ -24,7 +24,7 @@ We will use [Striim](https://www.striim.com/) for performing the zero downtime d
 *   Create and setup Cloud Spanner instance.
 *   Deploy and configure Striim for performing data migration.
 *   Plugin custom functions into Striim for real time data transformation(s).
-*   Create initial load striim pipeline.
+*   Create initial load Striim pipeline.
 *   Create couninous replication (CDC) striim pipeline.
 
 ## Costs
