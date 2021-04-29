@@ -98,7 +98,7 @@ section at the end of this tutorial.
         --instance=spanner-tgt \
         --ddl='CREATE TABLE signin_log (id STRING(36), employee_email STRING(200), details STRING(500)) PRIMARY KEY (id)'
         
-**NOTE** You might have noticed that employee_id has been changed to STRING in the above example. As discussed previously, this is done so that application can generate UUID keys post migration.
+**NOTE** The employee_id column has been changed to STRING in the above example. As mentioned previously, this is done so that application can generate UUID keys post migration.
 
 ## Setup Middleware (Striim)
 
