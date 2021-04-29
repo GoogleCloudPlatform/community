@@ -23,7 +23,7 @@ We will use [Striim](https://www.striim.com/) for performing the zero downtime d
 *   Create and setup CloudSQL MySQL instance with Auto Incrementing primary key.
 *   Create and setup Cloud Spanner instance.
 *   Deploy and configure Striim for performing data migration.
-*   Plugin custom functions into striim for real time data transformation(s).
+*   Plugin custom functions into Striim for real time data transformation(s).
 *   Create initial load striim pipeline.
 *   Create couninous replication (CDC) striim pipeline.
 
