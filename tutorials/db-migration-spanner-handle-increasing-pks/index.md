@@ -50,7 +50,7 @@ new one, or you can select a project that you already created.
 When you finish this tutorial, you can avoid continued billing by deleting the resources that you created. For details, see the "Cleaning up" 
 section at the end of this tutorial.
 
-## Setup Source Database (MySQL)
+## Setup Source Database (Cloud SQL for MySQL)
 1. Create Cloud SQL Instance, in a cloud shell.
 
         gcloud sql instances create mysql-57  \
