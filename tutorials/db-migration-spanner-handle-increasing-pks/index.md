@@ -85,7 +85,7 @@ section at the end of this tutorial.
         INSERT INTO signin_log (employee_email, details) values ('test-2@email.com', 'new ip address 1');
 
 ## Setup Target Database (Cloud Spanner)
-1. Create a cloud spanner instance
+1. Create a Cloud Spanner instance
 
         gcloud spanner instances create spanner-tgt \
             --config=regional-us-central1 \
