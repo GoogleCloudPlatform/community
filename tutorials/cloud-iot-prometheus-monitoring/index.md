@@ -87,7 +87,7 @@ export CLOUD_ZONE=us-central1-a
 gcloud beta container --project $GCLOUD_PROJECT clusters create "monitoring-demo" \
 --zone $CLOUD_ZONE --username "admin" \
 --cluster-version "1.10" --machine-type "n1-highmem-2" \
---image-type "COS" --disk-type "pd-standard" --disk-size "100" \
+--disk-type "pd-standard" --disk-size "100" \
 --scopes "cloud-platform","https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/trace.append" \
 --num-nodes "2" --enable-cloud-logging \
 --enable-cloud-monitoring --enable-ip-alias \
