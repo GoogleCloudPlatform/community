@@ -113,7 +113,7 @@ section at the end of this tutorial.
 ![Striim Deploy Screen](2_striim_deployment.png)
 
 3. Once deployed you will get a link to Striim instance along with Admin user and password.  
-   *NOTE: Using Deployment manager page you can get access to same information again if you forgot your credentials.*
+   *NOTE: You can also access this information from the [Deployment Manager](https://console.cloud.google.com/dm/deployments) if needed*
 
 ![Striim Credentials](3_striim_deployment_manager.png)
 
@@ -148,7 +148,7 @@ Update STRIIMVM_ZONE with the right value.
         sudo systemctl start striim-dbms
         sudo systemctl start striim-node
 
-3. Create a service account key for striim to communicate with cloud spanner. Execute below commands in cloud shell. 
+3. Create a service account key for Striim to authenticate with Cloud Spanner. Execute the following commands in Cloud Shell. 
 
         export PROJECT=$(gcloud info --format='value(config.project)')        
         export PROJECT_NUMBER=$(gcloud projects list \
@@ -157,9 +157,9 @@ Update STRIIMVM_ZONE with the right value.
         export compute_sa=$PROJECT_NUMBER-compute@developer.gserviceaccount.com
         gcloud iam service-accounts keys create ~/striim-spanner-key.json --iam-account $compute_sa
 
-   A key called striim-spanner-key.json is created in your home path.
+   A key called striim-spanner-key.json should be created on your Cloud Shell home path.
 
-4. Move the service account key into striim server.
+4. Move the service account key to the _/opt/striim_ directory on Striim instance. And grant _striim_ user owner permissions.
 
         gcloud compute scp ~/striim-spanner-key.json striim-spanner-1-vm:~
         gcloud compute ssh striim-spanner-1-vm \
@@ -167,14 +167,15 @@ Update STRIIMVM_ZONE with the right value.
             sudo chown striim /opt/striim/striim-spanner-key.json'
 
 ## Migrate data using Striim
-Data migration is divided into two jobs as below. 
-Both the jobs will make use of customer functions written in Java for data manipulations i.e. bit reverse and string conversion.
+Data migration is a two step process : 
 
 1. Initial Load
 2. Continuous Replication (CDC)
 
+Both step use custom functions written in Java for data manipulations i.e. bit reverse and string conversion.
+
 ### Plugin BitReverse Function into Striim
-We will write code, compile, package and deploy java code for bitreversal into striim. This is custom function been plugged into striim 
+You will write code, compile, package and deploy java code for bit reversal onto Striim instance. This custom function is to be moved to _/opt/striim/lib_ directory on Striim instance.
 
 1. SSH into VM
 
@@ -197,24 +198,24 @@ We will write code, compile, package and deploy java code for bitreversal into s
         javac CustomFunctions.java
         jar -cf CustomFunctions.jar CustomFunctions.class CustomFunctions.java
 
-4. Deploy jar into striim’s lib folder.
+4. Move jar onto Striim instance's _/opt/striim/lib/_ directory.
 
         sudo cp CustomFunctions.jar /opt/striim/lib/
         sudo chown striim /opt/striim/lib/CustomFunctions.jar
         sudo chmod +x /opt/striim/lib/CustomFunctions.jar
 
-5. Restart striim application
+5. Restart Striim application for Striim to pickup this jar. 
 
         sudo systemctl stop striim-node
         sudo systemctl stop striim-dbms
         sudo systemctl start striim-dbms
         sudo systemctl start striim-node
 
-### Create Initial load pipeline
-Initial load is meant to bulk load existing data. It reads data as on job start time and once finished it will quiesce (pause).
-Any further changes in data after job start time will not be read by this job.
+### Create initial load pipeline
+Initial load job is meant to bulk load existing data. It loads all data existing at job start time and once finished, will quiesce (pause).
+Any changes (updates, deletes, inserts, append) to data after job start time will not be replicated by this job.
 
-1. Save below code as file `mysql_to_spanner_initial_load.tql` on your local computer. You will import it into striim.
+1. Save the following code as `mysql_to_spanner_initial_load.tql` file on your local computer. You will import it into Striim application.
 
         drop APPLICATION mysql_to_spanner_initial_load CASCADE;
         
@@ -256,31 +257,31 @@ Any further changes in data after job start time will not be read by this job.
         
         END APPLICATION mysql_to_spanner_initial_load;
 
-2. Login to striim web ui. If needed, visit [deployment manager page](https://console.cloud.google.com/dm/deployments)
- access striim web ui link and credentials. 
+2. Login to Striim web UI. If needed, visit [deployment manager page](https://console.cloud.google.com/dm/deployments) to access Striim URL and credentials. 
 3. Click on Apps > + Add App (on top right).
 4. Click import existing app and choose the mysql_to_spanner_initial_load.tql created in step 1. And click import.
-5. In the workflow, replace Primary_IP with MySQL’s ip address. Click mysql_dbreader component and change the Primary_IP 
-in the right window showing connection url (screenshot below). And click save
+5. In the workflow, replace _Primary_IP_ with Cloud SQL for MySQL’s IP address. Click on mysql_dbreader adaptor and replace the Primary_IP in the Connection URL field (screenshot below). And click save.
 ![initial load](4_striim_initial_load.png)
 
-6. Created > Deploy App > Deploy
+6. Deploy the application. 
+Created > Deploy App > Deploy
 ![initial load deploy](5_striim_deploy.png)
 
-7. Deploy > Start App. 
-8. You will soon observe rows flowing through striim and data being inserted inside the cloud spanner.
-9. On spanner gui verify that rows have been written with bit reversed id values.
+7. Start the application 
+Deploy > Start App. 
+8. You should see rows being replicated through Striim and inserted to Cloud Spanner.
+9. On Cloud Spanner UI verify that rows have been written with bit reversed id values.
 ![initial complete](6_spanner_il_complete.png)
 
 ### Create continuous replication (CDC) pipeline
-Once initial load is complete, then using CDC pipeline you can keep replicating the new changes into Spanner.  
-Keeping MySQL and Spanner in sync. It reads data from mysql's binary logs using Striim's MysqlReader component.  
+Once initial load is complete, you can deploy a CDC pipeline to continuously replicate any new changes into Cloud Spanner after the initial load job was started .  
+This keeps Cloud SQL for MySQL and Spanner in sync while the CDC application is running. It reads data from Cloud SQL for MySQL's binary logs using Striim's MysqlReader adapter.  
 
-In production you would use `StartTimestamp` property to specify binary log position (i.e. time at which initial load started).  
-Also, you might like to create a `CheckpointTable` so that [striim can recover](https://www.striim.com/docs/en/spanner-writer.html) from a crash.
+In production you would use `StartTimestamp` property to specify binary log position (i.e. timestamp at which initial load was started) from which the CDC application should start replicating.  
+You should also create a [Checkpoint table](https://www.striim.com/docs/en/spanner-writer.html) so that Striim can recover from a failure.
 However these concepts are out of scope for this tutorial.
 
-1. Similar to previous, import below code for CDC Pipeline and change Primary_IP with mysql’s ip. Then deploy and start the app.
+1. Similar to initial load application, import the following code for CDC pipeline and change Primary_IP with Cloud SQL for MySQL’s IP address. Then deploy and start the application.
 
         drop APPLICATION mysql_to_spanner_cdc CASCADE;
         
