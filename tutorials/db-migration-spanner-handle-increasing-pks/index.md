@@ -70,7 +70,7 @@ section at the end of this tutorial.
 
 4. Create database and tables.
 
-        create database employeedb;
+        CREATE DATABASE employeedb;
         use employeedb;
         CREATE TABLE `signin_log` (
           `id` int not null AUTO_INCREMENT,
