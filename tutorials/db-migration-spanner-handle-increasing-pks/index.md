@@ -331,6 +331,8 @@ However these concepts are out of scope for this tutorial.
 
 2. Connect to mysql and insert a few rows.
 
+        gcloud sql connect mysql-57 --user=root
+
         insert into signin_log (employee_email, details) values ('cdc-test-3@email.com', 'ip 3333 ');
         insert into signin_log (employee_email, details) values ('cdc-test-4@email.com', 'ip 4444');
         insert into signin_log (employee_email, details) values ('cdc-test-5@email.com', 'ip 5555');
