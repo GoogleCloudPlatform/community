@@ -104,7 +104,7 @@ section at the end of this tutorial.
 
 ### Deploy Striim
 
-1. Create striim instance from market-place. Visit [this link](https://console.cloud.google.com/marketplace/product/striim/striim-spanner) from gcp market-place to get striim installed.
+1. Deploy a Striim instance from  GCP Marketplace. Visit [this link](https://console.cloud.google.com/marketplace/product/striim/striim-spanner) to deploy a Striim instance.
 
 ![Striim Marketplace](1_striim_market_place.png)
 
