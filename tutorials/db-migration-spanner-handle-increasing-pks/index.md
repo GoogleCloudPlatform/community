@@ -82,7 +82,7 @@ section at the end of this tutorial.
 5. Insert sample data rows.
 
         INSERT INTO signin_log (employee_email, details) values ('test-1@email.com', 'ip address a.b.c.d');
-        insert into signin_log (employee_email, details) values ('test-2@email.com', 'new ip address 1');
+        INSERT INTO signin_log (employee_email, details) values ('test-2@email.com', 'new ip address 1');
 
 ## Setup Target Database (Cloud Spanner)
 1. Create a cloud spanner instance
