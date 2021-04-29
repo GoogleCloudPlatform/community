@@ -64,7 +64,7 @@ section at the end of this tutorial.
         gcloud sql instances patch mysql-57 --backup-start-time 00:00
         gcloud sql instances patch mysql-57 --enable-bin-log    
 
-3. Connect to mysql instance. Type in password *password123* when prompted.
+3. Connect to Cloud SQL for MySQL instance. Type in password *password123* when prompted.
 
         gcloud sql connect mysql-57 --user=root
 
