@@ -108,7 +108,7 @@ section at the end of this tutorial.
 
 ![Striim Marketplace](1_striim_market_place.png)
 
-2. Click launch and then on the next screen keep everything as defaults and click deploy.
+2. Click "Launch". On the next screen keep the default configuration and click "Deploy".
 
 ![Striim Deploy Screen](2_striim_deployment.png)
 
