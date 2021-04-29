@@ -112,7 +112,7 @@ section at the end of this tutorial.
 
 ![Striim Deploy Screen](2_striim_deployment.png)
 
-3. Once deployed you will get a link to striim instance along with userid and password.  
+3. Once deployed you will get a link to Striim instance along with Admin user and password.  
    *NOTE: Using Deployment manager page you can get access to same information again if you forgot your credentials.*
 
 ![Striim Credentials](3_striim_deployment_manager.png)
