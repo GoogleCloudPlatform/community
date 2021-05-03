@@ -35,10 +35,10 @@ name. We use `root` for the database user name.
 1.  Create a new Cloud SQL for MySQL Second Generation instance with the following
     command:
 
-        $ gcloud sql instances create wordpress \
-            --activation-policy=ALWAYS \
-            --tier=db-n1-standard-1 \
-            --region=us-central1
+        gcloud sql instances create wordpress \
+          --activation-policy=ALWAYS \
+          --tier=db-n1-standard-1 \
+          --region=us-central1
 
     **Note**: you can choose `db-f1-micro` or `db-g1-small` instead of
     `db-n1-standard-1` for the Cloud SQL machine type, especially for
@@ -49,14 +49,14 @@ name. We use `root` for the database user name.
 
 1.  Create the database you want your WordPress site to use:
 
-        $ gcloud sql databases create wordpress --instance wordpress
+        gcloud sql databases create wordpress --instance wordpress
 
 1.  Change the root password for your instance:
 
-        $ gcloud sql users set-password root \
-            --host=% \
-            --instance wordpress \
-            --password=YOUR_INSTANCE_ROOT_PASSWORD # Don't use this password!
+        gcloud sql users set-password root \
+          --host=% \
+          --instance wordpress \
+          --password=YOUR_INSTANCE_ROOT_PASSWORD # Don't use this password!
 
 ## Create or update a WordPress project for App Engine
 
@@ -67,16 +67,16 @@ a new WordPress project or add the required configuration to an existing one.
 
 1.  Download the `google/cloud-tools` package:
 
-        $ composer require google/cloud-tools
+        composer require google/cloud-tools
 
     **Note**: If you receive an error about extensions, install `phar` and `zip` PHP
     extensions and retry:
     
-        $ sudo apt-get install php7.2-zip php7.2-curl
+        sudo apt-get install php7.2-zip php7.2-curl
 
 1.  Now you can run the `wp-gae` command which is included in that package:
 
-        $ php vendor/bin/wp-gae
+        php vendor/bin/wp-gae
 
     **Note**: You can also install `google/cloud-tools` [globally][composer-global],
     which will allow you to execute the command `wp-gae` anywhere.
@@ -95,7 +95,7 @@ to allow WordPress to run on App Engine:
 
 To download WordPress and set it up for GCP, run the `create` command:
 
-    $ php vendor/bin/wp-gae create
+    php vendor/bin/wp-gae create
 
 The command asks you several questions. After you answer them, you'll have a
 new WordPress project. By default, it will create `my-wordpress-project` in the
@@ -104,7 +104,7 @@ current directory.
 **Note**: To determine the region your database is in, use the
 `gcloud sql instances describe wordpress` command.
 
-    $ gcloud sql instances describe wordpress | grep region
+    gcloud sql instances describe wordpress | grep region
 
 
 ### Update an existing WordPress project
@@ -112,7 +112,7 @@ current directory.
 If you are migrating an existing project to Google Cloud, you can use the
 `update` command:
 
-    $ php vendor/bin/wp-gae update path/to/your-wordpress-site
+    php vendor/bin/wp-gae update path/to/your-wordpress-site
 
 The command asks you several questions. After you answer them, your existing
 project will contain the required files for deploying to App Engine, as well
@@ -121,13 +121,13 @@ be sure to verify the changes are correct before deploying.
 
 ## Deploy to Google Cloud
 
-`cd` into the root of your WordPress project:
+Go to the root of your WordPress project:
 
-    $ cd my-wordpress-project
+    cd my-wordpress-project
 
 Run the following command to deploy your project to App Engine:
 
-    $ gcloud app deploy app.yaml cron.yaml
+    gcloud app deploy app.yaml cron.yaml
 
 Now you can access your site, and continue the installation step! The URL is
 `https://YOUR_PROJECT_ID.appspot.com/`.
@@ -147,7 +147,7 @@ these steps:
     Engine bucket is named YOUR_PROJECT_ID.appspot.com. Change the default Access
     Control List (ACL) of that bucket as follows:
 
-        $ gsutil defacl ch -u AllUsers:R gs://YOUR_PROJECT_ID.appspot.com
+        gsutil defacl ch -u AllUsers:R gs://YOUR_PROJECT_ID.appspot.com
 
 1.  Go to the Dashboard at `https://YOUR_PROJECT_ID.appspot.com/wp-admin`. On the
     Plugins page, activate the `Google Cloud Storage plugin`.
@@ -163,10 +163,10 @@ and confirm the image is uploaded to the Cloud Storage bucket by visiting the
 To access this MySQL instance, use Cloud SQL Proxy. [Download][cloud-sql-proxy-download]
 it to your local computer and make it executable.
 
-To install in Cloud Shell:
+Install in Cloud Shell:
 
-    $ wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
-    $ chmod +x cloud_sql_proxy
+    wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
+    chmod +x cloud_sql_proxy
 
 Go to the [the Credentials section][credentials-section] of your project in the
 Console. Click **Create credentials** and then click **Service account key**. For
@@ -176,13 +176,13 @@ local machine. Save it to a safe place.
 
 Run the proxy by the following command:
 
-    $ ./cloud_sql_proxy \
-        -instances=YOUR_PROJECT_ID:us-central1:wordpress=tcp:3306 \
-        -credential_file=/path/to/YOUR_SERVICE_ACCOUNT_JSON_FILE.json &
+    ./cloud_sql_proxy \
+      -instances=YOUR_PROJECT_ID:us-central1:wordpress=tcp:3306 \
+      -credential_file=/path/to/YOUR_SERVICE_ACCOUNT_JSON_FILE.json &
         
 If running within Cloud Shell:
 
-    $ ./cloud_sql_proxy -instances <YOUR_PROJECT_ID>:us-central1:wordpress=tcp:3306 &
+    ./cloud_sql_proxy -instances <YOUR_PROJECT_ID>:us-central1:wordpress=tcp:3306 &
 
 **Note**: See [Connecting to Cloud SQL from External Applications][cloud-sql-external-apps]
 for more options when running the Cloud SQL proxy.
@@ -190,10 +190,13 @@ for more options when running the Cloud SQL proxy.
 Now you can access the Cloud SQL instance with the MySQL client in a separate
 command-line tab.
 
-    $ mysql --host=127.0.0.1 -u root -p
-    mysql> use database wordpress;
-    mysql> show tables;
-    mysql> exit
+    mysql --host=127.0.0.1 -u root -p
+
+At the `mysql` prompt:
+
+    use database wordpress;
+    show tables;
+    exit
 
 ## Various workflows
 
@@ -206,12 +209,14 @@ activate them in the production Dashboard. You can also use the `wp-cli` utility
 as follows. Be sure to keep the Cloud SQL proxy running.
 
     # Install the wp-cli utility
-    $ composer require wp-cli/wp-cli-bundle
+    composer require wp-cli/wp-cli-bundle
+    
     # Now you can run the "wp" command to update Wordpress itself
-    $ vendor/bin/wp core update --path=wordpress
+    vendor/bin/wp core update --path=wordpress
+    
     # You can also update all the plugins and themes
-    $ vendor/bin/wp plugin update --all
-    $ vendor/bin/wp theme update --all
+    vendor/bin/wp plugin update --all
+    vendor/bin/wp theme update --all
 
 The following error may occur:
 
@@ -220,20 +225,20 @@ The following error may occur:
 If you get this error, you can set a `WP_CLI_PHP_ARGS` environment variable to add
 `include_path` PHP configuration for wp-cli:
 
-    $ export WP_CLI_PHP_ARGS='-d include_path=vendor/google/appengine-php-sdk'
+    export WP_CLI_PHP_ARGS='-d include_path=vendor/google/appengine-php-sdk'
 
 Then try the update commands again.
 
 After everything is up to date, deploy the app again:
 
-    $ gcloud app deploy app.yaml cron.yaml
+    gcloud app deploy app.yaml cron.yaml
     
 **Note**: This will deploy a new version of the app and set it as the default while keeping the previous versions available
 under versioned hostnames. Visit the App Engine, Versions area to see previous versions.
 
 Alternately, you may deploy the new version and stop previous ones so they stop incurring charges:
 
-    $ gcloud app deploy app.yaml cron.yaml --promote --stop-previous-version
+    gcloud app deploy app.yaml cron.yaml --promote --stop-previous-version
 
 ### Remove plugins and themes
 
