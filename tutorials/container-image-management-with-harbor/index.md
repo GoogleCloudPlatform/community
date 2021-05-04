@@ -3,7 +3,7 @@ title: Hybrid and multi-cloud container image management with Harbor
 description: Set up one-way container image replication between Harbor and Google Container Registry.
 author: jpatokal
 tags: container registry, Anthos, Kubernetes Engine
-date_published: TBD
+date_published: 2021-05-10
 ---
 
 Marc Fong | App Modernisation Specialist | Google
