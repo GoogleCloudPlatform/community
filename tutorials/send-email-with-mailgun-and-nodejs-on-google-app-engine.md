@@ -21,7 +21,7 @@ overview of Node.js itself and learn ways to run Node.js apps on Google Cloud.
 
 1. Sign up for a [Mailgun account](https://mailgun.com/signup).
 
-1. Add a [new domain](https://mailgun.com/app/domains). Find your API key in your new domain's settings.
+1. Add a [new domain](https://documentation.mailgun.com/en/latest/user_manual.html). Find your API key in your new domain's settings.
 
 1. Initialize a `package.json` file with the following command:
 

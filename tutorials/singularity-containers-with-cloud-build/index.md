@@ -137,7 +137,7 @@ Singularity uses a
 as a blueprint for building a container. The definition file contains a number of sections which control how the
 `singularity build` command constructs a container. 
 
-Go back up one directory to look at [`julia.def`](../julia.def):
+Go back up one directory to look at `julia.def`:
 
 ```bash
 cd ..
