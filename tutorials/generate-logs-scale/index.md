@@ -123,7 +123,6 @@ Service Account. The command enables autoscaling up to 10 nodes and Horizontal P
         --region=$REGION \
         --node-locations=$ZONE \
         --enable-ip-alias \
-        --image-type="COS" \
         --num-nodes=5 \
         --machine-type=n1-standard-4 \
         --enable-stackdriver-kubernetes \
