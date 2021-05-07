@@ -1,9 +1,9 @@
 ---
-title: Eventarc and Workflows Integration
-description: Learn how to integrate Eventarc and Worklows.
+title: Integrate Eventarc and Workflows
+description: Learn how to integrate Eventarc and Worklows to trigger Cloud Run in response to Pub/Sub and Cloud Storage activity.
 author: meteatamel
-tags: Eventarc, Workflows, PubSub, AuditLog, Cloud Storage
-date_published: 2021-04-15
+tags: Eventarc, Workflows, AuditLog, Cloud Storage
+date_published: 2021-05-07
 ---
 
 Mete Atamel | Developer Advocate | Google
