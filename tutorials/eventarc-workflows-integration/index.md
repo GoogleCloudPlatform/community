@@ -17,8 +17,6 @@ In this tutorial, you deploy two workflows, Cloud Run services to run the workfl
 you use an Eventarc trigger that responds to a Pub/Sub message to a topic. In the second example, you use an Eventarc trigger that
 responds to the creation of a file in a Cloud Storage bucket.
 
-This tutorial assumes that you're using the Microsoft Windows operating system.
-
 ## Costs
 
 This tutorial uses billable components of Google Cloud, including the following:
@@ -34,7 +32,6 @@ generate a cost estimate based on your projected usage.
 
 ## Before you begin
 
-1.  Install [DBeaver Community for Windows](https://dbeaver.io/download/).
 1.  Create a project in the [Cloud Console](https://console.cloud.google.com/).
 1.  [Enable billing for your project](https://cloud.google.com/billing/docs/how-to/modify-project).
 1.  In the Cloud Console, activate [Cloud Shell](https://cloud.google.com/shell/docs/using-cloud-shell).
@@ -51,7 +48,7 @@ In this section, you see how a Pub/Sub message to a topic triggers a Cloud Run s
 service executes a workflow with an HTTP request from Eventarc.
 
 1.  Deploy the workflow defined in the
-    [`eventarc-pubsub/workflow.yam`l](https://github.com/GoogleCloudPlatform/eventarc-samples/tree/main/eventarc-workflows-integration/eventarc-pubsub/workflow.yaml)
+    [`eventarc-pubsub/workflow.yaml`](https://github.com/GoogleCloudPlatform/eventarc-samples/tree/main/eventarc-workflows-integration/eventarc-pubsub/workflow.yaml)
     file:
 
         export WORKFLOW_NAME=workflow-pubsub
