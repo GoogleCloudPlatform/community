@@ -3,7 +3,7 @@ title: Serverless VPC Access to private MongoDB Atlas
 description: Learn how to use Serverless VPC access to allow App Engine, Cloud Functions, or Cloud Run access to a MongoDB Atlas cluster using private IP addressing.
 author: russStarr
 tags: security, networking, RFC 1918
-date_published: 2021-04-16
+date_published: 2021-05-12
 ---
 
 Russ Starr | Customer Engineer | Google
@@ -12,7 +12,7 @@ Russ Starr | Customer Engineer | Google
 
 This tutorial is for engineers of Google Cloud who wish to configure private IP access from serverless services such as App Engine, Cloud Functions, or Cloud Run to a MongoDB Atlas cluster.
 
-![architecture](architecture.png)
+![architecture](https://storage.googleapis.com/gcp-community/tutorials/serverless-vpc-access-private-mongodb-atlas/architecture.png)
 
 Customers like having the option to keep their MongoDB connections scoped to private IP addresses only, instead of allowing public access from the Internet.
 
@@ -65,7 +65,7 @@ The following prerequisites exist for this tutorial.
 
 1.  Click the navigation menu, scroll down to VPC network, then click **Serverless VPC access**.
 
-    ![serverlessMenu](serverlessMenu.png)
+    ![serverlessMenu](https://storage.googleapis.com/gcp-community/tutorials/serverless-vpc-access-private-mongodb-atlas/serverlessMenu.png)
 
 1.  Click **Enable** to enable the Serverless VPC Access API.
 
@@ -111,7 +111,7 @@ It will take a few minutes to create the cluster but you move on to the next sec
 
 1.  In the MongoDB Atlas console, click the **Network Access** under the Security section.
 
-    ![networkAccess](networkAccess.png)
+    ![networkAccess](https://storage.googleapis.com/gcp-community/tutorials/serverless-vpc-access-private-mongodb-atlas/networkAccess.png)
 
 1.  Click **Add IP Address** under the IP Access List section.
 
@@ -272,7 +272,7 @@ The status should turn green for the Cloud Function before proceeding.
 
 1.  In the Google Cloud console, open Cloud Shell in the top right corner.
 
-    ![cloudShell](cloudShell.png)
+    ![cloudShell](https://storage.googleapis.com/gcp-community/tutorials/serverless-vpc-access-private-mongodb-atlas/cloudShell.png)
 
 1.  Enter the following command in Cloud Shell, updating the CFURL variable with the URL in the clipboard.
 
@@ -282,7 +282,7 @@ The status should turn green for the Cloud Function before proceeding.
     ```
     > **Success!** You should see a JSON dump of the Server Status information from your MongoDB Atlas cluster, which proves you have connectivity.
 
-    ![success](success.png)
+    ![success](https://storage.googleapis.com/gcp-community/tutorials/serverless-vpc-access-private-mongodb-atlas/success.png)
 
 ## Cleaning up
 
