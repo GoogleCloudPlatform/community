@@ -3,7 +3,7 @@ title: Export Firebase Crashlytics BigQuery logs to Datadog using Dataflow
 description: Bulk export Crashlytics BigQuery logs to Datadog on a daily basis using Dataflow.
 author: anantdamle
 tags: log analytics, monitoring
-date_published: 2021-04-30
+date_published: 2021-04-13
 ---
 
 Anant Damle | Solutions Architect | Google
@@ -25,7 +25,7 @@ This document assumes that you're familiar with [Dataflow](https://cloud.google.
 
 ## Architecture
 
-![Architecture Diagram](crashlytics_bq_datadog_arch.svg)
+![Architecture Diagram](https://storage.googleapis.com/gcp-community/tutorials/crashlytics-logs-to-datadog/crashlytics_bq_datadog_arch.svg)
  
  The batch Dataflow pipeline process the Crashlytics logs in BigQuery as follows:
  1.  Read the BigQuery table (or partition) 
@@ -195,7 +195,7 @@ You can directly launch the pipeline from the shell using following command:
     
 You can monitor the Dataflow job on Cloud Console. The pipeline DAG looks as follows:
 
-![Pipeline DAG](pipeline_dag.png)
+![Pipeline DAG](https://storage.googleapis.com/gcp-community/tutorials/crashlytics-logs-to-datadog/pipeline_dag.png)
 
 
 ### Create Dataflow flex template
@@ -233,7 +233,7 @@ Launch the pipeline using the flex template created in the previous step.
 
 Visit Datadog [logs viewer](https://app.datadoghq.com/logs?query=status%3Ainfo+host%3Acrashlytics) to verify the logs are available in Datadog.
 
-![Datadog screenshot](datadog_screenshot.png)
+![Datadog screenshot](https://storage.googleapis.com/gcp-community/tutorials/crashlytics-logs-to-datadog/datadog_screenshot.png)
 
 
 ## Cleaning up
