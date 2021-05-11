@@ -3,7 +3,7 @@ title: Exporting Google Cloud Security data to your SIEM
 description: Learn how to deploy unified export pipeline to stream your Google Cloud logs, asset changes and security findings to your existing SIEM.
 author: rarsan
 tags: logging, monitoring, alerts, security, siem, dataflow, scc
-date_published: 2021-04-17
+date_published: 2021-05-12
 ---
 
 Roy Arsan | Solutions Architect | Google
@@ -12,7 +12,7 @@ Roy Arsan | Solutions Architect | Google
 
 This tutorial is for security practitioners who need to aggregate all security-relevant data (logs, alerts, and assets metadata) from their Google Cloud environment into their existing Security Information & Event Management (SIEM) tools in order to power their security operations. You will deploy a Cloud PubSub & Dataflow-based pipeline to aggregate and stream in near real-time logs from Cloud Logging, security findings from Security Command Center and assets changes from Cloud Asset Inventory all in a unified cloud-native export pipeline.
 
-![Google Cloud data export to SIEM diagram](./images/siem-unified-export-pipeline.png)
+![Google Cloud data export to SIEM diagram](https://storage.googleapis.com/gcp-community/tutorials/exporting-security-data-to-your-siem/siem-unified-export-pipeline.png)
 
 ## Objectives
 
