@@ -1,0 +1,605 @@
+---
+title: Customizable serverless Golang proxy for GCS
+description:
+  Customize this Golang proxy for GCS to transform, or even translate, your GCS
+  object content.
+author: domz
+tags: Serverless, GCS, Cloud Run, Golang, Translate
+date_published: 2021-05-31
+---
+
+Dom Zippilli | Solutions Architect | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
+## Introduction
+
+This tutorial shows you how to use Cloud Run to host a streaming proxy in front
+of Google Cloud Storage (GCS), which you can use to do custom protocol
+translation to HTTP and transform responses with little impact to performance
+compared to standard GCS APIs.
+
+The idea of having serverless compute send media to HTTP clients isn't new, but
+there's been a relatively recent development that makes the performance and
+resource utilization for such services much different.
+[Cloud Run](https://cloud.google.com/run/ "Cloud Run")
+[added support for streaming responses in Q4 of 2020](https://cloud.google.com/blog/products/serverless/cloud-run-now-supports-http-grpc-server-streaming),
+and ever since I've been eager to try it out.
+
+Prior to this feature, bytes were only sent from Cloud Run (and its close cousin
+Cloud Functions) to clients when the function's response stream to the control
+plane was closed. This had a couple of implications that weren't great for some
+use cases:
+
+- Since the response had to be completely read and then forwarded to the client,
+  there could be significant wall time delays for TTFB. Effectively, the first
+  byte wasn't sent until the function sent its _last_ byte to the control plane.
+- There was a limit of 32MB on responses, which makes sense since the control
+  plane had to hold the entire response in order to forward it.
+
+Streaming responses alleviate both of these concerns. Bytes are sent back to the
+client as soon as the function writes them. This means the delay in the delivery
+of the first byte is not tied to the overall runtime of the function, and the
+responses don't have to sit in control plane memory at all so they can be any
+size and put little to no memory pressure on the control plane.
+
+## Using this new opportunity for a smart GCS proxy
+
+With this change, we can start to imagine serverless, performant, low TTFB
+proxies for all kinds of services. Anything that could be streamed would have a
+new performance profile in serverless; transcoded video, BigQuery result sets,
+and so on. In this world of possibilities, I decided to start with a simple but
+likely useful one; an HTTP proxy for GCS.
+
+You _do not_ need to do this just to serve static content out of GCS buckets.
+[There's already an established way to do that which involves no code and very little management](https://cloud.google.com/storage/docs/hosting-static-website).
+However, it has two important limitations:
+
+- It makes the content public. At the time of this writing, it's not really
+  feasible to host a private static website (e.g., on a VPC subnet, for intranet
+  purposes) using this feature.
+- You can't dynamically modify the content, if that's something you need to do.
+
+I had customers who couldn't live with those limitations, so I created
+[gcs-proxy-cloud-run](https://github.com/domZippilli/gcs-proxy-cloud-run) in
+Golang as a proof-of-concept to show the way. The design is pretty simple, and
+resembles most HTTP-to-HTTP proxies:
+
+![Architecture](./architecture.png)
+
+A couple of things to note here:
+
+- This is not an HTTP-to-HTTP proxy, as the backend is GCS's native JSON API.
+  This means that any and all Cloud Storage operations can be used, abstracted
+  away from the end-user who can just `GET` things.
+- This also means that Cloud IAM can be used for authentication to the bucket.
+  Only the Cloud Run service can access this bucket, and only with the
+  permissions granted. Various means can be used to secure the Cloud Run
+  service, such as Cloud Armor, Cloud IAP, and more. Thus, this endpoint is not
+  necessarily public, and neither is the data in the bucket.
+
+In addition, the code shows how to write _streaming_ responses and
+transformations (where possible), so that you can do all kinds of things to the
+media you're serving from GCS.
+
+## Why not _x_?
+
+Since Cloud Run just runs a container, pretty much any software could be a proxy
+to GCS. Here are some alternatives I considered:
+
+- haproxy/nginx/Envoy/etc.
+  - Battle-tested proxies with features like load balancing, caching, and
+    powerful DSLs for configuration languages. These will work in cases where
+    you like the proxy, and you don't need to do a lot of transformation -- or
+    you do, and you're good at Lua. Besides customization, the main problem with
+    these is they are typically used with HTTP backends, and I wanted to be able
+    to use the Google Cloud Client SDK for the backend.
+- `net/http/httpproxy`
+  - A proxy built into Golang! It's useful for HTTP backends, and if I write
+    more backends for this proxy, I'll probably use some or all of it. But since
+    I wanted to use the Google Cloud Client SDK for the backend, and I had a
+    particular way I wanted to do customizations, I decided to use the
+    `net/http` library instead.
+
+That said, for your use case, Cloud Run combined with any of the above could be
+a potent and low-toil, low-risk way to get the job done.
+
+But truthfully, Golang has incredible "batteries-included" support for server
+stuff -- from the rich `io` library that has everything you need to stream, to
+the `http` library that puts HTTP server writing on rails, to dead-simple
+concurrency with goroutines, a lot of this proxy is just "glue code." The real
+work is done by the Golang developers on whose shoulders I'm standing.
+
+## How gcs-proxy-cloud-run works
+
+Besides the aforementioned glue code, there are two substantial bits of code to
+look at, both of which are optional.
+
+- `config/config.go`
+
+  - This file is where you configure the proxy. Yes, I am suggesting you
+    hard-code the configuration into the binary. It's a lot safer to write
+    expressive Go code that compiles into a configured binary, as you get
+    compile-time analysis that catches a lot of mistakes. And with CI/CD,
+    particularly in serverless, there's not a huge difference operationally
+    between config baked into a statically linked binary, and a more stable
+    binary that reads a config file. Either way, you'll end up deploying a new
+    container image when things change. Plus, you don't end up investing in some
+    mini-domain-specific-langauge of a config file; just write Go, and extend it
+    however you need to. All of that said, **you don't need to change this** in
+    order to use the proxy to just serve static content from GCS. The bucket
+    name is taken from an environment variable, and the rest of the
+    configuration that you can do with Cloud Run is adequate for both public and
+    private proxies.
+
+- `filter/*.go`
+  - This package contains example (and in some cases, pretty workable) "filters"
+    for responses. Wherever possible, these are written as streaming filters, so
+    they add minimal latency and memory pressure to the proxy. These enable you
+    to do all kinds of things, from logging and filling caches, to blocking
+    regexes from being served, to translating languages on the fly. More on this
+    later, but the bottom line is **these are completely optional.** The proxy
+    is useful without them.
+  - If you choose to use filters, take a look at `config/pipelines.go` for
+    examples of how to chain them together into useful combinations. Multiple
+    **filters** combine together into a **pipeline**, where the GCS object media
+    stream is the input, and the client response stream is the output.
+
+For our first demonstration, we will bypass both of these and run the default
+configuration.
+
+## Demonstration 1: Just an HTTP proxy to GCS
+
+This is the default configuration of `gcs-proxy-cloud-run`. It will simply serve
+HTTP `GET` requests by mapping the `GET` URL to an object path in a bucket. The
+only "filter" applied is a logging filter, which emits information about the
+request and response into the log.
+
+The
+[Quickstart Deployment](https://github.com/domZippilli/gcs-proxy-cloud-run#quickstart-deployment)
+section of the `README.md` shows exactly how to do this. To make it easy, I've
+provided shell scripts that build and deploy the service using the `gcloud`
+command line. It's as simple as:
+
+- Clone the repo locally
+- From the repo root, run:
+  - `./build.sh && ./deploy.sh mybucket us-central1`, where:
+  - `mybucket` is the bucket you want to serve content from.
+  - `us-central1` is the region where you want the proxy to run.
+
+Assuming everything works and all the APIs are enabled, you should see the
+service named `gcs-mybucket` in the
+[Cloud Run console](https://console.cloud.google.com/run). Clicking on the
+service, you should see a link to a public endpoint for the service. Now, for
+this to do anything interesting, you will at least need something at
+`index.html` in your bucket. For my purposes, I have this serving up a very
+simple demo page, so I just load it up in my browser:
+
+![justlogging](./justlogging.png)
+
+This is very straightforward, and returns acceptable latency (note this is run
+from my home internet connection, which is nothing special and must travel a bit
+to the Oregon region).
+
+![justlogging-network](./justlogging-network.png)
+
+I should note that during development, I would just run this proxy in a Docker
+container on my dev workstation. This might not sound like something relevant,
+but for some workloads, some of the filter configurations -- particularly those
+with caching -- might make a proxy like this a good "sidecar." Running locally,
+the latency for cached responses was on the order of 2ms.
+
+As expected, logging messages are easily found in
+[Logs Explorer](https://console.cloud.google.com/logs) for this service, and
+they show the usual information for an HTTP server.
+
+![justlogging-logs](./justlogging-logs.png)
+
+### Using this for an intranet site
+
+You could take this configuration a step further and use the proxy to support a
+GCS-hosted static intranet site (in fact, could easily add dynamic content) that
+is secured by using
+[one of the restricted ingress settings](https://cloud.google.com/run/docs/securing/ingress).
+These can be combined with IAM invoker permissions to restrict where requests
+can ingress to your service, and thus request the content in your GCS bucket.
+
+## Demonstration 2: A simple filter to lowercase
+
+Now that we are looking into more complex usage of a Cloud Run proxy for GCS,
+it's time to take a look at the configuration file. The default configuration we
+ran above looks like this:
+
+```go
+// This function will be called in main.go for GET requests
+func GET(ctx context.Context, output http.ResponseWriter, input *http.Request) {
+    gcs.Read(ctx, output, input, LoggingOnly)
+}
+```
+
+Here's what this is saying. When a GET request is sent to the Cloud Run service,
+the `config.GET` function is called. You could do whatever you want here! You
+could write your own code to just print "Hello World!" You could even return
+`405 -- Method Not Allowed`! In the default configuration, however, it calls the
+`Read` function from the `gcs` package, which as you might guess, reads a GCS
+object and returns it in the response.
+
+The arguments to the `Read` function are as follows:
+
+- The `context` value for the request, established by the `ProxyHTTPGCS`
+  function in `main.go`.
+- The `output` and `input`, which are exactly what are required in the
+  entrypoint for a Cloud Run HTTP service. Those are just passed through without
+  modification to the backend code.
+- `LoggingOnly`, which is defined in the `pipelines.go` file. It is a "filter
+  pipeline" that just logs requests.
+
+The `LoggingOnly` pipeline definition is simple:
+
+```go
+// DEFAULT: A proxy that simply logs requests.
+var LoggingOnly = filter.Pipeline{
+    filter.LogRequest,
+}
+```
+
+This means that responses are run through one filter, `filter.LogRequest`, which
+is a function defined in `filter/logging.go`. You can probably guess what it
+does by now.
+
+We can add multiple filters to the pipeline, and they will be run in the order
+they are written. So, a pipeline for a proxy that lowercases everything looks
+like this:
+
+```go
+// EXAMPLE: Send everything lowercase. Undefined behavior with binaries.
+var LowercasingProxy = filter.Pipeline{
+    filter.ToLower,
+    filter.LogRequest,
+}
+```
+
+This will do two things; run all the bytes sent through `bytes.ToLower()`, and
+then log the requests as before. I will deploy it using the same scripts as the
+first demonstration, make **no** changes to the bucket, and then reload my
+webpage:
+
+![lowercasing](./lowercasing.png)
+
+The differences might not be immediately obvious, but note that "Lake
+Washington" is now "lake washington," and "Google Cloud" is "google cloud." The
+filter worked!
+
+If you were to look closer at the network performance and TTFB, you'd find
+they're unchanged. This is because this filter is a streaming filter. Let's take
+a quick look at how that works.
+
+```go
+// ToLower applies bytes.ToLower to the media.
+//
+// This is an example of a streaming filter. This will use very little memory
+// and add very little latency to responses.
+func ToLower(ctx context.Context, handle MediaFilterHandle) error {
+    defer handle.input.Close()
+    defer handle.output.Close()
+    buf := make([]byte, 4096)
+    for {
+        _, err := handle.input.Read(buf)
+        buf = bytes.ToLower(buf)
+        handle.output.Write(buf)
+        if err == io.EOF {
+            break
+        } else if err != nil {
+            return FilterError(handle, http.StatusInternalServerError, "lower filter: %v", err)
+        }
+    }
+    return nil
+}
+```
+
+The function is of a `MediaFilter` type, defined in `filter/filter.go`. A
+`MediaFilter` must accept a `MediaFilterHandle`, which includes references to
+all the bits needed to do media filtering. These include:
+
+- the `input`, which is either the object media itself, or the previous filter's
+  output, and
+- the `output`, which is either the response stream itself, or the next filter's
+  input.
+
+The chaining together of filters is taken care of by a pipeline builder
+function, also in `filter/filter.go`. We don't need to look at those internals
+right now, however.
+
+So the idea with this filter, then, is to read the input 4096 bytes at a time,
+call `bytes.ToLower` on the read bytes, and then send them along. This is
+repeated until the input is exhausted. That's all there is to it!
+
+If we didn't have streaming responses, this would still work as-is, but
+`handle.output.Write` wouldn't actually write to the client. For example, if we
+ran this function in Cloud Functions, we would find that the writes would be
+buffered until the entrypoint function returned, and we would be limited to
+32MB. Effectively, it wouldn't be much different from just reading the entire
+object into memory, running `ToLower` on the whole thing, and then writing it.
+Streaming responses make this all pretty slick, like it was running on a
+traditional server!
+
+## Demonstration 3: gzip encoding
+
+Did you know that GCS has built-in
+[decompressive transcoding](https://cloud.google.com/storage/docs/transcoding)?
+This lets you store compressed files, but serve them to readers in decompressed
+form on-the-fly. This is great for saving on storage and retrieval costs.
+
+But what if you want to go the other way? What if you wanted to be able to serve
+clients that are on mobile or other constrained internet connections compressed
+forms of the objects, to conserve bandwidth? Using a proxy like this, you can
+easily do _streaming_ compressive transcoding.
+
+As before, edit `config/config.go` and re-deploy. This time, use the
+`ZippingProxy`:
+
+```go
+// EXAMPLE: Send everything compressed.
+var ZippingProxy = filter.Pipeline{
+    filter.GZip,
+    filter.LogRequest,
+}
+```
+
+Your configuration should look like this:
+
+```go
+// This function will be called in main.go for GET requests
+func GET(ctx context.Context, output http.ResponseWriter, input *http.Request) {
+    gcs.Read(ctx, output, input, ZippingProxy)
+}
+```
+
+Loading my webpage, I now see the original, unchanged content. But one critical
+thing has changed -- the size of the downloads for my content. As noted above in
+the logs screenshot, the size of `index.html` is 1113 bytes. Now, it's just 531
+bytes:
+
+![zipping-network](./zipping-network.png)
+
+The file `style.css` is also compressed, from 1185 bytes to 591 bytes. Overall
+transfer decreased from 18.0kB to 16.6kB. Nothing earth-shattering in terms of
+bytes as these file sizes are trivial, but ~50% compression isn't too shabby!
+More importantly, it illustrates the point: Just by adding a simple filter to
+the configuration, we can add a very cool feature to GCS content serving.
+
+Once again, this filter is mostly glue code, carefully applied to ensure a
+streaming response:
+
+```go
+// GZip applies gzip encoding to the media.
+//
+// This is an example of a streaming filter. This will use very little memory
+// and add very little latency to responses.
+func GZip(ctx context.Context, handle MediaFilterHandle) error {
+    defer handle.input.Close()
+    defer handle.output.Close()
+    // delete content-length header. It is no longer accurate.
+    handle.response.Header().Del("Content-Length")
+    // add a content-encoding
+    handle.response.Header().Set("Content-Encoding", "gzip")
+    // zip the content
+    gz, err := gzip.NewWriterLevel(handle.output, 6)
+    if err != nil {
+        return FilterError(handle, http.StatusInternalServerError, "zip filter: %v", err)
+    }
+    defer gz.Close()
+    io.Copy(gz, handle.input)
+    return nil
+}
+```
+
+Though it has to do some header modification, this filter is even simpler than
+the `ToLower` filter when it comes to handling the bytes! It simply creates a
+`gzip.Writer` which targets the output, and then uses the `io.Copy` function to
+write the input to that. Just glue code!
+
+## Demonstration 4: Dynamic translation
+
+Now let's suppose I want to be able to translate my webpage on the fly. Perhaps
+I have multiple domain names for it, and I'll check the request URI to determine
+which one the caller used and direct them to an appropriate translation (French
+for `.fr`, Chinese for `.cn`, Spanish for `.mx`, and so on). How should I do
+this?
+
+- Automated translation, with a copy saved of each language. I will have many
+  copies to store, and I'll have to run a batch update job for any changes to
+  the website. I also will not benefit from any changes to the translation ML
+  model unless I run the batch re-translation.
+- Client-side code to translate. This is good, but now I need to have JavaScript
+  code in my site, and hope clients run it properly. I also have the added "wall
+  time" that users will get from downloading my English source, and then making
+  a Translate API call on the client side, and finally rendering the translated
+  content.
+- Dynamic server-side translation. This way, I only store one copy of the
+  website (my source English copy), but clients only ever see static content, no
+  Javascript. When my page is updated, the translations change. As the
+  translation ML models improve, I automatically get the improvements. This
+  could be slow and expensive if I make a translation each time, but I can
+  trivially add some caching or CDN, so that the translation is only made on
+  cache fills. **This is the approach I'll use here.**
+
+Easy enough; I can just change my `config.go` to:
+
+```go
+// This function will be called in main.go for GET requests
+func GET(ctx context.Context, output http.ResponseWriter, input *http.Request) {
+    gcs.Read(ctx, output, input, DynamicTranslationFromEnToEs)
+}
+```
+
+But what is `DynamicTranslationFromEnToEs`? It's a pipeline included in the
+sample confguration, and it bears some examination:
+
+```go
+// EXAMPLE: Translate HTML files from English to Spanish dynamically.
+var DynamicTranslationFromEnToEs = filter.Pipeline{
+    htmlEnglishToSpanish,
+    filter.LogRequest,
+}
+
+// htmlEnglishToSpanish applies the EnglishToSpanish filter, but only if the
+// isHTML test is true.
+func htmlEnglishToSpanish(c context.Context, mfh filter.MediaFilterHandle) error {
+    return filter.FilterIf(c, mfh, isHTML, englishToSpanish)
+}
+
+// englishToSpanish is MediaFilter that translates media from English to Spanish,
+// using the MIME type of the source in the call to Translate API. This uses
+// a translate API best for content under 30k code points.
+func englishToSpanish(c context.Context, mfh filter.MediaFilterHandle) error {
+    return filter.Translate(c, mfh, language.English, language.Spanish)
+}
+
+// isHTML tests whether a file ends with "html".
+func isHTML(r http.Request) bool {
+    url := r.URL.String()
+    return strings.HasSuffix(common.NormalizeURL(url), "html")
+}
+```
+
+Hopefully most of this is self-explanatory. The `Translate` filter requires
+arguments for source and target language, so `englishToSpanish` applies those
+arguments as English and Spanish within the context of a private function that
+conforms to the `MediaFilter` type.
+
+`FilterIf` might be more opaque, but it's really quite simple.
+`htmlEnglishToSpanish` is similarly emulating partial application with the
+`FilterIf` filter, here applying a test that examines the request -- `isHTML` --
+and a filter to run if that test is true, `englishToSpanish`. If the test is
+false, `FilterIf` runs a no-op filter instead.
+
+The key point to get across is that you can compose filters to make pipelines
+that suit your needs, even writing little bits of code to customize behaviors.
+
+So after deploying with this new configuration, what happens when I load my
+webpage?
+
+![translating](./translating.png)
+
+¡Que guay! Just like that, my webpage is in Spanish! This filter uses the
+[Cloud Translation](https://cloud.google.com/translate) basic API, but there are
+lots of ways to use Cloud Translation with all kinds of degrees of
+sophistication.
+
+There is one small downside to what I've got here:
+
+![translating-network](./translating-network.png)
+
+See that 128ms for index.html? It makes sense, as there are two things working
+against us on this translate filter:
+
+- It's _not_ streaming. It could probably be optimized a bit to use less RAM,
+  but since it has to make a remote API call for translate with the complete
+  document included, and I wanted to use the SDK, it just loads the whole page
+  into a byte array before sending. It then waits for a response, and does
+  stream that back as it reads it.
+- As mentioned, _it uses a whole other remote API_. We're no longer just talking
+  about reading from GCS, we're taking the content to a translation model and
+  getting new text back. This will involve time-intensive network trips,
+  computation time, and overhead. No matter how slick we are with input and
+  output streams, there's nothing we can really do about this.
+
+Now, an easy way to solve this is with caching. A CDN would work particularly
+well here; re-translation and the ~120ms latency penalty would only be incurred
+when the CDN has to fill the cache. Most, if not all requests, would be very
+fast using cached data. But what if a CDN isn't practical here? Could I cache
+inside this proxy?
+
+## Demonstration 5: Cached dynamic translation
+
+It seems doable; we will need to write our own pipeline, but it shouldn't be too
+hard.
+
+First, let's look at how caching is done in the configuration:
+
+```go
+// This function will be called in main.go for GET requests
+func GET(ctx context.Context, output http.ResponseWriter, input *http.Request) {
+    gcs.ReadWithCache(ctx, output, input, CacheMedia, cacheGetter, LoggingOnly)
+}
+```
+
+Here, we use a slightly different backend method: `ReadWithCache`. This is a
+"cache-aware" version of `gcs.Read`. It changes the arguments slightly:
+
+- `CacheMedia` is the `missPipeline` value in this function call. This is the
+  pipeline that gets called when an object is not in the cache. `CacheMedia`
+  just sends object media to the cache; you would want to use this if you were
+  just trying to cache GCS objects in the proxy unmodified.
+- `cacheGetter` is a function that defines how to get `[]byte` values from the
+  cache. It's defined in `config/pipeline.go` if you want to have a look.
+- `LoggingOnly` is the `hitPipeline` value in this function call. This is the
+  pipeline that gets called when an object _is_ in the cache. Since we have the
+  object cached, there's no need to cache it again; we just serve the content
+  from the cache and log it, through the default logging pipeline.
+
+This is _almost_ what we want, but we need to apply the translation also. By
+combining the translation and caching pipelines, we can get the desired effect:
+
+```go
+// This function will be called in main.go for GET requests
+func GET(ctx context.Context, output http.ResponseWriter, input *http.Request) {
+    //gcs.Read(ctx, output, input, LoggingOnly)
+    gcs.ReadWithCache(ctx, output, input, filter.Pipeline{
+        htmlEnglishToSpanish,
+        cacheMedia,
+        filter.LogRequest,
+    }, cacheGetter, LoggingOnly)
+}
+```
+
+The `cacheMedia` function is defined in `config/pipelines.go`, and looks like
+this:
+
+```go
+// cacheMedia applies mediaCache to the FillCache filter.
+func cacheMedia(c context.Context, mfh filter.MediaFilterHandle) error {
+    return filter.FillCache(c, mfh, cacheSetter)
+}
+```
+
+This uses the standard `FillCache` filter, applying an argument for the function
+it should use to set values in the cache. `cacheSetter`, in turn, is "aware" of
+a specific cache that's defined in the `config/pipelines.go` file.
+
+The "interface" of having a `cacheSetter` and `cacheGetter` function you define
+yourself is useful, because you can substitute any cache you want here. It
+doesn't even need to be on the proxy; it could be a remote cache of some sort.
+
+Anyway, what happens when I load the page with this configuration? After
+discarding the first couple of requests to account for "slow-starts" common with
+serverless technology, we see a much faster TTFB for our translated page (you
+can tell it's the translated version, as that one is a leaner 857 bytes):
+
+![translating-caching-network](./translating-caching-network.png)
+
+## Hola, Mundo!
+
+The `gcs-proxy-cloud-run` repo contains even more filters, and demonstrations of
+capability. This is really a "Hello World!" for what you can do with a
+combination of Cloud Run, streaming responses, and GCS. For example, check out
+`config/pipelines.go` for a pipeline that blocks sending of any data that
+matches a certain regex pattern:
+
+```go
+// BlockSSNs will block content that matches SSN regex.
+func blockSSNs(c context.Context, mfh filter.MediaFilterHandle) error {
+    regexes := []*regexp.Regexp{
+        // TODO: A better regex, but without lookarounds
+        regexp.MustCompile("\\b([0-9]{3}-[0-9]{2}-[0-9]{4})\\b"),
+    }
+    return filter.BlockRegex(c, mfh, regexes)
+}
+```
+
+This, too, is implemented as a streaming filter. For the sake of brevity, I
+won't demonstrate it, but you get the idea.
+
+What combinations can you think of? What use cases might you use a serverless
+proxy for object storage for? Let us know, and let's build Awesome GCP together!
