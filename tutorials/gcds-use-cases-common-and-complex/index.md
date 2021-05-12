@@ -1,6 +1,6 @@
 ---
 title: Google Cloud Directory Sync Examples
-description: Common and Complex Use Cases for Syncing Active Directory Users to Cloud Identity Using Google Cloud Directory Sync 
+description: Common and Complex Use Cases for Syncing Active Directory Users to Cloud Identity Using Google Cloud Directory Sync.
 author: akaashr
 tags: gcds, activedirectory
 date_published: 2021-05-21
