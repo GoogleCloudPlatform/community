@@ -45,7 +45,7 @@ new one, or you can select a project that you already created.
 
 1.  [Select or create a Google Cloud project.](https://console.cloud.google.com/projectselector2/home/dashboard)
 2.  [Enable billing for your project.](https://support.google.com/cloud/answer/6293499#enable-billing)
-3.  [Enable API](https://console.cloud.google.com/flows/enableapi?apiid=compute.googleapis.com,spanner.googleapis.com) for Compute Engine and Spanner.
+3.  [Enable API](https://console.cloud.google.com/flows/enableapi?apiid=compute.googleapis.com,spanner.googleapis.com,sqladmin.googleapis.com) for Compute Engine, Cloud SQL and Spanner.
 
 When you finish this tutorial, you can avoid continued billing by deleting the resources that you created. For details, see the "Cleaning up" 
 section at the end of this tutorial.
@@ -53,51 +53,51 @@ section at the end of this tutorial.
 ## Setup Source Database (Cloud SQL for MySQL)
 1. Create Cloud SQL Instance, in a cloud shell.
 
-        gcloud sql instances create mysql-57  \
-            --database-version=MYSQL_5_7 \
-            --tier=db-n1-standard-1  \
-            --region=us-central1 \
-            --root-password=password123
+       gcloud sql instances create mysql-57  \
+           --database-version=MYSQL_5_7 \
+           --tier=db-n1-standard-1  \
+           --region=us-central1 \
+           --root-password=password123
 
 2. Enable binary logging (for CDC).
 
-        gcloud sql instances patch mysql-57 --backup-start-time 00:00
-        gcloud sql instances patch mysql-57 --enable-bin-log    
+       gcloud sql instances patch mysql-57 --backup-start-time 00:00
+       gcloud sql instances patch mysql-57 --enable-bin-log    
 
 3. Connect to Cloud SQL for MySQL instance. Type in password *password123* when prompted.
 
-        gcloud sql connect mysql-57 --user=root
+       gcloud sql connect mysql-57 --user=root
 
 4. Create database and tables.
 
-        CREATE DATABASE employeedb;
-        use employeedb;
-        CREATE TABLE `signin_log` (
-          `id` int not null AUTO_INCREMENT,
-          `employee_email` varchar(200) DEFAULT NULL,
-          `details` varchar(500) DEFAULT NULL,
-          PRIMARY KEY (`id`)
-        );
+       CREATE DATABASE employeedb;
+       use employeedb;
+       CREATE TABLE `signin_log` (
+         `id` int not null AUTO_INCREMENT,
+         `employee_email` varchar(200) DEFAULT NULL,
+         `details` varchar(500) DEFAULT NULL,
+         PRIMARY KEY (`id`)
+       );
     
 5. Insert sample data rows.
 
-        INSERT INTO signin_log (employee_email, details) values ('test-1@email.com', 'ip address a.b.c.d');
-        INSERT INTO signin_log (employee_email, details) values ('test-2@email.com', 'new ip address 1');
+       INSERT INTO signin_log (employee_email, details) values ('test-1@email.com', 'ip address a.b.c.d');
+       INSERT INTO signin_log (employee_email, details) values ('test-2@email.com', 'new ip address 1');
 
 ## Setup Target Database (Cloud Spanner)
 1. Create a Cloud Spanner instance
 
-        gcloud spanner instances create spanner-tgt \
-            --config=regional-us-central1 \
-            --nodes=1 \
-            --description=spanner-tgt
+       gcloud spanner instances create spanner-tgt \
+           --config=regional-us-central1 \
+           --nodes=1 \
+           --description=spanner-tgt
 
 2. Create database and empty table.
 
-        gcloud spanner databases create employeedb \
-        --instance=spanner-tgt \
-        --ddl='CREATE TABLE signin_log (id STRING(36), employee_email STRING(200), details STRING(500)) PRIMARY KEY (id)'
-        
+       gcloud spanner databases create employeedb \
+       --instance=spanner-tgt \
+       --ddl='CREATE TABLE signin_log (id STRING(36), employee_email STRING(200), details STRING(500)) PRIMARY KEY (id)'
+       
 **NOTE** The employee_id column has been changed to STRING in the above example. As mentioned previously, this is done so that application can generate UUID keys post migration.
 
 ## Setup Middleware (Striim)
@@ -120,51 +120,50 @@ section at the end of this tutorial.
 ### Configure Striim
 
 1. To allow Striim to communicate with Cloud SQL for MySQL, [add the Striim server's IP address](https://cloud.google.com/sql/docs/mysql/connect-external-app)
- to the Cloud SQL for MySQL instance's authorized networks. 
+ to the Cloud SQL for MySQL instance's authorized networks. **Update `STRIIM_VM_ZONE` with the zone in which striim vm is deployed.**
  
-        STRIIMVM_ZONE=us-central1-f
-        gcloud sql instances patch mysql-57 \
-            --authorized-networks=$(gcloud compute instances describe striim-spanner-1-vm \
-            --format='get(networkInterfaces[0].accessConfigs[0].natIP)' \
-            --zone=$STRIIMVM_ZONE)
-
-Update STRIIMVM_ZONE with the right value.
+       STRIIM_VM_ZONE=us-central1-f
+       gcloud config set compute/zone $STRIIM_VM_ZONE
+       gcloud sql instances patch mysql-57 \
+           --authorized-networks=$(gcloud compute instances describe striim-spanner-1-vm \
+           --format='get(networkInterfaces[0].accessConfigs[0].natIP)' \
+           --zone=$STRIIM_VM_ZONE)
 
 2. Deploy mysql driver as described [here](https://cloud.google.com/architecture/partners/continuous-data-replication-cloud-spanner-striim#setting_up_mysql_connector_j)
 
     SSH into Striim VM
     
-        gcloud compute ssh striim-spanner-1-vm
+       gcloud compute ssh striim-spanner-1-vm
 
     Execute below comannds to download and deploy mysql driver inside striim.
     
-        wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.49.tar.gz
-        tar -xvzf mysql-connector-java-5.1.49.tar.gz
-        sudo cp ~/mysql-connector-java-5.1.49/mysql-connector-java-5.1.49.jar /opt/striim/lib
-        sudo chmod +x /opt/striim/lib/mysql-connector-java-5.1.49.jar
-        sudo chown striim /opt/striim/lib/mysql-connector-java-5.1.49.jar
-        sudo systemctl stop striim-node
-        sudo systemctl stop striim-dbms
-        sudo systemctl start striim-dbms
-        sudo systemctl start striim-node
+       wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.49.tar.gz
+       tar -xvzf mysql-connector-java-5.1.49.tar.gz
+       sudo cp ~/mysql-connector-java-5.1.49/mysql-connector-java-5.1.49.jar /opt/striim/lib
+       sudo chmod +x /opt/striim/lib/mysql-connector-java-5.1.49.jar
+       sudo chown striim /opt/striim/lib/mysql-connector-java-5.1.49.jar
+       sudo systemctl stop striim-node
+       sudo systemctl stop striim-dbms
+       sudo systemctl start striim-dbms
+       sudo systemctl start striim-node
 
 3. Create a service account key for Striim to authenticate with Cloud Spanner. Execute the following commands in Cloud Shell. 
 
-        export PROJECT=$(gcloud info --format='value(config.project)')        
-        export PROJECT_NUMBER=$(gcloud projects list \
-            --filter="projectId=$PROJECT" --format="value(projectNumber)")
-            
-        export compute_sa=$PROJECT_NUMBER-compute@developer.gserviceaccount.com
-        gcloud iam service-accounts keys create ~/striim-spanner-key.json --iam-account $compute_sa
+       export PROJECT=$(gcloud info --format='value(config.project)')       
+       export PROJECT_NUMBER=$(gcloud projects list \
+           --filter="projectId=$PROJECT" --format="value(projectNumber)")
+           
+       export compute_sa=$PROJECT_NUMBER-compute@developer.gserviceaccount.com
+       gcloud iam service-accounts keys create ~/striim-spanner-key.json --iam-account $compute_sa
 
    A key called striim-spanner-key.json should be created on your Cloud Shell home path.
 
 4. Move the service account key to the _/opt/striim_ directory on Striim instance. And grant _striim_ user owner permissions.
 
-        gcloud compute scp ~/striim-spanner-key.json striim-spanner-1-vm:~
-        gcloud compute ssh striim-spanner-1-vm \
-            -- 'sudo cp ~/striim-spanner-key.json /opt/striim && \
-            sudo chown striim /opt/striim/striim-spanner-key.json'
+       gcloud compute scp ~/striim-spanner-key.json striim-spanner-1-vm:~
+       gcloud compute ssh striim-spanner-1-vm \
+           -- 'sudo cp ~/striim-spanner-key.json /opt/striim && \
+           sudo chown striim /opt/striim/striim-spanner-key.json'
 
 ## Migrate data using Striim
 Data migration is a two step process : 
@@ -179,37 +178,37 @@ You will write code, compile, package and deploy java code for bit reversal onto
 
 1. SSH into VM
 
-        gcloud compute ssh striim-spanner-1-vm
+       gcloud compute ssh striim-spanner-1-vm
 
 2. Write java code
 
-        cat > CustomFunctions.java << EOF
-        public abstract class CustomFunctions {
-                
-        //used by STRIIM to convert MySQL's int ids to bit reversed strings
-        public static String bitReverseInt(Integer id) {
-                return String.valueOf(Integer.reverse(id));
-                }
-        }
-        EOF
+       cat > CustomFunctions.java << EOF
+       public abstract class CustomFunctions {
+              
+       //used by STRIIM to convert MySQL's int ids to bit reversed strings
+       public static String bitReverseInt(Integer id) {
+              return String.valueOf(Integer.reverse(id));
+              }
+       }
+       EOF
 
 3. Compile and package it.
 
-        javac CustomFunctions.java
-        jar -cf CustomFunctions.jar CustomFunctions.class CustomFunctions.java
+       javac CustomFunctions.java
+       jar -cf CustomFunctions.jar CustomFunctions.class CustomFunctions.java
 
 4. Move jar onto Striim instance's _/opt/striim/lib/_ directory.
 
-        sudo cp CustomFunctions.jar /opt/striim/lib/
-        sudo chown striim /opt/striim/lib/CustomFunctions.jar
-        sudo chmod +x /opt/striim/lib/CustomFunctions.jar
+       sudo cp CustomFunctions.jar /opt/striim/lib/
+       sudo chown striim /opt/striim/lib/CustomFunctions.jar
+       sudo chmod +x /opt/striim/lib/CustomFunctions.jar
 
 5. Restart Striim application for Striim to pickup this jar. 
 
-        sudo systemctl stop striim-node
-        sudo systemctl stop striim-dbms
-        sudo systemctl start striim-dbms
-        sudo systemctl start striim-node
+       sudo systemctl stop striim-node
+       sudo systemctl stop striim-dbms
+       sudo systemctl start striim-dbms
+       sudo systemctl start striim-node
 
 ### Create initial load pipeline
 Initial load job is meant to bulk load existing data. It loads all data existing at job start time and once finished, will quiesce (pause).
@@ -217,58 +216,62 @@ Any changes (updates, deletes, inserts, append) to data after job start time wil
 
 1. Save the following code as `mysql_to_spanner_initial_load.tql` file on your local computer. You will import it into Striim application.
 
-        drop APPLICATION mysql_to_spanner_initial_load CASCADE;
-        
-        IMPORT STATIC CustomFunctions.*;
-        
-        CREATE APPLICATION mysql_to_spanner_initial_load;
-        
-        CREATE FLOW sample1;
-        
-        CREATE OR REPLACE SOURCE mysql_dbreader USING Global.DatabaseReader (
-          Username: 'root',
-          DatabaseProviderType: 'Default',
-          FetchSize: 10,
-          adapterName: 'DatabaseReader',
-          QuiesceOnILCompletion: true,
-          Password_encrypted: 'false',
-          ConnectionURL: 'jdbc:mysql://PRIMARY_IP:3306/employeedb',
-          Tables: 'employeedb.signin_log',
-          Password: 'password123',
-          ReturnDateTimeAs: 'String')
-        OUTPUT TO sample_raw;
-        
-        CREATE STREAM SampleModifiedData OF Global.WAEvent;
-        
-        CREATE CQ POPULATE_SAMPLE_TABLE
-        INSERT INTO SampleModifiedData
-        SELECT * from sample_raw
-        MODIFY(data[0] = bitReverseInt(data[0]));
-        
-        CREATE TARGET spanner_sample USING Global.SpannerWriter (
-          InstanceID: 'spanner-tgt',
-          ServiceAccountKey: '/opt/striim/striim-spanner-key.json',
-          BatchPolicy: 'EventCount: 100, Interval: 10s',
-          ParallelThreads: '',
-          Tables: 'employeedb.signin_log,employeedb.signin_log' )
-        INPUT FROM SampleModifiedData;
-        
-        END FLOW sample1;
-        
-        END APPLICATION mysql_to_spanner_initial_load;
+       drop APPLICATION mysql_to_spanner_initial_load CASCADE;
+       
+       IMPORT STATIC CustomFunctions.*;
+       
+       CREATE APPLICATION mysql_to_spanner_initial_load;
+       
+       CREATE FLOW sample1;
+       
+       CREATE OR REPLACE SOURCE mysql_dbreader USING Global.DatabaseReader (
+         Username: 'root',
+         DatabaseProviderType: 'Default',
+         FetchSize: 10,
+         adapterName: 'DatabaseReader',
+         QuiesceOnILCompletion: true,
+         Password_encrypted: 'false',
+         ConnectionURL: 'jdbc:mysql://PRIMARY_IP:3306/employeedb',
+         Tables: 'employeedb.signin_log',
+         Password: 'password123',
+         ReturnDateTimeAs: 'String')
+       OUTPUT TO sample_raw;
+       
+       CREATE STREAM SampleModifiedData OF Global.WAEvent;
+       
+       CREATE CQ POPULATE_SAMPLE_TABLE
+       INSERT INTO SampleModifiedData
+       SELECT * from sample_raw
+       MODIFY(data[0] = bitReverseInt(data[0]));
+       
+       CREATE TARGET spanner_sample USING Global.SpannerWriter (
+         InstanceID: 'spanner-tgt',
+         ServiceAccountKey: '/opt/striim/striim-spanner-key.json',
+         BatchPolicy: 'EventCount: 100, Interval: 10s',
+         ParallelThreads: '',
+         Tables: 'employeedb.signin_log,employeedb.signin_log' )
+       INPUT FROM SampleModifiedData;
+       
+       END FLOW sample1;
+       
+       END APPLICATION mysql_to_spanner_initial_load;
 
 2. Login to Striim web UI. If needed, visit [deployment manager page](https://console.cloud.google.com/dm/deployments) to access Striim URL and credentials. 
-3. Click on Apps > + Add App (on top right).
+3. After login click `☰` menu on top left and select `Apps`. Click on `+ Add App` (on top right).
 4. Click import existing app and choose the mysql_to_spanner_initial_load.tql created in step 1. And click import.
 5. In the workflow, replace _Primary_IP_ with Cloud SQL for MySQL’s IP address. Click on mysql_dbreader adaptor and replace the Primary_IP in the Connection URL field (screenshot below). And click save.
+   You can find MySQL's IP address in GCP Console or by executing command as below.
+
+       gcloud sql instances list --filter=name=mysql-57
+       
 ![initial load](4_striim_initial_load.png)
 
-6. Deploy the application. 
-Created > Deploy App > Deploy
+6. Deploy the application using defaults.
+Created > Deploy App > Deploy.
 ![initial load deploy](5_striim_deploy.png)
 
 7. Start the application 
-Deploy > Start App. 
+Deployed > Start App. 
 8. You should see rows being replicated through Striim and inserted to Cloud Spanner.
 9. On Cloud Spanner UI verify that rows have been written with bit reversed id values.
 ![initial complete](6_spanner_il_complete.png)
@@ -281,61 +284,62 @@ In production you would use `StartTimestamp` property to specify binary log posi
 You should also create a [Checkpoint table](https://www.striim.com/docs/en/spanner-writer.html) so that Striim can recover from a failure.
 However these concepts are out of scope for this tutorial.
 
-1. Similar to initial load application, import the following code for CDC pipeline and change Primary_IP with Cloud SQL for MySQL’s IP address. Then deploy and start the application.
+1. Similar to initial load application, import the following code for CDC pipeline and change Primary_IP with Cloud SQL for MySQL’s IP address. Then deploy and start the application. 
 
-        drop APPLICATION mysql_to_spanner_cdc CASCADE;
-        
-        IMPORT STATIC CustomFunctions.*;
-        
-        CREATE APPLICATION mysql_to_spanner_cdc;
-        
-        CREATE FLOW sample1_cdc;
-        
-        
-        CREATE SOURCE mysql_cdc_source USING MysqlReader  (
-        ConnectionURL: 'jdbc:mysql://PRIMARY_IP:3306/employeedb',
-          Username: 'root',
-          Compression: false,
-          Password_encrypted: 'false',
-          connectionRetryPolicy: 'retryInterval=30, maxRetries=3',
-          FilterTransactionBoundaries: true,
-          Tables: 'employeedb.signin_log',
-          Password: 'password123',
-          SendBeforeImage: true
-          --change this timestamp
-          --,StartTimestamp: '2021-MAR-19 13:00:00'
-          )
-        OUTPUT TO sample_raw_cdc;
-        
-        
-        CREATE STREAM SampleModifiedDataCDC OF Global.WAEvent;
-        
-        CREATE CQ POPULATE_SAMPLE_TABLE_CDC
-        INSERT INTO SampleModifiedDataCDC
-        SELECT * FROM sample_raw_cdc
-        MODIFY(data[0] = bitReverseInt(data[0]));
-        
-        
-        CREATE TARGET spanner_sample_cdc USING Global.SpannerWriter (
-          InstanceID: 'spanner-tgt',
-          --CheckpointTable: 'CHKPOINT',
-          BatchPolicy: 'EventCount: 100, Interval: 10s',
-          ParallelThreads: '',
-          ServiceAccountKey: '/opt/striim/striim-spanner-key.json',
-          Tables: 'employeedb.signin_log,employeedb.signin_log' )
-        INPUT FROM SampleModifiedDataCDC;
-        
-        END FLOW sample1_cdc;
-        
-        END APPLICATION mysql_to_spanner_cdc;
+       drop APPLICATION mysql_to_spanner_cdc CASCADE;
+       
+       IMPORT STATIC CustomFunctions.*;
+       
+       CREATE APPLICATION mysql_to_spanner_cdc;
+       
+       CREATE FLOW sample1_cdc;
+       
+       
+       CREATE SOURCE mysql_cdc_source USING MysqlReader  (
+       ConnectionURL: 'jdbc:mysql://PRIMARY_IP:3306/employeedb',
+         Username: 'root',
+         Compression: false,
+         Password_encrypted: 'false',
+         connectionRetryPolicy: 'retryInterval=30, maxRetries=3',
+         FilterTransactionBoundaries: true,
+         Tables: 'employeedb.signin_log',
+         Password: 'password123',
+         SendBeforeImage: true
+         --change this timestamp
+         --,StartTimestamp: '2021-MAR-19 13:00:00'
+         )
+       OUTPUT TO sample_raw_cdc;
+       
+       
+       CREATE STREAM SampleModifiedDataCDC OF Global.WAEvent;
+       
+       CREATE CQ POPULATE_SAMPLE_TABLE_CDC
+       INSERT INTO SampleModifiedDataCDC
+       SELECT * FROM sample_raw_cdc
+       MODIFY(data[0] = bitReverseInt(data[0]));
+       
+       
+       CREATE TARGET spanner_sample_cdc USING Global.SpannerWriter (
+         InstanceID: 'spanner-tgt',
+         --CheckpointTable: 'CHKPOINT',
+         BatchPolicy: 'EventCount: 100, Interval: 10s',
+         ParallelThreads: '',
+         ServiceAccountKey: '/opt/striim/striim-spanner-key.json',
+         Tables: 'employeedb.signin_log,employeedb.signin_log' )
+       INPUT FROM SampleModifiedDataCDC;
+       
+       END FLOW sample1_cdc;
+       
+       END APPLICATION mysql_to_spanner_cdc;
 
 2. Connect to mysql and insert a few rows.
 
-        gcloud sql connect mysql-57 --user=root
-
-        insert into signin_log (employee_email, details) values ('cdc-test-3@email.com', 'ip 3333 ');
-        insert into signin_log (employee_email, details) values ('cdc-test-4@email.com', 'ip 4444');
-        insert into signin_log (employee_email, details) values ('cdc-test-5@email.com', 'ip 5555');
+       gcloud sql connect mysql-57 --user=root
+       
+       use employeedb;
+       insert into signin_log (employee_email, details) values ('cdc-test-3@email.com', 'ip 3333 ');
+       insert into signin_log (employee_email, details) values ('cdc-test-4@email.com', 'ip 4444');
+       insert into signin_log (employee_email, details) values ('cdc-test-5@email.com', 'ip 5555');
 
 
 3. Verify data has been replicated into Cloud Spanner.
