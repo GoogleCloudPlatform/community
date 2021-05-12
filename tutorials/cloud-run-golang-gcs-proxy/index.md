@@ -512,76 +512,12 @@ against us on this translate filter:
 Now, an easy way to solve this is with caching. A CDN would work particularly
 well here; re-translation and the ~120ms latency penalty would only be incurred
 when the CDN has to fill the cache. Most, if not all requests, would be very
-fast using cached data. But what if a CDN isn't practical here? Could I cache
-inside this proxy?
+fast using cached data.
 
-## Demonstration 5: Cached dynamic translation
-
-It seems doable; we will need to write our own pipeline, but it shouldn't be too
-hard.
-
-First, let's look at how caching is done in the configuration:
-
-```go
-// This function will be called in main.go for GET requests
-func GET(ctx context.Context, output http.ResponseWriter, input *http.Request) {
-    gcs.ReadWithCache(ctx, output, input, CacheMedia, cacheGetter, LoggingOnly)
-}
-```
-
-Here, we use a slightly different backend method: `ReadWithCache`. This is a
-"cache-aware" version of `gcs.Read`. It changes the arguments slightly:
-
--   `CacheMedia` is the `missPipeline` value in this function call. This is the
-    pipeline that gets called when an object is not in the cache. `CacheMedia`
-    just sends object media to the cache; you would want to use this if you were
-    just trying to cache GCS objects in the proxy unmodified.
--   `cacheGetter` is a function that defines how to get `[]byte` values from the
-    cache. It's defined in `config/pipeline.go` if you want to have a look.
--   `LoggingOnly` is the `hitPipeline` value in this function call. This is the
-    pipeline that gets called when an object _is_ in the cache. Since we have
-    the object cached, there's no need to cache it again; we just serve the
-    content from the cache and log it, through the default logging pipeline.
-
-This is _almost_ what we want, but we need to apply the translation also. By
-combining the translation and caching pipelines, we can get the desired effect:
-
-```go
-// This function will be called in main.go for GET requests
-func GET(ctx context.Context, output http.ResponseWriter, input *http.Request) {
-    //gcs.Read(ctx, output, input, LoggingOnly)
-    gcs.ReadWithCache(ctx, output, input, filter.Pipeline{
-        htmlEnglishToSpanish,
-        cacheMedia,
-        filter.LogRequest,
-    }, cacheGetter, LoggingOnly)
-}
-```
-
-The `cacheMedia` function is defined in `config/pipelines.go`, and looks like
-this:
-
-```go
-// cacheMedia applies mediaCache to the FillCache filter.
-func cacheMedia(c context.Context, mfh filter.MediaFilterHandle) error {
-    return filter.FillCache(c, mfh, cacheSetter)
-}
-```
-
-This uses the standard `FillCache` filter, applying an argument for the function
-it should use to set values in the cache. `cacheSetter`, in turn, is "aware" of
-a specific cache that's defined in the `config/pipelines.go` file.
-
-The "interface" of having a `cacheSetter` and `cacheGetter` function you define
-yourself is useful, because you can substitute any cache you want here. It
-doesn't even need to be on the proxy; it could be a remote cache of some sort.
-
-Anyway, what happens when I load the page with this configuration? After
-discarding the first couple of requests to account for "slow-starts" common with
-serverless technology, we see a much faster TTFB for our translated page (you
-can tell it's the translated version, as that one is a leaner 857 bytes):
-
-![translating-caching-network](./translating-caching-network.png)
+In fact, you could easily achieve this using a
+[Cloud External HTTP(S) Load Balancer with Cloud Run](https://cloud.google.com/load-balancing/docs/https/setting-up-https-serverless),
+which is in turn
+[used as an origin for Cloud CDN](https://cloud.google.com/cdn/docs/setting-up-cdn-with-serverless).
 
 ## Hola, Mundo!
 
