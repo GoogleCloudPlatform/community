@@ -40,9 +40,7 @@ Let’s assume that we’re working with a customer called The GCDSDemo Company 
 
 Let’s quickly examine the example Domain (***gcdsdemo.joonix.net***) for The GCDSDemo Company. You’ll notice there are two (2) Organizational Units (OU) of interest: ***Corp*** and ***GCP***.
 
-![ADUC OUs Screenshot] [01-AD-OUs]
-
-[01-AD-OUs]: https://github.com/akaashr/community/blob/master/tutorials/gcds-use-cases-common-and-complex/01-AD-OUs.png
+![ADUC OUs Screenshot](https://github.com/akaashr/community/blob/master/tutorials/gcds-use-cases-common-and-complex/01-AD-OUs.png)
 
 In the ***Corp*** OU there are few sub-OUs but we’ll be focusing on the ***IT*** and ***R&D*** sub-OUs since the User objects we need synced are located there.
 
