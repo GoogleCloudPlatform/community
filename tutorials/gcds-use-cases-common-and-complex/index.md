@@ -44,19 +44,13 @@ Let’s quickly examine the example Domain (***gcdsdemo.joonix.net***) for The G
 
 In the ***Corp*** OU there are few sub-OUs but we’ll be focusing on the ***IT*** and ***R&D*** sub-OUs since the User objects we need synced are located there.
 
-![ADUC IT Users Screenshot] [02-AD-IT-Users]
+![ADUC IT Users Screenshot](https://github.com/akaashr/community/blob/master/tutorials/gcds-use-cases-common-and-complex/02-AD-IT-Users.png)
 
-[02-AD-IT-Users]: https://github.com/akaashr/community/blob/master/tutorials/gcds-use-cases-common-and-complex/02-AD-IT-Users.png
-
-![ADUC R&D Users Screenshot] [03-AD-RD-Users]
-
-[03-AD-RD-Users]: https://github.com/akaashr/community/blob/master/tutorials/gcds-use-cases-common-and-complex/03-AD-RD-Users.png
+![ADUC R&D Users Screenshot](https://github.com/akaashr/community/blob/master/tutorials/gcds-use-cases-common-and-complex/03-AD-RD-Users.png)
 
 Let’s also assume that the IT Administrators of ***gcdsdemo.joonix.net*** made a design decision to put the Security Groups for Google Cloud in a separate OU to ensure that those Groups don’t inadvertently get assigned to resources within their on-premise environment.
 
-![ADUC GCP Groups Screenshot] [04-AD-GCP-Groups]
-
-[04-AD-GCP-Groups]: https://github.com/akaashr/community/blob/master/tutorials/gcds-use-cases-common-and-complex/04-AD-GCP-Groups.png
+![ADUC GCP Groups Screenshot](https://github.com/akaashr/community/blob/master/tutorials/gcds-use-cases-common-and-complex/04-AD-GCP-Groups.png)
 
 ### Google Cloud Directory Sync Configuration
 
@@ -68,9 +62,7 @@ The [Installation and Configuration Guide](https://cloud.google.com/architecture
 
 For example, consider that the Security Groups are not mail-enabled therefore they can only be identified by their `userPrincipalName` attribute. If the default LDAP Query were to be executed, ***all*** Security Groups including those that are out of scope will be returned as matching:
 
-![GCDS Default Search Screenshot] [05-GCDS-Default-Search]
-
-[05-GCDS-Default-Search]: https://github.com/akaashr/community/blob/master/tutorials/gcds-use-cases-common-and-complex/05-GCDS-Default-Search.png
+![GCDS Default Search Screenshot](https://github.com/akaashr/community/blob/master/tutorials/gcds-use-cases-common-and-complex/05-GCDS-Default-Search.png)
 
 This can usually be mitigated by manually assigning an email address to the Security Groups (even if they are not mail-enabled) and switching the Query to use the `mail` attribute or as we will see in the next section, manipulating the `Base DN` to be more specific.
 
@@ -96,9 +88,7 @@ In this case, since ***IT*** and ***R&D*** are Child OUs of ***Corp*** then the 
 
 Testing the LDAP Query yields the following list of Users:
 
-![GCDS Users BaseDN Screenshot] [06-GCDS-Users-BaseDN]
-
-[06-GCDS-Users-BaseDN]: https://github.com/akaashr/community/blob/master/tutorials/gcds-use-cases-common-and-complex/06-GCDS-Users-BaseDN.png
+![GCDS Users BaseDN Screenshot](https://github.com/akaashr/community/blob/master/tutorials/gcds-use-cases-common-and-complex/06-GCDS-Users-BaseDN.png)
 
 ### Groups Lookup
 
@@ -110,9 +100,7 @@ The `Base DN` should then be set to:
 
 Testing the LDAP Query yields the following list of Groups:
 
-![GCDS Groups BaseDN Screenshot] [07-GCDS-Groups-BaseDN]
-
-[07-GCDS-Groups-BaseDN]: https://github.com/akaashr/community/blob/master/tutorials/gcds-use-cases-common-and-complex/07-GCDS-Groups-BaseDN.png
+![GCDS Groups BaseDN Screenshot](https://github.com/akaashr/community/blob/master/tutorials/gcds-use-cases-common-and-complex/07-GCDS-Groups-BaseDN.png)
 
 Notice that the Builtin Security Groups like ***grouppolicycreatorowners@gcdsdemo.joonix.net*** and ***domaincontrollers@gcdsdemo.joonix.net*** don’t show up, which is the behavior we want.
 
@@ -167,9 +155,7 @@ To validate that the filter is configured correctly, either create a new User Se
 
 Here’s the results of the Query:
 
-![GCDS Users memberOf Screenshot] [08-GCDS-Users-memberOf]
-
-[08-GCDS-Users-memberOf]: https://github.com/akaashr/community/blob/master/tutorials/gcds-use-cases-common-and-complex/08-GCDS-Users-memberOf.png
+![GCDS Users memberOf Screenshot](https://github.com/akaashr/community/blob/master/tutorials/gcds-use-cases-common-and-complex/08-GCDS-Users-memberOf.png)
 
 Let’s quickly verify the Group Membership of the ***GCP-OrgAdmins*** Group to ensure the validity of the Query.
 
@@ -189,9 +175,7 @@ Great! We can clearly see the LDAP Query worked and now only the Users that are 
 
 The next step is to create a User Search Rule for the remaining Groups to ensure all the Users are synced.
 
-![GCDS Users Search Rule memberOf Screenshot] [09-GCDS-Users-SearchRule-memberOf]
-
-[09-GCDS-Users-SearchRule-memberOf]: https://github.com/akaashr/community/blob/master/tutorials/gcds-use-cases-common-and-complex/09-GCDS-Users-SearchRule-memberOf.png
+![GCDS Users Search Rule memberOf Screenshot](https://github.com/akaashr/community/blob/master/tutorials/gcds-use-cases-common-and-complex/09-GCDS-Users-SearchRule-memberOf.png)
 
 Notice that the `Base DN` is still configured to be `OU=Corp,DC=gcdsdemo,DC=joonix,DC=net` but the LDAP Query is still able to return the correct list of Users because the Distinguished Name of the Security Group is used in the Query which overrides the `Base DN` scope.
 
@@ -266,17 +250,13 @@ Using the DN of the ***GCP-AllUsers*** Group the LDAP Query will need to be modi
 
 `(&(memberof=CN=GCP-AllUsers,OU=Groups,OU=GCP,DC=gcdsdemo,DC=joonix,DC=net)(objectCategory=person)(objectClass=user)(!(userAccountControl:1.2.840.113556.1.4.803:=2))`
 
-![GCDS Users All Users memberOf Screenshot] [11-GCDS-Users-AllUsers-memberOf]
-
-[11-GCDS-Users-AllUsers-memberOf]: https://github.com/akaashr/community/blob/master/tutorials/gcds-use-cases-common-and-complex/11-GCDS-Users-AllUsers-memberOf.png
+![GCDS Users All Users memberOf Screenshot](https://github.com/akaashr/community/blob/master/tutorials/gcds-use-cases-common-and-complex/11-GCDS-Users-AllUsers-memberOf.png)
 
 To validate that the filter is configured correctly, either create a new User Search rule or update the existing one to include the new LDAP Query syntax and then click the ***Test LDAP Query*** button.
 
 Here’s the results of the Query: 
 
-![GCDS Users All Users memberOf Results Screenshot] [12-GCDS-Users-AllUsers-memberOf-results]
-
-[12-GCDS-Users-AllUsers-memberOf-results]: https://github.com/akaashr/community/blob/master/tutorials/gcds-use-cases-common-and-complex/12-GCDS-Users-AllUsers-memberOf-results.png
+![GCDS Users All Users memberOf Results Screenshot](https://github.com/akaashr/community/blob/master/tutorials/gcds-use-cases-common-and-complex/12-GCDS-Users-AllUsers-memberOf-results.png)
 
 ### Summary
 
@@ -310,13 +290,9 @@ Let’s assume that we need to sync the following Groups to Google Cloud:
 1. Groups in the ***GCP*** > ***Groups*** OU that are prefixed with ***GCP***
 2. Groups in the ***Corp*** > ***R&D*** > ***Groups*** OU that are either prefixed with ***RD*** or contain the word ***GCP*** in the description field
 
-![AD GCP Groups Screenshot] [13-AD-GCP-Groups-Sync]
+![AD GCP Groups Screenshot](https://github.com/akaashr/community/blob/master/tutorials/gcds-use-cases-common-and-complex/13-AD-GCP-Groups-Sync.png)
 
-[13-AD-GCP-Groups-Sync]: https://github.com/akaashr/community/blob/master/tutorials/gcds-use-cases-common-and-complex/13-AD-GCP-Groups-Sync.png
-
-![AD R&D Groups Screenshot] [14-AD-RD-Groups-Sync]
-
-[14-AD-RD-Groups-Sync]: https://github.com/akaashr/community/blob/master/tutorials/gcds-use-cases-common-and-complex/14-AD-RD-Groups-Sync.png
+![AD R&D Groups Screenshot](https://github.com/akaashr/community/blob/master/tutorials/gcds-use-cases-common-and-complex/14-AD-RD-Groups-Sync.png)
 
 #### 1 - Groups prefixed with GCP
 
@@ -328,9 +304,7 @@ To search for Groups prefixed with ***GCP*** in the ***GCP*** > ***Groups*** OU,
 
 Testing the Query yields the following results:
 
-![GCDS Groups GCP Screenshot] [15-GCDS-Groups-GCP-name]
-
-[15-GCDS-Groups-GCP-name]: https://github.com/akaashr/community/blob/master/tutorials/gcds-use-cases-common-and-complex/15-GCDS-Groups-GCP-name.png
+![GCDS Groups GCP Screenshot](https://github.com/akaashr/community/blob/master/tutorials/gcds-use-cases-common-and-complex/15-GCDS-Groups-GCP-name.png)
 
 #### 2 - Groups prefixed with RD or contain the word GCP in the description
 
@@ -342,9 +316,7 @@ To search for Groups prefixed with RD or have GCP in the description, in the Cor
 
 Testing the Query yields the following results:
 
-![GCDS Groups R&D Screenshot] [16-GCDS-Groups-RD-name]
-
-[16-GCDS-Groups-RD-name]: https://github.com/akaashr/community/blob/master/tutorials/gcds-use-cases-common-and-complex/16-GCDS-Groups-RD-name.png
+![GCDS Groups R&D Screenshot](https://github.com/akaashr/community/blob/master/tutorials/gcds-use-cases-common-and-complex/16-GCDS-Groups-RD-name.png)
 
 As expected, the four (4) Security Groups matching the criteria are found. The Security Group ***Restricted-Users*** does not have a name prefixed with ***RD*** nor does it have ***GCP*** in the description therefore it is omitted from the search.
 
