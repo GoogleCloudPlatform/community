@@ -1,7 +1,7 @@
 ---
 title: DB Migration from MySQL to Cloud Spanner - Handling auto incrementing keys
 description: Prevent hotspots in Cloud Spanner when migrating Auto Incrementing primary keys, using STRIIM.
-author: shashank-google, zk-gt
+author: shashank-google, zk-gt.
 tags: mysql, spanner, cloud spanner, striim, migration, zero downtime, data migration
 date_published: 2021-04-28
 ---
