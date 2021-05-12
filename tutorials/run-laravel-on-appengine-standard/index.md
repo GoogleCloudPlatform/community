@@ -18,9 +18,9 @@ overview of PHP and learn ways to run PHP apps on Google Cloud.
 
 ## Prerequisites
 
-1. Create a project in the [Cloud Console](https://console.cloud.google.com/project).
-1. Enable billing for your project.
-1. Install and initialize the [Cloud SDK][cloud_sdk].
+1. Create a project in the [Cloud Console](https://console.cloud.google.com/project). Take note of the *Project ID* string. Use it to replace `YOUR_PROJECT_ID`.
+3. Enable billing for your project.
+4. Install and initialize the [Cloud SDK][cloud_sdk].
 
 All code for this tutorial is available in the [PHP samples repository][laravel-framework-sample].
 
@@ -50,7 +50,7 @@ from laravel.com.
 
 1.  Create an `app.yaml` file with the following contents:
 
-        runtime: php72
+        runtime: php73
 
         env_variables:
           ## Put production environment variables here.
@@ -101,7 +101,7 @@ from laravel.com.
 
 1.  Run the following command to deploy your app:
 
-        gcloud app deploy
+        gcloud app deploy --project=YOUR_PROJECT_ID
 
 1.  Visit `http://YOUR_PROJECT_ID.appspot.com` to see the Laravel welcome page.
     Replace `YOUR_PROJECT_ID` with the ID of your Google Cloud project.
@@ -131,7 +131,7 @@ Laravel, you need to manually add the `DB_SOCKET` value to
         following command. Copy the `connectionName` value for the next step. Replace
         `YOUR_INSTANCE_NAME` with the name of your instance:
 
-            gcloud sql instances describe YOUR_INSTANCE_NAME | grep connectionName
+            gcloud sql instances describe YOUR_INSTANCE_NAME --project=YOUR_PROJECT_ID | grep connectionName
 
     *   Start the Cloud SQL proxy and replace `YOUR_CONNECTION_NAME` with the
         connection name you retrieved in the previous step.
@@ -140,7 +140,7 @@ Laravel, you need to manually add the `DB_SOCKET` value to
 
     *   Use `gcloud` to create a database for the application.
 
-            gcloud sql databases create laravel --instance=YOUR_INSTANCE_NAME
+            gcloud sql databases create laravel --instance=YOUR_INSTANCE_NAME --project=YOUR_PROJECT_ID
 
 1.  Run the database migrations for Laravel. This can be done locally by setting
     your parameters in `.env` or by passing them in as environment variables. Be
@@ -231,7 +231,7 @@ You can write logs to Stackdriver Logging from PHP applications by using the Sta
 1.  Modify your `app.yaml` file to set the `LOG_CHANNEL` environment variable to
     the value `stackdriver`:
 
-        runtime: php72
+        runtime: php73
 
         env_variables:
           LOG_CHANNEL: stackdriver
