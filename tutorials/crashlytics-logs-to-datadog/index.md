@@ -1,16 +1,17 @@
 ---
 title: Export Firebase Crashlytics BigQuery logs to Datadog using Dataflow
-description: Bulk export Crashlytics BigQuery logs to Datadog on a daily basis using Dataflow.
+description: Learn how to export Firebase Crashlytics logs from BigQuery tables to Datadog on a daily basis.
 author: anantdamle
-tags: log analytics, monitoring
-date_published: 2021-04-13
+tags: log analytics, monitoring, bulk export
+date_published: 2021-04-14
 ---
 
 Anant Damle | Solutions Architect | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-This document discusses how to export [Firebase Crashlytics](https://firebase.google.com/docs/crashlytics) logs from BigQuery tables to [Datadog](https://www.datadoghq.com/).
+This tutorial shows you how to export [Firebase Crashlytics](https://firebase.google.com/docs/crashlytics) logs from BigQuery tables to
+[Datadog](https://www.datadoghq.com/).
 
 Firebase Crashlytics is a lightweight, realtime crash reporter that helps you track, prioritize, and fix stability issues that erode your app quality.
 Crashlytics saves you troubleshooting time by intelligently grouping crashes and highlighting the circumstances that lead up to them.
