@@ -10,11 +10,11 @@ Roy Arsan | Solutions Architect | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-This tutorial is for security practitioners who need to aggregate all security-relevant data (logs, alerts, and assets metadata) from their Google Cloud 
+This tutorial is for security practitioners who need to aggregate all security-relevant data (logs, alerts, and asset metadata) from their Google Cloud 
 environment into their existing security information and event management (SIEM) tools.
 
 In this tutorial, you deploy a unified export pipeline that uses Cloud Pub/Sub and Dataflow to aggregate and stream logs from Cloud Logging, security findings 
-from Security Command Center, and assets changes from Cloud Asset Inventory.
+from Security Command Center, and asset changes from Cloud Asset Inventory.
 
 ![Google Cloud data export to SIEM diagram](https://storage.googleapis.com/gcp-community/tutorials/exporting-security-data-to-your-siem/siem-unified-export-pipeline.png)
 
@@ -22,8 +22,8 @@ from Security Command Center, and assets changes from Cloud Asset Inventory.
 
 *   Create a Pub/Sub topic and subscription to aggregate data.
 *   Set up log sinks in Cloud Logging to export logs.
-*   Set up notifications feed in Security Command Center to export security findings.
-*   Set up an asset feed in Cloud Asset Inventory to export assets changes.
+*   Set up a notification feed in Security Command Center to export security findings.
+*   Set up an asset feed in Cloud Asset Inventory to export asset changes.
 *   Deploy a Dataflow job to stream data from Pub/Sub to your SIEM system.
 
 ## Costs
@@ -87,7 +87,7 @@ several steps below, such as setting up an organization-wide log sink and organi
     additional log sinks to export more logs such as VPC flow logs, load balancing request logs, or virtual machine logs such as application logs and system 
     logs, depending on your security requirements.
 
-    This command returns the service account of the log sink writer, usually in the `o#####-####@gcp-sa-logging.iam.gserviceaccount.com`
+    This command returns the service account of the log sink writer, usually in the form `o#####-####@gcp-sa-logging.iam.gserviceaccount.com`
 
 1.  Set an environment variable to the service account of the log sink:
 
@@ -105,7 +105,7 @@ several steps below, such as setting up an organization-wide log sink and organi
 
         export GCLOUD_ACCOUNT=[EMAIL_ADDRESS]
 
-1.  Set up temporary permissions for the `gcloud` tool account that you're using, so that you can create an organization-wide finding notifications feed in the 
+1.  Set up temporary permissions for the `gcloud` tool account that you're using, so that you can create an organization-wide finding notification feed in the 
     next step:
 
         gcloud pubsub topics add-iam-policy-binding \
@@ -143,7 +143,7 @@ several steps below, such as setting up an organization-wide log sink and organi
           --member="user:$GCLOUD_ACCOUNT" \
           --role="roles/securitycenter.notificationConfigEditor"
 
-## Set up an asset changes feed in Cloud Asset Inventory
+## Set up an asset change feed in Cloud Asset Inventory
 
 1.  Set up temporary permissions for the `gcloud` tool account that you're using:
 
@@ -157,10 +157,10 @@ several steps below, such as setting up an organization-wide log sink and organi
 
         gcloud beta services identity create --service=cloudasset.googleapis.com --project=$PROJECT_ID
 
-    This command returns the service account of the Cloud Asset service agent in your project, usually in the form
+    This command returns the service account of the Cloud Asset Inventory service agent in your project, usually in the form
     `service-[YOUR_PROJECT_NUMBER]@gcp-sa-cloudasset.iam.gserviceaccount.com`.
 
-1.  Set an environment variable to the service account of the Cloud Asset service agent:
+1.  Set an environment variable to the service account of the Cloud Asset Inventory service agent:
 
         export ASSET_SA=service-[YOUR_PROJECT_NUMBER]@gcp-sa-cloudasset.iam.gserviceaccount.com
 
@@ -233,9 +233,7 @@ For example, if you use Splunk as a SIEM tool, you can deploy the
 [Pub/Sub to Splunk Dataflow template](https://cloud.google.com/blog/products/data-analytics/connect-to-splunk-with-a-dataflow-template) to deliver messages to 
 the Splunk HTTP Event Collector (HEC).
 
-The following steps walk you through that final stage.
-
-1.  In Cloud Shell, create a special-purpose Pub/Sub topic and subscription to be used for holding any undeliverable messages:
+1.  In Cloud Shell, create a Pub/Sub topic and subscription to hold any undeliverable messages:
 
         gcloud pubsub topics create export-topic-dl
         gcloud pubsub subscriptions create export-subscription-dl \
