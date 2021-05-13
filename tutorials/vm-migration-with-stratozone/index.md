@@ -42,7 +42,7 @@ After you have registered, sign in to the [StratoZone portal](https://portal.str
 Follow these steps to discover your environment's assets for migration to Google Cloud:
 
 1.  Download the StratoProbe data collector to a machine that has
-    [SSH or WMI access](https://portal.stratozone.com/Documentation/StratoProbe_Guide.html#4) to the assets to be collected.
+    [SSH or WMI access](https://docs.google.com/presentation/d/1iNS2BXelxUgBbtmIQyOa3WhS79Eh17CWOMU_UzTrkdA/present?slide=id.gb48bf533c4_0_1296) to the assets to be collected.
 1.  To install StratoProbe, run `setup.exe`. Follow the prompts for the application.
 1.  Run the StratoProbe shortcut created by the installer.
 1.  Enter the **Activation Code** and click **Activate Now**.
@@ -159,7 +159,7 @@ Automation portal.
 ### Next steps
 
 For more help with StratoZone, see
-[Troubleshooting](https://portal.stratozone.com/Documentation/StratoProbe_Troubleshooting.html).
+[Troubleshooting](https://docs.google.com/presentation/d/1VvTLT2kwFpY1YotyVWBNCFpQ5cGX6a_OK2kEbbRfnH0/present?slide=id.gab95e8f595_0_131).
 
 Continue with the [wave](https://cloud.google.com/velostrata/docs/how-to/organizing-migrations/overview) process on your
 Migrate for Compute Engine Manager:
