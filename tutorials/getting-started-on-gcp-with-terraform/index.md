@@ -3,7 +3,7 @@ title: Getting started with Terraform on Google Cloud
 description: Learn how to get a simple web server running on Compute Engine using Terraform to do the provisioning of resources.
 author: chrisst
 tags: terraform
-date_published: 2018-08-17
+date_published: 2020-10-05
 ---
 
 Chris Stephens | Software Engineer | Google
