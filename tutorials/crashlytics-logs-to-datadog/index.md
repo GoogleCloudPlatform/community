@@ -200,7 +200,7 @@ Create a Cloud Storage bucket for storing test data and Dataflow staging locatio
     | `datadogTags`           | `user:crashlytics-pipeline` |  |
     | `datadogLogHostname`    | `crashlytics`               |  |
     
-    For information about `datadogSource`, `datadogTags`, and `datadogLogHostnameefer`, see
+    For information about `datadogSource`, `datadogTags`, and `datadogLogHostname`, see
     [Datadog log entry structure](https://docs.datadoghq.com/api/latest/logs/#send-logs). You can customize these parameters to suit your needs.
 
     Use either `sourceBigQueryTableId` or `bigQuerySqlQuery`, not both.
