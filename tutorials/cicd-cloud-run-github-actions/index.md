@@ -259,7 +259,7 @@ Create a `GCP-Deploy.yml` file and copy this content into it:
             - name: Login
               uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
               with:
-                GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+                project_id: ${{ secrets.GCP_PROJECT_ID }}
                 service_account_email: ${{ secrets.GCP_EMAIL }}
                 service_account_key: ${{ secrets.GCP_CREDENTIALS }}
 

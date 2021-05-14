@@ -1,1 +1,2 @@
-ibis-framework[bigquery]
+ibis-framework
+ibis-bigquery
