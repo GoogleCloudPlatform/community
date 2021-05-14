@@ -25,8 +25,8 @@ Datadog is a log monitoring platform [integrated with Google Cloud](https://cons
 application and infrastructure monitoring services. 
 
 This document is intended for a technical audience whose responsibilities include log management or data analytics. 
-This document assumes that you're familiar with [Dataflow](https://cloud.google.com/dataflow), have some familiarity with using shell scripts and basic knowledge
-of Google Cloud.
+This document assumes that you're familiar with [Dataflow](https://cloud.google.com/dataflow) and have some familiarity with using shell scripts and basic 
+knowledge of Google Cloud.
 
 ## Architecture
 
@@ -133,7 +133,8 @@ If your project doesn't have a user-created service account, create one using fo
           --description="Service Account for Datadog export pipelines." \
           --display-name="Datadog logs exporter"
 
-1.  Create a custom role with required permissions for accessing Cloud DLP, Dataflow, and Cloud KMS:
+1.  Create a custom role with the permissions required, as specified in the
+    [`datadog_sender_permissions.yaml`](https://github.com/GoogleCloudPlatform/crashlytics-logs-to-datadog/blob/main/datadog_sender_permissions.yaml) file:
 
         export DATADOG_SENDER_ROLE_NAME="datadog_sender"
 
@@ -166,9 +167,9 @@ Create a Cloud Storage bucket for storing test data and Dataflow staging locatio
 
         ./gradlew clean build shadowJar
 
-1.  Define the Crashlytics exported BigQuery table name:
+1.  Define the table fully qualified BigQuery table ID for the Crashlytics data:
 
-        export CRASHLYTICS_BIGQUERY_TABLE="<projectId>:<datasetId>.<tableId>"
+        export CRASHLYTICS_BIGQUERY_TABLE="[YOUR_PROJECT_ID]:[YOUR_DATASET_ID].[YOUR_TABLE_ID]"
 
     Make sure that the service account has access to this BigQuery table.
 
@@ -189,9 +190,9 @@ Create a Cloud Storage bucket for storing test data and Dataflow staging locatio
 
     | parameter               | Default value               | Description                                                |
     | ----------------------- | --------------------------- | ---------------------------------------------------------- |
-    | `sourceBigQueryTableId` |                             | Fully qualified BigQuery TableId: `<projectId>:<datasetId>.<tableId>[:$<parition_date>]` |
-    | `bigQuerySqlQuery`      |                             | The BigQuery SQL query results to send to Datadog. |
-    | `shardCount`            | `10`                        | Number of parallel processes to send to Datadog. Too high a number can overload the Datadog API. |
+    | `sourceBigQueryTableId` |                             | Fully qualified BigQuery table ID                          |
+    | `bigQuerySqlQuery`      |                             | BigQuery SQL query results to send to Datadog              |
+    | `shardCount`            | `10`                        | Number of parallel processes to send to Datadog (Too high a number can overload the Datadog API.) |
     | `preserveNulls`         | `false`                     | Allow null values from BigQuery source to be serialized. |
     | `datadogApiKey`         |                             | API key from the [Datadog console](https://app.datadoghq.com/account/settings#api) |
     | `datadogEndpoint`       | `https://http-intake.logs.datadoghq.com/v1/input` | See [Datadog logging endpoints](https://docs.datadoghq.com/logs/log_collection/?tab=host#logging-endpoints).|
@@ -206,11 +207,11 @@ Create a Cloud Storage bucket for storing test data and Dataflow staging locatio
 
 1.  Monitor the Dataflow job in Cloud Console.
 
-The following diagram shows the pipeline DAG:
+    The following diagram shows the pipeline DAG:
 
-![Pipeline DAG](https://storage.googleapis.com/gcp-community/tutorials/crashlytics-logs-to-datadog/pipeline_dag.png)
+    ![Pipeline DAG](https://storage.googleapis.com/gcp-community/tutorials/crashlytics-logs-to-datadog/pipeline_dag.png)
 
-### Create Dataflow flex template
+### Create a Dataflow Flex Template
 
 [Dataflow templates](https://cloud.google.com/dataflow/docs/concepts/dataflow-templates) allow you to use the Cloud Console, the `gcloud` command-line tool, or
 REST API calls to set up your pipelines on Google Cloud and run them. Classic templates are staged as execution graphs on Cloud Storage; Flex Templates bundle
@@ -248,7 +249,7 @@ Run the pipeline using the Flex Template that you created in the previous step:
     
 ### Verify logs in the Datadog console
 
-Visit the Datadog [logs viewer](https://app.datadoghq.com/logs?query=status%3Ainfo+host%3Acrashlytics) to verify that the logs are available in Datadog.
+Visit the Datadog [log viewer](https://app.datadoghq.com/logs?query=status%3Ainfo+host%3Acrashlytics) to verify that the logs are available in Datadog.
 
 ![Datadog screenshot](https://storage.googleapis.com/gcp-community/tutorials/crashlytics-logs-to-datadog/datadog_screenshot.png)
 
