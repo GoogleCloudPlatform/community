@@ -1,5 +1,5 @@
 ---
-title: Horizontally scaling a MySQL database backend with Cloud SQL and ProxySQL
+title: Horizontally scale a MySQL database backend with Cloud SQL and ProxySQL
 description: Learn how to horizontally scale a MySQL database backend with Cloud SQL and ProxySQL.
 author: michaelawyu
 tags: MySQL, Cloud SQL, Database, ProxySQL
@@ -338,9 +338,8 @@ or [using the Cloud SQL API](https://cloud.google.com/sql/docs/mysql/admin-api/v
 1.  Repeat the steps once to create another read replica. Write down its IPv4
     address as well.
 
-See [Creating Read Replicas](https://cloud.google.com/sql/docs/mysql/replication/create-replica)
-and [Requirements and Tips for Configuring Replication](https://cloud.google.com/sql/docs/mysql/replication/tips#read-replica)
-for more information about Cloud SQL read replicas.
+For more information about Cloud SQL read replicas, see
+[Replication in Cloud SQL](https://cloud.google.com/sql/docs/mysql/replication/).
 
 ## Configuring ProxySQL to distribute database queries
 

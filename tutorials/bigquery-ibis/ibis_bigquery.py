@@ -18,8 +18,9 @@ YOUR_PROJECT_ID = os.environ['GOOGLE_CLOUD_PROJECT']
 
 # [START bigquery_ibis_connect]
 import ibis
+import ibis_bigquery
 
-conn = ibis.bigquery.connect(
+conn = ibis_bigquery.connect(
     project_id=YOUR_PROJECT_ID,
     dataset_id='bigquery-public-data.stackoverflow')
 # [END bigquery_ibis_connect]
@@ -129,16 +130,16 @@ print(expression.compile())
 # ORDER BY `year` DESC
 # [END bigquery_ibis_compile]
 
-print('\nExecuting UDF query:')
+# print('\nExecuting UDF query:')
 # [START bigquery_ibis_udf]
-@ibis.bigquery.udf(['double'], 'double')
-def example_udf(value):
-    return value + 1.0
-
-test_column = ibis.literal(1, type='double')
-expression = example_udf(test_column)
-
-print(conn.execute(expression))
+# @ibis.bigquery.udf(['double'], 'double')
+# def example_udf(value):
+#     return value + 1.0
+#
+# test_column = ibis.literal(1, type='double')
+# expression = example_udf(test_column)
+#
+# print(conn.execute(expression))
 # [END bigquery_ibis_udf]
 
 print('\nExecuting join query:')

@@ -46,13 +46,22 @@ to limit your costs](https://cloud.google.com/bigquery/cost-controls).
 
 ## Install Ibis with BigQuery integrations
 
-Install Ibis from the latest version on GitHub, because this tutorial
-requires some features which are not yet released, such as the ability to
-query public datasets.
+Install the Ibis package, which you can download from
+[PyPI](https://pypi.org/project/ibis-framework/) or from
+[conda-forge](https://github.com/conda-forge/ibis-framework-feedstock).
 
 ```
-pip install --upgrade git+https://github.com/ibis-project/ibis.git#egg=ibis_framework[bigquery]
+# PyPI
+pip install --upgrade ibis-framework ibis-bigquery
+
+# conda-forge
+conda config --add channels conda-forge
+conda install ibis-framework ibis-bigquery
 ```
+
+**Note**: At the time of this post, the latest release of Ibis (1.4.0) has an
+[incompatibility with SQLAlchemy version 1.4.x](https://github.com/ibis-project/ibis/issues/2689). You may need to
+install SQLAlchemy 1.3.x before installing Ibis.
 
 ## Connect to BigQuery
 
@@ -62,8 +71,9 @@ default dataset for queries.
 [embedmd]:# (ibis_bigquery.py /^.*START bigquery_ibis_connect.*/ /END bigquery_ibis_connect]/)
 ```py
 import ibis
+import ibis_bigquery
 
-conn = ibis.bigquery.connect(
+conn = ibis_bigquery.connect(
     project_id=YOUR_PROJECT_ID,
     dataset_id='bigquery-public-data.stackoverflow')
 ```
@@ -246,7 +256,7 @@ print(expression.compile())
 # ORDER BY `year` DESC
 ```
 
-## Next Steps
+## Next steps
 
 You've just run a query on BigQuery with Ibis. No SQL required! Next, you may
 wish to explore how to build more complex queries with Ibis.
