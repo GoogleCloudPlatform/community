@@ -230,7 +230,7 @@ status field in confusing ways. For more information, see
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
         spec:
           rules:
-          - host: ${NGINX_INGRESS_IP}.xip.io
+          - host: ${NGINX_INGRESS_IP}.nip.io
             http:
               paths:
               - backend:
@@ -255,23 +255,23 @@ status field in confusing ways. For more information, see
     The output should look like the following:
 
         NAME               HOSTS                ADDRESS       PORTS   AGE
-        ingress-resource   34.70.255.61.xip.io  34.70.255.61  80      111m
+        ingress-resource   34.70.255.61.nip.io  34.70.255.61  80      111m
 
-    Note the `HOSTS` value in the output is set to a FQDN using xip.io domain. This host resolves the hostname with the form of `[IP_ADDRESS].xio.io` to
+    Note the `HOSTS` value in the output is set to a FQDN using nip.io domain. This host resolves the hostname with the form of `[IP_ADDRESS].nip.io` to
     `[IP_ADDRESS]`. NGINX Ingress Controller requires you to use a DNS name in the `host` specification in the `Ingress` resource. For the purpose of this
-    tutorial, you use the xip.io service. In production, you can replace the `host` specification in the `Ingress` resource with you real FQDN for the Service.
+    tutorial, you use the nip.io service. In production, you can replace the `host` specification in the `Ingress` resource with you real FQDN for the Service.
 
 ### Test Ingress
 
-You should now be able to access the web application by going to the `$NGINX_INGRESS_IP.xip.io/hello`.
+You should now be able to access the web application by going to the `$NGINX_INGRESS_IP.nip.io/hello`.
 
-    http://$NGINX_INGRESS_IP.xip.io/hello
+    http://$NGINX_INGRESS_IP.nip.io/hello
 
 ![image](https://storage.googleapis.com/gcp-community/tutorials/nginx-ingress-gke/hello-app-v1.png)
 
 You can also access the `hello-app` using the `curl` command in Cloud Shell.
 
-    curl http://$NGINX_INGRESS_IP.xip.io/hello
+    curl http://$NGINX_INGRESS_IP.nip.io/hello
 
 The output should look like the following.
 
