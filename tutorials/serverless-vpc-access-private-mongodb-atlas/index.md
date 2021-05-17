@@ -55,47 +55,49 @@ cost estimate based on your projected usage.
 
 ## Before you begin
 
-The following prerequisites exist for this tutorial.
+This tutorial depends on you having some basic resources set up in Google Cloud and MongoDB Atlas.
 
-1.  Google Cloud
-    - [Select or create a Google Cloud project.](https://console.cloud.google.com/projectselector2/home/dashboard)
-    - [Enable billing for your project.](https://support.google.com/cloud/answer/6293499#enable-billing)
-1.  MongoDB Atlas
-    - [Create a MongoDB Atlas account](https://docs.atlas.mongodb.com/tutorial/create-atlas-account/).
-    - [Create a MongoDB Organization](https://docs.atlas.mongodb.com/tutorial/manage-organizations/)
-    - [Create a MongoDB Project](https://docs.atlas.mongodb.com/tutorial/manage-projects/)
-    - [Enable billing for your MongoDB Atlas organization](https://docs.atlas.mongodb.com/billing/).
-    - [Create a MongoDB Atlas user account](https://docs.atlas.mongodb.com/security-add-mongodb-users/) that will be used by Cloud Functions to connect to the MongoDB database.
+### Google Cloud setup
 
-## Enable VPC Serverless Access API
+1.  [Select or create a Google Cloud project.](https://console.cloud.google.com/projectselector2/home/dashboard)
+1.  [Enable billing for your project.](https://support.google.com/cloud/answer/6293499#enable-billing)
 
-1.  Login to the [Google Cloud Console](https://console.cloud.google.com) and select the project you want to use for this tutorial.
+### MongoDB Atlas setup
 
-1.  Click the navigation menu, scroll down to VPC network, then click **Serverless VPC access**.
+1.  [Create a MongoDB Atlas account.](https://docs.atlas.mongodb.com/tutorial/create-atlas-account/)
+1.  [Create a MongoDB organization.](https://docs.atlas.mongodb.com/tutorial/manage-organizations/)
+1.  [Create a MongoDB project.](https://docs.atlas.mongodb.com/tutorial/manage-projects/)
+1.  [Enable billing for your MongoDB Atlas organization.](https://docs.atlas.mongodb.com/billing/)
+1.  [Create a MongoDB Atlas user account](https://docs.atlas.mongodb.com/security-add-mongodb-users/), which is used by Cloud Functions to connect to the
+    MongoDB database.
 
-    ![serverlessMenu](https://storage.googleapis.com/gcp-community/tutorials/serverless-vpc-access-private-mongodb-atlas/serverlessMenu.png)
+## Enable the VPC Serverless Access API
 
-1.  Click **Enable** to enable the Serverless VPC Access API.
+1.  In the [Google Cloud Console](https://console.cloud.google.com), select the project to use for this tutorial.
 
-Wait for the API to be enabled prior to advancing.
+1.  Go to the [Serverless VPC Access API page](https://console.cloud.google.com/marketplace/details/google/vpcaccess.googleapis.com).
 
-## Create VPC Serverless Access connector.
+1.  Click **Enable**.
 
-1.  Once the API is enabled, click **Create Connector**.
+## Create the VPC Serverless Access connector
 
-1.  Enter an appropriate name. This tutorial will use `mongo-connector`.
+1.  Go to the [Serverless VPC Access page](https://console.cloud.google.com/networking/connectors).
 
-1.  Select the appropriate region.
+1.  Click **Create Connector**.
+
+1.  Enter a name for the connector. This tutorial uses `mongo-connector`.
+
+1.  Select a region.
 
 1.  Keep the `default` network selected.
 
-1.  Click **Custom IP Range** under Subnet and enter a private IP range that fits your IP scheme. This tutorial will use `10.8.0.0`. 
+1.  Click **Custom IP Range** under **Subnet**, and enter a private IP address range that fits your IP address scheme. This tutorial uses `10.8.0.0`. 
 
-    > **Note:** You only have the option to use a /28 mask for this step so don't include the mask in the field.
+    You only have the option to use a `/28` mask for this step, so don't include the mask in the field.
 
-    > **Remember:** This subnet will be referenced in a later step for the MongoDB Atlas whitelist.
+    This subnet is used in a later step when you configure the MongoDB Atlas access list.
 
-## Create MongoDB Atlas cluster
+## Create the MongoDB Atlas cluster
 
 1.  Login to [MongoDB Atlas](https://cloud.mongodb.com) and select the project you want for your cluster.
 
@@ -115,7 +117,7 @@ Wait for the API to be enabled prior to advancing.
 
 It will take a few minutes to create the cluster but you move on to the next section right away.
 
-## Configure MongoDB Atlas whitelist
+## Configure the MongoDB Atlas whitelist
 
 1.  In the MongoDB Atlas console, click the **Network Access** under the Security section.
 
