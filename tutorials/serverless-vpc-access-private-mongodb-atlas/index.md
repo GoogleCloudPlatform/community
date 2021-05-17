@@ -17,7 +17,7 @@ In this tutorial, you learn how to use [Serverless VPC Access](https://cloud.goo
 routes traffic from the Google Cloud serverless services to the MongoDB Atlas cluster. You also learn how to establish VPC peering between your VPC network and
 your MongoDB Atlas VPC network.
 
-Cloud Functions is used in this tutorial, but you can take similar steps to configure
+This tutorial uses Cloud Functions, but you can take similar steps to configure
 [App Engine](https://cloud.google.com/appengine/docs/standard/python/connecting-vpc) or
 [Cloud Run](https://cloud.google.com/run/docs/configuring/connecting-vpc).
 
@@ -33,10 +33,10 @@ The following diagram illustrates the architecture of the solution described in 
 ## Objectives
 
 *   Create a MongoDB Atlas cluster.
-*   Create a VPC peering relationship between MongoDB Atlas and your VPC.
-*   Create the Serverless VPC access connector.
+*   Create a VPC peering relationship between MongoDB Atlas and your Google Cloud VPC network.
+*   Create the Serverless VPC Access connector.
 *   Create a Cloud Function that triggers on HTTP and makes a connection to the MongoDB cluster.
-*   Verify the Cloud Function is able to reach the MongoDB cluster.
+*   Verify that the Cloud Function is able to reach the MongoDB Atlas cluster.
 
 ## Costs
 
@@ -47,11 +47,11 @@ This tutorial uses billable components of Google Cloud, including the following:
 *   [Virtual Private Cloud](https://cloud.google.com/vpc)
 *   [Serverless VPC Access](https://cloud.google.com/vpc/docs/configure-serverless-vpc-access)
 
-This tutorial also uses 3rd party billable components from MongoDB Atlas.
+This tutorial also uses billable components from MongoDB Atlas [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) to create a dedicated cluster, which is 
+required for this tutorial. Shared clusters don't support VPC peering.
 
-*   [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) to create a dedicated cluster, which is required for this tutorial. (shared doesn't support VPC peering)
-
-Use the [GCP pricing calculator](https://cloud.google.com/products/calculator) and [MongoDB Pricing page](https://www.mongodb.com/pricing) to generate a cost estimate based on your projected usage.
+Use the [Google Cloud pricing calculator](https://cloud.google.com/products/calculator) and [MongoDB pricing page](https://www.mongodb.com/pricing) to generate a 
+cost estimate based on your projected usage.
 
 ## Before you begin
 
