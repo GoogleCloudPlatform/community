@@ -1,26 +1,34 @@
 ---
-title: Serverless VPC Access to private MongoDB Atlas
-description: Learn how to use Serverless VPC access to allow App Engine, Cloud Functions, or Cloud Run access to a MongoDB Atlas cluster using private IP addressing.
+title: Configure private access to MongoDB Atlas with Serverless VPC Access
+description: Learn how to use Serverless VPC Access to allow App Engine, Cloud Functions, or Cloud Run access to a MongoDB Atlas cluster using private IP addressing.
 author: russStarr
 tags: security, networking, RFC 1918
-date_published: 2021-05-12
+date_published: 2021-05-18
 ---
 
 Russ Starr | Customer Engineer | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-This tutorial is for engineers of Google Cloud who wish to configure private IP access from serverless services such as App Engine, Cloud Functions, or Cloud Run to a MongoDB Atlas cluster.
+This tutorial shows you how to configure private IP access from serverless services such as App Engine, Cloud Functions, or Cloud Run to a MongoDB Atlas cluster.
+This is useful when you want to keep your MongoDB connections scoped to private IP addresses only, instead of allowing public access from the Internet.
+
+In this tutorial, you learn how to use [Serverless VPC Access](https://cloud.google.com/vpc/docs/configure-serverless-vpc-access) to create a connector that
+routes traffic from the Google Cloud serverless services to the MongoDB Atlas cluster. You also learn how to establish VPC peering between your VPC network and
+your MongoDB Atlas VPC network.
+
+Cloud Functions is used in this tutorial, but you can take similar steps to configure
+[App Engine](https://cloud.google.com/appengine/docs/standard/python/connecting-vpc) or
+[Cloud Run](https://cloud.google.com/run/docs/configuring/connecting-vpc).
+
+This tutorial uses Python, but you can adapt what you learn in this tutorial to other
+[languages supported for Cloud Functions](https://cloud.google.com/functions/docs/writing).
+
+This tutorial assumes that you have basic familiarity using the Google Cloud Console, Cloud Shell, the MongoDB Atlas console, Python, and shell scripts.
+
+The following diagram illustrates the architecture of the solution described in this tutorial:
 
 ![architecture](https://storage.googleapis.com/gcp-community/tutorials/serverless-vpc-access-private-mongodb-atlas/architecture.png)
-
-Customers like having the option to keep their MongoDB connections scoped to private IP addresses only, instead of allowing public access from the Internet.
-
-You will learn how to use Serverless VPC Access to create a connector that will route traffic from the Google Cloud serverless services to the MongoDB Atlas cluster. You will also learn how to establish VPC peering between your VPC and your MongoDB Atlas VPC.
-
-While Cloud Functions is used in this tutorial, similar steps can be taken to configure [App Engine](https://cloud.google.com/appengine/docs/standard/python/connecting-vpc) or [Cloud Run](https://cloud.google.com/run/docs/configuring/connecting-vpc). Likewise, python is used for the language but it can be easily adapted to other Cloud Function [supported languages](https://cloud.google.com/functions/docs/writing).
-
-As a prerequisite, users should have basic familiarity using the Google Cloud Console, Google Cloud Shell, the MongoDB Atlas console, and basic python/bash scripting.
 
 ## Objectives
 
