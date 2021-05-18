@@ -70,7 +70,7 @@ clusters of PostgreSQL and Redis.
 
 1.  In Harbor, go to **Administration > Registries > New Endpoint** and fill in the following details in the **Edit Endpoint** dialog box:
 
-    - **Provider**: **Google GCR**
+    - **Provider**: Choose **Google GCR**.
     - **Name**: Your endpoint name. This tutorial uses `gcr-sea-anthos-demo`.
     - **Description**: A description for your endpoint.
     - **Endpoint URL**: `https://gcr.io`
@@ -88,11 +88,12 @@ click **Save**:
 
 - **Name**: Your replication rule name. This tutorial uses `replicate-library-to-gcr`. 
 - **Description**: A description for your replication rule.
-- **Replication Mode**: **Push-based**, which means that Harbor is the primary container registry that new images are pushed to, so replication to other 
+- **Replication Mode**: Select **Push-based**, which means that Harbor is the primary container registry that new images are pushed to, so replication to other 
   sites should be triggered when new images are pushed to Harbor.
 - **Source resource filter**:
-  - **Name**: `[LIBRARY_NAME]/**`. For example, if you use `library/**` as the filter, all images under `library` are replicated. For more example filter 
-    patterns, see
+  - **Name**: `[LIBRARY_NAME]/**`. For example, if you use `library/**` as the filter, all images under `library` are replicated.
+
+    For more example filter patterns, see
     [Creating a replication rule](https://goharbor.io/docs/1.10/administration/configuring-replication/create-replication-rules/#replication-rule3:~:text=The%20name%20filter%20and%20tag%20filters%20support%20the%20following%20patterns).
   - **Tag**: (optional) Filter based on image tag/version.
   - **Label**: (optional) Filter based on Harbor labels.
@@ -100,7 +101,7 @@ click **Save**:
 - **Destination registry**: Name of the registry endpoint that you created in the previous section.
 - **Destination namespace**: `[YOUR_GOOGLE_CLOUD_PROJECT_NAME]/[OPTIONAL_GOOGLE_CONTAINER_REGISTRY_LIBRARY_NAME]`. The Google Cloud project name is mandatory. If
   you also specify a subdirectory with the library name, then all source images will be stored in this subdirectory.
-- **Trigger Mode**: **Event Based**
+- **Trigger Mode**: Select **Event Based**.
 - **Delete remote resources when locally deleted**: Check this box to keep Google Container Registry fully synchronized.
 - **Override**: Check this box to replace (overwrite) an image at the destination when an image of the same name exists.
 - **Enable rule**: Check this box.                                                                                                            
