@@ -155,7 +155,7 @@ For detailed instructions for adding a VPC peering connection, see the
 
 1.  Click **Add Peering Connection**.
 
-1.  Click **Google Cloud** and **Next**.
+1.  Click **Google Cloud**, and then click **Next**.
 
 1.  Enter the project ID of your Google Cloud project. 
 
@@ -206,7 +206,7 @@ For detailed instructions for adding a VPC peering connection, see the
 
     The connection string is in the following format:
 
-        mongodb+srv://<user>:<password>@<cluster_name>.<subdomain>.mongodb.net/
+        mongodb+srv://[USERNAME]:[PASSWORD]@[CLUSTER_NAME].[SUBDOMAIN].mongodb.net/
 
 1.  Click **Close**.
 
@@ -222,98 +222,88 @@ For detailed instructions for adding a VPC peering connection, see the
 
 1.  Click **Create**.
 
-## Create a Cloud Function (Configuration)
+## Create a Cloud Function
 
-1.  On the Google Cloud nagivation menu, scroll down to Serverless and click **Cloud Functions**.
+In this section, you create and configure a basic Cloud Function, set its requirements, and then add the Python code for the main body of the function. 
+
+### Configure the Cloud Function
+
+1.  In the Google Cloud Console, go to the [**Cloud Functions** page](https://console.cloud.google.com/functions).
 
 1.  Click **Create Function**.
 
-1.  Keep all the default settings and click **Save**.
+1.  Click **Save**, keeping all settings at their default values.
 
-1.  Scroll to the bottom and click **Runtime, Build and Connection Settings.** then **Connections**.
+1.  At the bottom of the page, click **Runtime, Build and Connection Settings**, and then click then **Connections**.
 
-1.  Select `mongo-connector` under Egress settings in the VPC connector field.
+1.  Under **Egress settings**, for **VPC connector** select `mongo-connector`.
 
 1.  Click **Next**.
 
-    > **Note:** These steps were split, please continue in the next section.
+### Deploy the requirements for the Cloud Function
 
-## Create a Cloud Function (requirements.txt Code)
+1.  For **Runtime**, select **Python 3.9**.
 
-1.  Select **Python 3.9** for the Runtime.
+1.  If you are prompted to enable the Cloud Build API, click **Enable API**, and then click **Enable**.
 
-1.  Click **Enable API** if warned about Cloud Build API being required.
+1.  On the left side of the **Cloud Functions** page, click **requirements.txt** and paste the following code:
 
-    > **Note:** A new tab will open.
+        # Function dependencies, for example:
+        # package>=version
+        pymongo
+        dnspython
 
-1.  Click **Enable** then close that newly opened tab once completed.
+1.  Click **Deploy** to install the required dependencies.
 
-1.  Click **requirements.txt** on the left hand side and paste the following code:
+    Before proceeding to the next section, wait for the Cloud Function status to turn green, indicating that the requirements have been deployed..
 
-    ```
-    # Function dependencies, for example:
-    # package>=version
-    pymongo
-    dnspython
-    ```
+### Deploy the main Python code for the Cloud Function
 
-1.  Click **Deploy**.
+1.  Select the Cloud Function.
 
-    > **Note:** This will install the required dependencies, which is required before adding more python code. Once deployed, the Cloud Function should turn green.
+1.  Click **Edit**, and then click **Next**.
 
-The status should turn green for the Cloud Function before proceeding.
+1.  Click **main.py** and replace all Python code with the following:
 
-## Create a Cloud Function (main.py Code)
+        from pymongo import MongoClient
+        from flask import make_response
 
-1.  Click the previously created Cloud Function, `function-1`.
+        connection_string = "mongodb+srv://<user>:<password>@<cluster_name>.<subdomain>.mongodb.net/"
 
-1.  Click **Edit**, **Next**.
-
-1.  Click **main.py** and paste the following code, replacing all existing python code:
-
-
-    ```python
-    from pymongo import MongoClient
-    from flask import make_response
-
-    connection_string = "mongodb+srv://<user>:<password>@<cluster_name>.<subdomain>.mongodb.net/"
-
-    def hello_world(request):
-        request_json = request.get_json()
-        if request.args and 'message' in request.args:
-            return request.args.get('message')
-        elif request_json and 'message' in request_json:
-            return request_json['message']
-        else:
-            client = MongoClient(connection_string)
-            db = client.empty_db
-            response = make_response()
-            response.data = str(db.command("serverStatus"))
-            response.headers["Content-Type"] = "application/json"
-            return response
-    ```
+        def hello_world(request):
+            request_json = request.get_json()
+            if request.args and 'message' in request.args:
+                return request.args.get('message')
+            elif request_json and 'message' in request_json:
+                return request_json['message']
+            else:
+                client = MongoClient(connection_string)
+                db = client.empty_db
+                response = make_response()
+                response.data = str(db.command("serverStatus"))
+                response.headers["Content-Type"] = "application/json"
+                return response
 
 1.  Update the `connection_string` variable to reflect your user account, password, and subdomain.
 
 1.  Click **Deploy**.
 
-## Verify the Cloud Function connects to the MongoDB Atlas cluster
+## Verify that the Cloud Function connects to the MongoDB Atlas cluster
 
-1.  Click the previously created Cloud Function, `function-1`.
+1.  Select the Cloud Function.
 
-1.  Click **Trigger** and copy the Trigger URL to your clipboard.
+1.  Click **Trigger** and copy the trigger URL to your clipboard.
 
-1.  In the Google Cloud console, open Cloud Shell in the top right corner.
+1.  Click the **Activate Cloud Shell** button in the upper-right corner of the Cloud Console.
 
     ![cloudShell](https://storage.googleapis.com/gcp-community/tutorials/serverless-vpc-access-private-mongodb-atlas/cloudShell.png)
 
-1.  Enter the following command in Cloud Shell, updating the CFURL variable with the URL in the clipboard.
+1.  Enter the following command in Cloud Shell, updating the `CFURL` variable with the URL on the clipboard.
 
-    ```bash
-    export CFURL="<insert URL here>"
-    curl -H "Authorization: Bearer $(gcloud auth print-identity-token)" $CFURL
-    ```
-    > **Success!** You should see a JSON dump of the Server Status information from your MongoDB Atlas cluster, which proves you have connectivity.
+        export CFURL="<insert URL here>"
+        curl -H "Authorization: Bearer $(gcloud auth print-identity-token)" $CFURL
+ 
+    Success! You should see a JSON dump of the server status information from your MongoDB Atlas cluster, which shows that you have connectivity.
 
     ![success](https://storage.googleapis.com/gcp-community/tutorials/serverless-vpc-access-private-mongodb-atlas/success.png)
 
@@ -321,23 +311,14 @@ The status should turn green for the Cloud Function before proceeding.
 
 To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project.
 
-Deleting a project has the following consequences:
-
-- If you used an existing project, you'll also delete any other work that you've done in the project.
-- You can't reuse the project ID of a deleted project. If you created a custom project ID that you plan to use in the
-  future, delete the resources inside the project instead. This ensures that URLs that use the project ID, such as
-  an `appspot.com` URL, remain available.
-
-To delete a project, do the following:
-
 1.  In the Cloud Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
 1.  In the project list, select the project you want to delete and click **Delete**.
 1.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
 
-You will also want to delete your MongoDB Atlas cluster if you no longer need it.
+You can also delete your MongoDB Atlas cluster if you no longer need it.
 
 ## What's next
 
-- [Serverless VPC Access documentation](https://cloud.google.com/vpc/docs/configure-serverless-vpc-access).
-- [MongoDB Connection String URI Format](https://docs.mongodb.com/manual/reference/connection-string/)
+- [Serverless VPC Access documentation](https://cloud.google.com/vpc/docs/configure-serverless-vpc-access)
+- [MongoDB connection string URI format](https://docs.mongodb.com/manual/reference/connection-string/)
 - Try out other Google Cloud features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
