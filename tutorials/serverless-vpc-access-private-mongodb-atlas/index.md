@@ -14,8 +14,8 @@ This tutorial shows you how to configure private IP access from serverless servi
 This is useful when you want to keep your MongoDB connections scoped to private IP addresses only, instead of allowing public access from the Internet.
 
 In this tutorial, you learn how to use [Serverless VPC Access](https://cloud.google.com/vpc/docs/configure-serverless-vpc-access) to create a connector that
-routes traffic from the Google Cloud serverless services to the MongoDB Atlas cluster. You also learn how to establish VPC peering between your VPC network and
-your MongoDB Atlas VPC network.
+routes traffic from the Google Cloud serverless services to the MongoDB Atlas cluster. You also learn how to establish VPC peering between your Google Cloud VPC 
+network and your MongoDB Atlas VPC network.
 
 This tutorial uses Cloud Functions, but you can take similar steps to configure
 [App Engine](https://cloud.google.com/appengine/docs/standard/python/connecting-vpc) or
@@ -44,11 +44,11 @@ This tutorial uses billable components of Google Cloud, including the following:
 
 *   [Cloud Functions](https://cloud.google.com/functions)
 *   [Cloud Build](https://cloud.google.com/build)
-*   [Virtual Private Cloud](https://cloud.google.com/vpc)
+*   [Virtual Private Cloud (VPC)](https://cloud.google.com/vpc)
 *   [Serverless VPC Access](https://cloud.google.com/vpc/docs/configure-serverless-vpc-access)
 
-This tutorial also uses billable components from MongoDB Atlas [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) to create a dedicated cluster, which is 
-required for this tutorial. Shared clusters don't support VPC peering.
+This tutorial also uses billable components of [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) to create a dedicated cluster. Shared clusters don't support
+VPC peering.
 
 Use the [Google Cloud pricing calculator](https://cloud.google.com/products/calculator) and [MongoDB pricing page](https://www.mongodb.com/pricing) to generate a 
 cost estimate based on your projected usage.
@@ -93,7 +93,9 @@ This tutorial depends on you having some basic resources set up in Google Cloud 
 
 1.  Keep the `default` network selected.
 
-1.  Click **Custom IP Range** under **Subnet**, and enter a private IP address range that fits your IP address scheme. This tutorial uses `10.8.0.0`. 
+1.  Under **Subnet**, click **Custom IP Range**, and enter a private IP address range that fits your IP address scheme.
+  
+    This tutorial uses `10.8.0.0`. 
 
     You only have the option to use a `/28` mask for this step, so don't include the mask in the field.
 
@@ -125,7 +127,7 @@ For detailed instructions for creating a MongoDB Atlas cluster, see the
 
 1.  Click **Create Cluster**.
 
-It takes a few minutes to create the cluster, but you can move to the next section before then.
+It takes a few minutes to create the cluster, but you can begin the next section before then.
 
 ## Configure the MongoDB Atlas access list
 
@@ -236,7 +238,7 @@ In this section, you create and configure a basic Cloud Function, set its requir
 
 1.  At the bottom of the page, click **Runtime, Build and Connection Settings**, and then click then **Connections**.
 
-1.  Under **Egress settings**, for **VPC connector** select `mongo-connector`.
+1.  Under **Egress settings**, for **VPC connector**, select `mongo-connector`.
 
 1.  Click **Next**.
 
@@ -268,7 +270,7 @@ In this section, you create and configure a basic Cloud Function, set its requir
         from pymongo import MongoClient
         from flask import make_response
 
-        connection_string = "mongodb+srv://<user>:<password>@<cluster_name>.<subdomain>.mongodb.net/"
+        connection_string = "mongodb+srv://[USERNAME]:[PASSWORD]@[CLUSTER_NAME].[SUBDOMAIN].mongodb.net/"
 
         def hello_world(request):
             request_json = request.get_json()
@@ -294,16 +296,15 @@ In this section, you create and configure a basic Cloud Function, set its requir
 
 1.  Click **Trigger** and copy the trigger URL to your clipboard.
 
-1.  Click the **Activate Cloud Shell** button in the upper-right corner of the Cloud Console.
-
-    ![cloudShell](https://storage.googleapis.com/gcp-community/tutorials/serverless-vpc-access-private-mongodb-atlas/cloudShell.png)
+1.  Click the [**Activate Cloud Shell**](https://cloud.google.com/shell/docs/using-cloud-shell#starting_a_new_session) button in the upper-right corner of the
+    Cloud Console.
 
 1.  Enter the following command in Cloud Shell, updating the `CFURL` variable with the URL on the clipboard.
 
         export CFURL="<insert URL here>"
         curl -H "Authorization: Bearer $(gcloud auth print-identity-token)" $CFURL
  
-    Success! You should see a JSON dump of the server status information from your MongoDB Atlas cluster, which shows that you have connectivity.
+    Success! You should see JSON output of the server status information from your MongoDB Atlas cluster, which shows that you have connectivity.
 
     ![success](https://storage.googleapis.com/gcp-community/tutorials/serverless-vpc-access-private-mongodb-atlas/success.png)
 
