@@ -85,9 +85,11 @@ This tutorial depends on you having some basic resources set up in Google Cloud 
 
 1.  Click **Create Connector**.
 
-1.  Enter a name for the connector. This tutorial uses `mongo-connector`.
+1.  Enter a name for the connector.
 
-1.  Select a region.
+    This tutorial uses `mongo-connector`.
+
+1.  Select a region that match the region of your serverless service.
 
 1.  Keep the `default` network selected.
 
@@ -99,103 +101,124 @@ This tutorial depends on you having some basic resources set up in Google Cloud 
 
 ## Create the MongoDB Atlas cluster
 
-1.  Login to [MongoDB Atlas](https://cloud.mongodb.com) and select the project you want for your cluster.
+For detailed instructions for creating a MongoDB Atlas cluster, see the
+[MongoDB Atlas documentation](https://docs.atlas.mongodb.com/tutorial/create-new-cluster/#procedure).
 
-1.  Click **Build a Cluster** located on the Data Storage, Clusters menu.
+1.  In the [MongoDB Atlas console](https://cloud.mongodb.com), select the project for your cluster.
 
-1.  Click **Create a Cluster** under Dedicated Clusters.
+1.  On the **Clusters** page, click **Build a Cluster**.
 
-    > **Note:** You can also select **Dedicated Multi-Cloud & Multi-Region Clusters** if needed but the steps in this tutorial assume you are using a Dedicated Cluster because it is the minimum for VPC Peering.
+1.  Under **Dedicated Clusters**, click **Create a Cluster**.
 
-1.  Click **Google Cloud** and your desired region.
+    You can also select **Dedicated Multi-Cloud & Multi-Region Clusters**, but the steps in this tutorial assume that you are using a dedicated cluster because
+    it is the minimum for VPC Network Peering.
 
-1.  Select your desired Cluster Tier. **M10** will be used for our tutorial but any of them will work.
+1.  Click **Google Cloud** and your region.
 
-1.  Provide your cluster a name. We'll use the default `Cluster0`.
+1.  Select a Cluster Tier.
+
+    This tutorial uses **M10**, but any of them will work.
+
+1.  Enter a name for your cluster.
+
+    This tutorial uses the default `Cluster0`.
 
 1.  Click **Create Cluster**.
 
-It will take a few minutes to create the cluster but you move on to the next section right away.
+It takes a few minutes to create the cluster, but you can move to the next section before then.
 
-## Configure the MongoDB Atlas whitelist
+## Configure the MongoDB Atlas access list
 
-1.  In the MongoDB Atlas console, click the **Network Access** under the Security section.
+For detailed instructions for adding IP addresses to the MongoDB IP access list, see the
+[MongoDB Atlas documentation](https://docs.atlas.mongodb.com/security/ip-access-list/#add-ip-access-list-entries).
+
+1.  In the MongoDB Atlas console, click **Network Access** in the **Security** section.
 
     ![networkAccess](https://storage.googleapis.com/gcp-community/tutorials/serverless-vpc-access-private-mongodb-atlas/networkAccess.png)
 
-1.  Click **Add IP Address** under the IP Access List section.
+1.  In the **IP Access List** tab, click **Add IP Address**.
 
-1.  For Access List Entry, enter the /28 network you created for the Serverless VPC Access Connector. `10.8.0.0/28` was used for this tutorial.
+1.  For **Access List Entry**, enter the `/28` network that you created for the Serverless VPC Access connector.
 
-1.  Under Comment, use `mongo-connector` so you remember the relationship with the GCP resource name.
+    This tutorial uses `10.8.0.0/28`.
 
-Your MongoDB Atlas cluster will now be secured and restricted to only the `10.8.0.0/28` subnet.
+1.  Under **Comment**, enter `mongo-connector` so that you remember the relationship with the Google Cloud resource name.
 
-## Configure MongoDB Atlas VPC Peering
+Following these steps restricts your MongoDB Atlas cluster to only the `10.8.0.0/28` subnet.
 
-1.  Click **Peering** while in the Network Access screen in the MongoDB Atlas console.
+## Configure MongoDB Atlas VPC peering
+
+For detailed instructions for adding a VPC peering connection, see the
+[MongoDB Atlas documentation](https://docs.atlas.mongodb.com/security-vpc-peering/#in-add-a-new-network-peering-connection-for-your-project-2).
+
+1.  In the **Network Access** section, click **Peering**.
 
 1.  Click **Add Peering Connection**.
 
 1.  Click **Google Cloud** and **Next**.
 
-1.  Enter the Project ID of your GCP project. 
+1.  Enter the project ID of your Google Cloud project. 
 
-1.  Enter the VPC Name. The tutorial will use **default** here.
+1.  Enter the VPC network name.
+ 
+    This tutorial uses `default`.
 
 1.  Click **Initiate Peering**.
 
-    > **Note:** The status will remain in Pending until you configure peering on the GCP side in later steps.
+    Keep this browser tab open so that you can use the project ID and VPC network name in the next section.
 
-    > **Remember:** The project ID and VPC name will be referenced in future step, so keep this browser tab open.
+    The status remains **Pending** until you configure peering on the Google Cloud side in the next section.
 
-## Configure VPC Peering on GCP
+## Configure VPC Network Peering on Google Cloud
 
-1.  In the Google Cloud Console, click the navigation menu, select VPC Network, then click **VPC network peering**.
+1.  In the Google Cloud Console, go to the [**VPC network peering** page](https://console.cloud.google.com/networking/peering/).
 
-1.  Click **create connection** and **continue**.
+1.  Click **Create connection**, and then click **Continue**.
 
-1.  Enter an appropriate name like `gcp2mongo`.
+1.  Enter name for the connection.
 
-1.  Select **default** under Your VPC network.
+    This tutorial uses `googlecloud2mongo`.
 
-1.  Click **in another project** under Peered VPC Network
+1.  Under **Your VPC network**, select **default** .
 
-1.  Enter the Project ID and VPC network name that were provided at the end of **Configure MongoDB Atlas VPC Peering** section.
+1.  Under **Peered VPC Network**, click **in another project**.
+
+1.  Enter the project ID and VPC network name that were provided at the end of the previous section, in which you configured MongoDB Atlas VPC peering.
 
 1.  Click **Create**.
 
-    > **Note:** These steps are successful when you see **Active** status for the peering connection. The MongoDB Atlas screen should show **Available** status once connected.
+    These steps are successful when you see the **Active** status for the peering connection. The MongoDB Atlas screen should show the **Available** status
+    when the connection is complete.
 
 ## Retrieve the connection string for your cluster
 
-1.  Login to the MongoDB Atlas console.
+1.  In the MongoDB Atlas console, on the **Cluster** page for your newly created cluster, click **Connect**.
 
-1.  Click **Connect** under the Cluster screen for your newly created cluster.
-
-1.  Click **Private IP for Peering** under Choose Connection Type.
+1.  For **Choose Connection Type**, select **Private IP for Peering**.
 
 1.  Click **Choose a connection method**.
 
 1.  Click **Connect your application**.
 
-1.  Select Python, 3.11 or later.
+1.  Select Python 3.11 or later.
 
-1.  Copy the connection string to be referenced later in our Cloud Function. Click **Close** when finished. The connection string will be in the following format:
+1.  Copy the connection string, which you use in the Cloud Function in a later section.
+
+    The connection string is in the following format:
 
         mongodb+srv://<user>:<password>@<cluster_name>.<subdomain>.mongodb.net/
 
+1.  Click **Close**.
+
 ## Create an empty database
 
-1.  Login to the MongoDB Atlas console.
+1.  In the MongoDB Atlas console, on the **Cluster** page, click **Collections**.
 
-1.  Click **Collections** under the Cluster screen.
+1.  Click **Add Your First Database**.
 
-1.  Click **Add Your First Database**
+1.  For the database name, enter `empty_db`.
 
-1.  Enter `empty_db` for the Database Name.
-
-1.  Enter `empty_collection` for the Collection Name.
+1.  For the collection name, enter `empty_collection`.
 
 1.  Click **Create**.
 
