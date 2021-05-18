@@ -6,7 +6,7 @@ tags: container registry, Anthos, Kubernetes Engine
 date_published: 2021-05-19
 ---
 
-Marc Fong | App Modernization Specialist | Google
+Marc Fong | Application Modernization Specialist | Google
 
 Jani Patokallio | Solutions Architect  | Google
 
@@ -23,7 +23,7 @@ clouds (multi-cloud) or a combination of public and on-premises data centers (hy
 
 Having container registries local to the Kubernetes clusters at multiple sites speeds the retrieval of application container images by decreasing latency and 
 increasing bandwidth, and it prevents a single container registry from being a single point of failure for the application running across independent Kubernetes 
-clusters
+clusters.
 
 Using different container registries for different clusters has a downstream impact, because the Kubernetes deployment manifests deployed to each cluster need to 
 use different fully qualified image names. This challenge can be addressed with different templating tools (such Helm, kpt, or Kustomize) but this is out of 
@@ -61,26 +61,25 @@ clusters of PostgreSQL and Redis.
 
 ## Set up the Google Container Registry endpoint for Harbor
 
-1.  In the Cloud Console, browse to **IAM & Admin > Service Accounts** and create a GCP IAM Service Account with the `Storage Admin` role.
-1.  Once created, click on the key name and select the **Keys** tab.  Under **Add key**, select "Create a new key" and **JSON**.  This will create a new key and 
-    download it to your local machine.
-1.  In Harbor, Go to **Administration > Registries > New Endpoint**
-1.  Fill in the details from the following table:
+1.  In the Cloud Console, go to the [**IAM & Admin > Service Accounts** page](https://console.cloud.google.com/iam-admin/serviceaccounts) and
+    [create a Google Cloud service account](https://cloud.google.com/iam/docs/creating-managing-service-accounts#creating) with the `Storage Admin` role.
+1.  Click the key name and select the **Keys** tab.
+1.  Under **Add key**, select **Create a new key** and **JSON**.
 
-    | Key                | Value                                            |
-    | ------------------ | ------------------------------------------------ |
-    | Provider           | Google GCR                                       |
-    | Name               | \[Endpoint Name\]                                |
-    | Description        | \[Endpoint Description\]                         |
-    | Endpoint URL       | https://gcr.io                                   |
-    | Access ID          | \_json\_key                                      |
-    | Access Secret      | \[Paste GCP IAM svc acct json key content here\] |
-    | Verify Remote Cert | ☑                                                |
+    This creates a new key and downloads it to your local machine.
 
-    ![Screenshot of Edit Endpoint dialog](https://storage.googleapis.com/gcp-community/tutorials/container-image-management-with-harbor/image2.png)
+1.  In Harbor, Go to **Administration > Registries > New Endpoint** and fill in the following details in the **Edit Endpoint** dialog box:
 
-1.  Click **Test Connection**
-1.  Click **OK**
+    - **Provider**: **Google GCR**
+    - **Name**: Your endpoint name. This tutorial uses `gcr-sea-anthos-demo`.
+    - **Description**: A description for your endpoint.
+    - **Endpoint URL**: `https://gcr.io`
+    - **Access ID**: `_json_key`
+    - **Access Secret**: Paste your Google Cloud IAM service account JSON key content in this field.
+    - **Verify Remote Cert**: Check this box.                                                |
+
+1.  Click **Test Connection**.
+1.  Click **OK**.
 
 ## Set up replication
 
