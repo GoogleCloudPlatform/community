@@ -1,9 +1,9 @@
 ---
-title: Creating a Cloud Monitoring Chart Using Data From BigQuery
-description: Learn how to create Cloud Monitoring charts and dashboard using data from BigQuery.
+title: Create a Cloud Monitoring chart with data From BigQuery
+description: Learn how to create Cloud Monitoring charts and dashboards using data from BigQuery.
 author: xiangshen-dk
 tags: monitoring, stackdriver, bigquery, cloud run
-date_published: 2021-04-26
+date_published: 2021-05-20
 ---
 
 Xiang Shen | Solutions Architect | Google
@@ -207,7 +207,7 @@ the following query:
 
 You should see the query results similar to the following:
 
-![BigQuery data](bigquery-test-data.png)
+![BigQuery data](https://storage.googleapis.com/gcp-community/tutorials/monitoring-dashboard-from-bq/bigquery-test-data.png)
 
 ### Run the schduler job manually
 
@@ -233,7 +233,7 @@ If you have never used Cloud Monitoring, then on your first access of **Monitori
 1.  At the top of the diagram, select **Stacked Bar**. Wait for a few moments and
     you should have a chart like the following:
 
-![Metric chart](monitoring-chart.png)
+![Metric chart](https://storage.googleapis.com/gcp-community/tutorials/monitoring-dashboard-from-bq/monitoring-chart.png)
 
 1.  Click **Save Chart**. Name the chart.
 1.  In the **Dashboard** drop-down list, select **New Dashboard**.
@@ -241,7 +241,7 @@ If you have never used Cloud Monitoring, then on your first access of **Monitori
 1.  There is now a new chart in this dashboard.
     You can find the dashboard from Cloud Monitoring and it's similar to the following:
 
-![Dashboard](dashboard.png)
+![Dashboard](https://storage.googleapis.com/gcp-community/tutorials/monitoring-dashboard-from-bq/dashboard.png)
 
 ## Cleaning up
 
