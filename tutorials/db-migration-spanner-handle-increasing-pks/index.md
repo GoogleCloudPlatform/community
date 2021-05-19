@@ -1,5 +1,5 @@
 ---
-title: Database migration from MySQL to Cloud Spanner - handling auto-incrementing keys
+title: Database migration from MySQL to Cloud Spanner, handling auto-incrementing keys
 description: Prevent hotspots in Cloud Spanner when migrating auto-incrementing primary keys, using STRIIM.
 author: shashank-google,zk-gt
 tags: mysql, spanner, cloud spanner, striim, migration, zero downtime, data migration
@@ -10,31 +10,40 @@ Shashank Agarwal, Zeeshan Khan and David Ng | Database Migrations Engineers | Go
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-In this tutorial you will learn about migrating databases consisting of auto incrementing primary keys. The primary key uniquely identifies each row in a table. If you insert records with a monotonically increasing integer as the key, you'll always insert at the end of your key space. This is undesirable because Cloud Spanner divides data among servers by key ranges, which means your inserts will be directed at a single server, creating a hotspot. This applies even when an existing database needs to be migrated. Unless mitigated, this can lead to slow data ingestion from MySQL to Cloud Spanner due to **hotspots**.   
+In this tutorial you learn about migrating databases consisting of auto-incrementing primary keys. The primary key uniquely identifies each row in a table. If
+you insert records with a monotonically increasing integer as the key, you always insert at the end of your key space. This is undesirable because Cloud Spanner 
+divides data among servers by key ranges, which means that your inserts are directed at a single server, creating a *hotspot*. This applies even when an existing
+database needs to be migrated. Unless mitigated, these hotspots can lead to slow data ingestion from MySQL to Cloud Spanner.   
 
-This tutorial will implement [bit-reverse](https://cloud.google.com/spanner/docs/schema-design#bit_reverse_primary_key) technique to reliably convert incrementing keys such that it can prevent hotspot in Cloud Spanner. Core idea is to write a deterministic mathematical function f(x) which results in a non-incrementing value and is unique. Reversing the bits maintains unique values across the primary keys. You need to store only the reversed value, because you can recalculate the original value in your application code, if needed.   
+This tutorial implements a [bit-reverse](https://cloud.google.com/spanner/docs/schema-design#bit_reverse_primary_key) technique to reliably convert incrementing
+keys to prevent hotspots in Cloud Spanner. The core idea is to write a deterministic mathematical function that gives a unique non-incrementing value. Reversing
+the bits maintains unique values across the primary keys. You only need to store the reversed value, because you can recalculate the original value in your 
+application code, if needed.   
 
-In addition, we also got to solve for generating keys post migration. Cloud Spanner does not have auto generated keys (at time of writing this article), therefore post migration applications will need to generate primary keys. In this tutorial, we will assume that the applications will use [UUID](https://cloud.google.com/spanner/docs/schema-design#uuid_primary_key) for generating keys post migration on Cloud Spanner.  
+Cloud Spanner does not provide auto-generated keys, so applications need to generate primary keys after migration. This tutorial assumes that the applications
+use [UUID](https://cloud.google.com/spanner/docs/schema-design#uuid_primary_key) for generating keys after the migration to Cloud Spanner.  
 
-We will use [Striim](https://www.striim.com/) for performing the zero downtime data migration from MySQL to Cloud Spanner.  
+This tutorial uses [Striim](https://www.striim.com/) to perform the zero-downtime data migration from MySQL to Cloud Spanner.  
 
 ## Objectives
 
-*   Create and setup CloudSQL MySQL instance with Auto Incrementing primary key.
-*   Create and setup Cloud Spanner instance.
+*   Create and set up a Cloud SQL for MySQL instance with auto-incrementing primary keys.
+*   Create and set up a Cloud Spanner instance.
 *   Deploy and configure Striim for performing data migration.
-*   Plugin custom functions into Striim for real time data transformation(s).
-*   Create initial load Striim pipeline.
-*   Create  a continuous replication (CDC) Striim pipeline.
+*   Add custom functions to Striim for real-time data transformation.
+*   Create a Striim pipeline for loading data.
+*   Create a Striim pipeline for continuous replication of data.
 
 ## Costs
 
+Ths tutorial requires a Striim license, which you can get with a free trial period through the
+[Google Cloud Marketplace](https://console.cloud.google.com/marketplace/details/striim/striim).
+
 This tutorial uses billable components of Google Cloud, including the following:
 
-*   Compute Engine for Striim
-*   Cloud SQL MySQL instance
+*   Compute Engine (for running Striim)
+*   Cloud SQL for MySQL
 *   Cloud Spanner
-*   Striim License, which includes a trial period through the [Cloud Marketplace](https://console.cloud.google.com/marketplace/details/striim/striim)
 
 Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage.   
 
