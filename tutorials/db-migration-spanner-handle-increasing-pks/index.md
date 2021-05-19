@@ -1,9 +1,9 @@
 ---
-title: DB Migration from MySQL to Cloud Spanner - Handling auto incrementing keys
-description: Prevent hotspots in Cloud Spanner when migrating Auto Incrementing primary keys, using STRIIM.
+title: Database migration from MySQL to Cloud Spanner - handling auto-incrementing keys
+description: Prevent hotspots in Cloud Spanner when migrating auto-incrementing primary keys, using STRIIM.
 author: shashank-google,zk-gt
 tags: mysql, spanner, cloud spanner, striim, migration, zero downtime, data migration
-date_published: 2021-04-28
+date_published: 2021-05-20
 ---
 
 Shashank Agarwal, Zeeshan Khan and David Ng | Database Migrations Engineers | Google
@@ -106,16 +106,16 @@ section at the end of this tutorial.
 
 1. Deploy a Striim instance from  GCP Marketplace. Visit [this link](https://console.cloud.google.com/marketplace/product/striim/striim-spanner) to deploy a Striim instance.
 
-![Striim Marketplace](1_striim_market_place.png)
+![Striim Marketplace](https://storage.googleapis.com/gcp-community/tutorials/db-migration-spanner-handle-increasing-pks/1_striim_market_place.png)
 
 2. Click "Launch". On the next screen keep the default configuration and click "Deploy".
 
-![Striim Deploy Screen](2_striim_deployment.png)
+![Striim Deploy Screen](https://storage.googleapis.com/gcp-community/tutorials/db-migration-spanner-handle-increasing-pks/2_striim_deployment.png)
 
 3. Once deployed you will get a link to Striim instance along with Admin user and password.  
    *NOTE: You can also access this information from the [Deployment Manager](https://console.cloud.google.com/dm/deployments) if needed*
 
-![Striim Credentials](3_striim_deployment_manager.png)
+![Striim Credentials](https://storage.googleapis.com/gcp-community/tutorials/db-migration-spanner-handle-increasing-pks/3_striim_deployment_manager.png)
 
 ### Configure Striim
 
@@ -264,7 +264,7 @@ Any changes (updates, deletes, inserts, append) to data after job start time wil
 
        gcloud sql instances list --filter=name=mysql-57
        
-![initial load](4_striim_initial_load.png)
+![initial load](https://storage.googleapis.com/gcp-community/tutorials/db-migration-spanner-handle-increasing-pks/4_striim_initial_load.png)
 
 6. Deploy the application using defaults.
 Created > Deploy App > Deploy.
@@ -274,7 +274,7 @@ Created > Deploy App > Deploy.
 Deployed > Start App. 
 8. You should see rows being replicated through Striim and inserted to Cloud Spanner.
 9. On Cloud Spanner UI verify that rows have been written with bit reversed id values.
-![initial complete](6_spanner_il_complete.png)
+![initial complete](https://storage.googleapis.com/gcp-community/tutorials/db-migration-spanner-handle-increasing-pks/6_spanner_il_complete.png)
 
 ### Create continuous replication (CDC) pipeline
 Once initial load is complete, you can deploy a CDC pipeline to continuously replicate any new changes into Cloud Spanner after the initial load job was started .  
@@ -344,7 +344,7 @@ However these concepts are out of scope for this tutorial.
 
 3. Verify data has been replicated into Cloud Spanner.
 
-![spanner cdc complete](7_spanner_cdc_complete.png)
+![spanner cdc complete](https://storage.googleapis.com/gcp-community/tutorials/db-migration-spanner-handle-increasing-pks/7_spanner_cdc_complete.png)
 
 
 ## Cleaning up
