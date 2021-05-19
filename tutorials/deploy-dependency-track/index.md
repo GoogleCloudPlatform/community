@@ -3,7 +3,7 @@ title: Deploying OWASP Dependency Track to Google Cloud
 description: Learn how to deploy the OWASP Dependency Track system to Google Kubernetes Engine.
 author: dedickinson
 tags: owasp, dependency track, kubernetes, cloud build, cloud sql, supply chain
-date_published: 2020-04-28
+date_published: 2020-05-21
 ---
 
 Duncan Dickinson | Customer Engineer | Google
@@ -306,7 +306,7 @@ As you can see from the diagram below, a number of services will be utilised:
 - A Postgres-based Cloud SQL database will be used to hold Dependency Track data.
 - Secret Manager will be used to securely store database passwords.
 
-![The GKE-based deployment as describe in the paragraph above.](img/deploy_gke.png)
+![The GKE-based deployment as describe in the paragraph above.](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/deploy_gke.png)
 
 A [_Troubleshooting_](#troubleshooting) section has been provided to help out with
 issues that you may encounter.
@@ -743,12 +743,12 @@ for more information.
 
 In the frontend user interface, go to the "Projects" screen and click on "+ Create Project".
 
-![New project screen](img/new_project.png)
+![New project screen](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/new_project.png)
 
 You don't need to enter many details, just use "demo-project" for the Project Name
 and set the Classifier to "Application" then press the "Create" button.
 
-![New project dialog](img/new_project_dialog.png)
+![New project dialog](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/new_project_dialog.png)
 
 You'll see the new project listed - click on it and when in the project screen, 
 click on the "Components" tab. 
@@ -763,26 +763,26 @@ cloudshell download bom.json
 
 You can now click on the "Upload BOM" button and select the `bom.json` file for upload.
 
-![Uploading the BOM](img/upload_bom.png)
+![Uploading the BOM](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/upload_bom.png)
 
 When you return to the project screen you should see the components listed. If not,
 click on the refresh button to the right of the screen. Take some time to click around
 and explore the information. 
 
-![Project screen with components listed](img/component_listing.png)
+![Project screen with components listed](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/component_listing.png)
 
 The `django` component has a high risk score and seems to be the source 
 of several issues. If you click on the `django` link, you'll be taken to 
 the overview page for the component. Here you'll see that `django` 1.2
 has numerous known vulnerabilities: 1 Critical, 3 High, 27 Medium and 1 Low.
 
-![Project screen with components listed](img/component_listing_overview.png)
+![Project screen with components listed](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/component_listing_overview.png)
 
 Clicking on the `Vulnerabilities` tab will then take you to the listing for
 all the known component vulnerabilities. You can then click through to each 
 vulnerability (such as "CVE-2011-4137") to get further details about the vulnerability.
 
-![Project screen with components listed](img/component_listing_vulns.png)
+![Project screen with components listed](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/component_listing_vulns.png)
 
 ### Uploading a BOM from the terminal
 
@@ -793,11 +793,11 @@ In the frontend user interface, go to the "Administration" screen, and select
 "Access Management" (last item), then "Teams".
 You'll see a team named "Automation", click on this to view the team's configuration.
 
-![The Teams listing screen](img/teams.png)
+![The Teams listing screen](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/teams.png)
 
 Add `PROJECT_CREATION_UPLOAD` permission to the "Automation" team.
 
-![The permissions listing for the team](img/teams_perm.png)
+![The permissions listing for the team](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/teams_perm.png)
 
 Copy the API Key that is displayed for the "Automation" team 
 and set up the API Key as a variable in your terminal:
@@ -830,7 +830,7 @@ The `bom-loader.py` script performs the following:
 Now you can go to your Dependency Track frontend and open the "Projects" tab. You'll
 see there's now a `demo-project` with version `0.1.0`:
 
-![Project listing with demo_project version 0.1.0](img/listing_demo_project.png)
+![Project listing with demo_project version 0.1.0](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/listing_demo_project.png)
 
 As before, you can click on the project and explore the dependencies.
 
@@ -915,7 +915,7 @@ go to the Dependency Track frontend, select the project from the list and click
 "View Details" in the project screen (below).
 The pop-up dialog will have a "Delete" button that deletes the project.
 
-![The View Details link is used to open the display to delete the project](img/delete_demo_project.png)
+![The View Details link is used to open the display to delete the project](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/delete_demo_project.png)
 
 With that done you can now submit the build with the following command:
 
