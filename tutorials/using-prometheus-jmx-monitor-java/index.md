@@ -1,9 +1,9 @@
 ---
-title: Using Prometheus and JMX to monitor Java applications on GKE 
-description: Learn how to monitor Java application running on GKE via Prometheus and Cloud Monitoring.
+title: Use Prometheus and JMX to monitor Java applications on Google Kubernetes Engine 
+description: Learn how to monitor Java applications running on GKE with Prometheus and Cloud Monitoring.
 author: xiangshen-dk
 tags: monitoring, stackdriver, prometheus, jmx, java
-date_published: 2020-11-11
+date_published: 2021-05-20
 ---
 
 Xiang Shen | Solutions Architect | Google
@@ -130,7 +130,7 @@ Using the Prometheus Kubernetes service account, Prometheus discovers resources 
 
 3. In the Prometheus UI, click Status > Service Discovery. 
 
-![prom-service-discovery](prom-svc-discovery.png)
+![prom-service-discovery](https://storage.googleapis.com/gcp-community/tutorials/using-prometheus-jmx-monitor-java/prom-svc-discovery.png)
 
 4. Click Status > Targets.
 
@@ -258,7 +258,7 @@ If you open the **helloworld-deployment.yaml** file, you can see that we use the
 
 1.  In the Prometheus UI, view the exported JVM metrics. In the Expression field, type in the metric` jvm_memory_bytes_used` in the search field and click the **Graph** tab. You will see a graph similar to the following:
 
-![jvm-memory-bytes](prom-cloud-monitoring.png)
+![jvm-memory-bytes](https://storage.googleapis.com/gcp-community/tutorials/using-prometheus-jmx-monitor-java/prom-cloud-monitoring.png)
 
 ## Viewing metrics in Cloud Monitoring
 
@@ -277,7 +277,7 @@ To view these metrics:
 
 1.  In the following example, a filter was added to display the metrics for a specific cluster and a container. Filtering is useful when you have multiple clusters and many containers:
 
-![image](metric-explorer.png)
+![image](https://storage.googleapis.com/gcp-community/tutorials/using-prometheus-jmx-monitor-java/metric-explorer.png)
 
 ## Cleaning up
 
