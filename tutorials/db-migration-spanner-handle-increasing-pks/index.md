@@ -6,12 +6,12 @@ tags: mysql, spanner, cloud spanner, striim, migration, zero downtime, data migr
 date_published: 2021-05-20
 ---
 
-Shashank Agarwal, Zeeshan Khan and David Ng | Database Migrations Engineers | Google
+Shashank Agarwal, Zeeshan Khan, and David Ng | Database Migration Engineers | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-In this tutorial you learn about migrating databases consisting of auto-incrementing primary keys. The primary key uniquely identifies each row in a table. If
-you insert records with a monotonically increasing integer as the key, you always insert at the end of your key space. This is undesirable because Cloud Spanner 
+In this tutorial you learn about migrating databases that have auto-incrementing primary keys. The primary key uniquely identifies each row in a table. If you
+insert records with a monotonically increasing integer as the key, you always insert at the end of your key space. This is undesirable because Cloud Spanner 
 divides data among servers by key ranges, which means that your inserts are directed at a single server, creating a *hotspot*. This applies even when an existing
 database needs to be migrated. Unless mitigated, these hotspots can lead to slow data ingestion from MySQL to Cloud Spanner.   
 
@@ -50,48 +50,53 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
 ## Before you begin
 
 For this tutorial, you need a Google Cloud [project](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#projects). You can create a
-new one, or you can select a project that you already created.
+new project, or you can select a project that you already created.
 
-1.  [Select or create a Google Cloud project.](https://console.cloud.google.com/projectselector2/home/dashboard)
-2.  [Enable billing for your project.](https://support.google.com/cloud/answer/6293499#enable-billing)
-3.  [Enable API](https://console.cloud.google.com/flows/enableapi?apiid=compute.googleapis.com,spanner.googleapis.com,sqladmin.googleapis.com) for Compute Engine, Cloud SQL and Spanner.
+1.  [Select or create a Google Cloud project](https://console.cloud.google.com/projectselector2/home/dashboard).
+1.  [Enable billing for your project](https://support.google.com/cloud/answer/6293499#enable-billing).
+1.  [Enable the Compute Engine, Cloud SQL, and Cloud Spanner APIs](https://console.cloud.google.com/flows/enableapi?apiid=compute.googleapis.com,spanner.googleapis.com,sqladmin.googleapis.com).
+1.  In the Cloud Console, activate [Cloud Shell](https://cloud.google.com/shell/docs/launching-cloud-shell#launching_from_the_console), which provides an 
+    interactive shell that includes the `gcloud` command-line interface. You use Cloud Shell to run the commands in this tutorial.
 
 When you finish this tutorial, you can avoid continued billing by deleting the resources that you created. For details, see the "Cleaning up" 
 section at the end of this tutorial.
 
-## Setup Source Database (Cloud SQL for MySQL)
-1. Create Cloud SQL Instance, in a cloud shell.
+## Set up the source database with Cloud SQL for MySQL
 
-       gcloud sql instances create mysql-57  \
-           --database-version=MYSQL_5_7 \
-           --tier=db-n1-standard-1  \
-           --region=us-central1 \
-           --root-password=password123
+1.  Create a Cloud SQL instance:
 
-2. Enable binary logging (for CDC).
+        gcloud sql instances create mysql-57  \
+            --database-version=MYSQL_5_7 \
+            --tier=db-n1-standard-1  \
+            --region=us-central1 \
+            --root-password=password123
 
-       gcloud sql instances patch mysql-57 --backup-start-time 00:00
-       gcloud sql instances patch mysql-57 --enable-bin-log    
+1.  Enable binary logging for change data capture (CDC):
 
-3. Connect to Cloud SQL for MySQL instance. Type in password *password123* when prompted.
+        gcloud sql instances patch mysql-57 --backup-start-time 00:00
+        gcloud sql instances patch mysql-57 --enable-bin-log    
 
-       gcloud sql connect mysql-57 --user=root
+1.  Connect to the Cloud SQL for MySQL instance:
 
-4. Create database and tables.
+        gcloud sql connect mysql-57 --user=root
+        
+    Enter the password (`password123`) when you are prompted.
 
-       CREATE DATABASE employeedb;
-       use employeedb;
-       CREATE TABLE `signin_log` (
-         `id` int not null AUTO_INCREMENT,
-         `employee_email` varchar(200) DEFAULT NULL,
-         `details` varchar(500) DEFAULT NULL,
-         PRIMARY KEY (`id`)
-       );
+1.  Create a database and tables:
+
+        CREATE DATABASE employeedb;
+        use employeedb;
+        CREATE TABLE `signin_log` (
+          `id` int not null AUTO_INCREMENT,
+          `employee_email` varchar(200) DEFAULT NULL,
+          `details` varchar(500) DEFAULT NULL,
+          PRIMARY KEY (`id`)
+        );
     
-5. Insert sample data rows.
+1.  Insert sample data rows:
 
-       INSERT INTO signin_log (employee_email, details) values ('test-1@email.com', 'ip address a.b.c.d');
-       INSERT INTO signin_log (employee_email, details) values ('test-2@email.com', 'new ip address 1');
+        INSERT INTO signin_log (employee_email, details) values ('test-1@email.com', 'ip address a.b.c.d');
+        INSERT INTO signin_log (employee_email, details) values ('test-2@email.com', 'new ip address 1');
 
 ## Setup Target Database (Cloud Spanner)
 1. Create a Cloud Spanner instance
