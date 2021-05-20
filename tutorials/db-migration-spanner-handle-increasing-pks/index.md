@@ -178,7 +178,7 @@ The `employee_id` column has been changed to `STRING` in this example, so that t
 
         gcloud iam service-accounts keys create ~/striim-spanner-key.json --iam-account $compute_sa
 
-   This creates a service account key called `striim-spanner-key.json` on your Cloud Shell home path.
+    This creates a service account key called `striim-spanner-key.json` on your Cloud Shell home path.
 
 1.  Move the service account key to the `/opt/striim_ directory` on the Striim instance:
 
@@ -298,7 +298,7 @@ Any changes (updates, deletes, inserts, append) to data after the job start time
     
     ![initial load](https://storage.googleapis.com/gcp-community/tutorials/db-migration-spanner-handle-increasing-pks/4_striim_initial_load.png)
 
-1.  Click save.
+1.  Click **Save**.
 
 1.  Deploy the application using default values: Choose **Created > Deploy App > Deploy**.
 
@@ -320,7 +320,10 @@ the Cloud SQL for MySQL binary logs using the Striim MysqlReader adapter.
 
 **Note**: In production, you use the `StartTimestamp` property to specify the binary log position (the timestamp at which initial load was started) from which 
 the CDC application should start replicating. You should also create a [Checkpoint table](https://www.striim.com/docs/en/spanner-writer.html) so that Striim can 
-recover from a failure. However these concepts are out of scope for this tutorial.
+recover from a failure. However, these concepts are out of scope for this tutorial.
+
+The steps in this section are abbreviated to highlight only the portions that differ from the previous section. Refer to the previous section for details of
+interacting with the user interface.
 
 1.  Import the following code for the CDC pipeline and replace `Primary_IP` with the IP address for Cloud SQL for MySQL. 
 
@@ -391,6 +394,6 @@ To avoid incurring charges to your Google Cloud account for the resources used i
 1.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
 
 ## What's next
-- Learn more about [choosing primary key in Cloud Spanner](https://cloud.google.com/spanner/docs/schema-and-data-model#choosing_a_primary_key).
+- Learn more about [choosing a primary key in Cloud Spanner](https://cloud.google.com/spanner/docs/schema-and-data-model#choosing_a_primary_key).
 - Learn about [using Striim for continuous data replication to Cloud Spanner](https://cloud.google.com/solutions/partners/continuous-data-replication-cloud-spanner-striim).
 - Try out other Google Cloud features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
