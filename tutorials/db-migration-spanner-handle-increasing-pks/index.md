@@ -31,7 +31,7 @@ This tutorial uses [Striim](https://www.striim.com/) to perform the zero-downtim
 *   Create and set up a Cloud Spanner instance.
 *   Deploy and configure Striim for performing data migration.
 *   Add custom functions to Striim for real-time data transformation.
-*   Create a Striim pipeline for loading data.
+*   Create a Striim pipeline for the initial loading of data.
 *   Create a Striim pipeline for continuous replication of data.
 
 ## Costs
@@ -55,8 +55,9 @@ new project, or you can select a project that you already created.
 1.  [Select or create a Google Cloud project](https://console.cloud.google.com/projectselector2/home/dashboard).
 1.  [Enable billing for your project](https://support.google.com/cloud/answer/6293499#enable-billing).
 1.  [Enable the Compute Engine, Cloud SQL, and Cloud Spanner APIs](https://console.cloud.google.com/flows/enableapi?apiid=compute.googleapis.com,spanner.googleapis.com,sqladmin.googleapis.com).
-1.  In the Cloud Console, activate [Cloud Shell](https://cloud.google.com/shell/docs/launching-cloud-shell#launching_from_the_console), which provides an 
-    interactive shell that includes the `gcloud` command-line interface. You use Cloud Shell to run the commands in this tutorial.
+1.  In the Cloud Console, activate [Cloud Shell](https://cloud.google.com/shell/docs/launching-cloud-shell#launching_from_the_console).
+
+    Cloud Shell provides an interactive shell that includes the `gcloud` command-line interface, which you use to run the commands in this tutorial.
 
 When you finish this tutorial, you can avoid continued billing by deleting the resources that you created. For details, see the "Cleaning up" 
 section at the end of this tutorial.
@@ -119,45 +120,48 @@ The `employee_id` column has been changed to `STRING` in this example, so that t
 
 1.  [Deploy a Striim instance from  Google Cloud Marketplace](https://console.cloud.google.com/marketplace/product/striim/striim-spanner).
 
-    ![Striim Marketplace](https://storage.googleapis.com/gcp-community/tutorials/db-migration-spanner-handle-increasing-pks/1_striim_market_place.png)
-
 1.  Click **Launch**.
 
 1.  Keep the default configuration, and click **Deploy**.
-
-    ![Striim deploy screen](https://storage.googleapis.com/gcp-community/tutorials/db-migration-spanner-handle-increasing-pks/2_striim_deployment.png)
 
     When deployment is complete, get a link to a Striim instance along with administrator username and password. You can also access this information from the 
     [Deployment Manager](https://console.cloud.google.com/dm/deployments).
 
     ![Striim Credentials](https://storage.googleapis.com/gcp-community/tutorials/db-migration-spanner-handle-increasing-pks/3_striim_deployment_manager.png)
 
-1.  To allow Striim to communicate with Cloud SQL for MySQL, [add the Striim server's IP address](https://cloud.google.com/sql/docs/mysql/connect-external-app)
-    to the Cloud SQL for MySQL instance's authorized networks. **Update `STRIIM_VM_ZONE` with the zone in which striim vm is deployed.**
+1.  Set the zone to the zone of the VM that is running Striim:
  
         STRIIM_VM_ZONE=us-central1-f
-
+        
         gcloud config set compute/zone $STRIIM_VM_ZONE
+
+1.  To allow Striim to communicate with Cloud SQL for MySQL, [add the Striim server's IP address](https://cloud.google.com/sql/docs/mysql/connect-external-app)
+    to the Cloud SQL for MySQL instance's authorized networks.
 
         gcloud sql instances patch mysql-57 \
             --authorized-networks=$(gcloud compute instances describe striim-spanner-1-vm \
             --format='get(networkInterfaces[0].accessConfigs[0].natIP)' \
             --zone=$STRIIM_VM_ZONE)
 
-1.  Deploy mysql driver as described
-    [here](https://cloud.google.com/architecture/partners/continuous-data-replication-cloud-spanner-striim#setting_up_mysql_connector_j)
+1.  Deploy [the MySQL driver (MySQL Connector/J)](https://cloud.google.com/architecture/partners/continuous-data-replication-cloud-spanner-striim#setting_up_mysql_connector_j):
 
     1.  Connect to the VM running Striim using SSH:
     
             gcloud compute ssh striim-spanner-1-vm
-
-    1.  Execute below comannds to download and deploy mysql driver inside striim.
     
+    1.  Download the MySQL driver (MySQL Connector/J) to the instance and extract the contents of the file:
+
             wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.49.tar.gz
             tar -xvzf mysql-connector-java-5.1.49.tar.gz
+
+    1.  Copy the file to the Striim library path, allow it to be executable, and change ownership of the file that you downloaded:
+
             sudo cp ~/mysql-connector-java-5.1.49/mysql-connector-java-5.1.49.jar /opt/striim/lib
             sudo chmod +x /opt/striim/lib/mysql-connector-java-5.1.49.jar
             sudo chown striim /opt/striim/lib/mysql-connector-java-5.1.49.jar
+
+    1.  To load the new library, restart the Striim server:
+    
             sudo systemctl stop striim-node
             sudo systemctl stop striim-dbms
             sudo systemctl start striim-dbms
@@ -188,23 +192,21 @@ The `employee_id` column has been changed to `STRING` in this example, so that t
 
 ## Migrate data using Striim
 
-Data migration is a two step process: 
+Data migration is a two-phase process: 
 
-1. Initial Load
-2. Continuous Replication (CDC)
+1. Initial load of data
+2. Continuous replication with change data capture (CDC)
 
-Both step use custom functions written in Java for data manipulations i.e. bit reverse and string conversion.
+This section includes custom functions written in Java for manipulating data during both of these phases. During the initial load of data, you use a custom
+bit-reverse function. During replication, you use a custom string conversion function.
 
 ### Add the bit-reverse function to Striim
 
-You will write code, compile, package and deploy java code for bit reversal onto Striim instance. This custom function is to be moved to _/opt/striim/lib_ 
-directory on Striim instance.
-
-1.  Connect to the VM with SSH:
+1.  Connect to the VM that's running Striim with SSH:
 
         gcloud compute ssh striim-spanner-1-vm
 
-1.  Write Java code:
+1.  Run the following command to add a bit-reverse function to the `CustomFunctions.java` file:
 
         cat > CustomFunctions.java << EOF
         public abstract class CustomFunctions {
@@ -221,13 +223,13 @@ directory on Striim instance.
         javac CustomFunctions.java
         jar -cf CustomFunctions.jar CustomFunctions.class CustomFunctions.java
 
-1.  Move the JAR file to the Striim instance's `/opt/striim/lib/` directory:
+1.  Move the `CustomFunctions.jar` file to the Striim instance's `/opt/striim/lib/` directory:
 
         sudo cp CustomFunctions.jar /opt/striim/lib/
         sudo chown striim /opt/striim/lib/CustomFunctions.jar
         sudo chmod +x /opt/striim/lib/CustomFunctions.jar
 
-1.  Restart the Striim application so that it loads this JAR file: 
+1.  Restart the Striim application so that it loads this JAR package: 
 
         sudo systemctl stop striim-node
         sudo systemctl stop striim-dbms
@@ -236,10 +238,14 @@ directory on Striim instance.
 
 ### Create the initial load pipeline
 
-The initial load job bulk-loads existing data. It loads all data existing at job start time and once finished, will quiesce (pause).
-Any changes (updates, deletes, inserts, append) to data after job start time will not be replicated by this job.
+The initial load job bulk-loads existing data. It loads all data existing at job start time. When the data is loaded, the job quiesces (pauses).
+Any changes (updates, deletes, inserts, append) to data after the job start time will not be replicated by this job.
 
-1.  Save the following code as `mysql_to_spanner_initial_load.tql` file on your local computer. You will import it into Striim application.
+1.  Get the MySQL IP address, which you use in a later step:
+
+        gcloud sql instances list --filter=name=mysql-57
+
+1.  Save the following code to a new `mysql_to_spanner_initial_load.tql` file on your local computer:
 
         drop APPLICATION mysql_to_spanner_initial_load CASCADE;
 
@@ -281,25 +287,28 @@ Any changes (updates, deletes, inserts, append) to data after job start time wil
 
         END APPLICATION mysql_to_spanner_initial_load;
 
-1.  Log in to Striim web UI. If needed, visit [deployment manager page](https://console.cloud.google.com/dm/deployments) to access Striim URL and credentials. 
-1.  After login click `☰` menu on top left and select `Apps`. Click on `+ Add App` (on top right).
-1.  Click import existing app and choose the mysql_to_spanner_initial_load.tql created in step 1. And click import.
-1.  In the workflow, replace _Primary_IP_ with Cloud SQL for MySQL’s IP address. Click on mysql_dbreader adaptor and replace the Primary_IP in the Connection URL
-    field (screenshot below). And click save.
+1.  Go to the Striim web interface and log in.
+
+    If needed, go to the [Deployment Manager page](https://console.cloud.google.com/dm/deployments) to get the URL for the Striim web interface and credentials.
     
-    You can get the MySQL IP address in the Cloud Console or by running the following command:
-
-        gcloud sql instances list --filter=name=mysql-57
-
+1.  Click the **☰** menu in the upper left and select **Apps**.
+1.  Click **+ Add App** in the upper right.
+1.  Click **Import existing app**, choose the `mysql_to_spanner_initial_load.tql` file, and click **Import**.
+1.  Click the `mysql_dbreader` adaptor and replace `Primary_IP` in the **Connection URL** field with the Cloud SQL for MySQL IP address.
+    
     ![initial load](https://storage.googleapis.com/gcp-community/tutorials/db-migration-spanner-handle-increasing-pks/4_striim_initial_load.png)
 
-1.  Deploy the application using defaults: Created > Deploy App > Deploy.
+1.  Click save.
+
+1.  Deploy the application using default values: Choose **Created > Deploy App > Deploy**.
 
     ![initial load deploy](5_striim_deploy.png)
 
-1.  Start the application: Deployed > Start App. 
-1.  You should see rows being replicated through Striim and inserted to Cloud Spanner.
-1.  On Cloud Spanner UI verify that rows have been written with bit reversed id values.
+1.  Start the application: Choose **Deployed > Start App**.
+
+    You should see rows being replicated through Striim and inserted to Cloud Spanner.
+
+1.  In Cloud Spanner, verify that rows have been written with bit-reversed ID values.
 
     ![initial complete](https://storage.googleapis.com/gcp-community/tutorials/db-migration-spanner-handle-increasing-pks/6_spanner_il_complete.png)
 
@@ -313,7 +322,7 @@ the Cloud SQL for MySQL binary logs using the Striim MysqlReader adapter.
 the CDC application should start replicating. You should also create a [Checkpoint table](https://www.striim.com/docs/en/spanner-writer.html) so that Striim can 
 recover from a failure. However these concepts are out of scope for this tutorial.
 
-1.  Import the following code for CDC pipeline and change Primary_IP with Cloud SQL for MySQL’s IP address. Then deploy and start the application. 
+1.  Import the following code for the CDC pipeline and replace `Primary_IP` with the IP address for Cloud SQL for MySQL. 
 
         drop APPLICATION mysql_to_spanner_cdc CASCADE;
 
@@ -358,7 +367,9 @@ recover from a failure. However these concepts are out of scope for this tutoria
 
         END APPLICATION mysql_to_spanner_cdc;
 
-1.  Connect to mysql and insert a few rows.
+1.  Deploy and start the application.
+
+3.  Connect to MySQL and insert a few rows:
 
         gcloud sql connect mysql-57 --user=root
   
@@ -370,7 +381,6 @@ recover from a failure. However these concepts are out of scope for this tutoria
 1.  Verify that the data has been replicated into Cloud Spanner.
 
     ![spanner cdc complete](https://storage.googleapis.com/gcp-community/tutorials/db-migration-spanner-handle-increasing-pks/7_spanner_cdc_complete.png)
-
 
 ## Cleaning up
 
