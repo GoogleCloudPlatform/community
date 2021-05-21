@@ -302,7 +302,7 @@ Any changes (updates, deletes, inserts, append) to data after the job start time
 
 1.  Deploy the application using default values: Choose **Created > Deploy App > Deploy**.
 
-    ![initial load deploy](5_striim_deploy.png)
+    ![initial load deploy](https://storage.googleapis.com/gcp-community/tutorials/db-migration-spanner-handle-increasing-pks/5_striim_deploy.png)
 
 1.  Start the application: Choose **Deployed > Start App**.
 
