@@ -18,9 +18,12 @@ overview of PHP and learn ways to run PHP apps on Google Cloud.
 
 ## Prerequisites
 
-1. Create a project in the [Cloud Console](https://console.cloud.google.com/project). Take note of the *Project ID* string. Use it to replace `YOUR_PROJECT_ID`.
-3. Enable billing for your project.
-4. Install and initialize the [Cloud SDK][cloud_sdk].
+1.  Create a project in the [Cloud Console](https://console.cloud.google.com/project).
+
+    Note the project ID value, which you use to replace the `YOUR_PROJECT_ID` placeholder in later steps.
+    
+1.  Enable billing for your project.
+1.  Install and initialize the [Cloud SDK][cloud_sdk].
 
 All code for this tutorial is available in the [PHP samples repository][laravel-framework-sample].
 
@@ -102,9 +105,10 @@ from laravel.com.
 1.  Run the following command to deploy your app:
 
         gcloud app deploy --project=YOUR_PROJECT_ID
+        
+    Replace `YOUR_PROJECT_ID` with your Google Cloud project ID.
 
 1.  Visit `http://YOUR_PROJECT_ID.appspot.com` to see the Laravel welcome page.
-    Replace `YOUR_PROJECT_ID` with the ID of your Google Cloud project.
 
     ![Laravel welcome page][laravel-welcome]
 
