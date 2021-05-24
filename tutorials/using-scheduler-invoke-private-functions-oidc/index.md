@@ -6,7 +6,8 @@ tags: Python
 date_published: 2020-08-07
 ---
 
-Katie McLaughlin | Developer Advocate | Google
+Katie McLaughlin | Developer Advocate | Google<br>
+Dina Graves | Developer Programs Engineer | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
