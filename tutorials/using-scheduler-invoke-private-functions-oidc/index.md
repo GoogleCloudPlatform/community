@@ -109,11 +109,11 @@ This function can be tested on your local machine by using the [Functions Framew
 
 1.  Install the Function Frameworks package on your machine:
 
-        pip install functions-framework==1.5.0
+        pip install functions-framework==2.1.3
 
 1. Use Functions Framework to target the `hello_world` method in `main.py`: 
 
-        functions-framework --target hello_world
+        functions-framework --target hello_world --debug
 
     The function will be made available at `http://0.0.0.0:8080`.
 
@@ -127,11 +127,14 @@ This function can be tested on your local machine by using the [Functions Framew
 
     The terminal running the Functions Framework will show the logs for the invocation:
 
-        [2020-00-00 00:00:00 +0000] [23541] [INFO] Starting gunicorn 20.0.4
-        [2020-00-00 00:00:00 +0000] [23541] [INFO] Listening at: http://0.0.0.0:8080 (23451)
-        [2020-00-00 00:00:00 +0000] [23541] [INFO] Using worker: threads
-        [2020-00-00 00:00:00 +0000] [23543] [INFO] Booting worker with pid: 23456
-        Hello, local function!
+		 * Serving Flask app "hello_world" (lazy loading)
+		 * Environment: production
+		 * Debug mode: on
+		 * Running on http://0.0.0.0:8080/ (Press CTRL+C to quit)
+		 * Restarting with fsevents reloader
+		 * Debugger is active!
+		Hello, local function!
+		127.0.0.1 - - [00/Jan/2020 00:00:00] "POST / HTTP/1.1" 200 -
 
 ## Authentication architecture overview
 
