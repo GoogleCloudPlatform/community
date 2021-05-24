@@ -50,14 +50,15 @@ We recommend that you create a new Google Cloud project for this tutorial, so th
     see [Create a project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#creating_a_project).
 1.  Make sure that billing is enabled for your project. For details, see [Confirm billing is enabled](https://cloud.google.com/billing/docs/how-to/modify-project#confirm_billing_is_enabled_on_a_project).
 
-1.  Enable the Cloud Build, Cloud Scheduler and Cloud Functions APIs.
+1.  Enable the Cloud Build, Cloud Scheduler, and Cloud Functions APIs:
 
-    [Enable the APIs](https://console.cloud.google.com/flows/enableapi?apiid=cloudbuild.googleapis.com,cloudscheduler.googleapis.com,cloudfunctions.googleapis.com) in the UI, or enable them in the command line:
+    - [Enable the APIs in the Cloud Console.](https://console.cloud.google.com/flows/enableapi?apiid=cloudbuild.googleapis.com,cloudscheduler.googleapis.com,cloudfunctions.googleapis.com)
+    - Enable the APIs from the command line:
 
-        gcloud services enable \
-           cloudbuild.googleapis.com \
-           cloudscheduler.googleapis.com \
-           cloudfunctions.googleapis.com
+          gcloud services enable \
+            cloudbuild.googleapis.com \
+            cloudscheduler.googleapis.com \
+            cloudfunctions.googleapis.com
 
 1.  Initialize an App Engine environment and choose its region by running the following command and following the prompts:
 
@@ -127,14 +128,14 @@ This function can be tested on your local machine by using the [Functions Framew
 
     The terminal running the Functions Framework will show the logs for the invocation:
 
-		 * Serving Flask app "hello_world" (lazy loading)
-		 * Environment: production
-		 * Debug mode: on
-		 * Running on http://0.0.0.0:8080/ (Press CTRL+C to quit)
-		 * Restarting with fsevents reloader
-		 * Debugger is active!
-		Hello, local function!
-		127.0.0.1 - - [00/Jan/2020 00:00:00] "POST / HTTP/1.1" 200 -
+        * Serving Flask app "hello_world" (lazy loading)
+        * Environment: production
+        * Debug mode: on
+        * Running on http://0.0.0.0:8080/ (Press CTRL+C to quit)
+        * Restarting with fsevents reloader
+        * Debugger is active!
+        Hello, local function!
+        127.0.0.1 - - [00/Jan/2020 00:00:00] "POST / HTTP/1.1" 200 -
 
 ## Authentication architecture overview
 
@@ -160,13 +161,13 @@ create and test a Cloud Scheduler job.
 1.  [Create a service account](https://cloud.google.com/iam/docs/creating-managing-service-accounts#creating):
 
         gcloud iam service-accounts create myserviceaccount \
-           --display-name "my service account"
+          --display-name "my service account"
 
 1.  Assign the role to allow this service account to invoke Cloud Functions: 
 
         gcloud projects add-iam-policy-binding ${PROJECT_ID} \
-           --member serviceAccount:myserviceaccount@${PROJECT_ID}.iam.gserviceaccount.com \
-           --role roles/cloudfunctions.invoker
+          --member serviceAccount:myserviceaccount@${PROJECT_ID}.iam.gserviceaccount.com \
+          --role roles/cloudfunctions.invoker
 
 ### Create a Cloud Function
 
@@ -199,7 +200,7 @@ Console.
 
 ![Successfully triggered a Cloud Run function in the Testing tab](https://storage.googleapis.com/gcp-community/tutorials/using-scheduler-invoke-private-functions-oidc/testing-cloud-functions.png)
 
-You can also test this event in the console, through `curl` by specifying the authorization header: 
+You can also test this event in the console with `curl` by specifying the authorization header: 
 
     FUNCTION_URL=$(gcloud functions describe hello_world --format 'value(httpsTrigger.url)')
     curl -H "Authorization: Bearer $(gcloud auth print-identity-token)" \
