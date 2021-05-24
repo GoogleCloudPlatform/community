@@ -199,6 +199,13 @@ Console.
 
 ![Successfully triggered a Cloud Run function in the Testing tab](https://storage.googleapis.com/gcp-community/tutorials/using-scheduler-invoke-private-functions-oidc/testing-cloud-functions.png)
 
+You can also test this event in the console, through `curl` by specifying the authorization header: 
+
+    FUNCTION_URL=$(gcloud functions describe hello_world --format 'value(httpsTrigger.url)')
+    curl -H "Authorization: Bearer $(gcloud auth print-identity-token)" \
+        $FUNCTION_URL \
+        -d '{"name": "testing event"}'
+
 ### Create a scheduled job
 
 [Create a scheduled job](https://cloud.google.com/scheduler/docs/creating#creating_jobs) to invoke the Cloud Function previously created, using the service
