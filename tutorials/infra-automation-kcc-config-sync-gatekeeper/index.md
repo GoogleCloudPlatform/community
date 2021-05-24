@@ -195,11 +195,11 @@ kubectl apply -f configconnectorcontext.yaml
 kubectl wait -n cnrm-system --for=condition=Ready pod --all
 ```
 
-Optionally, you can verify Config Connector is set up correctly by deploying a GCP resource (e.g Cloud Storage). <br /><br />
+Optionally, you can verify Config Connector is set up correctly by [deploying a GCP resource](https://cloud.google.com/config-connector/docs/reference/overview) (e.g Cloud Storage). <br /><br />
 
 ## Config Sync
 
-Config Sync is a Kubernetes operator that allows managing of Kubernetes resources in a GitOps approach where the configurations are stored in the git repository and automatically pulled by the operator to be applied. The Config Sync operator custom controller monitors the Git repository and the state of the clusters, keeping them consistent for each Kubernetes object chosen. By default, Config Sync applies a configuration to each enrolled cluster and namespaces. However this scope can be limited using the ClusterSelector and NamespaceSelector configurations.
+Config Sync is a Kubernetes operator that allows managing of Kubernetes resources in a GitOps approach where the configurations are stored in the git repository and automatically pulled by the operator to be applied. The Config Sync operator custom controller monitors the Git repository and the state of the clusters, keeping them consistent for each Kubernetes object chosen. By default, Config Sync applies a configuration to each enrolled cluster and namespaces. However this scope can be limited using the [ClusterSelector](https://cloud.google.com/kubernetes-engine/docs/add-on/config-sync/how-to/clusterselectors#clusterselectors) and [NamespaceSelector] configurations.
 
 Follow the instructions below to manually install the Config Connector operator.  
 
@@ -286,5 +286,3 @@ spec:
 ```
 
 13. Commit and push the code to the repository. This will trigger the Config Sync operator to pick up the changes and create the Kubernetes objects in the appropriate `kcc-tutorial-dev` namespace. Config Connector will then take the configuration and create a Cloud SQL instance in your GCP dev project. <br /><br />
-
-## Policy Enforcement
