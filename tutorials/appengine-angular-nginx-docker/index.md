@@ -96,7 +96,7 @@ You can see the sample code in
 ## Cloud Build
 
 There are many ways of using Cloud Build for any application. For simplicity, this tutorial uses the `dist` folder of the sample app for output.
-1.  Create `nginx-hosting` folder and copy `dist` folder into it.
+1.  Create an `nginx-hosting` folder and copy the `dist` folder into it.
 1.  Add a `Dockerfile` file in the `nginx-hosting` folder, and copy the following code into the file:
   
         # The standard nginx container just runs nginx. The configuration file added
