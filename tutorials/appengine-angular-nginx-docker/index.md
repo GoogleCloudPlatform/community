@@ -96,8 +96,8 @@ You can see the sample code in
 ## Cloud Build
 
 There are many ways of using Cloud Build for any application. For simplicity, this tutorial uses the `dist` folder of the sample app for output.
-
-1.  Add a `Dockerfile` file in the `dist` folder, and copy the following code into the file:
+1.  Create an `nginx-hosting` folder and copy the `dist` folder into it.
+1.  Add a `Dockerfile` file in the `nginx-hosting` folder, and copy the following code into the file:
   
         # The standard nginx container just runs nginx. The configuration file added
         # below will be used by nginx.
@@ -125,7 +125,7 @@ There are many ways of using Cloud Build for any application. For simplicity, th
 
         CMD ["/bin/sh",  "-c",  "envsubst < /usr/share/nginx/www/sampleapp/assets/envconfig.template.js > /usr/share/nginx/www/sampleapp/assets/envconfig.js && exec nginx -g 'daemon off;'"]
 
-1.  Add an `nginx` file in the `dist` folder, and copy the following code into the file:
+1.  Add an `nginx.conf` file in the `nginx-hosting` folder, and copy the following code into the file:
 
         events {
            worker_connections 768;
@@ -165,7 +165,7 @@ There are many ways of using Cloud Build for any application. For simplicity, th
             }
         }
 
-1.  Add a `cloudbuild.yaml` file in the `dist` folder, and copy the following code into the file:
+1.  Add a `cloudbuild.yaml` file in the `nginx-hosting` folder, and copy the following code into the file:
   
         steps:
         - name: 'gcr.io/cloud-builders/docker'
@@ -174,7 +174,7 @@ There are many ways of using Cloud Build for any application. For simplicity, th
           args: ['push', 'us.gcr.io/$PROJECT_ID/angular-nginx-container']
         images: ['us.gcr.io/$PROJECT_ID/angular-nginx-container']
 
-1.  Add an `app.yaml` file in the `dist` folder, and copy the following code into the file:
+1.  Add an `app.yaml` file in the `nginx-hosting` folder, and copy the following code into the file:
 
         runtime: custom
         env: flex
@@ -184,7 +184,7 @@ There are many ways of using Cloud Build for any application. For simplicity, th
         env_variables:
           API_URL: "https://webapi-dev.appname.com"
 
-1.  If you want to verify the setup in your local Docker environment, you can do so with the following two commands on the `dist` folder.
+1.  If you want to verify the setup in your local Docker environment, you can do so with the following two commands on the `nginx-hosting` folder.
     (To make this work you have to comment out `listen 8080;` in the `nginx` file.)
 
         docker build -t sampleapp .
