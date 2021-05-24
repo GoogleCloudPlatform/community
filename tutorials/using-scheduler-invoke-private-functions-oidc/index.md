@@ -174,12 +174,12 @@ Using the source code provided earlier, [deploy the Cloud Function](https://clou
 created service account is [associated with this function](https://cloud.google.com/functions/docs/securing/function-identity#per-function_identity), and that 
 unauthenticated access is disallowed:
 
-        gcloud functions deploy hello_world \
-          --trigger-http \
-          --region us-central1 \
-          --runtime python37 \
-          --service-account myserviceaccount@${PROJECT_ID}.iam.gserviceaccount.com \
-          --no-allow-unauthenticated
+    gcloud functions deploy hello_world \
+      --trigger-http \
+      --region us-central1 \
+      --runtime python39 \
+      --service-account myserviceaccount@${PROJECT_ID}.iam.gserviceaccount.com \
+      --no-allow-unauthenticated
 
 ### Test the function
 
