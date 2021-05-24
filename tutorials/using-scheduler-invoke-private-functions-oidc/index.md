@@ -33,6 +33,7 @@ In this tutorial, you do the following:
 This tutorial uses billable components of Google Cloud, including the following:
 
 *   [Cloud Functions](https://cloud.google.com/functions)
+*   [Cloud Build](https://cloud.google.com/build)
 *   [Cloud Scheduler](https://cloud.google.com/scheduler)
 *   [App Engine](https://cloud.google.com/appengine/docs/flexible/python)
 
@@ -49,9 +50,14 @@ We recommend that you create a new Google Cloud project for this tutorial, so th
     see [Create a project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#creating_a_project).
 1.  Make sure that billing is enabled for your project. For details, see [Confirm billing is enabled](https://cloud.google.com/billing/docs/how-to/modify-project#confirm_billing_is_enabled_on_a_project).
 
-1.  Enable the Cloud Scheduler and Cloud Functions APIs: 
+1.  Enable the Cloud Build, Cloud Scheduler and Cloud Functions APIs.
 
-    [Enable the APIs](https://console.cloud.google.com/flows/enableapi?apiid=cloudscheduler.googleapis.com,cloudfunctions.googleapis.com)
+    [Enable the APIs](https://console.cloud.google.com/flows/enableapi?apiid=cloudbuild.googleapis.com,cloudscheduler.googleapis.com,cloudfunctions.googleapis.com) in the UI, or enable them in the command line:
+
+        gcloud services enable \
+           cloudbuild.googleapis.com \
+           cloudscheduler.googleapis.com \
+           cloudfunctions.googleapis.com
 
 1.  Initialize an App Engine environment and choose its region by running the following command and following the prompts:
 
