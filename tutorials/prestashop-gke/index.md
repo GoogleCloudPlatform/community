@@ -4,7 +4,6 @@ description: Deploy Prestashop on the GKE with Cloud SQL, NFS and scale it horiz
 author: gabihodoroaga
 tags: kubernetes
 date_published: 2021-05-26
-cSpell: ignore Prestashop gabihodoroaga kubernetes Hodoroaga hodo gcloud containerregistry sqladmin mysqldump mkdir chmod mypresta kubectl jsonpath psdata cloudsql envsubst presta psweb
 ---
 
 Gabriel Hodoroaga | Software developer | hodo.dev
@@ -26,7 +25,7 @@ The following diagram illustrates the components and interactions that are part 
 * Create a custom Prestashop docker image
 * Create a Cloud SQL instance
 * Create a GKE cluster
-* Deploy an NFS server
+* Deploy a NFS server
 * Deploy and scale Prestashop on GKE
 * Use GCE Ingress, Cloud Load Balancer and Cloud CDN
 
