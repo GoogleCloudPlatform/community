@@ -15,10 +15,10 @@
 # limitations under the License.
 
 
-# Clear Out Old Reesults
+# Clear out old results
 rm ora2pg/data/output.sql
 
-# Create New Ora2PG Data
+# Create new Ora2Pg data
 CURR_DIR=$(pwd)
 ORACLE_TYPES="TABLE VIEW"
 for ORACLE_TYPE in ${ORACLE_TYPES}
