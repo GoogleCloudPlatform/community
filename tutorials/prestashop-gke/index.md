@@ -1,6 +1,6 @@
 ---
-title: Prestashop deployment on the GKE
-description: Deploy Prestashop on the GKE with Cloud SQL, NFS and scale it horizontally.
+title: Prestashop deployment on GKE
+description: Deploy Prestashop on GKE with Cloud SQL, NFS and scale it horizontally.
 author: gabihodoroaga
 tags: kubernetes
 date_published: 2021-05-26
