@@ -1,6 +1,7 @@
 ---
 title: Migrate an Oracle database to Cloud SQL for PostgreSQL using Datastream
 description: Learn how to use Ora2Pg, Datastream, and Dataflow to migrate a database from Oracle to Cloud SQL for PostgreSQL.
+author: ktchana
 tags: datastream, dms, database migration, ora2pg, dataflow, cloud sql, postgresql, oracle
 date_published: 2021-05-26
 ---
