@@ -538,12 +538,14 @@ database:
         postgres=> select * from demoapp.demotable;
     
     The output should look like the following, though the values in the `rowid` column may differ:
-    
+
+    ```
            rowid    | id | name 
         ------------+----+------
          1343264979 |  1 | A
          1345112114 |  2 | B
         (2 rows)
+    ```
 
 1.  Connect to the source Oracle database and make some changes with the following SQL statements:
 
@@ -572,12 +574,14 @@ database:
         postgres=> select * from demoapp.demotable;
 
     The output should look similar to this:
-
+    
+    ```
             rowid    | id | name 
          ------------+----+------
           1345112276 |  3 | C
           1343264979 |  1 | Z
          (2 rows)
+    ```
 
 ## Data validation before cutover
 
