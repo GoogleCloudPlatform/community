@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-nfs
+spec:
+  storageClassName: ""
+  capacity: 
+    storage: 10Gi
+  accessModes:
+  - ReadWriteOnce
+  gcePersistentDisk:
+    pdName: nfs-pv-disk
+    fsType: ext4
+  claimRef:
+     namespace: default
+     name: pvc-nfs
