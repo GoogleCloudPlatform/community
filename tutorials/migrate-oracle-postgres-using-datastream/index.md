@@ -14,7 +14,7 @@ This tutorial shows you how to migrate a database from Oracle® to Cloud SQL for
 [Dataflow](https://cloud.google.com/dataflow/) template, a customized setup for [Ora2Pg](https://ora2pg.darold.net/), and an open source
 [validation tool developed by Google](https://github.com/GoogleCloudPlatform/professional-services-data-validator).
 
-![Migration pipeline using Datastream](images/ora2pg-datastream-architecture.png)
+![Migration pipeline using Datastream](https://storage.googleapis.com/gcp-community/tutorials/migrate-oracle-postgres-using-datastream/ora2pg-datastream-architecture.png)
 
 This tutorial is part of a series that shows you how to migrate a database from Oracle to Cloud SQL for PostgreSQL. For detailed discussions of migration-related
 concepts, see the other documents in the series:
