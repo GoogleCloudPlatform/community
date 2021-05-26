@@ -17,13 +17,13 @@ FROM perl:slim
 ARG ORA2PG_VERSION=21.0
 ARG ORACLE_ODBC_VERSION=12.2
 
-# Install General Requirements
+# Install general requirements
 RUN apt-get update \
     && apt-get install wget -y \
     && apt-get install unzip -y \
     && apt-get clean
 
-# Install ora2pg
+# Install Ora2Pg
 RUN wget --output-document=/tmp/ora2pg.zip https://github.com/darold/ora2pg/archive/v${ORA2PG_VERSION}.zip
 RUN unzip -d /tmp/ /tmp/ora2pg.zip
 RUN cd /tmp/ora2pg-${ORA2PG_VERSION}/ && perl Makefile.PL && make && make install
@@ -40,14 +40,14 @@ RUN alien -i *.rpm && rm *.rpm \
     && ln -s /usr/include/oracle/${ORACLE_ODBC_VERSION}/client64 $ORACLE_HOME/include \
     && ldconfig -v
 
-# Instal DBI module with Orcle, Postgres and Compress::Zlib module
+# Instal DBI module with Oracle, Postgres, and Compress::Zlib module
 RUN perl -MCPAN -e 'install DBI' &&\
     perl -MCPAN -e 'install DBD::Pg' &&\
     perl -MCPAN -e 'install DBD::Oracle' &&\
     perl -MCPAN -e 'install Bundle::Compress::Zlib'
 
 
-# Create Directories
+# Create directories
 RUN mkdir /config /data
 RUN ln -s /config/ora2pg.conf /etc/ora2pg/ora2pg.conf
 
