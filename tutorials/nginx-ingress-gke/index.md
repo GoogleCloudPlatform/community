@@ -58,7 +58,7 @@ This tutorial explains how to accomplish the following:
 ## Objectives
 
 - Deploy a simple Kubernetes web _application_ Deployment.
-- Deploy _NGINX Ingress Controller_ using the stable Helm [chart](https://github.com/kubernetes/charts/tree/master/stable/nginx-ingress).
+- Deploy _NGINX Ingress Controller_ using the stable Helm [chart](https://github.com/kubernetes/ingress-nginx/tree/master/charts/ingress-nginx).
 - Deploy an _Ingress Resource_ for the _application_ that uses _NGINX Ingress_ as the controller.
 - Test NGINX Ingress functionality by accessing the Google Cloud L4 (TCP/UDP) load balancer
   frontend IP address and ensure that it can access the web application.
@@ -153,12 +153,12 @@ Here is a basic flow of the NGINX ingress solution on Google Kubernetes Engine.
 
 1.  Before you deploy the NGINX Ingress Helm chart to the GKE cluster, add the `nginx-stable` Helm repository in Cloud Shell:
 
-        helm repo add nginx-stable https://helm.nginx.com/stable
+        helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
         helm repo update
 
 1.  Deploy an NGINX controller Deployment and Service by running the following command:
 
-        helm install nginx-ingress nginx-stable/nginx-ingress
+        helm install nginx-ingress ingress-nginx/ingress-nginx
 
 1.  Verify that the `nginx-ingress-controller` Deployment and Service are deployed to the GKE cluster:
 
