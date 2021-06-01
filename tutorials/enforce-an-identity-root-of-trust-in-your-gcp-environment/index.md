@@ -285,7 +285,7 @@ The root of trust for your Google Cloud Organization starts here.
 
 1.  (Optional) Set up a directory sync with your existing user directory (for example, LDAP or AD) for the right users and 
     groups to be provisioned automatically to your Cloud Identity account. This usually requires “bot” privileged users to 
-    allow for the synchronization. Google recommends using [Google Cloud Directory Sync](https://support.google.com/a/topic/2679497?hl=en&ref_topic=4511280)
+    allow for the synchronization. Google recommends using [Google Cloud Directory Sync](https://support.google.com/a/topic/2679497)
     for this. 
 
     To learn more about synchronizing identities for Google Cloud, see

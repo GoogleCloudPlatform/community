@@ -127,7 +127,7 @@ instructions are also available in the
 
 ### Finish configuring the driver
 
-1.  Choose the [Google Cloud project ID](https://support.google.com/cloud/answer/6158840?hl=en) to use as the
+1.  Choose the [Google Cloud project ID](https://support.google.com/cloud/answer/6158840) to use as the
     billing project for queries by clicking the arrow on the **Catalog (project)** selection box.
 
     ![Choose a billing project](https://storage.googleapis.com/gcp-community/tutorials/bigquery-from-excel/billing-project.png)

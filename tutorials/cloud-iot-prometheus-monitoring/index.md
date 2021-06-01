@@ -619,7 +619,7 @@ While you can embed an iFrame for the complete edit view URL if you want the ful
 choices.
 
 Assuming a standard edit URL like the following, you can choose
-[**Publish to Web**](https://support.google.com/docs/answer/183965?co=GENIE.Platform%3DDesktop&hl=en),
+[**Publish to the web**](https://support.google.com/docs/answer/183965),
 which will make the document public and will automatically create the `iframe src` code for you if you choose to embed it:
 
 ```
@@ -627,7 +627,7 @@ https://docs.google.com/spreadsheets/d/1FvwKEqVbnY1k3ZfQ3SJNLr-CAb3U_3bIOIFe_XE2
 ```
 
 If you want to keep the document private to your shared recipients or a
-[group](https://support.google.com/a/answer/167101?hl=en), you can use a special URL to get the content.
+[group](https://support.google.com/a/answer/167101), you can use a special URL to get the content.
 Replace `edit#gid=0` in the URL with `htmlembed?single=true&gid=0&widget=false&chrome=false`. You can also
 add `range=f2:g6` if you want to further restrict to a specific range.
 
