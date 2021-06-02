@@ -102,6 +102,12 @@ Reminder: If you want to see detailed findings or run analysis on findings, we r
 
 ## Build
 
+Clone the source repository for this tutorial:
+
+    git clone https://github.com/GoogleCloudPlatform/community.git
+    cd community/tutorials/dlp-hybrid-inspect
+
+
 Run the following command to compile the script:
 
     mvn clean package -DskipTests
