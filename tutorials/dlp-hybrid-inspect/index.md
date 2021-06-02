@@ -102,15 +102,17 @@ Reminder: If you want to see detailed findings or run analysis on findings, we r
 
 ## Build
 
-Clone the source repository for this tutorial:
+1.  Clone the source repository for this tutorial:
 
-    git clone https://github.com/GoogleCloudPlatform/community.git
-    cd community/tutorials/dlp-hybrid-inspect
+        git clone https://github.com/GoogleCloudPlatform/community.git
+        
+1.  Go to the directory for this tutorial:
 
+        cd community/tutorials/dlp-hybrid-inspect
 
-Run the following command to compile the script:
+1.  Compile the script:
 
-    mvn clean package -DskipTests
+        mvn clean package -DskipTests
 
 ## Command-line parameters
 
