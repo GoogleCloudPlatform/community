@@ -60,8 +60,8 @@ You need to define several variables that control where elements of the infrastr
         ZONE=${REGION}-b
         PROJECT_ID=[YOUR_PROJECT_ID]
    
-   Replace `[YOUR_PROJECT_ID]` with your project ID. This tutorial uses the region `us-central1`. If you want to change the region, check that the zone 
-   values are appropriate for the region that you specify.
+    Replace `[YOUR_PROJECT_ID]` with your project ID. This tutorial uses the region `us-central1`. If you want to change the region, check that the zone 
+    values are appropriate for the region that you specify.
    
 1.  Enable all necessary services:
 
@@ -73,7 +73,7 @@ You need to define several variables that control where elements of the infrastr
         gcloud services enable cloudbuild.googleapis.com
         gcloud services enable cloudscheduler.googleapis.com
 
-1.  Set the zone and project ID so you don't have to specify these values in every subsequent command:
+1.  Set the zone and project ID so that you don't have to specify these values in subsequent commands:
 
         gcloud config set project ${PROJECT_ID}
         gcloud config set compute/zone ${ZONE}
@@ -144,9 +144,11 @@ The sample code for this tutorial is in the Google Cloud Community GitHub reposi
           --member=serviceAccount:cloud-scheduler-run@${PROJECT_ID}.iam.gserviceaccount.com \
           --role=roles/run.invoker
 
-1.  Create an App Engine app, because Cloud Scheduler depends on App Engine:
+1.  Create an App Engine app:
 
         gcloud app create --region=us-central
+        
+    Cloud Scheduler depends on App Engine.
 
 1.  Create the Cloud Scheduler job:
 
@@ -209,7 +211,6 @@ Run the Cloud Scheduler job:
 
     gcloud scheduler jobs run monitoring-job
 
-
 ### Create a dashboard
 
 1.  In the [Cloud Console](https://console.cloud.google.com/), select your Google Cloud project.
@@ -217,7 +218,7 @@ Run the Cloud Scheduler job:
 1.  In the **Find resource type and metric** field, enter `sales-demo`.
 1.  Select the metric that starts with `custom.googleapis.com/sales-demo`.
 
-    You might have to refresh the page to see the metric name.
+    You might need to refresh the page to see the metric name.
 
 1.  For the resource type, enter `Global` and select the **Global** resource type.
 1.  In the **Group by** menu, select **item**.
