@@ -38,11 +38,11 @@ app = Flask(__name__)
 def index():
     client = bigquery.Client()
 
-    # The bigquery_schema.json file has the BQ schema. Adjst the query as needed
-    # Keep in mind there can only be one data point for each time series
-    # You cannot add time seires older then existing ones in Cloud Monitoring
-    # For this particular query, we grab all rows in the last time interval
-    # with an ascending order
+    # The bigquery_schema.json file has the BigQuery schema. Adjust the query as needed.
+    # Keep in mind that there can only be one data point for each time series.
+    # You cannot add time series older than existing ones in Cloud Monitoring.
+    # For this particular query, we grab all rows in the last time interval, in
+    # ascending order
     query_job = client.query(
         f"""
         SELECT *
@@ -75,7 +75,7 @@ def send_metric(sales_item, sales_num, report_time):
     series.resource.type = "global"
     series.resource.labels["project_id"] = PROJECT_ID
 
-    # If needed, add more labes for filtering and grouping
+    # If needed, add more labels for filtering and grouping
     series.metric.labels["item"] = sales_item
 
     epoch = report_time.timestamp()
