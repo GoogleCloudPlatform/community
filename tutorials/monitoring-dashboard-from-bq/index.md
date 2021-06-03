@@ -3,30 +3,33 @@ title: Create a Cloud Monitoring chart with data From BigQuery
 description: Learn how to create Cloud Monitoring charts and dashboards using data from BigQuery.
 author: xiangshen-dk
 tags: monitoring, stackdriver, bigquery, cloud run
-date_published: 2021-05-20
+date_published: 2021-06-03
 ---
 
 Xiang Shen | Solutions Architect | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-This tutorial describes how to ingest data from [BigQuery](https://cloud.google.com/bigquery) to [Cloud Monitoring](https://cloud.google.com/monitoring) and visualize it on a dashboard. A typical use case is you have some business metric data stored in a BigQuery table and you want to plot the data along with the infrastructure metrics. Therefore, you can correlate the data and have a better understanding of your system.
+This tutorial describes how to ingest data from [BigQuery](https://cloud.google.com/bigquery) to [Cloud Monitoring](https://cloud.google.com/monitoring) and 
+visualize it on a dashboard. A typical use case is when you have some business metrics data stored in a BigQuery table and you want to plot the data along with
+the infrastructure metrics, so that you can correlate the data and have a better understanding of your system.
 
 ## Objectives 
 
-+   Create a serverless approach to ingest data from BigQuery
++   Create a serverless approach to ingest data from BigQuery.
 +   Visualize ingest metric data in Cloud Monitoring.
 
 ## Costs
 
-This tutorial uses billable components of Google Cloud, including:
+This tutorial uses billable components of Google Cloud, including the following:
 
 +   [Cloud Run](https://cloud.google.com/run/pricing)
 +   [Cloud Scheduler](https://cloud.google.com/scheduler/pricing)
 +   [BigQuery](https://cloud.google.com/bigquery/pricing)
-+   Chargeable [external metrics](https://cloud.google.com/stackdriver/pricing#metrics-chargeable)
++   [Chargeable external metrics](https://cloud.google.com/stackdriver/pricing#metrics-chargeable)
 
-To generate a cost estimate based on your projected usage, use the [Pricing Calculator](https://cloud.google.com/products/calculator#id=38ec76f1-971f-41b5-8aec-a04e732129cc).
+To generate a cost estimate based on your projected usage, use the
+[pricing calculator](https://cloud.google.com/products/calculator#id=38ec76f1-971f-41b5-8aec-a04e732129cc).
 
 ## Before you begin
 
