@@ -3,14 +3,18 @@ title: Use Prometheus and JMX to monitor Java applications on Google Kubernetes 
 description: Learn how to monitor Java applications running on GKE with Prometheus and Cloud Monitoring.
 author: xiangshen-dk
 tags: monitoring, stackdriver, prometheus, jmx, java
-date_published: 2021-05-20
+date_published: 2021-06-04
 ---
 
 Xiang Shen | Solutions Architect | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-This tutorial describes how to use [Prometheus](https://prometheus.io/) and [Java Management Extensions(JMX](https://en.wikipedia.org/wiki/Java_Management_Extensions)) to monitor a Java application running on a [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine) cluster. You'll learn how to deploy Prometheus, enable JMX monitoring and view metric data in Google [Cloud Monitoring](https://cloud.google.com/monitoring). The tutorial is for developers and operators who want to have better observability of the Java metrics exposed by JMX.
+This tutorial describes how to use [Prometheus](https://prometheus.io/) and
+[Java Management Extensions(JMX)](https://en.wikipedia.org/wiki/Java_Management_Extensions) to monitor a Java application running on a
+[Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine) cluster. This tutorial shows you how to deploy Prometheus, enable JMX monitoring, and view
+metrics data in [Cloud Monitoring](https://cloud.google.com/monitoring). This tutorial is for developers and operators who want to have better observability of
+the Java metrics exposed by JMX.
 
 ## Objectives 
 
