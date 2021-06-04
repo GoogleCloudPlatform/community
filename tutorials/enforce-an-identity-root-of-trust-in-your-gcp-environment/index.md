@@ -327,7 +327,7 @@ You must be a super admin to execute this step. Follow your ceremony to log in a
     ![IAM](https://storage.googleapis.com/gcp-community/tutorials/enforce-an-identity-root-of-trust-in-your-gcp-environment/image10.png)
 
 Before completing this root of trust ceremony, we recommend that you
-[export your Admin console logs](https://support.google.com/a/answer/4579579?hl=en) to a trusted SIEM (security information and event management) system. You can
+[export your Admin console logs](https://support.google.com/a/answer/4579579) to a trusted SIEM (security information and event management) system. You can
 do this with solutions like [Splunk](https://splunkbase.splunk.com/app/3791/#/details), or through automation with tools like the
 [CFT G Suite exporter](https://github.com/terraform-google-modules/terraform-google-gsuite-export) module in Google Cloud.
 If no existing solution is satisfying, you can export admin logs using custom code and the [G Suite SDK](https://developers.google.com/admin-sdk).
