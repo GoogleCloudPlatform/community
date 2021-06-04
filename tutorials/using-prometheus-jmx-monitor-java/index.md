@@ -104,7 +104,7 @@ You need to define several variables that control where elements of the infrastr
 
         kubectl apply -f clusterRole.yaml
 
-1.  Create the Prometheus `configmap` to scrape metrics from apps running in the `GKE` cluster:
+1.  Create the Prometheus configuration to scrape metrics from apps running in the `GKE` cluster:
 
         kubectl apply -f config-map.yaml
 
@@ -127,11 +127,13 @@ You need to define several variables that control where elements of the infrastr
     [Monitoring sidecar](https://github.com/Stackdriver/stackdriver-prometheus-sidecar). The Prometheus server container collects metrics from pods in the GKE
     cluster that are exporting Prometheus metrics. The server uses the Monitoring sidecar container to push metrics to Monitoring.
 
-1.  Wait a few moments and confirm that the status of the Prometheus pod is **Running**:
+1.  Confirm that the status of the Prometheus pod is **Running**:
 
         kubectl get pods -n prometheus
+        
+    Deployment can take a few minutes.
 
-    The output looks similar to the following:
+    When deployment is complete, the output looks similar to the following:
 
         NAME                                     READY   STATUS    RESTARTS   AGE
         prometheus-deployment-6d76c4f447-cbdlr   2/2     Running   0          38s
@@ -178,6 +180,7 @@ In this tutorial, you create a Spring Boot application to test the configuration
             -d artifactId=helloworld \
             -d baseDir=helloworld-gke \
             -o helloworld-gke.zip
+
         unzip helloworld-gke.zip
 
 1.  Go to the `helloworld-gke` directory:
@@ -192,7 +195,7 @@ In this tutorial, you create a Spring Boot application to test the configuration
 
         cp ../Dockerfile .
 
-    If you open the Dockerfile, you can see that it downloads the Prometheus [JMX_exporter](https://github.com/prometheus/jmx_exporter) and runs it as a
+    If you open the Dockerfile, you can see that it downloads the Prometheus [JMX exporter](https://github.com/prometheus/jmx_exporter) and runs it as a
     Java agent on port 9404:
 
         # Run the web service on container startup.
@@ -204,11 +207,11 @@ In this tutorial, you create a Spring Boot application to test the configuration
             "-Dserver.port=${PORT}","-jar", \
             "/helloworld.jar"]
 
-1.  Copy the configuration file for the JMX_exporter:
+1.  Copy the configuration file for the JMX exporter:
 
         cp ../config.yaml .
 
-    In the `JMX_exporter` repository, there are more [configuration examples](https://github.com/prometheus/jmx_exporter/tree/master/example_configs) for common
+    In the `jmx_exporter` repository, there are more [configuration examples](https://github.com/prometheus/jmx_exporter/tree/master/example_configs) for common
     applications such as Tomcat, Spark, and Kafka. 
 
     JMX is configured to use port 5555 and disable authentication and SSL. If you need to change the setup, refer to the
@@ -285,7 +288,7 @@ In this tutorial, you create a Spring Boot application to test the configuration
         hello        LoadBalancer   10.47.242.246   34.73.69.237   80:31374/TCP   62s
         kubernetes   ClusterIP      10.47.240.1     <none>         443/TCP        37m
 
-1.  When the external IP is provisioned, open a browser window using the external IP address as the URL.
+1.  When the external IP address is provisioned, open a browser window using the external IP address as the URL.
 
     For example, using the value from above: `http://34.73.69.237`.
 
