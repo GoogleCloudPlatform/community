@@ -138,27 +138,35 @@ You need to define several variables that control where elements of the infrastr
 
 ## Inspect Prometheus on the GKE cluster
 
-Using the Prometheus Kubernetes service account, Prometheus discovers resources that are running inside a GKE cluster. Some of these resources are already configured to export Prometheus metrics.
+Using the Prometheus Kubernetes service account, Prometheus discovers resources that are running in a GKE cluster. Some of these resources are already configured
+to export Prometheus metrics.
 
-1. Set up port forwarding to the Prometheus server UI that's running in the GKE cluster:
+1.  Set up port forwarding to the Prometheus server UI that's running in the GKE cluster:
 
         export PROMETHEUS_POD_GKE=$(kubectl get pods --namespace prometheus -l "app=prometheus-server" \
             -o jsonpath="{.items[0].metadata.name}")
+        
         kubectl port-forward --namespace prometheus $PROMETHEUS_POD_GKE 8080:9090 >> /dev/null &
 
-2. In Cloud Shell, click Web Preview at the top-right corner. Click Preview on port 8080. If the port is not 8080, click Change port, change the port to 8080, and then click Change and Preview. The Prometheus server UI is displayed.
+1.  In Cloud Shell, click **Web preview** in the upper-right corner of the panel, and choose **Preview on port 8080** from the menu that appears.
 
-3. In the Prometheus UI, click Status > Service Discovery. 
+    If the port is not 8080, click **Change port**, change the port to 8080, and then click **Change and preview**.
+    
+    The Prometheus server UI is displayed.
 
-![prom-service-discovery](https://storage.googleapis.com/gcp-community/tutorials/using-prometheus-jmx-monitor-java/prom-svc-discovery.png)
+1.  In the Prometheus UI, select **Status > Service discovery**. 
 
-4. Click Status > Targets.
+    ![prom-service-discovery](https://storage.googleapis.com/gcp-community/tutorials/using-prometheus-jmx-monitor-java/prom-svc-discovery.png)
 
-Targets are the HTTP(S) endpoints defined in resources that are exporting Prometheus metrics at regular intervals. You see various Kubernetes resources that are exporting metrics, for example, the Kubernetes API server exporting metrics from the /metrics HTTPS endpoint.
+1.  Click **Status > Targets**.
 
-## Creating the test Java application
+Targets are the HTTP(S) endpoints defined in resources that are exporting Prometheus metrics at regular intervals. You see various Kubernetes resources that are
+exporting metrics, such as the Kubernetes API server exporting metrics from the `/metrics` HTTPS endpoint.
 
-In this tutorial, you will create a Spring Boot HelloWorld application to test the configuration. If you want to learn more about the application, you can read the [quickstart for Java](https://cloud.google.com/kubernetes-engine/docs/quickstarts/deploying-a-language-specific-app#java_1).
+## Create the test Java application
+
+In this tutorial, you create a Spring Boot application to test the configuration. To learn more about the application, see the
+[quickstart for Java](https://cloud.google.com/kubernetes-engine/docs/quickstarts/deploying-a-language-specific-app#java_1).
 
 1.  In Cloud Shell, create a new empty web project:
 
@@ -172,17 +180,20 @@ In this tutorial, you will create a Spring Boot HelloWorld application to test t
             -o helloworld-gke.zip
         unzip helloworld-gke.zip
 
-    cd helloworld-gke
+1.  Go to the `helloworld-gke` directory:
 
-1.  Update the `HelloworldApplication` class by adding a `@RestController` to handle the `/` mapping and return the response we need.
+        cd helloworld-gke
+
+1.  Update the `HelloworldApplication` class by adding a `@RestController` to handle the `/` mapping and return the response that you need:
 
         cp ../HelloworldApplication.java src/main/java/com/example/helloworld/HelloworldApplication.java
 
-1.  Create the Dockerfile. You can copy the example from the cloned repository:
+1.  Copy the example Dockerfile from the cloned repository:
 
         cp ../Dockerfile .
 
-    If you open the Dockerfile, you can see we download the Prometheus [JMX_exporter ](https://github.com/prometheus/jmx_exporter)and run it as a java agent on port **9404**:
+    If you open the Dockerfile, you can see that it downloads the Prometheus [JMX_exporter](https://github.com/prometheus/jmx_exporter) and runs it as a
+    Java agent on port 9404:
 
         # Run the web service on container startup.
         CMD ["java", "-javaagent:./jmx_prometheus_javaagent-0.15.0.jar=9404:config.yaml", \
@@ -193,13 +204,15 @@ In this tutorial, you will create a Spring Boot HelloWorld application to test t
             "-Dserver.port=${PORT}","-jar", \
             "/helloworld.jar"]
 
-1.  Copy the config file for the JMX_exporter
+1.  Copy the configuration file for the JMX_exporter:
 
         cp ../config.yaml .
 
-    > In the JMX_exporter repository, there are more [configuration examples](https://github.com/prometheus/jmx_exporter/tree/master/example_configs) for common applications such as Tomcat, Spark, and Kafka. 
+    In the `JMX_exporter` repository, there are more [configuration examples](https://github.com/prometheus/jmx_exporter/tree/master/example_configs) for common
+    applications such as Tomcat, Spark, and Kafka. 
 
-    > Also note, JMX is configured to use port 5555 and disabled authentication and SSL. If you need to change the setup, refer to the [JMX documentation](https://docs.oracle.com/en/java/javase/11/management/monitoring-and-management-using-jmx-technology.html).
+    JMX is configured to use port 5555 and disable authentication and SSL. If you need to change the setup, refer to the
+    [JMX documentation](https://docs.oracle.com/en/java/javase/11/management/monitoring-and-management-using-jmx-technology.html).
 
 1.  Build the container image using Cloud Build:
 
@@ -209,129 +222,124 @@ In this tutorial, you will create a Spring Boot HelloWorld application to test t
 
         envsubst < ../helloworld-deployment.yaml | kubectl apply -f -
 
-If you open the **helloworld-deployment.yaml** file, you can see that we use the annotations in the Deployment to let Prometheus know to scrape the metrics and on which port:
+    If you open the `helloworld-deployment.yaml` file, you can see that it uses the annotations in the Deployment to let Prometheus know to scrape the metrics 
+    and on which port:
 
-    # This file configures the hello-world app which serves public web traffic.
-    apiVersion: apps/v1
-    kind: Deployment
-    metadata:
-     name: helloworld-gke
-    spec:
-     replicas: 1
-     selector:
-       matchLabels:
-         app: hello
-     template:
-       metadata:
-         labels:
+        # This file configures the hello-world app which serves public web traffic.
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+         name: helloworld-gke
+        spec:
+         replicas: 1
+         selector:
+           matchLabels:
+             app: hello
+         template:
+           metadata:
+             labels:
+               app: hello
+             annotations:
+               prometheus.io/scrape: 'true'
+               prometheus.io/port: '9404'
+           spec:
+             containers:
+             - name: hello-app
+               # Replace $GCLOUD_PROJECT with your project ID
+               image: gcr.io/${GCP_PROJECT}/helloworld-gke:latest
+               # This app listens on port 8080 for web traffic by default.
+               ports:
+               - containerPort: 8080
+               env:
+                 - name: PORT
+                   value: "8080"
+        ---
+        apiVersion: v1
+        kind: Service
+        metadata:
+         name: hello
+        spec:
+         type: LoadBalancer
+         selector:
            app: hello
-         annotations:
-           prometheus.io/scrape: 'true'
-           prometheus.io/port: '9404'
-       spec:
-         containers:
-         - name: hello-app
-           # Replace $GCLOUD_PROJECT with your project ID
-           image: gcr.io/${GCP_PROJECT}/helloworld-gke:latest
-           # This app listens on port 8080 for web traffic by default.
-           ports:
-           - containerPort: 8080
-           env:
-             - name: PORT
-               value: "8080"
-    ---
-    apiVersion: v1
-    kind: Service
-    metadata:
-     name: hello
-    spec:
-     type: LoadBalancer
-     selector:
-       app: hello
-     ports:
-     - port: 80
-       targetPort: 8080
+         ports:
+         - port: 80
+           targetPort: 8080
 
 1.  View the status of the `helloworld-gke` pods:
 
-    kubectl get pods
+        kubectl get pods
 
-    Repeat this command until the output looks like the following, with the helloworld-gke pod running:
+    Repeat this command until the output looks like the following, with the `helloworld-gke` pod running:
 
-    NAME                              READY   STATUS    RESTARTS   AGE
-    helloworld-gke-54c5b678c6-csdlw   1/1     Running   0          28s
+        NAME                              READY   STATUS    RESTARTS   AGE
+        helloworld-gke-54c5b678c6-csdlw   1/1     Running   0          28s
 
-1.  View the service is deployed:
+1.  Check to see that the service is deployed:
 
-    kubectl get services
-    NAME         TYPE           CLUSTER-IP      EXTERNAL-IP    PORT(S)        AGE
-    hello        LoadBalancer   10.47.242.246   34.73.69.237   80:31374/TCP   62s
-    kubernetes   ClusterIP      10.47.240.1     <none>         443/TCP        37m
+        kubectl get services
+        
+    The output should be similar to the following:
+    
+        NAME         TYPE           CLUSTER-IP      EXTERNAL-IP    PORT(S)        AGE
+        hello        LoadBalancer   10.47.242.246   34.73.69.237   80:31374/TCP   62s
+        kubernetes   ClusterIP      10.47.240.1     <none>         443/TCP        37m
 
-1.  When the external IP is provisioned, open a browser window using the external IP as the URL. For the above example you should use:
+1.  When the external IP is provisioned, open a browser window using the external IP address as the URL.
 
-> [http://34.73.69.237](http://34.73.69.237)
+    For example, using the value from above: `http://34.73.69.237`.
 
-> When the service is running, you will see the response `Hello World!`
+    When the service is running, you see the response `Hello World!`
 
-## Viewing metrics in Prometheus UI
+## View the exported JVM metrics in Prometheus
 
-1.  In the Prometheus UI, view the exported JVM metrics. In the Expression field, type in the metric` jvm_memory_bytes_used` in the search field and click the **Graph** tab. You will see a graph similar to the following:
+1.  In Prometheus, in the **Expression** field, type `jvm_memory_bytes_used` in the search field and click the **Graph** tab.
 
-![jvm-memory-bytes](https://storage.googleapis.com/gcp-community/tutorials/using-prometheus-jmx-monitor-java/prom-cloud-monitoring.png)
+    You see a graph similar to the following:
 
-## Viewing metrics in Cloud Monitoring
+    ![jvm-memory-bytes](https://storage.googleapis.com/gcp-community/tutorials/using-prometheus-jmx-monitor-java/prom-cloud-monitoring.png)
 
-Prometheus is configured to export metrics to Google Cloud's operations suite as [external metrics](https://cloud.google.com/monitoring/api/metrics_other#externalgoogleapiscom).  
-To view these metrics:
+## View the exported JVM metrics in Cloud Monitoring
 
-1.  In the Cloud Console, select **[Monitoring**](https://console.cloud.google.com/monitoring).
+Prometheus is configured to export metrics to Google Cloud's operations suite as
+[external metrics](https://cloud.google.com/monitoring/api/metrics_other#externalgoogleapiscom).  
 
-    +   If it's your first time using Cloud Monitoring, you need to [create a workspace](https://cloud.google.com/monitoring/workspaces/create).
+1.  In the Cloud Console to the [Cloud Monitoring **Metrics explorer** page](https://console.cloud.google.com/monitoring/metrics-explorer).
+1.  In the **Find resource type and metric** menu, select **Kubernetes Container** (`k8s_container`) for the **Resource type**.
+1.  For the **Metric** field, select one with the prefix `external/prometheus/`. For example, you might
+    select `external.googleapis.com/prometheus/jvm_memory_bytes_used`.
 
-1.  In the Monitoring navigation pane, click **Metrics Explorer**.
-1.  In the **Find resource type and metric menu**:
+    In the following example, a filter was added to display the metrics for a specific cluster and a container. Filtering is useful when you have multiple
+    clusters and many containers:
 
-    +   Select **Kubernetes Container** (`k8s_container`) for the **Resource type**.
-    +   For the **Metric** field, select one with the prefix `external/prometheus/`. For example, you might select `external.googleapis.com/prometheus/jvm_memory_bytes_used`
-
-1.  In the following example, a filter was added to display the metrics for a specific cluster and a container. Filtering is useful when you have multiple clusters and many containers:
-
-![image](https://storage.googleapis.com/gcp-community/tutorials/using-prometheus-jmx-monitor-java/metric-explorer.png)
+    ![image](https://storage.googleapis.com/gcp-community/tutorials/using-prometheus-jmx-monitor-java/metric-explorer.png)
 
 ## Cleaning up
 
 ### Delete the project
 
-The easiest way to eliminate billing is to delete the project you created for the tutorial.  
-**Caution**: Deleting a project has the following effects:
+The easiest way to eliminate billing is to delete the project you created for the tutorial.
 
-+   **Everything in the project is deleted.** If you used an existing project for this tutorial, when you delete it, you also delete any other work you've done in the project.
-+   **Custom project IDs are lost.** When you created this project, you might have created a custom project ID that you want to use in the future. To preserve the URLs that use the project ID, such as an **`appspot.com`** URL, delete selected resources inside the project instead of deleting the whole project.
-
-If you plan to explore multiple tutorials and quickstarts, reusing projects can help you avoid exceeding project quota limits.
-
-1.  In the Cloud Console, go to the **Manage resources** page.  
-[Go to the Manage resources page](https://console.cloud.google.com/iam-admin/projects)
-1.  In the project list, select the project that you want to delete and then click **Delete**     ![image](https://drive.google.com/uc?export=view&id=1Uth4UEGpVYwsP-mhCLOV7BYVWqRfU25D)
-
+1.  In the Cloud Console, go to the [**Manage resources** page](https://console.cloud.google.com/iam-admin/projects).
+1.  In the project list, select the project that you want to delete and then click **Delete**.
 1.  In the dialog, type the project ID and then click **Shut down** to delete the project.
 
 ### Delete the individual resources
 
-If you don't want to delete the whole project, run the following command to delete the resources: 
+If you don't want to delete the whole project, run the following command to delete the clusters: 
 
     gcloud container clusters delete jmx-demo-cluster --zone us-east1-b
 
-## You can delete the container images using the following steps:
+You can delete the container images using the following steps:
 
 1.  Go to the [Container Registry page](https://console.cloud.google.com/kubernetes/images/list).
-1.  Click the **helloworld-gke** image, select all versions by marking the checkbox next to **Name**. 
-1.  Click **DELETE** at the top of the page.
+1.  Click the `helloworld-gke` image, and select all versions by marking the checkbox next to **Name**. 
+1.  Click **Delete** at the top of the page.
 
 ## What's next
 
-+   Learn about [White-box app monitoring for GKE with Prometheus](https://cloud.google.com/solutions/white-box-app-monitoring-for-gke-with-prometheus).
-+   Read about the [Cloud Monitoring integration with Prometheus](https://cloud.google.com/stackdriver/docs/solutions/gke/prometheus).
-+   Learn about [Monitoring apps running on multiple GKE clusters using Prometheus and Cloud Monitoring](https://cloud.google.com/solutions/monitoring-apps-running-on-multiple-gke-clusters-using-prometheus-and-stackdriver).
++   Learn about [white-box app monitoring for GKE with Prometheus](https://cloud.google.com/solutions/white-box-app-monitoring-for-gke-with-prometheus).
++   Learn about the [Cloud Monitoring integration with Prometheus](https://cloud.google.com/stackdriver/docs/solutions/gke/prometheus).
++   Learn about
+    [Monitoring apps running on multiple GKE clusters using Prometheus and Cloud Monitoring](https://cloud.google.com/solutions/monitoring-apps-running-on-multiple-gke-clusters-using-prometheus-and-stackdriver).
 +   Try out other Google Cloud features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
