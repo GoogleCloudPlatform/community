@@ -25,60 +25,74 @@ the Java metrics exposed by JMX.
 
 ## Costs
 
-This tutorial uses billable components of Google Cloud, including:
+This tutorial uses billable components of Google Cloud, including the following:
 
-+   A [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/pricing) cluster.
-+   A [Cloud Load balancer](https://cloud.google.com/vpc/network-pricing#lb)
++   [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/pricing)
++   [Cloud Load Balancing](https://cloud.google.com/vpc/network-pricing#lb)
 +   [Compute Engine](https://cloud.google.com/compute/pricing)
 +   Chargeable [external metrics](https://cloud.google.com/stackdriver/pricing#metrics-chargeable)
 
-To generate a cost estimate based on your projected usage, use the [Pricing Calculator](https://cloud.google.com/products/calculator#id=38ec76f1-971f-41b5-8aec-a04e732129cc).
+To generate a cost estimate based on your projected usage, use the
+[pricing calculator](https://cloud.google.com/products/calculator#id=38ec76f1-971f-41b5-8aec-a04e732129cc).
 
 ## Before you begin
 
-For this tutorial, you need a Google Cloud [project](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#projects). You can create a new project or select a project that you have already created. When you finish this tutorial, you can avoid continued billing by deleting the resources that you created. To make cleanup easiest, you may want to create a new project for this tutorial, so that you can delete the project when you're done. For details, see the "Cleaning up" section at the end of the tutorial.
+For this tutorial, you need a Google Cloud [project](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#projects). You can create a
+new project or select a project that you have already created. When you finish this tutorial, you can avoid continued billing by deleting the resources that you
+created. To make cleanup easiest, you may want to create a new project for this tutorial, so that you can delete the project when you're done. For details, see
+the "Cleaning up" section at the end of the tutorial.
 
 1.  [Select or create a Google Cloud project.](https://cloud.console.google.com/projectselector2/home/dashboard)
 1.  [Enable billing for your project.](https://support.google.com/cloud/answer/6293499#enable-billing)
-1.  [Enable the Kubernetes Engine, Container Registry, and Cloud Monitoring APIs.](https://console.cloud.google.com/flows/enableapi?apiid=containerregistry.googleapis.com,container.googleapis.com,monitoring.googleapis.com,cloudbuild.googleapis.com)
-1.  Make sure that you have either a project [owner or editor role](https://cloud.google.com/iam/docs/understanding-roles#primitive_roles), or sufficient permissions to use the services listed above.
+1.  [Enable the Kubernetes Engine, Container Registry, Cloud Monitoring, and Cloud Build APIs.](https://console.cloud.google.com/flows/enableapi?apiid=containerregistry.googleapis.com,container.googleapis.com,monitoring.googleapis.com,cloudbuild.googleapis.com)
+1.  Make sure that you have either a [project owner or editor role](https://cloud.google.com/iam/docs/understanding-roles#primitive_roles), or sufficient 
+    permissions to use the services listed above. 
 
-When you finish this tutorial, you can avoid continued billing by deleting the resources you created. See [Cleaning up](#heading=h.e6uzvad6vamz) for more detail.  
+This tutorial uses the [gcloud](https://cloud.google.com/sdk/gcloud) command-line tool. We recommend that you run the commands in this tutorial in
+[Cloud Shell](https://cloud.google.com/shell).
 
-## Initializing common variables  
+## Set common variables
+
 You need to define several variables that control where elements of the infrastructure are deployed.
 
-1.  Open Cloud Shell that has **gcloud** installed and configured.
-1.  Set the variables used in this tutorial. The tutorial sets the region to `us-east-1`. If you want to change the region, ensure that the zone values reference the region you specify.
+1.  In Cloud Shell, set the region, zone, and project ID:
 
         region=us-east1
         zone=${region}-b
-        project_id=[YOUR_PROJECT_ID] 
+        project_id=[YOUR_PROJECT_ID]
+        
+    Replace `[YOUR_PROJECT_ID]` with your project ID. This tutorial uses the region `us-east1`. If you want to change the region, check that the zone 
+    values are appropriate for the region that you specify.
 
-1.  Run the following commands to set the default zone and project ID so you don't have to specify these values in every subsequent command:
+1.  Set the default zone and project ID so that you don't need to specify these values in subsequent commands:
 
         gcloud config set project ${project_id}
         gcloud config set compute/zone ${zone}
 
-## Creating the GKE cluster
+## Create the GKE cluster
 
-1. In Cloud Shell, create the GKE cluster:
+1.  In Cloud Shell, create the GKE cluster:
 
         gcloud container clusters create jmx-demo-cluster \
-        --zone ${zone} \
-        --tags=gke-cluster-with-jmx-monitoring
+          --zone ${zone} \
+          --tags=gke-cluster-with-jmx-monitoring
 
-2. Wait a few minutes until the cluster is successfully created. Ensure that the cluster's status is **RUNNING**. You can also run the following command to view the status:
+1.  Wait a few minutes until the cluster is successfully created, and ensure that the cluster's status is **RUNNING**.
+
+    You can run the following command to view the status:
 
         gcloud container clusters list
 
-## Installing and configuring the Prometheus server
+## Install and configure the Prometheus server
 
-1. Clone the sample repository. The sample repository includes the Kubernetes manifests for Prometheus and the demo app that you will deploy:
+
+1.  Clone the sample repository:
 
         git clone https://github.com/xiangshen-dk/gke-prometheus-jmx.git
 
-1. Change your working directory to the cloned repository:</li>
+    The sample repository includes the Kubernetes manifests for Prometheus and the demonstration app that you deploy.
+    
+1.  Go to the directory that contains the tutorial files:
 
         cd gke-prometheus-jmx
 
@@ -94,8 +108,6 @@ You need to define several variables that control where elements of the infrastr
 
         kubectl apply -f config-map.yaml
 
-Next task is to create the Prometheus server deployment. The manifest in the next step creates the Prometheus deployment with a single pod. The pod is composed of two containers: the Prometheus server container and Google's [Monitoring sidecar](https://github.com/Stackdriver/stackdriver-prometheus-sidecar). The Prometheus server container collects metrics from pods in the GKE cluster that are exporting Prometheus metrics. The server uses the Monitoring sidecar container to push metrics to Monitoring.
-
 1.  Define environment variables used in the Prometheus deployment manifest:
 
         export KUBE_NAMESPACE=prometheus
@@ -110,15 +122,19 @@ Next task is to create the Prometheus server deployment. The manifest in the nex
 1.  Apply the Prometheus deployment manifest by using the environment variables you defined:
 
         envsubst < prometheus-deployment.yaml | kubectl apply -f -
+   
+    The manifest creates the Prometheus deployment with a single pod. The pod is composed of two containers: the Prometheus server container and Google's
+    [Monitoring sidecar](https://github.com/Stackdriver/stackdriver-prometheus-sidecar). The Prometheus server container collects metrics from pods in the GKE
+    cluster that are exporting Prometheus metrics. The server uses the Monitoring sidecar container to push metrics to Monitoring.
 
-1.  Wait a few moments and confirm that the Prometheus pod is **Running**:
+1.  Wait a few moments and confirm that the status of the Prometheus pod is **Running**:
 
         kubectl get pods -n prometheus
 
-> The output looks similar to the following:
+    The output looks similar to the following:
 
-    NAME                                     READY   STATUS    RESTARTS   AGE
-    prometheus-deployment-6d76c4f447-cbdlr   2/2     Running   0          38s
+        NAME                                     READY   STATUS    RESTARTS   AGE
+        prometheus-deployment-6d76c4f447-cbdlr   2/2     Running   0          38s
 
 ## Inspect Prometheus on the GKE cluster
 
