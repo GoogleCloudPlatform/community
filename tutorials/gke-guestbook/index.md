@@ -21,11 +21,11 @@ Console to guide you.
 
 In this walkthrough you’ll do the following:
 
-* Create a Kubernetes Engine Cluster.
-* Install Redis and webserver in cluster. 
-* Configure Redis and webserver to be accessible on the internet. 
+* Create a Kubernetes Engine cluster.
+* Install Redis and a webserver in the cluster. 
+* Configure Redis and the webserver to be accessible on the internet. 
 
-[![Open walkthrough in the Cloud Console](https://storage.googleapis.com/gcp-community/tutorials/compute-quickstart/tutorial.png)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=gke_guestbook)
+[![Open walkthrough in the Cloud Console](https://storage.googleapis.com/gcp-community/tutorials/gke-guestbook/tutorial.png)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=gke_guestbook)
 
 [gke-docs]: https://cloud.google.com/kubernetes-engine/
 [gke-registry]: https://cloud.google.com/container-registry
