@@ -6,11 +6,9 @@ tags: Compute Engine, Walkthrough
 date_published: 2019-07-31
 ---
 
-Jeff Scudder‎  | Software Engineer | Google
+Jeff Scudder  | Software Engineer | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
-
-<!-- {% setvar project_id "<your-project>" %} -->
 
 Use this interactive walkthrough to learn how to create a virtual machine 
 instance in Compute Engine using the Cloud Console. There are step-by-step 
@@ -23,8 +21,8 @@ guide you.
 
 In this walkthrough you’ll do the following:
 
-* Create and configure a VMs
-* Create an index.html file
-* Start a Python webserver 
+* Create and configure a virtual machine (VM).
+* Create an `index.html` file.
+* Start a Python webserver.
 
-[![Open walkthrough in the Cloud Console](https://storage.googleapis.com/gcp-community/tutorials/compute_short_quickstart/tutorial.png)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=bigquery_import_data_from_cloud_storage)
+[![Open walkthrough in the Cloud Console](https://storage.googleapis.com/gcp-community/tutorials/compute-short-quickstart/tutorial.png)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=bigquery_import_data_from_cloud_storage)
