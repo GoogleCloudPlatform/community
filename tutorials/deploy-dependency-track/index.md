@@ -1,6 +1,6 @@
 ---
-title: Deploying OWASP Dependency Track to Google Cloud
-description: Learn how to deploy the OWASP Dependency Track system to Google Kubernetes Engine.
+title: Deploy OWASP Dependency-Track to Google Cloud
+description: Learn how to deploy the OWASP Dependency-Track system to Google Kubernetes Engine.
 author: dedickinson
 tags: owasp, dependency track, kubernetes, cloud build, cloud sql, supply chain
 date_published: 2020-05-21
@@ -10,40 +10,39 @@ Duncan Dickinson | Customer Engineer | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-The [OWASP Dependency-Track project](https://owasp.org/www-project-dependency-track/)
-is a component analysis platform for tracking dependencies, their 
-licences and associated vulnerabilities. It's a very useful tool to get up and running as
-you build out your software supply chain approach.
+In this tutorial, you deploy [Dependency-Track](https://dependencytrack.org/) to Google Cloud
+and use it to alert you to vulnerabilities in a small Python demonstration system.
 
-Dependency Track accepts Software Bill of Materials (SBOMs) in [CycloneDX](https://cyclonedx.org/)
-format. This can be provided either on an ad-hoc basis or as part of your deployment system.
+The [OWASP Dependency-Track project](https://owasp.org/www-project-dependency-track/)
+is a component analysis platform for tracking dependencies, their licenses, and associated vulnerabilities.
+Dependency-Track is a useful tool as you build out your software supply chain.
+
+Dependency-Track accepts software bills of materials (SBOMs) in [CycloneDX](https://cyclonedx.org/)
+format, which you can provide either on an ad-hoc basis or as part of your deployment system.
 The approach is useful in a number of scenarios:
 
-- Software vendors can provide you SBOMs when they deliver/sell you a software project
-- Teams building and deploying software can submit SBOMs when new versions are deployed
-- You can manually list dependencies for legacy systems
+- Software vendors can provide you SBOMs when they deliver a software project.
+- Teams building and deploying software can submit SBOMs when new versions are deployed.
+- You can manually list dependencies for legacy systems.
 
-Using Dependency Track gives you one element towards managing your approach to monitoring 
-and responding to  
-[Using Components with Known Vulnerabilities](https://owasp.org/www-project-top-ten/2017/A9_2017-Using_Components_with_Known_Vulnerabilities)
-from the OWASP Top-10. The idea is to have an inventory of components in use across your environment. 
-Using a variety of resources such as the 
+Using Dependency-Track helps you to monitor and respond to vulnerabilites in components in your systems.
+[Using components with known vulnerabilities](https://owasp.org/www-project-top-ten/2017/A9_2017-Using_Components_with_Known_Vulnerabilities)
+is one of the [top 10 web application security risks](https://owasp.org/www-project-top-ten/) identified by the Open Web Application Security Project (OWASP). 
+If you have an inventory of components in use across your environment, then you can use resources such as the
 [National Vulnerability Database](https://docs.dependencytrack.org/datasources/nvd/)
-you can then determine if you have vulnerable components and respond in accordance with your 
-organisation's processes. 
+to determine whether you have vulnerable components, and respond according to your organization's processes.
 
-This tutorial deploys [Dependency Track](https://dependencytrack.org/) to Google Cloud
-and illustrates its use in a small Python demo.
+You run the commands in this tutorial in [Cloud Shell](https://cloud.google.com/shell). This tutorial assumes that you are comfortable running commands in a 
+Linux command shell.
+
+This tutorial takes approximately 2-4 hours to complete.
 
 ## Objectives
 
-1. [Generate an SBOM](#generate-an-sbom) takes you through creating an SBOM for a basic project.
-1. [Prepare the Dependency Track images](#prepare-the-dependency-track-images) sets up an Artifact Registry 
-  and the required images.
-1. [Deploy Dependency Track](#deploy-dependency-track) deploys Dependency Track to Google Kubernetes Engine. 
-1. [Using Dependency Track](#using-dependency-track) will then demonstrate uploading an SBOM and integrating
-    Cloud Build.
-
+1. Generate a bill of materials (BOM) for a basic project.
+1. Set up Artifact Registry and prepare the Dependency-Track images.
+1. Deploy Dependency-Track to Google Kubernetes Engine. 
+1. Upload a BOM and integrate Cloud Build.
 
 ## Costs
 
@@ -55,171 +54,145 @@ This tutorial uses billable components of Google Cloud, including the following:
 *   [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine)
 *   [Cloud SQL](https://cloud.google.com/sql/)
 
-Use the [pricing calculator](https://cloud.google.com/products/calculator) 
-to generate a cost estimate based on your projected usage.
+Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage.
 
 ## Before you begin
 
-This is an advanced tutorial that will take approximately 2-4 hours to complete.
+You need access to a domain for which you can create two sub-domains, one for the frontend and one for the API server. If you do not have a domain,
+you can register one with [Google Domains](https://domains.google.com).
 
-In order to follow this tutorial, you need to be comfortable using the Linux shell.
+### Set up Google Cloud project
 
-You will need a [Google Cloud](https://cloud.google.com/) account and a 
-[project](https://cloud.google.com/resource-manager/docs/creating-managing-projects) with
-a billing account attached. It is strongly recommended that you create a project specifically
-for this tutorial and not reuse an existing project. You will need to be a 
-[project owner](https://cloud.google.com/iam/docs/understanding-roles#basic-definitions)
-for your chosen project.
+To complete this tutorial, you need a
+[Google Cloud project](https://cloud.google.com/resource-manager/docs/creating-managing-projects)
+with [billing enabled](https://cloud.google.com/billing/docs/how-to/modify-project#enable_billing_for_a_project).
+We recommend that you create a new project specifically for this tutorial.
 
-You should follow this guide in [Cloud Shell](https://cloud.google.com/shell) 
-as it has all of the software required by this tutorial.
+You must have the [project owner](https://cloud.google.com/iam/docs/understanding-roles#basic-definitions) role for the project.
 
-You will need access to a domain for which you can create two sub-domains - 
-one for each of the Frontend and the API Server. If you do not have a domain you can visit
-[Google Domains](https://domains.google.com) and register one there.
+1.  In [Cloud Shell](https://cloud.google.com/shell), set a project ID environment variable, replacing `[YOUR_PROJECT_ID]` with your
+    [Google Cloud project ID](https://cloud.google.com/resource-manager/docs/creating-managing-projects#before_you_begin):
 
-### Prepare your shell
+        export GCP_PROJECT_ID=[YOUR_PROJECT_ID]
 
-Enter the commands below into Cloud Shell - 
-_making sure you replace `<YOUR PROJECT ID>` with your desired Project ID._:
+1.  Set the working project for the `gcloud` environment:
 
-```bash
-export GCP_PROJECT_ID=<YOUR PROJECT ID>
-gcloud config set project $GCP_PROJECT_ID
+        gcloud config set project $GCP_PROJECT_ID
 
-export GCP_REGION=us-central1
-```
+1.  Set an environment variable for your Google Cloud region:
 
-### Clone the repository
+        export GCP_REGION=us-central1
 
-This tutorial utilises a number of files so we'll clone the tutorial 
-repository and change into this tutorial's directory:
+### Get the tutorial files
 
-```bash
-git clone https://github.com/GoogleCloudPlatform/community.git
-cd community/tutorials/deploy-dependency-track
-```
+1.  Clone the tutorial repository:
 
-_Note:_ A basic set up script is available in [scripts/services.sh](scripts/services.sh).
-This can be useful if your Cloud Shell session is disconnected but be aware that the script does not
-set up all variables etc. You don't need to run this now - just remember that it's available.
-Please ensure you review the script before running the command below:
+        git clone https://github.com/GoogleCloudPlatform/community.git
 
-```bash
-source scripts/services.sh
-```
+1.  Go to the tutorial directory:
 
-## Generate an SBOM
+        cd community/tutorials/deploy-dependency-track
+        
+### Install `pip` and `poetry` packages
 
-The demonstration ("demo") project has no code - 
-it's just there to include some libraries (namely `flask` and a very old version of `Django`).
+1.  Upgrade `pip`:
 
-__WARNING__: The demonstration project includes a very old version of Django with known vulnerabilities.
-Do not try to run the project - it is purely set up to demonstrate Dependency Track's ability to report
-on vulnerabilities.
+        pip3 install --upgrade pip
 
-Run the following commands in Cloud Shell to set up the project:
+1.  Install `poetry`, a package for dependency management:
 
-```bash
-# Upgrade pip 
-pip3 install --upgrade pip
+        python3 -m pip install poetry --user
+        
+1.  Add the installation directories to your `PATH` variable so that you can run the installed software:
 
-# Install poetry
-python3 -m pip install poetry --user
-export PATH=$PATH:$HOME/.local/bin
+        export PATH=$PATH:$HOME/.local/bin
 
-# Prepare the demo project
-cd demo-project
-poetry install
-```
+## Generate a software bill of materials
 
-Now run `poetry show --tree` and you will see the project's set of dependencies (snippet below):
+The demonstration project has no functional code; it's just there to include the `flask` library and a very old version of the `django` library.
 
-```
-django 1.2 A high-level Python Web framework that encourages rapid development and clean, pragmatic design.
-flask 1.1.2 A simple framework for building complex web applications.
-├── click >=5.1
-├── itsdangerous >=0.24
-├── jinja2 >=2.10.1
-│   └── markupsafe >=0.23 
-└── werkzeug >=0.15
-```
+__WARNING__: The demonstration project includes a very old version of Django with known vulnerabilities. Do not try to run the project. It is only set up to
+demonstrate Dependency-Track's ability to report on vulnerabilities.
 
-The [CycloneDX](https://cyclonedx.org/) project defines a schema for 
-software bill of materials (SBOMs) as well as providing 
-[tools](https://cyclonedx.org/tool-center/) that can be used with various programming languages
-and CI/CD tools. 
-The Python version ([`cyclonedx-bom`](https://pypi.org/project/cyclonedx-bom/)) is included 
-as a development dependency of the demo project. 
+The [CycloneDX](https://cyclonedx.org/) project defines a schema for software bills of materials (SBOMs), as well as providing 
+[tools](https://cyclonedx.org/tool-center/) that you can use with various programming languages and CI/CD tools.
 
-Use `poetry` to generate a `requirements.txt` file:
+The Python version ([`cyclonedx-bom`](https://pypi.org/project/cyclonedx-bom/)) is included as a development dependency of the demonstration project. 
 
-```bash
-poetry export --without-hashes>requirements.txt
-```
+1.  Go to the demonstration project directory:
 
-You'll see the familiar `requirements.txt` file has been created. 
+        cd demo-project
 
-Now, generate a JSON-formatted Cyclone DX SBOM:
+1.  Install the demonstration project with `poetry`
 
-```bash
-poetry run cyclonedx-py -j
-```
+        poetry install
 
-The `requirements.txt` file  is read by `cyclonedx-py` to produce `bom.json`.
-Taking a look at that file you can see some interesting
-aspects of the SBOM. Each of the `components` contains details for each dependency - for example:
+1.  Show the project's dependencies:
 
-```json
-{
-    "description": "A simple framework for building complex web applications.",
-    "hashes": [
+        poetry show --tree
+
+    The following is an excerpt of the dependency graph output:
+    
+        django 1.2 A high-level Python Web framework that encourages rapid development and clean, pragmatic design.
+        flask 1.1.2 A simple framework for building complex web applications.
+        ├── click >=5.1
+        ├── itsdangerous >=0.24
+        ├── jinja2 >=2.10.1
+        │   └── markupsafe >=0.23 
+        └── werkzeug >=0.15
+
+1.  Use `poetry` to generate a `requirements.txt` file:
+
+        poetry export --without-hashes>requirements.txt
+
+1.  Generate a CycloneDX BOM in JSON format:
+
+        poetry run cyclonedx-py -j
+
+    `cyclonedx-py` processes the `requirements.txt` file to produce the `bom.json` file.
+
+1.  View the `bom.json` file in a text editor.
+
+    The following is an excerpt that shows the details for the `flask` component, including its name, publisher, version, licenses,
+    and [package URL (purl)](https://github.com/package-url/purl-spec): 
+
         {
-            "alg": "MD5",
-            "content": "1811ab52f277d5eccfa3d7127afd7f92"
-        },
-        {
-            "alg": "SHA-256",
-            "content": "8a4fdd8936eba2512e9c85df320a37e694c93945b33ef33c89946a340a238557"
+            "description": "A simple framework for building complex web applications.",
+            "hashes": [
+                {
+                    "alg": "MD5",
+                    "content": "1811ab52f277d5eccfa3d7127afd7f92"
+                },
+                {
+                    "alg": "SHA-256",
+                    "content": "8a4fdd8936eba2512e9c85df320a37e694c93945b33ef33c89946a340a238557"
+                }
+            ],
+            "licenses": [
+                {
+                    "license": {
+                        "name": "BSD-3-Clause"
+                    }
+                }
+            ],
+            "modified": false,
+            "name": "flask",
+            "publisher": "Armin Ronacher",
+            "purl": "pkg:pypi/flask@1.1.2",
+            "type": "library",
+            "version": "1.1.2"
         }
-    ],
-    "licenses": [
-        {
-            "license": {
-                "name": "BSD-3-Clause"
-            }
-        }
-    ],
-    "modified": false,
-    "name": "flask",
-    "publisher": "Armin Ronacher",
-    "purl": "pkg:pypi/flask@1.1.2",
-    "type": "library",
-    "version": "1.1.2"
-}
-```
 
-From that snippet you can see:
-
-- The component details - name, publisher, version etc
-- The licenses on the project
-- A [Package URL (purl)](https://github.com/package-url/purl-spec) for the project (`pkg:pypi/flask@1.1.2`) - used 
-    to easily reference/identify a component across the veritable sea of languages and packaging types/protocols
-    in use today
-
-We'll return to the `bom` file when we've set up a Dependency Track service.
-
-
-## Prepare the Dependency Track images
+## Prepare the Dependency-Track images
 
 Two images are needed:
 
 - The `frontend` image provides the web-based user interface
 - The `apiserver` image provides an Open API-based interface that is used by the frontend and when 
-  interacting with Dependency Track from other systems (such as submitting a BOM)
+  interacting with Dependency-Track from other systems (such as submitting a BOM)
 
-The [Artifact Registry](https://cloud.google.com/artifact-registry) service will be utilised
-to store container images. [Container Analysis](https://cloud.google.com/container-analysis/docs/container-analysis)
+The [Artifact Registry](https://cloud.google.com/artifact-registry) service stores container images.
+[Container Analysis](https://cloud.google.com/container-analysis/docs/container-analysis)
 is also enabled to provide vulnerability scans of the images being used. 
 Both Artifact Registry and Container Analysis have a cost and you could use the images
 directly from Docker Hub. However, there are a couple of reasons why you should consider 
@@ -264,7 +237,7 @@ over time and this can cause issues such as broken integrations. Whilst the inst
 below indicate a version that's recent to this tutorial being written, it's useful to check
 the provided links to determine if a newer version is available.
 
-Start with the [Dependency Track API server](https://hub.docker.com/r/dependencytrack/apiserver):
+Start with the [Dependency-Track API server](https://hub.docker.com/r/dependencytrack/apiserver):
 
 ```bash
 docker pull docker.io/dependencytrack/apiserver:4.2.1
@@ -272,7 +245,7 @@ docker tag docker.io/dependencytrack/apiserver:4.2.1 $GCP_REGISTRY/apiserver:4.2
 docker push $GCP_REGISTRY/apiserver:4.2.1
 ```
 
-And then pull/push the [Dependency Track Front End (UI)](https://hub.docker.com/r/dependencytrack/frontend) image:
+And then pull/push the [Dependency-Track Front End (UI)](https://hub.docker.com/r/dependencytrack/frontend) image:
 
 ```bash
 docker pull docker.io/dependencytrack/frontend:1.2.0
@@ -295,21 +268,20 @@ Before you continue please note that you will need access to a domain in which y
 sub-domains - one for each of the Frontend and the API Server. This is necessary as we'll be creating
 TLS certificates for the domains. 
 
-As you can see from the diagram below, a number of services will be utilised:
+As you can see from the diagram below, this solution uses several services:
 
-- The Dependency Track Frontend and API Server components will be hosted as
+- The Dependency-Track Frontend and API Server components will be hosted as
   GKE pods, fronted by Cloud Load Balancers. The required container images will
   be hosted in the Artifact Registry.
 - The GKE instance will operate as a private cluster so a Cloud NAT will be 
-  required for outbound requests - primarily Dependency Track downloading its 
+  required for outbound requests - primarily Dependency-Track downloading its 
   various datasources.
-- A Postgres-based Cloud SQL database will be used to hold Dependency Track data.
+- A PostgreSQL Cloud SQL database is used to hold Dependency-Track data.
 - Secret Manager will be used to securely store database passwords.
 
 ![The GKE-based deployment as describe in the paragraph above.](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/deploy_gke.png)
 
-A [_Troubleshooting_](#troubleshooting) section has been provided to help out with
-issues that you may encounter.
+See the "Troubleshooting" section at the end of this document for information about solving issues that you may encounter.
 
 ### Initial set up
 
@@ -364,12 +336,12 @@ get these started early:
 
 ```bash
 gcloud compute ssl-certificates create dependency-track-cert-api \
-    --description="Certificate for the Dependency Track API" \
+    --description="Certificate for the Dependency-Track API" \
     --domains=$DT_DOMAIN_API \
     --global
     
 gcloud compute ssl-certificates create dependency-track-cert-ui \
-    --description="Certificate for the Dependency Track UI" \
+    --description="Certificate for the Dependency-Track UI" \
     --domains=$DT_DOMAIN_UI \
     --global
 ```
@@ -379,8 +351,7 @@ You can check in on the progress of the certificates by running
 
 The setup of the certificates only completes when they're aligned to a 
 Load Balancer. Continue with the tutorial as this will build out the required
-resources. A [Troublshooting section](#troubleshooting) provides assistance if
-you're experiencing something unexpected.
+resources.
 
 ### Create external IPs
 
@@ -408,8 +379,8 @@ using the subdomain in the record's `Name` field and the IP address in the recor
 offer similar guidance.
 
 As an example, say you owned the `example.com` domain. For this tutorial you need to 
-create two subdomains. If you wanted the `api` subdomain for the Dependency Track API 
-Server and `dt` subdomain for the Dependency Track user interface, two resource records
+create two subdomains. If you wanted the `api` subdomain for the Dependency-Track API 
+Server and `dt` subdomain for the Dependency-Track user interface, two resource records
 will need to be configured for your domain:
 
 | Name | Type | TTL | Data |
@@ -427,13 +398,13 @@ With the settings above, the following domain names will be available:
 
 ### Set up a GKE cluster
 
-In the commands below you'll create a VPC to house the private GKE cluster and enable
+In the commands below you'll create a VPC netowrk to house the private GKE cluster and enable
 [private service access](https://cloud.google.com/sql/docs/postgres/configure-private-services-access#configure-access) -
 the latter providing the ability to create a Cloud SQL instance without a public IP address.
 
 ```bash
 gcloud compute networks create dependency-track \
-      --description="A demo VPC for hosting Dependency Track" \
+      --description="A demo VPC network for hosting Dependency-Track" \
       --subnet-mode=custom
       
 gcloud compute addresses create google-managed-services-dependency-track \
@@ -478,7 +449,7 @@ If `kubectl version` lists details for the client and server, `kubectl` was able
 to the GKE cluster. However, if `Unable to connect to the server` is displayed, review the 
 [Configuring cluster access for kubectl](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl) article.
 
-The GKE nodes need outbound internet access so that the Dependency Track
+The GKE nodes need outbound internet access so that the Dependency-Track
 system can download its required databases. This requires a Cloud NAT:
 
 ```bash
@@ -502,7 +473,7 @@ kubectl create namespace dependency-track
 kubectl config set-context --current --namespace=dependency-track
 ```
 
-### Deploy the Dependency Track frontend
+### Deploy the Dependency-Track frontend
 
 The deployment process makes use of the 
 [`kustomize`](https://kubectl.docs.kubernetes.io/guides/introduction/)
@@ -652,9 +623,6 @@ consider opening a separate Cloud Shell terminal tailing the logs with:
 kubectl logs -f dependency-track-apiserver-0 dependency-track-apiserver
 ```
 
-Head to the [Using Dependency Track](#using-dependency-track) section to start using 
-the system.
-
 ### Troubleshooting
 
 #### TLS error
@@ -722,7 +690,7 @@ Don't leave the pod hanging around - delete it once you're done:
 kubectl delete pod/proxy
 ```
 
-## Using Dependency Track
+## Using Dependency-Track
 
 The API Server loads a range of data and will take up to half an hour to be ready.
 You may also need to wait for the TLS certificates to be provisioned.
@@ -733,12 +701,12 @@ The following paths may be of interest:
 - `/api/version` - the service version
 - `/api/swagger.json` - the OpenAPI definition
 
-Once you have the Dependency Track API and frontend running, you're ready to login to the frontend.
+Once you have the Dependency-Track API and frontend running, you're ready to login to the frontend.
 
 Once you've accessed the frontend, enter `admin`/`admin` for the initial login 
 username/password - you'll be prompted to set up a better password. 
 Refer to 
-[Dependency Track's Initial Startup document](https://docs.dependencytrack.org/getting-started/initial-startup/)
+[Dependency-Track's Initial Startup document](https://docs.dependencytrack.org/getting-started/initial-startup/)
 for more information.
 
 In the frontend user interface, go to the "Projects" screen and click on "+ Create Project".
@@ -807,7 +775,7 @@ export DT_API_KEY=<YOUR API KEY>
 ```
 
 Once you've set up the "Automation" team's permissions and API key you're ready
-to upload a BOM to your Dependency Track service. 
+to upload a BOM to your Dependency-Track service. 
 
 Generate and upload the XML version of the BOM:
 
@@ -825,9 +793,9 @@ The `bom-loader.py` script performs the following:
 
 1. Reads the project name and version from the `pyproject.toml` file
 1. Loads the BOM (`bom.xml`)
-1. Packages the information and submits it to the Dependency Track API server
+1. Packages the information and submits it to the Dependency-Track API server
 
-Now you can go to your Dependency Track frontend and open the "Projects" tab. You'll
+Now you can go to your Dependency-Track frontend and open the "Projects" tab. You'll
 see there's now a `demo-project` with version `0.1.0`:
 
 ![Project listing with demo_project version 0.1.0](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/listing_demo_project.png)
@@ -887,7 +855,7 @@ Cloud Build can [use secrets stored in Secret Manager](https://cloud.google.com/
 This is extremely useful for automating build environments as Secret Manager provides a 
 central place for holding sensitive information such as keys and passwords. 
 Builds can use this to quickly access required secrets without requiring command line 
-parameters. This also make it easier to rotate keys (such as the Dependency Track API key)
+parameters. This also make it easier to rotate keys (such as the Dependency-Track API key)
 without needing to reconfigure every build.
 
 Start by adding the API Key as a secret:
@@ -910,8 +878,8 @@ gcloud secrets add-iam-policy-binding dependency-track-api-key  \
 ```
 
 If you previously uploaded the BOM from the terminal you may want to delete the project/version 
-in Dependency Track before you submit the BOM using Cloud Build. To delete it,
-go to the Dependency Track frontend, select the project from the list and click 
+in Dependency-Track before you submit the BOM using Cloud Build. To delete it,
+go to the Dependency-Track frontend, select the project from the list and click 
 "View Details" in the project screen (below).
 The pop-up dialog will have a "Delete" button that deletes the project.
 
@@ -924,7 +892,7 @@ gcloud builds submit --config cloudbuild.yaml \
   --substitutions=_DT_APISERVER=$DT_APISERVER . 
 ```
 
-The build will start and push the generated BOM to Dependency Track.
+The build will start and push the generated BOM to Dependency-Track.
 
 You can check out the details in the frontend UI or try out the API with `curl`. The following
 command will list all projects
@@ -946,74 +914,46 @@ curl --location --request GET \
 If you visit the API site you'll be able to access the OpenAPI definition for further
 API goodness. The address will look something like `https://<DT_DOMAIN_API>/api/swagger.json`.
 
-Take some time to explore Dependency Track and consider how/where you might use it.
-The scenarios provided here (manual upload, command line upload and CI/CD integration)
-are good starting points for including dependency tracking as part of managing your software supply chain.
+
+## Considerations for a production system
+
+Take some time to explore Dependency-Track and consider how and where you might use it. The scenarios provided in this tutorial (manual upload, command-line
+upload, and CI/CD integration) are good starting points for including dependency tracking as part of managing your software supply chain.
+
+If Dependency-Track is right for your organization, it's important to consider a production approach to setting up the system.
+
+Though this tutorial demonstrates several aspects of setup and configuration, you need to consider additional aspects for a production implementation,
+including the following:
+
+- **Keep your container images up to date**: You got a copy of the Dependency-Track images from Docker Hub and set them up in Artifact Registry with container
+  scanning. Make sure to track new releases of Dependency-Track and also consider how to keep your container images updated.
+- **Consider your GKE deployment**: This tutorial provides a set of good practices, such as workload identity, Cloud SQL Auth Proxy, and private clusters. 
+  For a production instance, you must also plan out aspects such as network setup and how you serve the client and API to your organization. Don't forget to 
+  review [access to cluster endpoints](https://cloud.google.com/kubernetes-engine/docs/concepts/private-cluster-concept#overview) to determine whether
+  public access to the Kubernetes control plane can be disabled.
+- **Review all permissions**: Some of the tutorial configuration needs tightening up for a long-term production service. For example, review the Cloud SQL user,
+  because it has very broad access that you can reduce. 
+- **Review the Cloud SQL configuration**: Consider aspects such as [automated backups](https://cloud.google.com/sql/docs/postgres/backup-recovery/backing-up) and
+  the resources (memory and vCPU) of the underlying virtual machine.
+- **Set up access**: Consider how users will access the system. Dependency-Track
+  [supports OIDC](https://docs.dependencytrack.org/getting-started/openidconnect-configuration/), which can save you from managing authentication in the 
+  Dependency-Track service. You can also explore [Identity-Aware Proxy](https://cloud.google.com/iap) for remote access to the system.
+- **Rotate API keys regularly**: Dependency-Track uses API keys for access to the API Server (such as from Cloud Build). Ensure that these keys are rotated 
+  regularly.
+- **Use security and operations services**: Consider tools such as [Cloud Armor](https://cloud.google.com/armor) and 
+  [Google Cloud's operations suite](https://cloud.google.com/products/operations) for the ongoing security and operation of your system.
+
+Having a model to track dependecies is a great first step. Configuring the system to notify you when a vulnerability pops up is even better. Check out the
+[Dependency-Track notifications](https://docs.dependencytrack.org/integrations/notifications/) document for options. The webhooks model is a useful approach to 
+automating responses. Also consider your processes and how your organization will respond when a vulnerability is reported.
 
 ## Cleaning up
 
 To avoid incurring charges to your Google Cloud account for the resources 
 used in this tutorial, you can delete the project.
 
-Deleting a project has the following consequences:
-
-- If you used an existing project, you'll also delete any other work that 
-  you've done in the project.
-- You can't reuse the project ID of a deleted project. 
-  If you created a custom project ID that you plan to use in the future, 
-  delete the resources inside the project instead. 
-  This ensures that URLs that use the project ID, such as an `.a.run.app` URL, remain available.
-
-To delete a project, do the following:
-
 1.  In the Cloud Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
 1.  In the project list, select the project you want to delete and click **Delete**.
 1.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
 
-Remove the two domain names (DNS entries) created in [Create external IPs](#create-external-ips).
-
-## What's next
-
-I hope that this guide has been useful and demonstrated a straight-forward way
-to start tackling dependency management in your environment.
-
-If you've decided that Dependency Track is right for your organisation, 
-it's important to consider a production approach to setting up the system.
-Whilst the tutorial tackled several aspects to setup and configuration, a 
-production roll-out needs to consider a number of additional aspects, including:
-
-- _Keeping your container images up to date_: You grabbed a copy of the Dependency
-  Track images from Docker Hub and set them up in Artifact Registry with container
-  scanning. Make sure you track new releases of Dependency Track and also consider
-  how to keep your container images updated.
-- _Consider your GKE deployment_: The tutorial provided a set of good practices
-  such as workload identity, Cloud SQL Auth Proxy and private clusters. There's more
-  to do for a production instance and you'll want to plan out aspects such as
-  network setup and how you serve the client and API to your organization.
-  Don't forget to review [Access to cluster endpoints](https://cloud.google.com/kubernetes-engine/docs/concepts/private-cluster-concept#overview) to determine if
-  public access to the Kubernetes control plane can be disabled.
-- _Review all permissions_: Some of the tutorial configuration needs tightening up for a 
-  long-term production service. For example, review the Cloud SQL user as it has very broad 
-  access that can be reduced. 
-- _Review the Cloud SQL configuration_: Consider aspects such as 
-  [automated backups](https://cloud.google.com/sql/docs/postgres/backup-recovery/backing-up) and the resources (memory and vCPU) of the underlying virtual machine.
-- _Set up access_: Consider how users will access the system - Dependency Track 
-  [supports OIDC](https://docs.dependencytrack.org/getting-started/openidconnect-configuration/) - 
-  saving you from managing authentication in the Dependency Track service. 
-  You might also wish to explore [Identity Aware Proxy](https://cloud.google.com/iap) 
-  for remote access to the system.
-- _Rotate API keys regularly_: Dependency Track uses API keys for access to the
-  API Server (such as from Cloud Build). Ensure that these keys are rotated regularly.
-- _Utilise security and operations services_: Consider tools such as
-  [Cloud Armor](https://cloud.google.com/armor) and Google Cloud's 
-  [Operations Suite](https://cloud.google.com/products/operations) for the
-  ongoing security and operation of your system.
-
-Having a model to track dependecies is a great first step. Configuring the system to
-notify you when a vulnerability pops up is even better. Check out the [Dependency
-Track notifications](https://docs.dependencytrack.org/integrations/notifications/)
-document for options - the webhooks model is a useful approach to automating 
-responses. Also consider your processes and how your organisation will respond when
-a vulnerability is reported.
-
-Safe coding!
+Remove the two domain names (DNS entries) created in the "Create external IP addresses" section.
