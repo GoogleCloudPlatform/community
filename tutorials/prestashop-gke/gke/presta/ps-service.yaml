@@ -4,6 +4,7 @@ metadata:
   name: service-psweb
   annotations:
     cloud.google.com/backend-config: '{"default": "bc-psweb"}'
+    cloud.google.com/neg: '{"ingress": true}'
 spec:
   type: NodePort
   ports:

@@ -188,6 +188,7 @@ For this step we will use the official prestashop docker image and we will extra
     ```bash
     gcloud container clusters create $CLUSTER_NAME \
             --zone $ZONE --machine-type "e2-medium" \
+            --enable-ip-alias \
             --num-nodes=3 --scopes=gke-default,sql-admin
     ```
 
