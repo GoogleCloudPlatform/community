@@ -41,11 +41,11 @@ This tutorial takes approximately 2-4 hours to complete.
 
 The following diagram illustrates the architecture of the solution described in this tutorial:
 
-![The GKE-based deployment as describe in the paragraph above.](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/deploy_gke.png)
+![Architecture overview.](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/deploy_gke.png)
 
 - The Dependency-Track Frontend and API Service components are hosted as GKE pods.
-- Traffic to the GKE pods is managed by Cloud Load Balancing load balancers.
-- The container images are hosted in Artifact Registry.
+- Cloud Load Balancing manages traffic to the GKE pods.
+- Artifact Registry hosts the container images.
 - The GKE instance operates as a private cluster, so Cloud NAT handles outbound requests - primarily Dependency-Track downloading its 
   various data sources.
 - A PostgreSQL Cloud SQL database holds Dependency-Track data.
@@ -217,7 +217,7 @@ services. However, there are advantages to using these services in a production 
 * Container Analysis provides [automatic vulnerability scanning](https://cloud.google.com/container-analysis/docs/vulnerability-scanning) 
   on images, which you can use as part of a broader approach to monitoring for vulnerabilities.
 
-You pull the required images from the Docker Hub and push them to your repository, using a specific version number for each image instead of using `latest`.
+You pull the required images from Docker Hub and push them to your repository, using a specific version number for each image instead of using `latest`.
 The image indicated by `latest` changes, which can cause issues such as broken integrations. Though the instructions in this section indicate a version that's
 current at the time of the writing of this tutorial, you should check to determine whether a newer version is available.
 
@@ -266,77 +266,64 @@ current at the time of the writing of this tutorial, you should check to determi
 
 In this section, you configure the system to run on Google Kubernetes Engine (GKE) and use a Cloud SQL PostgreSQL database. 
 
-### Initial set up
+### Enable services and set up the environment
 
-There's quite a few services need to be enabled:
+1.  Enable the Compute Engine, GKE, Cloud SQL, Cloud SQL Admin, Secret Manager, and Service Networking services:
 
-- GKE (`container.googleapis.com`)
-- Compute Engine (`compute.googleapis.com`) (runs the VMs hosting GKE nodes)
-- Cloud SQL (`sql-component.googleapis.com`)
-- Cloud SQL Admin (`sqladmin.googleapis.com`)
-- Secret Manager (`secretmanager.googleapis.com`)
-- Service Networking (`servicenetworking.googleapis.com`)
-    (provides functionality needed for Cloud SQL private instances)
+        gcloud services enable compute.googleapis.com \
+                               container.googleapis.com \
+                               sql-component.googleapis.com \
+                               sqladmin.googleapis.com \
+                               secretmanager.googleapis.com \
+                               servicenetworking.googleapis.com
 
-This is all enabled with the following command:
+1.  Designate a default region for Compute Engine, which runs the GKE worker nodes:
 
-```bash
-gcloud services enable  compute.googleapis.com \
-                        container.googleapis.com \
-                        sql-component.googleapis.com \
-                        sqladmin.googleapis.com \
-                        secretmanager.googleapis.com \
-                        servicenetworking.googleapis.com
-```
+        gcloud config set compute/region $GCP_REGION
 
-It's useful to designate a default region for Compute Engine (which runs the GKE worker nodes):
+1.  Add your domains to the commands below: 
 
-```bash
-gcloud config set compute/region $GCP_REGION
-```
+        export DT_DOMAIN_API=[YOUR_DOMAIN_NAME_FOR_THE_API_SERVER]
+        export DT_APISERVER=https://$DT_DOMAIN_API
+        export DT_DOMAIN_UI=[YOUR_DOMAIN_NAME_FOR_THE_FRONTEND]
 
-Add your domains to the commands below. 
-`DT_DOMAIN_API` will provide the API Server (e.g. `api.example.com`)
-and `DT_APISERVER` is its URL (e.g. `https://api.example.com`).
-`DT_DOMAIN_UI` provides the frontend (e.g. `ui.example.com`).
-
-```bash
-export DT_DOMAIN_API=<Your chosen domain name>
-export DT_APISERVER=https://$DT_DOMAIN_API
-export DT_DOMAIN_UI=<Your chosen domain name>
-```
+    `DT_DOMAIN_API` provides the API Server (e.g., `api.example.com`).
+    `DT_APISERVER` is its URL (e.g., `https://api.example.com`).
+    `DT_DOMAIN_UI` provides the frontend (e.g., `ui.example.com`).
 
 ### Create TLS certificates
 
-TLS certificates will be created for the API and user interface endpoints. 
-Whilst this can be done using a
+In this section, you create TLS certificates for the API and user interface endpoints. You could do this using a
 [GKE `ManagedCertificate` resource](https://cloud.google.com/kubernetes-engine/docs/how-to/managed-certs#setting_up_the_managed_certificate),
-defining these outside of Kubernetes allows them to be transferred as needed. 
-This isn't overly important for a tutorial environment but should be considered in a production environment.
+but defining the TLS certificates outside of Kubernetes allows them to be transferred as needed. This isn't an important requirement for a tutorial environment,
+but you should consider this advantage for your production environment.
 
-The provisioning of the certificates can take some time, so it's best to
-get these started early:
+The provisioning of the certificates can take a long time, so it's best to get these started early.
 
-```bash
-gcloud compute ssl-certificates create dependency-track-cert-api \
-    --description="Certificate for the Dependency-Track API" \
-    --domains=$DT_DOMAIN_API \
-    --global
-    
-gcloud compute ssl-certificates create dependency-track-cert-ui \
-    --description="Certificate for the Dependency-Track UI" \
-    --domains=$DT_DOMAIN_UI \
-    --global
-```
+1.  Create the TLS certificate for the API server:
 
-You can check in on the progress of the certificates by running 
-`gcloud compute ssl-certificates list`. 
+        gcloud compute ssl-certificates create dependency-track-cert-api \
+          --description="Certificate for the Dependency-Track API" \
+          --domains=$DT_DOMAIN_API \
+          --global
 
-The setup of the certificates only completes when they're aligned to a 
-Load Balancer. Continue with the tutorial as this will build out the required
-resources.
+1.  Create the TLS certificate for the frontend:
 
-### Create external IPs
+        gcloud compute ssl-certificates create dependency-track-cert-ui \
+          --description="Certificate for the Dependency-Track UI" \
+          --domains=$DT_DOMAIN_UI \
+          --global
+
+1.  Check the progress:
+
+        gcloud compute ssl-certificates list
+        
+    You can check the progress at any time with this command.
+
+While waiting for the certificates to be provisioned, you can continue with the next sections of the tutorial. The setup of the certificates only completes when
+they're aligned to a load balancer.
+
+### Create external IP addresses
 
 Next, set up two external IP addresses:
 
