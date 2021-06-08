@@ -39,7 +39,7 @@ This tutorial takes approximately 2-4 hours to complete.
 
 ## Architecture overview
 
-As shown the diagram below, this solution uses several services:
+The following diagram illustrates the architecture of the solution described in this tutorial:
 
 ![The GKE-based deployment as describe in the paragraph above.](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/deploy_gke.png)
 
