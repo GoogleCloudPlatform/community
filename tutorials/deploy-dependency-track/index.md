@@ -287,15 +287,15 @@ In this section, you configure the system to run on Google Kubernetes Engine (GK
         export DT_APISERVER=https://$DT_DOMAIN_API
         export DT_DOMAIN_UI=[YOUR_DOMAIN_NAME_FOR_THE_FRONTEND]
 
-    `DT_DOMAIN_API` provides the API Server (e.g., `api.example.com`).
-    `DT_APISERVER` is its URL (e.g., `https://api.example.com`).
-    `DT_DOMAIN_UI` provides the frontend (e.g., `ui.example.com`).
+    * `DT_DOMAIN_API` provides the API Server (e.g., `api.example.com`).
+    * `DT_APISERVER` is its URL (e.g., `https://api.example.com`).
+    * `DT_DOMAIN_UI` provides the frontend (e.g., `ui.example.com`).
 
 ### Create TLS certificates
 
 In this section, you create TLS certificates for the API and user interface endpoints. You could do this using a
 [GKE `ManagedCertificate` resource](https://cloud.google.com/kubernetes-engine/docs/how-to/managed-certs#setting_up_the_managed_certificate),
-but defining the TLS certificates outside of Kubernetes allows them to be transferred as needed. This isn't an important requirement for a tutorial environment,
+but defining the TLS certificates outside of Kubernetes allows you to transfer them as needed. This isn't an important requirement for a tutorial environment,
 but you should consider this advantage for your production environment.
 
 The provisioning of the certificates can take a long time, so it's best to get these started early.
@@ -325,123 +325,136 @@ they're aligned to a load balancer.
 
 ### Create external IP addresses
 
-Next, set up two external IP addresses:
+1.  Create two external IP addresses:
 
-```bash
-gcloud compute addresses create dependency-track-ip-api --global
-gcloud compute addresses create dependency-track-ip-ui --global
+        gcloud compute addresses create dependency-track-ip-api --global
+        gcloud compute addresses create dependency-track-ip-ui --global
 
-export DT_IP_API=$(gcloud compute addresses describe dependency-track-ip-api \
-                    --global --format="value(address)")
-export DT_IP_UI=$(gcloud compute addresses describe dependency-track-ip-ui \
-                    --global --format="value(address)")
+1.  Set two environment variables, one for each of the external IP addresses:
 
-echo "IP Address for $DT_DOMAIN_API: $DT_IP_API"
-echo "IP Address for $DT_DOMAIN_UI: $DT_IP_UI"
-```
+        export DT_IP_API=$(gcloud compute addresses describe dependency-track-ip-api \
+          --global --format="value(address)")
+      
+        export DT_IP_UI=$(gcloud compute addresses describe dependency-track-ip-ui \
+          --global --format="value(address)")
 
-At this point you can add your chosen domain names and the IP addresses to your DNS system. 
-As DNS entries can take up to 48-hours to propagate, it's best to get this done now. 
+1.  Check the addresses:
 
-To configure your domains, create an `A` record with a `TTL` (Time To Live) of 1 hour
+        echo "IP address for $DT_DOMAIN_API: $DT_IP_API"
+        echo "IP address for $DT_DOMAIN_UI: $DT_IP_UI"
+
+### Configure your domains
+
+Add your domain names and the IP addresses to your DNS system. DNS entries can take up to 48 hours to propagate. 
+
+For this tutorial, you need to create two subdomains, one for the frontend and one for the API server.
+
+To configure your domains, create an `A` record with a `TTL` (time to live) of 1 hour
 using the subdomain in the record's `Name` field and the IP address in the record's
-`Data` Field. The Google Domains site provides a guide to [resource records](https://support.google.com/domains/answer/3251147?hl=en) and your hosting service should 
+`Data` Field. The Google Domains site provides a guide to
+[resource records](https://support.google.com/domains/answer/3251147), and your hosting service should 
 offer similar guidance.
 
-As an example, say you owned the `example.com` domain. For this tutorial you need to 
-create two subdomains. If you wanted the `api` subdomain for the Dependency-Track API 
-Server and `dt` subdomain for the Dependency-Track user interface, two resource records
-will need to be configured for your domain:
+For example, if you use the `api` subdomain for the Dependency-Track API Server and `dt` subdomain for the Dependency-Track user interface, the two resource
+records should be configured as follows for your domain:
 
 | Name | Type | TTL | Data |
 | ---- | ---- | --- | ---- |
 | api  |  A   | 1hr | 1.2.3.4 |
 | dt   |  A   | 1hr | 1.2.3.5 |
 
-_Don't forget to use the actual IP addresses you created and not `1.2.3.4` and `1.2.3.5`._
+Be sure to use the actual IP addresses that you created, not the `1.2.3.4` and `1.2.3.5` examples.
 
-With the settings above, the following domain names will be available:
+With the settings above for the example domain `domain.com`, the following domain names would be available:
 
-* `api.example.com` will resolve to `1.2.3.4`
-* `dt.example.com` will resolve to `1.2.3.5`
+* `api.example.com` will resolve to `1.2.3.4`.
+* `dt.example.com` will resolve to `1.2.3.5`.
 
+### Set up a VPC network for the GKE cluster
 
-### Set up a GKE cluster
+In this section, you create a VPC network for the private GKE cluster and to enable
+[private service access](https://cloud.google.com/sql/docs/postgres/configure-private-services-access#configure-access), which allows you to create a Cloud SQL
+instance without a public IP address.
 
-In the commands below you'll create a VPC netowrk to house the private GKE cluster and enable
-[private service access](https://cloud.google.com/sql/docs/postgres/configure-private-services-access#configure-access) -
-the latter providing the ability to create a Cloud SQL instance without a public IP address.
+1.  Create the VPC network:
 
-```bash
-gcloud compute networks create dependency-track \
-      --description="A demo VPC network for hosting Dependency-Track" \
-      --subnet-mode=custom
-      
-gcloud compute addresses create google-managed-services-dependency-track \
-    --global \
-    --purpose=VPC_PEERING \
-    --prefix-length=20 \
-    --network=dependency-track
-    
-gcloud services vpc-peerings connect \
-    --service=servicenetworking.googleapis.com \
-    --ranges=google-managed-services-dependency-track \
-    --network=dependency-track \
-    --project=$GCP_PROJECT_ID
-```
+        gcloud compute networks create dependency-track \
+          --description="A demo VPC network for hosting Dependency-Track" \
+          --subnet-mode=custom
 
-Next, create a private GKE cluster. The code below creates a private cluster, but
-the Kubernetes control plane is available on a public endpoint. This will allow you,
-for the purposes of this tutorial, to access the cluster with `kubectl` from Cloud Shell. 
-In a production environment you'll likely seek to limit access to the control plane. Review 
-[Access to cluster endpoints](https://cloud.google.com/kubernetes-engine/docs/concepts/private-cluster-concept#overview)
-for further details.
+1.  Reserve an IP address:
 
-```bash
-gcloud container clusters create-auto dependency-track \
-    --region=$GCP_REGION \
-    --create-subnetwork="name=dependency-track-subnet" \
-    --network=dependency-track \
-    --no-enable-master-authorized-networks \
-    --enable-private-nodes
-```
+        gcloud compute addresses create google-managed-services-dependency-track \
+          --global \
+          --purpose=VPC_PEERING \
+          --prefix-length=20 \
+          --network=dependency-track
 
-Once the cluster is ready, set up your `kubectl` with the correct credentials 
-and check on the client and server versions:
+1.  Connect to the service with VPC peering:
 
-```bash
-gcloud container clusters get-credentials dependency-track --region $GCP_REGION
+        gcloud services vpc-peerings connect \
+          --service=servicenetworking.googleapis.com \
+          --ranges=google-managed-services-dependency-track \
+          --network=dependency-track \
+          --project=$GCP_PROJECT_ID
 
-kubectl version
-```
+### Create the GKE cluster
 
-If `kubectl version` lists details for the client and server, `kubectl` was able to connect
-to the GKE cluster. However, if `Unable to connect to the server` is displayed, review the 
-[Configuring cluster access for kubectl](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl) article.
+In this section, you create a private GKE cluster, but the Kubernetes control plane is available on a public endpoint. For this tutorial, this allows you
+to access the cluster with `kubectl` from Cloud Shell. In a production environment, you should typically limit access to the control plane. For details, 
+see [Access to cluster endpoints](https://cloud.google.com/kubernetes-engine/docs/concepts/private-cluster-concept#overview).
 
-The GKE nodes need outbound internet access so that the Dependency-Track
-system can download its required databases. This requires a Cloud NAT:
+1.  Create the GKE cluster:
 
-```bash
-gcloud compute routers create dependency-track-nat-router \
-    --network dependency-track \
-    --region $GCP_REGION
+        gcloud container clusters create-auto dependency-track \
+          --region=$GCP_REGION \
+          --create-subnetwork="name=dependency-track-subnet" \
+          --network=dependency-track \
+          --no-enable-master-authorized-networks \
+          --enable-private-nodes
 
-gcloud compute routers nats create dependency-track-nat \
-    --router=dependency-track-nat-router \
-    --auto-allocate-nat-external-ips \
-    --nat-all-subnet-ip-ranges \
-    --region $GCP_REGION \
-    --enable-logging
-```
+1.  Set up `kubectl` with the correct credentials:
 
-Now that our GKE environment is ready to go, create a `dependency-track` 
-Kubernetes namespace to work in:
+        gcloud container clusters get-credentials dependency-track --region $GCP_REGION
 
-```bash
-kubectl create namespace dependency-track
-kubectl config set-context --current --namespace=dependency-track
-```
+1.  Check the client and server versions:
+
+        kubectl version
+
+    If this command returns details for the client and server, `kubectl` was able to connect to the GKE cluster. If the command
+    returns `Unable to connect to the server`, then see 
+    [Configuring cluster access for kubectl](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl)
+    for help.
+
+### Set up Cloud NAT
+
+The GKE nodes need outbound internet access so that the Dependency-Track system can download its required databases. This requires Cloud NAT for network address
+translation.
+
+1.  Create a router:
+
+        gcloud compute routers create dependency-track-nat-router \
+          --network dependency-track \
+          --region $GCP_REGION
+
+1.  Add a Cloud NAT gateway:
+
+        gcloud compute routers nats create dependency-track-nat \
+          --router=dependency-track-nat-router \
+          --auto-allocate-nat-external-ips \
+          --nat-all-subnet-ip-ranges \
+          --region $GCP_REGION \
+          --enable-logging
+
+### Create a Kubernetes namespace
+
+1.  Create a `dependency-track` Kubernetes namespace:
+
+        kubectl create namespace dependency-track
+        
+1.  Switch the context to the new namespace:
+
+        kubectl config set-context --current --namespace=dependency-track
 
 ### Deploy the Dependency-Track frontend
 
