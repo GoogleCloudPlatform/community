@@ -3,7 +3,7 @@ title: Deploy OWASP Dependency-Track to Google Cloud
 description: Learn how to deploy the OWASP Dependency-Track system to Google Kubernetes Engine.
 author: dedickinson
 tags: owasp, dependency track, kubernetes, cloud build, cloud sql, supply chain
-date_published: 2020-05-21
+date_published: 2020-06-09
 ---
 
 Duncan Dickinson | Customer Engineer | Google
@@ -50,7 +50,7 @@ This tutorial uses billable components of Google Cloud, including the following:
 
 *   [Artifact Registry](https://cloud.google.com/artifact-registry)
 *   [Container Analysis](https://cloud.google.com/container-analysis/docs/container-analysis)
-*   [External IP address](https://cloud.google.com/compute/docs/ip-addresses/reserve-static-external-ip-address)
+*   [External IP addresses](https://cloud.google.com/compute/docs/ip-addresses/reserve-static-external-ip-address)
 *   [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine)
 *   [Cloud SQL](https://cloud.google.com/sql/)
 
@@ -58,10 +58,10 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
 
 ## Before you begin
 
-You need access to a domain for which you can create two sub-domains, one for the frontend and one for the API server. If you do not have a domain,
+You need access to a domain for which you can create two subdomains, one for the frontend and one for the API server. If you do not have a domain,
 you can register one with [Google Domains](https://domains.google.com).
 
-### Set up Google Cloud project
+### Set up your Google Cloud project
 
 To complete this tutorial, you need a
 [Google Cloud project](https://cloud.google.com/resource-manager/docs/creating-managing-projects)
@@ -109,7 +109,8 @@ You must have the [project owner](https://cloud.google.com/iam/docs/understandin
 
 ## Generate a software bill of materials
 
-The demonstration project has no functional code; it's just there to include the `flask` library and a very old version of the `django` library.
+The demonstration project has no functional code; its purpose is to include the `flask` library and a very old version of the `django` library, to
+demonstrate the presence of a vulnerability.
 
 __WARNING__: The demonstration project includes a very old version of Django with known vulnerabilities. Do not try to run the project. It is only set up to
 demonstrate Dependency-Track's ability to report on vulnerabilities.
@@ -185,88 +186,72 @@ The Python version ([`cyclonedx-bom`](https://pypi.org/project/cyclonedx-bom/)) 
 
 ## Prepare the Dependency-Track images
 
-Two images are needed:
+In this section, you work with two images:
 
-- The `frontend` image provides the web-based user interface
+- The `frontend` image provides the web-based user interface.
 - The `apiserver` image provides an Open API-based interface that is used by the frontend and when 
-  interacting with Dependency-Track from other systems (such as submitting a BOM)
+  interacting with Dependency-Track from other systems (such as submitting a BOM).
 
-The [Artifact Registry](https://cloud.google.com/artifact-registry) service stores container images.
-[Container Analysis](https://cloud.google.com/container-analysis/docs/container-analysis)
-is also enabled to provide vulnerability scans of the images being used. 
-Both Artifact Registry and Container Analysis have a cost and you could use the images
-directly from Docker Hub. However, there are a couple of reasons why you should consider 
-the approach used in this tutorial:
+In this tutorial, you use the [Artifact Registry](https://cloud.google.com/artifact-registry) service to store container images,
+and you use the [Container Analysis](https://cloud.google.com/container-analysis/docs/container-analysis) service to scan the images for vulnerabilities.
+
+Because Artifact Registry and Container Analysis have associated costs, you might choose to use the images directly from Docker Hub instead of using these 
+services. However, there are advantages to using these services in a production system:
 
 * You have a copy of the images local to your project. This protects your environment
-    from changes to the image or if Docker Hub becomes unavailable.
+  from changes to the images, and the images remain available if Docker Hub becomes unavailable.
 * Container Analysis provides [automatic vulnerability scanning](https://cloud.google.com/container-analysis/docs/vulnerability-scanning) 
-    on images. This forms part of a broader approach to monitoring for vulnerabilities. 
-    Whilst you may tear down your project after completing the tutorial, the approach
-    is useful when considering a production environment.
+  on images, which you can use as part of a broader approach to monitoring for vulnerabilities.
 
-First up, enable the relevant APIs and set the default location for image storage:
+You pull the required images from the Docker Hub and push it to your repository, using a specific version number for each image instead of using `latest`.
+The image indicated by `latest` changes, which can cause issues such as broken integrations. Though the instructions in this section indicate a version that's
+current at the time of the writing of this tutorial, you should check to determine whether a newer version is available.
 
-```bash
-gcloud services enable  artifactregistry.googleapis.com \
-                        containerscanning.googleapis.com
+1.  Enable the APIs:
 
-gcloud config set artifacts/location $GCP_REGION
-```
+        gcloud services enable  artifactregistry.googleapis.com \
+                                containerscanning.googleapis.com
 
-Next, configure the `dependency-track` image repository:
+1.  Set the default location for image storage:
 
-```bash
-gcloud artifacts repositories create dependency-track \
-              --repository-format=docker \
-              --location=$GCP_REGION
+        gcloud config set artifacts/location $GCP_REGION
 
-export GCP_REGISTRY=$GCP_REGION-docker.pkg.dev/$GCP_PROJECT_ID/dependency-track
-```
+1.  Configure the `dependency-track` image repository:
 
-In order to push images to the repository you need to configure docker with the required authentication:
+        gcloud artifacts repositories create dependency-track \
+          --repository-format=docker \
+          --location=$GCP_REGION
 
-```bash
-gcloud auth configure-docker $GCP_REGION-docker.pkg.dev
-```
+        export GCP_REGISTRY=$GCP_REGION-docker.pkg.dev/$GCP_PROJECT_ID/dependency-track
 
-Now it's just a case of pulling the required images from the Docker Hub and pushing it to 
-your repository. You'll notice that a specific version is provided for each image instead
-of using `latest`. The use of a specific version is preferred as `latest` will change
-over time and this can cause issues such as broken integrations. Whilst the instructions
-below indicate a version that's recent to this tutorial being written, it's useful to check
-the provided links to determine if a newer version is available.
+1.  Configure Docker with the required authentication, so that you can push images to the repository:
 
-Start with the [Dependency-Track API server](https://hub.docker.com/r/dependencytrack/apiserver):
+        gcloud auth configure-docker $GCP_REGION-docker.pkg.dev
 
-```bash
-docker pull docker.io/dependencytrack/apiserver:4.2.1
-docker tag docker.io/dependencytrack/apiserver:4.2.1 $GCP_REGISTRY/apiserver:4.2.1
-docker push $GCP_REGISTRY/apiserver:4.2.1
-```
+1.  Pull the [Dependency-Track API server](https://hub.docker.com/r/dependencytrack/apiserver) image from Docker Hub and push it to your
+    repository:
 
-And then pull/push the [Dependency-Track Front End (UI)](https://hub.docker.com/r/dependencytrack/frontend) image:
+        docker pull docker.io/dependencytrack/apiserver:4.2.1
+        docker tag docker.io/dependencytrack/apiserver:4.2.1 $GCP_REGISTRY/apiserver:4.2.1
+        docker push $GCP_REGISTRY/apiserver:4.2.1
 
-```bash
-docker pull docker.io/dependencytrack/frontend:1.2.0
-docker tag docker.io/dependencytrack/frontend:1.2.0 $GCP_REGISTRY/frontend:1.2.0
-docker push $GCP_REGISTRY/frontend:1.2.0  
-```
+1.  Pull the [Dependency-Track Front End (UI)](https://hub.docker.com/r/dependencytrack/frontend) image from Docker Hub and push it to your
+    repository:
 
-You can always check your image collection with the following command:
+        docker pull docker.io/dependencytrack/frontend:1.2.0
+        docker tag docker.io/dependencytrack/frontend:1.2.0 $GCP_REGISTRY/frontend:1.2.0
+        docker push $GCP_REGISTRY/frontend:1.2.0  
 
-```bash
-gcloud artifacts docker images list $GCP_REGISTRY
-```
+1.  Check your image collection:
+
+        gcloud artifacts docker images list $GCP_REGISTRY
+        
+    You can use this command at any time to see what images you have stored with Artifact Registry.
 
 ## Deploy to Google Kubernetes Engine and Cloud SQL
 
 In this section you will configure the system to run in 
 Google Kubernetes Engine (GKE) and use a Cloud SQL Postgres database. 
-
-Before you continue please note that you will need access to a domain in which you can create two
-sub-domains - one for each of the Frontend and the API Server. This is necessary as we'll be creating
-TLS certificates for the domains. 
 
 As you can see from the diagram below, this solution uses several services:
 
