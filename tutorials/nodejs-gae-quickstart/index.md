@@ -19,10 +19,10 @@ panel on the right side of the Cloud Console to guide you.
 
 In this walkthrough you’ll do the following:
 
-* Create a project
+* Create a project.
 * Build and run your "Hello, world!" app using Node.js.
-* Deploy to App Engine
+* Deploy the app to App Engine.
 
-[![Open walkthrough in the Cloud Console](https://storage.googleapis.com/gcp-community/tutorials/nodejs_gae_quickstart/tutorial.png)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=nodejs_gae_quickstart)
+[![Open walkthrough in the Cloud Console](https://storage.googleapis.com/gcp-community/tutorials/nodejs-gae-quickstart/tutorial.png)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=nodejs_gae_quickstart)
 
 [node]: https://nodejs.org/
