@@ -25,4 +25,4 @@ In this walkthrough you’ll do the following:
 * Install and run a sample application in the cluster. 
 * Configure the sample application to be accessible on the internet. 
 
-[![Open walkthrough in the Cloud Console](https://storage.googleapis.com/gcp-community/tutorials/gke_quickstart/tutorial.png)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=gke_guestbook)
+[![Open walkthrough in the Cloud Console](https://storage.googleapis.com/gcp-community/tutorials/gke-quickstart/tutorial.png)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=gke_guestbook)
