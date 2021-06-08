@@ -134,11 +134,11 @@ users might be eligible for a [free trial](https://cloud.google.com/free-trial).
     necessary commands such as `gcloud` and `gsutil`.
 1.  [Create a Google Cloud account](https://console.cloud.google.com/)
     for using the Cloud Console.
-1.  Enable billing: [create a billing project](https://support.google.com/cloud/answer/6288653?hl=en).
+1.  Enable billing: [create a billing project](https://support.google.com/cloud/answer/6288653).
     Learn more about billing [here](https://cloud.google.com/appengine/docs/standard/python/console/).
 1.  In the Cloud Console, [create a new project](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
     Your project has a unique ID that is part of your web application URL.
-1. [Enable](https://support.google.com/cloud/answer/6158841?hl=en) the Cloud Storage,
+1. [Enable](https://support.google.com/cloud/answer/6158841) the Cloud Storage,
    Pub/Sub, Datastore, and Cloud Vision APIs.
 1.  Open a terminal on your local machine. On the command line, [set the default project](https://cloud.google.com/sdk/docs/managing-configurations)
     to your newly created project by running the following command:
@@ -1624,7 +1624,7 @@ Congratulations! You've completed this tutorial and now have a functioning, user
 
 ## Clean up
 
-1.  If necessary, [close your billing account](https://support.google.com/cloud/answer/6288653?hl=en).
+1.  If necessary, [close your billing account](https://support.google.com/cloud/answer/6288653).
 1.  [Delete your project](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
 
     **Note**: You won't be able to use this project ID again.
