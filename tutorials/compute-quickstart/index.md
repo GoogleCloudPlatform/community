@@ -25,4 +25,4 @@ In this walkthrough you’ll do the following:
 * Set up firewall rules.
 * Use SSH to install packages on your VMs.
 
-[![Open walkthrough in the Cloud Console](https://storage.googleapis.com/gcp-community/tutorials/compute-quickstart/tutorial.png)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=bigquery_import_data_from_cloud_storage)
+[![Open walkthrough in the Cloud Console](https://storage.googleapis.com/gcp-community/tutorials/compute-quickstart/tutorial.png)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=compute_quickstart)
