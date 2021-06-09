@@ -20,9 +20,9 @@ database administration and schema conversions, and that you have basic knowledg
 
 High-level overview of the migration procedure using Ora2Pg:
 
-1. Install Ora2pg and initialize the migration project.
+1. Install Ora2Pg and initialize the migration project.
 2. Set up source and target database connectivity.
-3. Configure Ora2pg migration parameters.
+3. Configure Ora2Pg migration parameters.
 4. Generate a database migration report.
 5. Export the database schema from the Oracle database.
 6. Import the database schema into Cloud SQL for PostgreSQL.
@@ -39,14 +39,14 @@ document series:
 *   [Migrating Oracle users to Cloud SQL for PostgreSQL: Queries, stored procedures, functions, and triggers](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-queries)
 *   [Migrating Oracle users to Cloud SQL for PostgreSQL: Security, operations, monitoring, and logging](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-security)
 
-Though Ora2pg supports exporting data from Oracle database and importing it into Cloud SQL for PostgreSQL, it is an offline migration in which the database must
+Though Ora2Pg supports exporting data from Oracle database and importing it into Cloud SQL for PostgreSQL, it is an offline migration in which the database must
 be taken out of service during the data migration process. It's common to use data migration tools that support real-time replication, such as Striim
 or Oracle GoldenGate for migrations that require minimal downtime.
 
 ## Objectives
 
-*   Learn how to perform Oracle to PostgreSQL schema conversion using Ora2pg.
-*   Perform an offline data migration from an Oracle database to PostgreSQL using Ora2pg.
+*   Learn how to perform Oracle to PostgreSQL schema conversion using Ora2Pg.
+*   Perform an offline data migration from an Oracle database to PostgreSQL using Ora2Pg.
 *   Understand the downtime requirements and data integrity considerations during data migration.
 
 ## Costs
@@ -70,14 +70,14 @@ cleanup easiest at the end of the tutorial, we recommend that you create a new p
 When you finish this tutorial, you can avoid continued billing by deleting the resources that you created, as described in the "Cleaning up" section at the end 
 of this document.
 
-## Install Ora2pg and initialize the migration project
+## Install Ora2Pg and initialize the migration project
 
-Ora2pg uses Oracle client libraries to connect to the source Oracle database to perform scans and exports. Though it is possible to install and use Ora2pg on the
-same machine as the source Oracle database, we recommend that you use a dedicated machine for the Ora2pg installation and runtime to prevent potential 
+Ora2Pg uses Oracle client libraries to connect to the source Oracle database to perform scans and exports. Though it is possible to install and use Ora2Pg on the
+same machine as the source Oracle database, we recommend that you use a dedicated machine for the Ora2Pg installation and runtime to prevent potential 
 interruptions to the source database. 
 
 This section shows an example of creating a [Compute Engine instance](https://cloud.google.com/compute/docs/instances/create-start-instance#publicimage) and
-installing Ora2pg on that instance. 
+installing Ora2Pg on that instance. 
 
 1.  Set a variable for the Google Cloud project ID for VM creation:
 
@@ -95,7 +95,7 @@ installing Ora2pg on that instance.
 
     -   Oracle client library installation
     -   PostgreSQL client library installation
-    -   Working directory for Ora2pg (usually less than 1GB, excluding data)
+    -   Working directory for Ora2Pg (usually less than 1GB, excluding data)
     -   Data export files from source database (optional)
 
 1.  Create the Compute Engine instance:
@@ -141,18 +141,18 @@ installing Ora2pg on that instance.
         sudo yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
         sudo yum install -y postgresql12-libs.x86_64 postgresql12.x86_64
 
-1.  Install Ora2pg dependencies:
+1.  Install Ora2Pg dependencies:
 
         sudo yum install -y devtoolset-8 perl-CPAN perl-DBD-Pg libaio perl-Test-Simple perl-Test-NoWarnings
 
-1.  As root, [download Ora2pg](https://github.com/darold/ora2pg/releases). This example uses Ora2pg v21.0. 
+1.  As root, [download Ora2pg](https://github.com/darold/ora2pg/releases). This example uses Ora2Pg v21.0. 
 
         yum install -y wget
         wget https://github.com/darold/ora2pg/archive/v21.0.zip
 
 1.  As root, [install Ora2Pg](http://ora2pg.darold.net/documentation.html#Installing-Ora2Pg).
 
-    1.  Make sure that the following environment variables are set before installing. These environment variables are required whenever Ora2pg is used.
+    1.  Make sure that the following environment variables are set before installing. These environment variables are required whenever Ora2Pg is used.
 
             export ORACLE_HOME=[PATH_TO_INSTANT_CLIENT_DIRECTORY]
             export LD_LIBRARY_PATH=$ORACLE_HOME
