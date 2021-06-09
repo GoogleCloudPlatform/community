@@ -87,7 +87,7 @@ export CLOUD_ZONE=us-central1-a
 gcloud beta container --project $GCLOUD_PROJECT clusters create "monitoring-demo" \
 --zone $CLOUD_ZONE --username "admin" \
 --cluster-version "1.10" --machine-type "n1-highmem-2" \
---image-type "COS" --disk-type "pd-standard" --disk-size "100" \
+--disk-type "pd-standard" --disk-size "100" \
 --scopes "cloud-platform","https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/trace.append" \
 --num-nodes "2" --enable-cloud-logging \
 --enable-cloud-monitoring --enable-ip-alias \
@@ -619,7 +619,7 @@ While you can embed an iFrame for the complete edit view URL if you want the ful
 choices.
 
 Assuming a standard edit URL like the following, you can choose
-[**Publish to Web**](https://support.google.com/docs/answer/183965?co=GENIE.Platform%3DDesktop&hl=en),
+[**Publish to the web**](https://support.google.com/docs/answer/183965),
 which will make the document public and will automatically create the `iframe src` code for you if you choose to embed it:
 
 ```
@@ -627,7 +627,7 @@ https://docs.google.com/spreadsheets/d/1FvwKEqVbnY1k3ZfQ3SJNLr-CAb3U_3bIOIFe_XE2
 ```
 
 If you want to keep the document private to your shared recipients or a
-[group](https://support.google.com/a/answer/167101?hl=en), you can use a special URL to get the content.
+[group](https://support.google.com/a/answer/167101), you can use a special URL to get the content.
 Replace `edit#gid=0` in the URL with `htmlembed?single=true&gid=0&widget=false&chrome=false`. You can also
 add `range=f2:g6` if you want to further restrict to a specific range.
 

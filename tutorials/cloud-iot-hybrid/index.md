@@ -227,7 +227,7 @@ This script builds the binary, installs it on the relay VM, and starts it as a r
 
 You can use an MQTT client to connect to the stand-in for the on-premises broker. This represents some part of the
 on-premises IoT application. One simple browser-based tool you can use in Chrome is
-[MQTTLens](https://chrome.google.com/webstore/detail/mqttlens/hemojaaeigabkbcookmlgmdigohjobjm?hl=en).
+[MQTTLens](https://chrome.google.com/webstore/detail/mqttlens/hemojaaeigabkbcookmlgmdigohjobjm).
 
 Use the public IP address of the `on-prem-rabbit` instance, along with a username of `user` and password of `abc123` to 
 connect.
