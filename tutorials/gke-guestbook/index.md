@@ -15,7 +15,7 @@ using [Google Kubernetes Engine (GKE)][gke-docs] and [Redis][redis]. There are
 step-by-step instructions in the **Learn** panel on the right side of the Cloud 
 Console to guide you.
 
-[![Open in Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=gke_guestbook)
+[![Open in Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?tutorial=gke_guestbook)
 
 ## What you'll do
 
@@ -25,7 +25,7 @@ In this walkthrough you’ll do the following:
 * Install Redis and a webserver in the cluster. 
 * Configure Redis and the webserver to be accessible on the internet. 
 
-[![Open walkthrough in the Cloud Console](https://storage.googleapis.com/gcp-community/tutorials/gke-guestbook/tutorial.png)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=gke_guestbook)
+[![Open walkthrough in the Cloud Console](https://storage.googleapis.com/gcp-community/tutorials/gke-guestbook/tutorial.png)](https://console.cloud.google.com/getting-started?tutorial=gke_guestbook)
 
 [gke-docs]: https://cloud.google.com/kubernetes-engine/
 [gke-registry]: https://cloud.google.com/container-registry
