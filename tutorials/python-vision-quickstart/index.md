@@ -2,7 +2,7 @@
 title: Label images with the Cloud Vision API
 description: Learn the basics of image labeling with a simple Cloud Vision API application.
 author: jscud
-tags: Cloud Vision, Pyton, Walkthrough
+tags: Cloud Vision, Python, Walkthrough
 date_published: 2019-07-31
 ---
 
