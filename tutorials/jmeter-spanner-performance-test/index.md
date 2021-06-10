@@ -1,7 +1,7 @@
 ---
 title: Cloud Spanner performance test using JMeter
 description: Evaluate Cloud Spanner for custom workload using JMeter's JDBC Sampler.
-author: shashank-google, chbussler, ravinderl
+author: shashank-google,chbussler,ravinderl
 tags: spanner, cloud spanner, evaluation, migration, perforamnce test, jdbc
 date_published: 2021-06-20
 ---
@@ -10,7 +10,7 @@ Shashank Agarwal, Ravinder Lota, Chritoph Bussler | Google Cloud Engineer(s) | G
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-![hero_img](images/00_hero_img.png)
+![hero_img](images/00_hero_img_4.png)
 
 Cloud Spanner is a fully managed, horizontally scalable, transactional and SQL compliant database as service. For more
 key features read [here](https://cloud.google.com/spanner#section-2). However in order to evaluate Cloud Spanner’s cost
