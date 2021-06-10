@@ -3,7 +3,7 @@ title: Deploy OWASP Dependency-Track to Google Cloud
 description: Learn how to deploy the OWASP Dependency-Track system to Google Kubernetes Engine.
 author: dedickinson
 tags: owasp, dependency track, kubernetes, cloud build, cloud sql, supply chain
-date_published: 2021-06-09
+date_published: 2021-06-11
 ---
 
 Duncan Dickinson | Customer Engineer | Google
@@ -46,8 +46,8 @@ The following diagram illustrates the architecture of the solution described in 
 - The Dependency-Track Frontend and API Service components are hosted as GKE pods.
 - Cloud Load Balancing manages traffic to the GKE pods.
 - Artifact Registry hosts the container images.
-- The GKE instance operates as a private cluster, so Cloud NAT handles outbound requests - primarily Dependency-Track downloading its 
-  various data sources.
+- The GKE instance operates as a private cluster, so Cloud NAT handles outbound requests (primarily Dependency-Track downloading its 
+  various data sources).
 - A PostgreSQL Cloud SQL database holds Dependency-Track data.
 - Secret Manager securely stores database passwords.
 
@@ -138,7 +138,7 @@ The Python version ([`cyclonedx-bom`](https://pypi.org/project/cyclonedx-bom/)) 
 
         cd demo-project
 
-1.  Install the demonstration project with `poetry`
+1.  Install the demonstration project with `poetry`:
 
         poetry install
 
@@ -365,7 +365,7 @@ records should be configured as follows for your domain:
 
 Be sure to use the actual IP addresses that you created, not the `1.2.3.4` and `1.2.3.5` examples.
 
-With the settings above for the example domain `domain.com`, the following domain names would be available:
+With the settings above for the example domain `example.com`, the following domain names would be available:
 
 * `api.example.com` will resolve to `1.2.3.4`.
 * `dt.example.com` will resolve to `1.2.3.5`.
@@ -458,153 +458,127 @@ translation.
 
 ### Deploy the Dependency-Track frontend
 
-The deployment process makes use of the 
-[`kustomize`](https://kubectl.docs.kubernetes.io/guides/introduction/)
-functionality build into `kubectl`. 
-You'll find the various deployment files under the `deploy` directory.
+The deployment process uses the [`kustomize`](https://kubectl.docs.kubernetes.io/guides/introduction/)
+functionality built into the `kubectl` package. 
 
-Importantly, the `envsubst` command is used to interpolate the various environment variables 
-in the deployment files. The required package (`gettext-base`) is already installed
+The various deployment files are in the `deploy` directory.
+
+The `envsubst` command is used to process environment variables in the deployment files. The required package (`gettext-base`) is already installed
 in Cloud Shell.
 
-To deploy the frontend workload to the GKE cluster run the following commands
+To deploy the frontend workload to the GKE cluster, run the following commands
 from the base directory of the tutorial:
 
-```bash
-cd deploy/frontend
-cat kustomization.base.yaml | envsubst >kustomization.yaml
-kubectl apply -k .
-```
+    cd deploy/frontend
+    cat kustomization.base.yaml | envsubst >kustomization.yaml
+    kubectl apply -k .
 
-### Deploy the API Server
+### Set up a service account for database access
 
-There are more steps involved when deploying the API Server as it uses a Postgres database. The steps involved are:
+The API Server needs to access a database. In this section, you create a service account for database access with GKE
+[workload identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity), which is used by a PostgreSQL database that you
+create in the next section. This allows the [SQL Auth Proxy pod](https://cloud.google.com/sql/docs/postgres/connect-kubernetes-engine) to
+connect to Cloud SQL through the service account.
 
-1. Create a service account for database access via Cloud SQL Auth Proxy
-1. Create the Postgres database in Cloud SQL
-1. Deploy the API Server to GKE
+1.  Create a Kubernetes service account:
 
-#### Set up a service account
+        kubectl create serviceaccount dependency-track
 
-As the API Server needs to access a database, we'll create and use a service account with GKE
-[workload identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity).
-This will let the [SQL Auth Proxy pod](https://cloud.google.com/sql/docs/postgres/connect-kubernetes-engine)
-connect to Cloud SQL via the service account.
+1.  Create a Google Cloud IAM service account:
 
-The incantation for setting up the service account is below. 
+        gcloud iam service-accounts create dependency-track
 
-```bash
-# 1. Create a kubernetes service account
-kubectl create serviceaccount dependency-track
+1.  Align the Kubernetes service account to the IAM service account:
 
-# 2. Create a Google Cloud IAM service account
-gcloud iam service-accounts create dependency-track
+        gcloud iam service-accounts add-iam-policy-binding \
+          --role roles/iam.workloadIdentityUser \
+          --member "serviceAccount:$GCP_PROJECT_ID.svc.id.goog[dependency-track/dependency-track]" \
+          dependency-track@$GCP_PROJECT_ID.iam.gserviceaccount.com
 
-# 3. Align the kubernetes service account to the IAM service account
-gcloud iam service-accounts add-iam-policy-binding \
-  --role roles/iam.workloadIdentityUser \
-  --member "serviceAccount:$GCP_PROJECT_ID.svc.id.goog[dependency-track/dependency-track]" \
-  dependency-track@$GCP_PROJECT_ID.iam.gserviceaccount.com
+1.  Align the IAM service account to the Kubernetes service account:
 
-# 4. Similar to step 3, align the IAM service account to the kubernetes one
-kubectl annotate serviceaccount \
-  --namespace dependency-track \
-  dependency-track \
-  iam.gke.io/gcp-service-account=dependency-track@$GCP_PROJECT_ID.iam.gserviceaccount.com
+        kubectl annotate serviceaccount \
+          --namespace dependency-track \
+          dependency-track \
+          iam.gke.io/gcp-service-account=dependency-track@$GCP_PROJECT_ID.iam.gserviceaccount.com
   
-# 5. Grant the cloudsql.client role to the IAM service account so that 
-#    SQL Auth Proxy can connect to the DB
-gcloud projects add-iam-policy-binding $GCP_PROJECT_ID \
-  --role roles/cloudsql.client  \
-  --member "serviceAccount:dependency-track@$GCP_PROJECT_ID.iam.gserviceaccount.com" 
-```
+1.  Grant the `cloudsql.client` role to the IAM service account so that SQL Auth Proxy can connect to the database:
 
-#### Create a Cloud SQL instance
+        gcloud projects add-iam-policy-binding $GCP_PROJECT_ID \
+          --role roles/cloudsql.client  \
+          --member "serviceAccount:dependency-track@$GCP_PROJECT_ID.iam.gserviceaccount.com"
 
-Next up, set up a Cloud SQL instance running Postgres. 
+### Set up a Cloud SQL instance using PostgreSQL
 
-A random password will be generated for each database account and 
-stored in [Secret Manager](https://cloud.google.com/secret-manager)
-so that you don't have to write them down on a scrap of paper. 
+1.  Generate a random password for each database account and store it in [Secret Manager](https://cloud.google.com/secret-manager):
 
-```bash
-cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 30 | head -n 1 | \
-  gcloud secrets create dependency-track-postgres-admin \
-            --data-file=-
-            
-cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 30 | head -n 1 | \
-  gcloud secrets create dependency-track-postgres-user \
-            --data-file=-
-```
+        cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 30 | head -n 1 | \
+          gcloud secrets create dependency-track-postgres-admin \
+          --data-file=-
 
-Create the database server and associated user and database using the commands
-below. Note that creating a new Cloud SQL instance takes several minutes.
+        cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 30 | head -n 1 | \
+          gcloud secrets create dependency-track-postgres-user \
+          --data-file=-
 
-```bash
-export DT_DB_INSTANCE=dependency-track
+1.  Set a variable for the database instance name:
 
-# 1. Create the Cloud SQL instance
-gcloud beta sql instances create $DT_DB_INSTANCE \
-            --region=$GCP_REGION \
-            --no-assign-ip \
-            --network=projects/$GCP_PROJECT_ID/global/networks/dependency-track \
-            --database-version=POSTGRES_13 \
-            --tier=db-g1-small \
-            --storage-auto-increase \
-            --root-password=$(gcloud secrets versions access 1 --secret=dependency-track-postgres-admin)          
+        export DT_DB_INSTANCE=dependency-track
 
-# 2. Set up a database user
-gcloud sql users create dependency-track-user \
-            --instance=$DT_DB_INSTANCE \
-            --password=$(gcloud secrets versions access 1 --secret=dependency-track-postgres-user)
+1.  Create the Cloud SQL instance:
 
-# 3. Create the database            
-gcloud sql databases create dependency-track \
-            --instance=$DT_DB_INSTANCE
+        gcloud beta sql instances create $DT_DB_INSTANCE \
+          --region=$GCP_REGION \
+          --no-assign-ip \
+          --network=projects/$GCP_PROJECT_ID/global/networks/dependency-track \
+          --database-version=POSTGRES_13 \
+          --tier=db-g1-small \
+          --storage-auto-increase \
+          --root-password=$(gcloud secrets versions access 1 --secret=dependency-track-postgres-admin)          
 
-# 4. We'll need the connection details in the kubernetes configuration
-export DT_DB_CONNECTION=$(gcloud sql instances describe $DT_DB_INSTANCE --format="value(connectionName)")
-```
+    Creating a new Cloud SQL instance can take several minutes.
+    
+    At time of writing, the private IP addresses for Cloud SQL feature is in preview, so it requires the `gcloud beta sql instances create` command.
 
-__Note:__ _at time of writing, private IP for Cloud SQL is in beta and requires the
-`gcloud beta sql` call to access the functionality._
+1.  Set up a database user:
 
-The API Server will need the database user password so this is set up as a Kubernetes secret:
+        gcloud sql users create dependency-track-user \
+          --instance=$DT_DB_INSTANCE \
+          --password=$(gcloud secrets versions access 1 --secret=dependency-track-postgres-user)
 
-```bash
-kubectl create secret generic dependency-track-postgres-user-password \
-  --from-literal ALPINE_DATABASE_PASSWORD=$(gcloud secrets versions access 1 --secret=dependency-track-postgres-user) 
-```
+1.  Create the database:
 
-#### Launch the API Server
+        gcloud sql databases create dependency-track \
+          --instance=$DT_DB_INSTANCE
 
-After all of that you can now fire up the Kubernetes resources much as you did for the frontend:
+1.  Set a variable for the connection details:
 
-```bash
-cd ../api
-cat kustomization.base.yaml | envsubst >kustomization.yaml
-kubectl apply -k .
-```
+        export DT_DB_CONNECTION=$(gcloud sql instances describe $DT_DB_INSTANCE --format="value(connectionName)")
 
-Whilst the `kubectl apply` returns very quickly, the GKE cluster will need to resize 
-for the new workload and this can take a few minutes.
-Additionally, the API Server loads a lot of data and takes a long time to be ready. 
-To check that the required pods have been deployed, run the following command to
-start watching the status of the workload:
+1.  Set the databse password as a Kubernetes secret for the API server:
 
-```bash
-kubectl get pods -w -l app=dependency-track-apiserver
-```
+        kubectl create secret generic dependency-track-postgres-user-password \
+          --from-literal ALPINE_DATABASE_PASSWORD=$(gcloud secrets versions access 1 --secret=dependency-track-postgres-user) 
 
-Once the pod's status is listed as `RUNNING` with `2/2` containers ready,
-exit the command with `ctrl+c`.
+### Deploy and start the API server
 
-To track the progress of the API Server's data load,
-consider opening a separate Cloud Shell terminal tailing the logs with:
+To deploy the API server workload to the GKE cluster, run the following commands:
 
-```bash
-kubectl logs -f dependency-track-apiserver-0 dependency-track-apiserver
-```
+    cd ../api
+    cat kustomization.base.yaml | envsubst >kustomization.yaml
+    kubectl apply -k .
+
+Though the `kubectl apply` command returns very quickly, the GKE cluster needs to resize for the new workload, which can take a few minutes.
+Also, the API Server loads a lot of data and can take several minutes to be ready. 
+
+To check that the required pods have been deployed, run the following command:
+
+    kubectl get pods -w -l app=dependency-track-apiserver
+
+When the pod's status is listed as `RUNNING` with `2/2` containers ready, exit by pressing `Ctrl+C`.
+
+To track the progress of the API server's data load, open a separate Cloud Shell terminal and check the logs with this command:
+
+    kubectl logs -f dependency-track-apiserver-0 dependency-track-apiserver
 
 ### Troubleshooting
 
