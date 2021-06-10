@@ -10,6 +10,7 @@ Shashank Agarwal, Ravinder Lota, Chritoph Bussler | Google Cloud Engineer(s) | G
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
+![hero_img](images/00_hero_img.png)
 
 Cloud Spanner is a fully managed, horizontally scalable, transactional and SQL compliant database as service. For more
 key features read [here](https://cloud.google.com/spanner#section-2). However in order to evaluate Cloud Spanner’s cost
@@ -424,12 +425,11 @@ used). It contains one JDBC Sampler Search Album which depends on User Parameter
 Search Album jdbc sampler as above triggers sql query as screenshot above. It populates query parameters using 
 variable(s) as below:
 
-`${singerid} -- obtained from CSV Read`
-
+`${singerid} -- obtained from CSV Read`  
 `${title} -- obtained from User Parameters`
 
-Finally a timer is configured to throttle load to meet the requirement. It need to be supplied with transactions per **
-minute**, therefore 7K (TPS) * 60 = 420,000 (TPM)
+Finally a timer is configured to throttle load to meet the requirement. It need to be supplied with transactions 
+**per minute**, therefore 7K (TPS) * 60 = 420,000 (TPM)
 
 ![drawing](images/09_test-ss-4.png)
 
