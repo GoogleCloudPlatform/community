@@ -203,7 +203,7 @@ The Python version ([`cyclonedx-bom`](https://pypi.org/project/cyclonedx-bom/)) 
 In this section, you work with two images:
 
 - The `frontend` image provides the web-based user interface.
-- The `apiserver` image provides an Open API-based interface that is used by the frontend and when 
+- The `apiserver` image provides an OpenAPI-based interface that is used by the frontend and when 
   interacting with Dependency-Track from other systems (such as submitting a BOM).
 
 In this tutorial, you use the [Artifact Registry](https://cloud.google.com/artifact-registry) service to store container images,
@@ -287,7 +287,7 @@ In this section, you configure the system to run on Google Kubernetes Engine (GK
         export DT_APISERVER=https://$DT_DOMAIN_API
         export DT_DOMAIN_UI=[YOUR_DOMAIN_NAME_FOR_THE_FRONTEND]
 
-    * `DT_DOMAIN_API` provides the API Server (e.g., `api.example.com`).
+    * `DT_DOMAIN_API` provides the API server (e.g., `api.example.com`).
     * `DT_APISERVER` is its URL (e.g., `https://api.example.com`).
     * `DT_DOMAIN_UI` provides the frontend (e.g., `ui.example.com`).
 
@@ -355,7 +355,7 @@ using the subdomain in the record's `Name` field and the IP address in the recor
 [resource records](https://support.google.com/domains/answer/3251147), and your hosting service should 
 offer similar guidance.
 
-For example, if you use the `api` subdomain for the Dependency-Track API Server and `dt` subdomain for the Dependency-Track user interface, the two resource
+For example, if you use the `api` subdomain for the Dependency-Track API server and `dt` subdomain for the Dependency-Track user interface, the two resource
 records should be configured as follows for your domain:
 
 | Name | Type | TTL | Data |
@@ -475,7 +475,7 @@ from the base directory of the tutorial:
 
 ### Set up a service account for database access
 
-The API Server needs to access a database. In this section, you create a service account for database access with GKE
+The API server needs to access a database. In this section, you create a service account for database access with GKE
 [workload identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity), which is used by a PostgreSQL database that you
 create in the next section. This allows the [SQL Auth Proxy pod](https://cloud.google.com/sql/docs/postgres/connect-kubernetes-engine) to
 connect to Cloud SQL through the service account.
@@ -568,7 +568,7 @@ To deploy the API server workload to the GKE cluster, run the following commands
     kubectl apply -k .
 
 Though the `kubectl apply` command returns very quickly, the GKE cluster needs to resize for the new workload, which can take a few minutes.
-Also, the API Server loads a lot of data and can take several minutes to be ready. 
+Also, the API Server loads a lot of data and can take up to 30 minutes to be ready. 
 
 To check that the required pods have been deployed, run the following command:
 
@@ -580,134 +580,57 @@ To track the progress of the API server's data load, open a separate Cloud Shell
 
     kubectl logs -f dependency-track-apiserver-0 dependency-track-apiserver
 
-### Troubleshooting
-
-#### TLS error
-
-If you visit the frontend or API Server you might get a TLS error such as `ERR_SSL_VERSION_OR_CIPHER_MISMATCH`.
-Check the TLS certificate status with `gcloud compute ssl-certificates list` - you need both of the
-certificates to be listed as "ACTIVE". If you see "FAILED_NOT_VISIBLE" just wait a while for the certificate to
-be provisioned to the load balancer. This can take some time (up to 60-minutes).
-
-It can be useful to open a new terminal and set a watch on the certificate listing:
-
-```bash
-watch -n 30 gcloud compute ssl-certificates list
-```
-
-Check out 
-[Troubleshooting SSL certificates](https://cloud.google.com/load-balancing/docs/ssl-certificates/troubleshooting)
-for more info.
-
-#### GKE Connectivity
-
-If needed, you can check out the cluster by firing up a `busybox` instance: 
-
-```bash
-kubectl run --rm -it --image=busybox -- sh
-```
-
-Then run something like: `wget -O - http://www.example.com`
-
-#### Checking the database
-
-If you need to check the database using the `psql` tool, start by reviewing
-[Connecting using the Cloud SQL Auth Proxy](https://cloud.google.com/sql/docs/postgres/connect-admin-proxy)
-
-You can install `psql` in Cloud Shell (if it's not already there) with:
-
-```bash
-sudo apt install postgresql-client
-```
-
-Next, start up a Cloud SQL Auth Proxy in your GKE cluster with the following command:
-
-```bash
-kubectl run proxy --port 5432 --serviceaccount=dependency-track \
-  --image=gcr.io/cloudsql-docker/gce-proxy:1.22.0 -- /cloud_sql_proxy \
-    -instances=$DT_DB_CONNECTION=tcp:5432 \
-    -ip_address_types=PRIVATE
-```
-
-Setup a port forwarding on the Postgres port with:
-
-```bash
-kubectl port-forward pod/proxy 5432:5432
-```
-
-You can now open a new terminal and connect to the Postgres instance with:
-
-```bash
-psql "host=127.0.0.1 sslmode=disable dbname=dependency-track user=dependency-track-user"
-```
-
-Don't leave the pod hanging around - delete it once you're done:
-
-```bash
-kubectl delete pod/proxy
-```
-
 ## Using Dependency-Track
 
-The API Server loads a range of data and will take up to half an hour to be ready.
-You may also need to wait for the TLS certificates to be provisioned.
+When the API server has finished loading data and the TLS certificates are provisioned, you can visit the API server site.
 
-When the API Server is ready, you can now visit the API Server site.
-The following paths may be of interest:
+- `/api/version` is the service version.
+- `/api/swagger.json` is the OpenAPI definition.
 
-- `/api/version` - the service version
-- `/api/swagger.json` - the OpenAPI definition
+When you access the frontend, enter `admin` and `admin` for the initial login username and password. You're prompted to set up a new password. 
 
-Once you have the Dependency-Track API and frontend running, you're ready to login to the frontend.
+For more information, see 
+[Dependency-Track's Initial Startup document](https://docs.dependencytrack.org/getting-started/initial-startup/).
 
-Once you've accessed the frontend, enter `admin`/`admin` for the initial login 
-username/password - you'll be prompted to set up a better password. 
-Refer to 
-[Dependency-Track's Initial Startup document](https://docs.dependencytrack.org/getting-started/initial-startup/)
-for more information.
+1.  In the frontend user interface, go to the **Projects** screen and click **+ Create Project**.
 
-In the frontend user interface, go to the "Projects" screen and click on "+ Create Project".
+    ![New project screen](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/new_project.png)
 
-![New project screen](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/new_project.png)
+1.  Use `demo-project` for the project name, set **Classifier** to **Application**, and click **Create**.
 
-You don't need to enter many details, just use "demo-project" for the Project Name
-and set the Classifier to "Application" then press the "Create" button.
+    ![New project dialog](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/new_project_dialog.png)
 
-![New project dialog](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/new_project_dialog.png)
+1.  Click the new project.
+1.  In the project screen, click the **Components** tab.
+1.  Use the following command in the `demo-project` directory to download a copy of `bom.json`:
 
-You'll see the new project listed - click on it and when in the project screen, 
-click on the "Components" tab. 
+        cloudshell download bom.json
 
-You will need a local copy of `bom.json` in order to upload it. Use the following
-command in the base of the tutorial directory to download a copy to your computer
-(_make sure you're in the `demo-project` directory_):
+1.  Click **Upload BOM** and select the `bom.json` file for upload.
 
-```bash
-cloudshell download bom.json
-```
+    ![Uploading the BOM](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/upload_bom.png)
 
-You can now click on the "Upload BOM" button and select the `bom.json` file for upload.
+    When you return to the project screen you should see the components listed. If not,
+    click the refresh button. 
 
-![Uploading the BOM](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/upload_bom.png)
+1.  Explore the information.
 
-When you return to the project screen you should see the components listed. If not,
-click on the refresh button to the right of the screen. Take some time to click around
-and explore the information. 
+    ![Project screen with components listed](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/component_listing.png)
 
-![Project screen with components listed](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/component_listing.png)
+    The `django` component has a high risk score and seems to be the source 
+    of several issues.
+    
+1.  Click the `django` link.
 
-The `django` component has a high risk score and seems to be the source 
-of several issues. If you click on the `django` link, you'll be taken to 
-the overview page for the component. Here you'll see that `django` 1.2
-has numerous known vulnerabilities: 1 Critical, 3 High, 27 Medium and 1 Low.
+    You're taken to the overview page for the component, where you see that `django` 1.2 has many known vulnerabilities.
 
-![Project screen with components listed](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/component_listing_overview.png)
+    ![Project screen with components listed](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/component_listing_overview.png)
 
-Clicking on the `Vulnerabilities` tab will then take you to the listing for
-all the known component vulnerabilities. You can then click through to each 
-vulnerability (such as "CVE-2011-4137") to get further details about the vulnerability.
+1.  Click the **Vulnerabilities** tab to go to the listing for the known component vulnerabilities.
 
-![Project screen with components listed](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/component_listing_vulns.png)
+    You can then click through to each vulnerability (such as "CVE-2011-4137") to get further details about the vulnerability.
+
+    ![Project screen with components listed](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/component_listing_vulns.png)
 
 ### Uploading a BOM from the terminal
 
@@ -871,6 +794,59 @@ curl --location --request GET \
 If you visit the API site you'll be able to access the OpenAPI definition for further
 API goodness. The address will look something like `https://<DT_DOMAIN_API>/api/swagger.json`.
 
+## Troubleshooting
+
+### Resolving TLS errors
+
+When you visit the frontend or API server, you might get a TLS error such as `ERR_SSL_VERSION_OR_CIPHER_MISMATCH`.
+
+If this occurs, check the TLS certificate status:
+
+    gcloud compute ssl-certificates list
+    
+Both of the certificates must be listed as `ACTIVE`. If you see `FAILED_NOT_VISIBLE`, then wait a while for the certificate to
+be provisioned to the load balancer. This can take up to an hour.
+
+You can open a new terminal and set a watch on the certificate listing:
+
+    watch -n 30 gcloud compute ssl-certificates list
+
+For more information, see [Troubleshooting SSL certificates](https://cloud.google.com/load-balancing/docs/ssl-certificates/troubleshooting).
+
+### Checking GKE connectivity
+
+You can check connectivity for the cluster with the following commands:
+
+    kubectl run --rm -it --image=busybox -- sh
+    wget -O - http://www.example.com
+
+### Checking the database
+
+If you need to check the database using the `psql` tool, start by reviewing
+[Connecting using the Cloud SQL Auth Proxy](https://cloud.google.com/sql/docs/postgres/connect-admin-proxy).
+
+If the `psql` client is not installed, you can install it:
+
+    sudo apt install postgresql-client
+
+1.  Start Cloud SQL Auth Proxy in your GKE cluster:
+
+        kubectl run proxy --port 5432 --serviceaccount=dependency-track \
+          --image=gcr.io/cloudsql-docker/gce-proxy:1.22.0 -- /cloud_sql_proxy \
+            -instances=$DT_DB_CONNECTION=tcp:5432 \
+            -ip_address_types=PRIVATE
+
+1.  Set up port forwarding on the PostgreSQL port:
+
+        kubectl port-forward pod/proxy 5432:5432
+
+1.  Open a new terminal and connect to the PostgreSQL instance:
+
+        psql "host=127.0.0.1 sslmode=disable dbname=dependency-track user=dependency-track-user"
+
+1.  Delete the pod when you're done:
+
+        kubectl delete pod/proxy
 
 ## Considerations for a production system
 
