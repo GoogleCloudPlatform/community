@@ -10,7 +10,7 @@ Shashank Agarwal, Ravinder Lota, Chritoph Bussler | Google Cloud Engineer(s) | G
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-![hero_img](images/00_hero_img_4.png)
+![hero_img](images/00_hero_img_5.png)
 
 Cloud Spanner is a fully managed, horizontally scalable, transactional and SQL compliant database as service. For more
 key features read [here](https://cloud.google.com/spanner#section-2). However in order to evaluate Cloud Spanner’s cost
@@ -222,10 +222,6 @@ executed serially per thread.
 
 Test plan (and/or Thread group) can also have config elements such as JDBC Connection, CSV Data Reader etc. Configs can
 then be shared with child nodes.
-
-<p id="gdcalert1" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: undefined internal link (link text: "Sample test plan link"). Did you generate a TOC? </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert2">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-[Sample test plan link](#heading=h.v1r2n2peezpu)
 
 ## 5.2. <a name="connection"></a> Configuring connection parameters
 
