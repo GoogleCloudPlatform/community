@@ -10,7 +10,7 @@ Jeff Scudder | Software Engineer | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-Use this interactive walkthrough to learn how walks you through a basic 
+This interactive walkthrough shows you how to set up and use a basic 
 application that uses the Vision API. There are step-by-step instructions in the 
 **Learn** panel on the right side of the Cloud Console to guide you.
 
@@ -21,9 +21,7 @@ application that uses the Vision API. There are step-by-step instructions in the
 In this walkthrough you’ll do the following:
 
 * Enable the Cloud Vision API.
-* Setup a service account and credentials. 
-* Use application to run an image detection application.  
+* Set up a service account and credentials. 
+* Run an image detection application.  
 
-[![Open walkthrough in the Cloud Console](https://storage.googleapis.com/gcp-community/tutorials/python_vision_quickstart/tutorial.png)](https://console.cloud.google.com/getting-started?tutorial=python_vision_quickstart)
-
-
+[![Open walkthrough in the Cloud Console](https://storage.googleapis.com/gcp-community/tutorials/python-vision-quickstart/tutorial.png)](https://console.cloud.google.com/getting-started?tutorial=python_vision_quickstart)
