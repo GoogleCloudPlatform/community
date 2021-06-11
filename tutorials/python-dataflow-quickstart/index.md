@@ -21,9 +21,9 @@ using Python. There are step-by-step instructions in the
 In this walkthrough you’ll do the following:
 
 * Create a project.
-* Setup Dataflow. 
-* Create a Cloud Storage Bucket.
+* Set up Dataflow. 
+* Create a Cloud Storage bucket.
 * Run a Dataflow job through the pipeline.
 * Monitor and check results.
 
-[![Open walkthrough in the Cloud Console](https://storage.googleapis.com/gcp-community/tutorials/python_dataflow_quickstart/tutorial.png)](https://console.cloud.google.com/getting-started?tutorial=python_dataflow_quickstart)
+[![Open walkthrough in the Cloud Console](https://storage.googleapis.com/gcp-community/tutorials/python-dataflow-quickstart/tutorial.png)](https://console.cloud.google.com/getting-started?tutorial=python_dataflow_quickstart)
