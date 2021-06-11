@@ -24,4 +24,4 @@ In this walkthrough you’ll do the following:
 * Build and run your "Hello, world!" app in Python.
 * Deploy the app to App Engine.
 
-[![Open walkthrough in the Cloud Console](https://storage.googleapis.com/gcp-community/tutorials/python_mvms_quickstart/tutorial.png)](https://console.cloud.google.com/getting-started?tutorial=python_mvms_quickstart)
+[![Open walkthrough in the Cloud Console](https://storage.googleapis.com/gcp-community/tutorials/python-mvms-quickstart/tutorial.png)](https://console.cloud.google.com/getting-started?tutorial=python_mvms_quickstart)
