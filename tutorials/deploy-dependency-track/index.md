@@ -554,7 +554,7 @@ connect to Cloud SQL through the service account.
 
         export DT_DB_CONNECTION=$(gcloud sql instances describe $DT_DB_INSTANCE --format="value(connectionName)")
 
-1.  Set the databse password as a Kubernetes secret for the API server:
+1.  Set the database password as a Kubernetes secret for the API server:
 
         kubectl create secret generic dependency-track-postgres-user-password \
           --from-literal ALPINE_DATABASE_PASSWORD=$(gcloud secrets versions access 1 --secret=dependency-track-postgres-user) 
@@ -590,7 +590,9 @@ When the API server has finished loading data and the TLS certificates are provi
 When you access the frontend, enter `admin` and `admin` for the initial login username and password. You're prompted to set up a new password. 
 
 For more information, see 
-[Dependency-Track's Initial Startup document](https://docs.dependencytrack.org/getting-started/initial-startup/).
+[Dependency-Track's initial startup document](https://docs.dependencytrack.org/getting-started/initial-startup/).
+
+### Upload a BOM with the frontend user interface
 
 1.  In the frontend user interface, go to the **Projects** screen and click **+ Create Project**.
 
@@ -632,103 +634,59 @@ For more information, see
 
     ![Project screen with components listed](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/component_listing_vulns.png)
 
-### Uploading a BOM from the terminal
+### Upload a BOM from the terminal
 
-Uploading a BOM manually is not a long-term solution. Let's take a look at how a BOM
-can be directly uploaded to the API. 
+In a production system, you will more often upload a BOM with the API, rather than through the graphical user interface.
 
-In the frontend user interface, go to the "Administration" screen, and select 
-"Access Management" (last item), then "Teams".
-You'll see a team named "Automation", click on this to view the team's configuration.
+1.  In the frontend user interface, go to the **Administration** screen, select **Access Management**, and then select **Teams**.
 
-![The Teams listing screen](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/teams.png)
+1.  Click the **Automation** team to view the team's configuration.
 
-Add `PROJECT_CREATION_UPLOAD` permission to the "Automation" team.
+    ![The Teams listing screen](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/teams.png)
 
-![The permissions listing for the team](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/teams_perm.png)
+1.  Add the `PROJECT_CREATION_UPLOAD` permission to the **Automation** team.
 
-Copy the API Key that is displayed for the "Automation" team 
-and set up the API Key as a variable in your terminal:
+    ![The permissions listing for the team](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/teams_perm.png)
 
-```bash
-export DT_API_KEY=<YOUR API KEY>
-```
+1.  Copy the API key that is displayed for the **Automation** team, and set the API key as a variable in your terminal:
 
-Once you've set up the "Automation" team's permissions and API key you're ready
-to upload a BOM to your Dependency-Track service. 
+        export DT_API_KEY=[YOUR_API_KEY]
 
-Generate and upload the XML version of the BOM:
+1.  Generate the XML version of the BOM:
 
-```bash
-# 1. Generate the BOM
-poetry install
-poetry export --without-hashes>requirements.txt
-poetry run cyclonedx-py
+        poetry install
+        poetry export --without-hashes>requirements.txt
+        poetry run cyclonedx-py
 
-# 2. Upload the BOM
-poetry run ./bom-loader.py --url $DT_APISERVER --api-key=$DT_API_KEY
-```
+1.  Upload the BOM:
 
-The `bom-loader.py` script performs the following:
+        poetry run ./bom-loader.py --url $DT_APISERVER --api-key=$DT_API_KEY
 
-1. Reads the project name and version from the `pyproject.toml` file
-1. Loads the BOM (`bom.xml`)
-1. Packages the information and submits it to the Dependency-Track API server
+    The `bom-loader.py` script performs the following steps:
 
-Now you can go to your Dependency-Track frontend and open the "Projects" tab. You'll
-see there's now a `demo-project` with version `0.1.0`:
+    1. Reads the project name and version from the `pyproject.toml` file.
+    1. Loads the BOM (`bom.xml`).
+    1. Packages the information and submits it to the Dependency-Track API server.
 
-![Project listing with demo_project version 0.1.0](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/listing_demo_project.png)
+1.  Go to your Dependency-Track frontend and open the **Projects** tab.
 
-As before, you can click on the project and explore the dependencies.
+    You should see `demo-project` with version `0.1.0`:
 
-### Using Cloud Build
+    ![Project listing with demo_project version 0.1.0](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/listing_demo_project.png)
 
-For the next iteration of submitting a BOM let's look at integrating the approach with
-your CI/CD workflow. 
+    As before, you can select the project and explore the dependencies.
 
-Start by enabling the Cloud Build and Cloud Storage APIs:
+### Upload a BOM with Cloud Build
 
-```bash
-gcloud services enable cloudbuild.googleapis.com \
-  storage-component.googleapis.com
-```
+In this section, you set up Cloud Build and see how you can submit a BOM as part of your CI/CD workflow.
 
-Next, create a builder image that can be used in Cloud Build. First,
-create a new repository called `builders`:
-
-```bash
-gcloud artifacts repositories create builders \
-              --repository-format=docker \
-              --location=$GCP_REGION
-```
-
-Next, make sure you're in the `demo-project` directory and submit the 
-Poetry image to Cloud Build:
-
-```bash
-gcloud builds submit support/poetry-image \
-  --tag ${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/builders/poetry:1
-```
-
-The Cloud Build job will create the image and store it in the `builders` repository.
-This image provides Python with the Poetry system ready to go.
-
-If you take a look at the `cloudbuild.yaml` file you'll notice that there's an 
-`artifacts` section that will store the generated `bom.xml` in a Cloud Storage 
-bucket. This isn't necessary but could be a useful information source.
+The `cloudbuild.yaml` file contains an `artifacts` section that stores the generated `bom.xml` in a Cloud Storage bucket. This isn't necessary, but it can be a useful information source.
 
 ```yaml
 artifacts:
   objects:
     location: gs://${PROJECT_ID}-build/$BUILD_ID
     paths: ["bom.xml"]
-```
-
-Create the bucket using the following command:
-
-```bash
-gsutil mb gs://${GCP_PROJECT_ID}-build
 ```
 
 Cloud Build can [use secrets stored in Secret Manager](https://cloud.google.com/build/docs/securing-builds/use-secrets#configuring_builds_to_access_the_secret_from).
@@ -738,61 +696,69 @@ Builds can use this to quickly access required secrets without requiring command
 parameters. This also make it easier to rotate keys (such as the Dependency-Track API key)
 without needing to reconfigure every build.
 
-Start by adding the API Key as a secret:
 
-```bash
-printf $DT_API_KEY | gcloud secrets create dependency-track-api-key --data-file -
-```
+1.  Enable the Cloud Build and Cloud Storage APIs:
 
-Then grant Cloud Build the ability to read the secret:
+        gcloud services enable cloudbuild.googleapis.com storage-component.googleapis.com
 
-```bash
-# Get the unique GCP project number
-export GCP_PROJECT_NUM=$(gcloud projects describe ${GCP_PROJECT_ID} \
-                          --format 'value(projectNumber)')
+1.  Create a new repository called `builders`:
 
-# Grant the secretAccessor role to the Cloud Build service account
-gcloud secrets add-iam-policy-binding dependency-track-api-key  \
-    --member serviceAccount:${GCP_PROJECT_NUM}@cloudbuild.gserviceaccount.com \
-    --role roles/secretmanager.secretAccessor
-```
+        gcloud artifacts repositories create builders \
+          --repository-format=docker \
+          --location=$GCP_REGION
 
-If you previously uploaded the BOM from the terminal you may want to delete the project/version 
-in Dependency-Track before you submit the BOM using Cloud Build. To delete it,
-go to the Dependency-Track frontend, select the project from the list and click 
-"View Details" in the project screen (below).
-The pop-up dialog will have a "Delete" button that deletes the project.
+1.  In the `demo-project` directory, submit the Poetry image to Cloud Build:
 
-![The View Details link is used to open the display to delete the project](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/delete_demo_project.png)
+        gcloud builds submit support/poetry-image \
+          --tag ${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/builders/poetry:1
 
-With that done you can now submit the build with the following command:
+    The Cloud Build job creates the image and store it in the `builders` repository.
+    This image provides Python with the Poetry system ready to go.
 
-```bash
-gcloud builds submit --config cloudbuild.yaml \
-  --substitutions=_DT_APISERVER=$DT_APISERVER . 
-```
+1.  Create the Cloud Storage bucket:
 
-The build will start and push the generated BOM to Dependency-Track.
+        gsutil mb gs://${GCP_PROJECT_ID}-build
 
-You can check out the details in the frontend UI or try out the API with `curl`. The following
-command will list all projects
+1.  Add the API key as a secret:
 
-```bash
-curl --location --request GET \
-  "$DT_APISERVER/api/v1/project" \
-  --header "x-api-key: $DT_API_KEY" | jq
-```
+        printf $DT_API_KEY | gcloud secrets create dependency-track-api-key --data-file -
 
-This one provides basic project details:
+1.  Get the unique Google Cloud project number
 
-```bash
-curl --location --request GET \
-  "$DT_APISERVER/api/v1/project/lookup?name=demo-project&version=0.1.0" \
-  --header "x-api-key: $DT_API_KEY" | jq
-```
+        export GCP_PROJECT_NUM=$(gcloud projects describe ${GCP_PROJECT_ID} --format 'value(projectNumber)')
 
-If you visit the API site you'll be able to access the OpenAPI definition for further
-API goodness. The address will look something like `https://<DT_DOMAIN_API>/api/swagger.json`.
+1.  Give Cloud Build the ability to read the secret by granting the `secretAccessor` role to the Cloud Build service account:
+
+        gcloud secrets add-iam-policy-binding dependency-track-api-key  \
+          --member serviceAccount:${GCP_PROJECT_NUM}@cloudbuild.gserviceaccount.com \
+          --role roles/secretmanager.secretAccessor
+
+1.  To delete the project and version that you added in the previous sections in Dependency-Track, 
+    go to the Dependency-Track frontend, select the project from the list, click **View Details** in the project screen, and click
+    the **Delete** button.
+
+    ![The View Details link is used to open the display to delete the project](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/delete_demo_project.png)
+
+1.  Submit the build:
+
+        gcloud builds submit --config cloudbuild.yaml --substitutions=_DT_APISERVER=$DT_APISERVER . 
+
+    The build starts and pushes the generated BOM to Dependency-Track.
+
+1.  List all projects:
+
+        curl --location --request GET \
+          "$DT_APISERVER/api/v1/project" \
+          --header "x-api-key: $DT_API_KEY" | jq
+
+1.  Check basic project details:
+
+        curl --location --request GET \
+          "$DT_APISERVER/api/v1/project/lookup?name=demo-project&version=0.1.0" \
+          --header "x-api-key: $DT_API_KEY" | jq
+
+You can visit the API site, to access the OpenAPI definition for further API information. The address is of the form
+`https://[DT_DOMAIN_API]/api/swagger.json`.
 
 ## Troubleshooting
 
