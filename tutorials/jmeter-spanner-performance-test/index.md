@@ -2,11 +2,11 @@
 title: Cloud Spanner performance test using JMeter
 description: Evaluate Cloud Spanner for custom workload using JMeter's JDBC Sampler.
 author: shashank-google,chbussler,rlota
-tags: spanner, cloud spanner, evaluation, migration, perforamnce test, jdbc
+tags: spanner, cloud spanner, evaluation, migration, performance test, jdbc
 date_published: 2021-06-20
 ---
 
-Shashank Agarwal, Ravinder Lota, Chritoph Bussler | Google Cloud Engineer(s) | Google
+Shashank Agarwal, Ravinder Lota, Christoph Bussler | Google Cloud Engineer(s) | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
