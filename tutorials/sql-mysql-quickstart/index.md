@@ -24,4 +24,4 @@ In this walkthrough you’ll do the following:
 * Set up and query a database.
 * Clean up the resources used in the tutorial.
 
-[![Open walkthrough in the Cloud Console](https://storage.googleapis.com/gcp-community/tutorials/sql_mysql_quickstart/tutorial.png)](https://console.cloud.google.com/getting-started?tutorial=sql_mysql_quickstart)
+[![Open walkthrough in the Cloud Console](https://storage.googleapis.com/gcp-community/tutorials/sql-mysql-quickstart/tutorial.png)](https://console.cloud.google.com/getting-started?tutorial=sql_mysql_quickstart)
