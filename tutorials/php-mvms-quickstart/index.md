@@ -24,4 +24,4 @@ In this walkthrough you’ll do the following:
 * Deploy a PHP application to App Engine. 
 
 
-[![Open walkthrough in the Cloud Console](https://storage.googleapis.com/gcp-community/tutorials/php_mvms_quickstart/tutorial.png)](https://console.cloud.google.com/getting-started?tutorial=php_mvms_quickstart)
+[![Open walkthrough in the Cloud Console](https://storage.googleapis.com/gcp-community/tutorials/php-mvms-quickstart/tutorial.png)](https://console.cloud.google.com/getting-started?tutorial=php_mvms_quickstart)
