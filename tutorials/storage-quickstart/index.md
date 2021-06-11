@@ -20,9 +20,8 @@ application to App Engine. There are step-by-step instructions in the
 
 In this walkthrough you’ll do the following:
 
-* Create Cloud Storage Bucket.
-* Upload a file to the Bucket.
+* Create Cloud Storage bucket.
+* Upload a file to the bucket.
 * Clean up the resources used in the tutorial.
 
-[![Open walkthrough in the Cloud Console](https://storage.googleapis.com/gcp-community/tutorials/storage_quickstart/tutorial.png)](https://console.cloud.google.com/getting-started?tutorial=storage_quickstart)
-
+[![Open walkthrough in the Cloud Console](https://storage.googleapis.com/gcp-community/tutorials/storage-quickstart/tutorial.png)](https://console.cloud.google.com/getting-started?tutorial=storage_quickstart)
