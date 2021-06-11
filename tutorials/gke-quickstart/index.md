@@ -15,7 +15,7 @@ machines and deploy a prebuilt Docker container image with a simple Node.js
 example app. There are step-by-step instructions in the **Learn** panel on the 
 right side of the Cloud Console to guide you.
 
-[![Open in Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=gke_quickstart)
+[![Open in Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?tutorial=gke_quickstart)
 
 ## What you'll do
 
@@ -25,4 +25,4 @@ In this walkthrough you’ll do the following:
 * Install and run a sample application in the cluster. 
 * Configure the sample application to be accessible on the internet. 
 
-[![Open walkthrough in the Cloud Console](https://storage.googleapis.com/gcp-community/tutorials/gke-quickstart/tutorial.png)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=gke_guestbook)
+[![Open walkthrough in the Cloud Console](https://storage.googleapis.com/gcp-community/tutorials/gke-quickstart/tutorial.png)](https://console.cloud.google.com/getting-started?tutorial=gke_guestbook)

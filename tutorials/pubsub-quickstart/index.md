@@ -13,7 +13,7 @@ Jeff Scudder | Software Engineer | Google
 Use this interactive walkthrough to get a brief introduction to the command-line interface for Pub/Sub, using the `gcloud` command-line tool.
 There are step-by-step instructions in the **Learn** panel on the right side of the Cloud Console to guide you.
 
-[![Open in Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=pubsub_quickstart)
+[![Open in Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?tutorial=pubsub_quickstart)
 
 ## What you'll do
 
@@ -23,4 +23,4 @@ In this walkthrough you’ll do the following:
 * Publish messages to that topic.
 * Retrieve messages sent to that topic.
 
-[![Open walkthrough in the Cloud Console](https://storage.googleapis.com/gcp-community/tutorials/pubsub-quickstart/tutorial.png)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=pubsub_quickstart)
+[![Open walkthrough in the Cloud Console](https://storage.googleapis.com/gcp-community/tutorials/pubsub-quickstart/tutorial.png)](https://console.cloud.google.com/getting-started?tutorial=pubsub_quickstart)
