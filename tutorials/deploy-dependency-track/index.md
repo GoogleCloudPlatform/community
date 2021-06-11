@@ -19,7 +19,7 @@ Dependency-Track is a useful tool as you build out your software supply chain.
 
 Dependency-Track accepts software bills of materials (SBOMs) in [CycloneDX](https://cyclonedx.org/)
 format, which you can provide either on an ad-hoc basis or as part of your deployment system.
-The approach is useful in a number of scenarios:
+This kind of system is useful in a number of scenarios:
 
 - Software vendors can provide you SBOMs when they deliver a software project.
 - Teams building and deploying software can submit SBOMs when new versions are deployed.
@@ -680,22 +680,11 @@ In a production system, you will more often upload a BOM with the API, rather th
 
 In this section, you set up Cloud Build and see how you can submit a BOM as part of your CI/CD workflow.
 
-The `cloudbuild.yaml` file contains an `artifacts` section that stores the generated `bom.xml` in a Cloud Storage bucket. This isn't necessary, but it can be a useful information source.
-
-```yaml
-artifacts:
-  objects:
-    location: gs://${PROJECT_ID}-build/$BUILD_ID
-    paths: ["bom.xml"]
-```
-
-Cloud Build can [use secrets stored in Secret Manager](https://cloud.google.com/build/docs/securing-builds/use-secrets#configuring_builds_to_access_the_secret_from).
-This is extremely useful for automating build environments as Secret Manager provides a 
-central place for holding sensitive information such as keys and passwords. 
-Builds can use this to quickly access required secrets without requiring command line 
-parameters. This also make it easier to rotate keys (such as the Dependency-Track API key)
-without needing to reconfigure every build.
-
+Cloud Build can
+[use secrets stored in Secret Manager](https://cloud.google.com/build/docs/securing-builds/use-secrets#configuring_builds_to_access_the_secret_from).
+This is extremely useful for automating build environments, because Secret Manager provides a central place for holding sensitive information such as keys and 
+passwords. Builds can use this to quickly access required secrets without requiring command-line parameters. This also make it easier to rotate keys (such as the
+Dependency-Track API key) without needing to reconfigure every build.
 
 1.  Enable the Cloud Build and Cloud Storage APIs:
 
@@ -715,9 +704,16 @@ without needing to reconfigure every build.
     The Cloud Build job creates the image and store it in the `builders` repository.
     This image provides Python with the Poetry system ready to go.
 
-1.  Create the Cloud Storage bucket:
+1.  Create a Cloud Storage bucket:
 
         gsutil mb gs://${GCP_PROJECT_ID}-build
+
+    The `cloudbuild.yaml` file contains an `artifacts` section that stores the generated `bom.xml` in this Cloud Storage bucket:
+
+        artifacts:
+          objects:
+            location: gs://${PROJECT_ID}-build/$BUILD_ID
+            paths: ["bom.xml"]
 
 1.  Add the API key as a secret:
 
@@ -733,7 +729,7 @@ without needing to reconfigure every build.
           --member serviceAccount:${GCP_PROJECT_NUM}@cloudbuild.gserviceaccount.com \
           --role roles/secretmanager.secretAccessor
 
-1.  To delete the project and version that you added in the previous sections in Dependency-Track, 
+1.  To clear the resources that you added in previous sections of this tutorial in Dependency-Track, 
     go to the Dependency-Track frontend, select the project from the list, click **View Details** in the project screen, and click
     the **Delete** button.
 
