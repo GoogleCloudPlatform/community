@@ -40,7 +40,6 @@ the "Cleaning up" section at the end of the tutorial.
 
 1.  [Select or create a Google Cloud project.](https://cloud.console.google.com/projectselector2/home/dashboard)
 1.  [Enable billing for your project.](https://support.google.com/cloud/answer/6293499#enable-billing)
-1.  [Enable the Kubernetes Engine, Container Registry, Cloud Monitoring, and Cloud Build APIs.](https://console.cloud.google.com/flows/enableapi?apiid=containerregistry.googleapis.com,container.googleapis.com,monitoring.googleapis.com,cloudbuild.googleapis.com)
 1.  Make sure that you have either a project [owner or editor role](https://cloud.google.com/iam/docs/understanding-roles#primitive_roles), or sufficient 
     permissions to use the services listed above.
 
@@ -72,6 +71,7 @@ You need to define several variables that control where elements of the infrastr
         gcloud services enable logging.googleapis.com
         gcloud services enable cloudbuild.googleapis.com
         gcloud services enable cloudscheduler.googleapis.com
+        gcloud services enable containerregistry.googleapis.com
 
 1.  Set the zone and project ID so that you don't have to specify these values in subsequent commands:
 
@@ -134,7 +134,7 @@ The sample code for this tutorial is in the Google Cloud Community GitHub reposi
 
 1.  When you are prompted for the service name, press Enter to accept the default name `monitoring-bq`.
 
-    Deployment can take a few miniutes. When the deployment is complete, the command line displays the service URL.
+    Deployment can take a few minutes. When the deployment is complete, the command line displays the service URL.
 
 1.  For Cloud Run, give your service account permission to invoke your service:
 
@@ -161,7 +161,7 @@ The sample code for this tutorial is in the Google Cloud Community GitHub reposi
 
 
 The procedure in this section allows you to run a Cloud Run service to ingest BigQuery data to Cloud Monitoring. However, if you prefer an event-based 
-system instead of a shedule-based system, you can use BigQuery events, which can also trigger a Cloud Run service. For more information, see
+system instead of a schedule-based system, you can use BigQuery events, which can also trigger a Cloud Run service. For more information, see
 [How to trigger Cloud Run actions on BigQuery events](https://cloud.google.com/blog/topics/developers-practitioners/how-trigger-cloud-run-actions-bigquery-events).
 
 ## View metrics in Cloud Monitoring
