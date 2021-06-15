@@ -15,7 +15,7 @@ machine running a Node.js application and one running MongoDB. There are
 step-by-step instructions in the **Learn** panel on the right side of the Cloud 
 Console to guide you.
 
-[![Open in Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=compute_quickstart)
+[![Open in Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?tutorial=compute_quickstart)
 
 ## What you'll do
 
@@ -25,4 +25,4 @@ In this walkthrough you’ll do the following:
 * Set up firewall rules.
 * Use SSH to install packages on your VMs.
 
-[![Open walkthrough in the Cloud Console](https://storage.googleapis.com/gcp-community/tutorials/compute-quickstart/tutorial.png)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=bigquery_import_data_from_cloud_storage)
+[![Open walkthrough in the Cloud Console](https://storage.googleapis.com/gcp-community/tutorials/compute-quickstart/tutorial.png)](https://console.cloud.google.com/getting-started?tutorial=compute_quickstart)
