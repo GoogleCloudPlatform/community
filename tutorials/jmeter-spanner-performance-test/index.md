@@ -226,7 +226,7 @@ then be shared with child nodes.
 Within each JMeter test (screenshot below) you will need to provide connection parameters which will be used by the JDBC
 library to connect to Cloud Spanner (next).
 
-![drawing](images/01_Connection_Params.png)
+![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/01_Connection_Params.png)
 
 Following properties should be updated:
 
@@ -249,7 +249,7 @@ Above parameters will be utilized in JDBC Connection Configuration.
 Check complete list of jdbs properties 
 [here](https://javadoc.io/doc/com.google.cloud/google-cloud-spanner-jdbc/latest/com/google/cloud/spanner/jdbc/JdbcDriver.html)
 
-![drawing](images/02_JDBC_Connection_Params.png)
+![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/02_JDBC_Connection_Params.png)
 
 Connection pool variable name (conn_pool) will be used by JDBC Samplers to obtain connection and JDBC Connection URL as below:
 
@@ -265,16 +265,16 @@ Read Only or Staleness etc which can be configured as needed.
 A Thread group represents a group of users, and the number of threads you assign a thread group is equivalent to the
 number of users that you want querying Cloud Spanner. Example thread group configuration as below.
 
-![drawing](images/03_thread_groups.png)
+![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/03_thread_groups.png)
 
 In case you want a thread group to execute for a given time duration, then you can change it as shown in screenshot
 below. Where duration can be supplied as command line value with default of 5 mins.
 
-![drawing](images/04_thread_groups_2.png)
+![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/04_thread_groups_2.png)
 
 ## 5.5. JDBC Request Sampler
 
-![drawing](images/05_jdbc_sampler.png)
+![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/05_jdbc_sampler.png)
 
 Using JDBC Sampler you can fire SQL Queries. Using Prepared Select or Prepared Update is recommended as it
 is [more performant](https://cloud.google.com/spanner/docs/sql-best-practices#query-parameters) on Cloud Spanner.
@@ -404,17 +404,17 @@ Above csv can be created using a sql query such as below. This is to randomly se
 Let's take a brief walkthrough of the test. As the below screenshot shows, there are three thread groups with the
 transaction as defined previously.
 
-![drawing](images/06_test-ss-1.png)
+![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/06_test-ss-1.png)
 
 The CSV Read' config reads data from a csv file which is being used in all the three thread groups. Since all the three
 thread groups are very similar we will take a look at Search Albums.
 
-![drawing](images/07_test-ss-2.png)
+![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/07_test-ss-2.png)
 
 It is configured to use users and duration parameters which can be passed by command line (if not then defaults will be
 used). It contains one JDBC Sampler Search Album which depends on User Parameters and Timer.
 
-![drawing](images/08_test-ss-3.png)
+![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/08_test-ss-3.png)
 
 Search Album jdbc sampler as above triggers sql query as screenshot above. It populates query parameters using 
 variable(s) as below:
@@ -425,7 +425,7 @@ variable(s) as below:
 Finally a timer is configured to throttle load to meet the requirement. It need to be supplied with transactions 
 **per minute**, therefore 7K (TPS) * 60 = 420,000 (TPM)
 
-![drawing](images/09_test-ss-4.png)
+![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/09_test-ss-4.png)
 
 # 8. Executing performance test
 
@@ -495,7 +495,7 @@ use [metrics explorer](https://cloud.google.com/spanner/docs/monitoring-cloud#cr
 Spanner dashboard provides information about the read & write operations executing on the spanner instance.
 For example, the following chart shows a total TPS of 43744 per second for the selected duration.
 
-![alt_text](images/10_results-ss-1.png)
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/10_results-ss-1.png)
 
 **Latency:**
 
@@ -503,7 +503,7 @@ An example of read and write operations latency at 50th and 99th percentile is c
 **Note:** You can also get **95th percentile** latency from [Cloud Monitoring](https://cloud.google.com/spanner/docs/monitoring-cloud)
 
 
-![alt_text](images/11_results-ss-2.png)
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/11_results-ss-2.png)
 
 *Latency metrics have been redacted in above screen shot.*
 
@@ -522,8 +522,7 @@ to reduce the lock time.
 This metric is important to understand the CPU utilization throughout the test duration and provides information whether
 the cluster is under-utilized or over-utilized.
 
-
-![alt_text](images/12_results-ss-3.png)
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/12_results-ss-3.png)
 
 This information can be used to further optimize the cluster size. More details on how to investigate high CPU
 utilization can be found [here](https://cloud.google.com/spanner/docs/introspection/investigate-cpu-utilization).
@@ -537,6 +536,7 @@ To avoid incurring charges to your Google Cloud account for the resources used i
 3.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
 
 ## What's next
+
 - [Cloud Spanner Schema and data model](https://cloud.google.com/spanner/docs/schema-and-data-model)
 - [Schema design best practices](https://cloud.google.com/spanner/docs/schema-design)
 - [Demystifying Cloud Spanner multi-region configurations](https://cloud.google.com/blog/topics/developers-practitioners/demystifying-cloud-spanner-multi-region-configurations)
