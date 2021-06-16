@@ -18,7 +18,7 @@ This entire tutorial can be completed in the Cloud Shell in the Cloud Console.
 
 The following diagram illustrates the components and interactions that are part of this tutorial:
 
-![Prestashop on GKE](prestashop-gke.png)
+![Prestashop on GKE](https://storage.googleapis.com/gcp-community/tutorials/prestashop-gke/prestashop-gke.png)
 
 ## Objectives
 
