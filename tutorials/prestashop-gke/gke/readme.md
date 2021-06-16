@@ -1,2 +1,0 @@
-# Deploy Prestashop on GKE
-
