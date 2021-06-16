@@ -1,21 +1,17 @@
 ---
-title: Customizable serverless Golang proxy for GCS
-description:
-    Customize this Golang proxy for GCS to transform, or even translate, your
-    GCS object content.
+title: Use Cloud Run and Go to create a customizable serverless proxy for Cloud Storage
+description: Customize this Go proxy for Cloud Storage to transform, or even translate, objects in Cloud Storage.
 author: domz
-tags: Serverless, GCS, Cloud Run, Golang, Translate
-date_published: 2021-05-31
+tags: Serverless, GCS, Cloud Storage, Cloud Run, Golang, Go, Translate
+date_published: 2021-06-17
 ---
 
 Dom Zippilli | Solutions Architect | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-## Introduction
-
 This tutorial shows you how to use Cloud Run to host
-[a streaming proxy in front of Google Cloud Storage (GCS)](https://github.com/domZippilli/gcs-proxy-cloud-run),
+[a streaming proxy in front of Cloud Storage](https://github.com/domZippilli/gcs-proxy-cloud-run),
 which you can use to do custom protocol translation to HTTP and transform
 responses with little impact to performance compared to standard GCS APIs.
 
@@ -67,7 +63,7 @@ I had customers who couldn't live with those limitations, so I created
 Golang as a proof-of-concept to show the way. The design is pretty simple, and
 resembles most HTTP-to-HTTP proxies:
 
-![Architecture](./architecture.png)
+![Architecture](https://storage.googleapis.com/gcp-community/tutorials/cloud-run-golang-gcs-proxy/architecture.png)
 
 A couple of things to note here:
 
@@ -179,13 +175,13 @@ this to do anything interesting, you will at least need something at
 `index.html` in your bucket. For my purposes, I have this serving up a very
 simple demo page, so I just load it up in my browser:
 
-![justlogging](./justlogging.png)
+![justlogging](https://storage.googleapis.com/gcp-community/tutorials/cloud-run-golang-gcs-proxy/justlogging.png)
 
 This is very straightforward, and returns acceptable latency (note this is run
 from my home internet connection, which is nothing special and must travel a bit
 to the Oregon region).
 
-![justlogging-network](./justlogging-network.png)
+![justlogging-network](https://storage.googleapis.com/gcp-community/tutorials/cloud-run-golang-gcs-proxy/justlogging-network.png)
 
 I should note that during development, I would just run this proxy in a Docker
 container on my dev workstation. This might not sound like something relevant,
@@ -197,7 +193,7 @@ As expected, logging messages are easily found in
 [Logs Explorer](https://console.cloud.google.com/logs) for this service, and
 they show the usual information for an HTTP server.
 
-![justlogging-logs](./justlogging-logs.png)
+![justlogging-logs](https://storage.googleapis.com/gcp-community/tutorials/cloud-run-golang-gcs-proxy/justlogging-logs.png)
 
 ### Using this for an intranet site
 
@@ -268,7 +264,7 @@ then log the requests as before. I will deploy it using the same scripts as the
 first demonstration, make **no** changes to the bucket, and then reload my
 webpage:
 
-![lowercasing](./lowercasing.png)
+![lowercasing](https://storage.googleapis.com/gcp-community/tutorials/cloud-run-golang-gcs-proxy/lowercasing.png)
 
 The differences might not be immediately obvious, but note that "Lake
 Washington" is now "lake washington," and "Google Cloud" is "google cloud." The
@@ -364,7 +360,7 @@ thing has changed -- the size of the downloads for my content. As noted above in
 the logs screenshot, the size of `index.html` is 1113 bytes. Now, it's just 531
 bytes:
 
-![zipping-network](./zipping-network.png)
+![zipping-network](https://storage.googleapis.com/gcp-community/tutorials/cloud-run-golang-gcs-proxy/zipping-network.png)
 
 The file `style.css` is also compressed, from 1185 bytes to 591 bytes. Overall
 transfer decreased from 18.0kB to 16.6kB. Nothing earth-shattering in terms of
@@ -484,7 +480,7 @@ that suit your needs, even writing little bits of code to customize behaviors.
 So after deploying with this new configuration, what happens when I load my
 webpage?
 
-![translating](./translating.png)
+![translating](https://storage.googleapis.com/gcp-community/tutorials/cloud-run-golang-gcs-proxy/translating.png)
 
 ¡Que guay! Just like that, my webpage is in Spanish! This filter uses the
 [Cloud Translation](https://cloud.google.com/translate) basic API, but there are
@@ -493,7 +489,7 @@ sophistication.
 
 There is one small downside to what I've got here:
 
-![translating-network](./translating-network.png)
+![translating-network](https://storage.googleapis.com/gcp-community/tutorials/cloud-run-golang-gcs-proxy/translating-network.png)
 
 See that 128ms for index.html? It makes sense, as there are two things working
 against us on this translate filter:
