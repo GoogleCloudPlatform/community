@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "demo-project"
+version = "0.1.0"
+description = "A basic demonstration project environment."
+authors = ["Duncan Dickinson <dickinsond@google.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+Flask = "^1.1.2"
+Django = "1.2"
+
+[tool.poetry.dev-dependencies]
+cyclonedx-bom = "^0.4.3"
+tomlkit = "^0.7.0"
+safety = "^1.10.3"
+pylint = "^2.7.4"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
