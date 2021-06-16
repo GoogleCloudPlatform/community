@@ -96,7 +96,9 @@ Follow the rest of the steps of the web wizard to activate your device and regis
 
 ### Option 2: Activate Sens'it using the mobile app
 
-Alternatively, you can install the Sigfox Sens'it Discovery mobile app and use it to activate your device. The app is available in the [Google Play store](https://play.google.com/store/apps/details?id=com.sensitio&hl=en_US) for Android and [App Store](https://play.google.com/store/apps/details?id=com.sensitio&hl=en_US) for iOS.
+Alternatively, you can install the Sigfox Sens'it Discovery mobile app and use it to activate your device. The app is available in the
+[Google Play store](https://play.google.com/store/apps/details?id=com.sensitio) for Android and
+[App Store](https://play.google.com/store/apps/details?id=com.sensitio) for iOS.
 
 To activate the Sens'it device using the mobile app, execute the following steps:
 
