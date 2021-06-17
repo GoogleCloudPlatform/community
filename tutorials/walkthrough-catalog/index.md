@@ -1,17 +1,21 @@
 ---
-title: Walkthrough Catalog
-description: A list of all of the interactive walkthroughs that we have published.
+title: Catalog of Google Cloud interactive walkthroughs
+description: A list of interactive walkthroughs that we have published. 
 author: tpryan
-tags: Walkthrough
-date_published: 2021-06-17
+tags: Walkthrough, tutorial
+date_published: 2021-06-18
 ---
 
-## Google Cloud Walkthrough Catalog
-This is the current list of interactive tutorials we refer to as Walkthroughs. 
-They take you through simple bite sized tasks with step by step directions and 
-hints that appear directly in the Cloud Console to help click the right part of the interface to do what needs to be done.  
+Google Cloud _walkthroughs_ are interactive, step-by-step tutorials that take you through simple tasks
+in the Cloud Console. When you use these walkthroughs, hints appear directly in the Cloud Console to help you to interact with the interface
+as necessary for each step.
 
-![Neos Demo](https://storage.googleapis.com/gcp-community/tutorials/walkthrough-catalog/demo.gif)
+Explore the current set of walkthroughs, and
+[let us know](https://github.com/GoogleCloudPlatform/community/issues?q=is%3Aopen+is%3Aissue+label%3A%22tutorial+request%22)
+what additional walkthroughs you'd like to see.
+
+![Neos demonstration](https://storage.googleapis.com/gcp-community/tutorials/walkthrough-catalog/demo.gif)
+
 <table>
 	<tr>
         <td width="250" style="vertical-align: top;" >
