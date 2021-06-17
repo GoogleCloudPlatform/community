@@ -1,6 +1,6 @@
 ---
 title: Catalog of Google Cloud interactive walkthroughs
-description: A list of interactive walkthroughs that we have published. 
+description: A list of interactive walkthroughs that we have published.
 author: tpryan
 tags: Walkthrough, tutorial
 date_published: 2021-06-18
