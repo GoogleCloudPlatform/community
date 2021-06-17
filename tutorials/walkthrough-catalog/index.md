@@ -14,8 +14,6 @@ Explore the current set of walkthroughs, and
 [let us know](https://github.com/GoogleCloudPlatform/community/issues?q=is%3Aopen+is%3Aissue+label%3A%22tutorial+request%22)
 what additional walkthroughs you'd like to see.
 
-![Neos demonstration](https://storage.googleapis.com/gcp-community/tutorials/walkthrough-catalog/demo.gif)
-
 <table>
 	<tr>
         <td width="250" style="vertical-align: top;" >
