@@ -1,6 +1,6 @@
 ---
 title: Walkthrough Catalog
-description: A list of all of the interactive walkthorughs that we have published. 
+description: A list of all of the interactive walkthroughs that we have published.
 author: tpryan
 tags: Walkthrough
 date_published: 2021-06-17
