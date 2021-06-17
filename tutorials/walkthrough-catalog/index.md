@@ -215,7 +215,7 @@ what additional walkthroughs you'd like to see.
             </a> 
             <p>Learn to use Pub/Sub to send and receive real-time messages.</p>
             <ul>
-                <li>PubSub</li>
+                <li>Pub/Sub</li>
             </ul>
         </td>
 
