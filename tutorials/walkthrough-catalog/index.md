@@ -1,3 +1,11 @@
+---
+title: Walkthrough Catalog
+description: A list of all of the interactive walkthorughs that we have published. 
+author: tpryan
+tags: Walkthrough
+date_published: 2021-06-17
+---
+
 ## Google Cloud Walkthrough Catalog
 This is the current list of interactive tutorials we refer to as Walkthroughs. 
 They take you through simple bite sized tasks with step by step directions and 
