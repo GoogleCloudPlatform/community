@@ -1,6 +1,6 @@
 ---
 title: Google Cloud Directory Sync examples
-description: Common and complex use cases for synchronizing Active Directory users to Cloud Identity using Google Cloud Directory Sync.
+description: Learn from four use cases for synchronizing Active Directory users to Cloud Identity using Google Cloud Directory Sync.
 author: akaashr
 tags: gcds, activedirectory
 date_published: 2021-06-21
@@ -12,6 +12,10 @@ Akaash Rampersad | Customer Engineer, Infrastructure Modernization | Google
 
 This document describes four scenarios in which you can use Google Cloud Directory Sync (GCDS) to synchronize user and group identities from an Active Directory
 domain.
+
+In these scenarios, you manipulate LDAP queries with GCDS to broaden or narrow the scope of a user or group search. Each organization’s requirements for
+synchronizing identities from on-premises to Google Cloud are different, which is why the customizability of GCDS is a powerful tool for administrators and
+security engineers, to help ensure that the right users and groups are synchronized to the cloud.
 
 ## Costs
 
@@ -57,66 +61,60 @@ considerations with this approach:
 - The time that a query takes to run increases with the number of objects in the subtree.
 
 - The default search for user objects and group objects returns _all_ matching entries, which can cause unintended users or groups to synchronize
-  with Google Cloud. 
+  with Google Cloud Identity. 
 
 For example, consider that the security groups are not mail-enabled, so they can only be identified by their `userPrincipalName` attribute. If the default LDAP 
 query is executed, then _all_ security groups—including those that are out of scope—are returned as matching:
 
 ![GCDS default search screenshot](https://storage.googleapis.com/gcp-community/tutorials/gcds-use-cases-common-and-complex/05-GCDS-Default-Search.png)
 
-This can usually be mitigated by manually assigning an email address to the security groups (even if they are not mail-enabled) and switching the query to use
-the `mail` attribute. Alternatively, as shown in the next section, you can make the **Base DN** value more specific.
+You can usually mitigate this behavior by manually assigning an email address to the security groups (even if they are not mail-enabled) and switching the query
+to use the `mail` attribute. Alternatively, as shown in the next section, you can make the **Base DN** value more specific.
 
-## Scenario #1 - User Accounts and Groups are not in the same Organizational Unit (OU)
+## Scenario #1: User accounts and groups are not in the same organizational unit
 
-This scenario is typically found in most on-premise environments; the User objects and Group objects are located in different OUs and there is no common “anchor OU” for them both. Additionally this scenario explores configuring the `Base DN` in the Search Rules to ensure that the search scope is smaller which will also help with preventing unintended Users and Groups from being synced.
+In this scenario, the user objects and group objects are located in different organizational units, which is typical in most on-premises environments. The users
+are in the `Corp` > `IT` > `Users` and `Corp` > `R&D` > `Users` sub-OUs, and all users in these sub-OUs will be synchronozed to Google Cloud.
 
-For this example, assume the following is true:
-- [x] GCDS is installed and configured per the [documentation](https://cloud.google.com/architecture/identity/federating-gcp-with-active-directory-synchronizing-user-accounts)
-- [x] The Security Groups are ***not*** mail-enabled and ***do not*** have an email address assigned
-      For mail-enabled Groups, you would use `mail` instead of `userPrincipalName`
-- [x] The Users reside in the ***Corp*** > ***IT*** > ***Users***  and ***Corp*** > ***R&D*** > ***Users*** sub-OUs
-- [x] All Users in the sub-OUs will be synced to Google Cloud
+This scenario also demonstrates configuring the **Base DN** in the search rules to make the search scope smaller, which helps to prevent unintended users and
+groups from being synchronized.
 
-### User Accounts Lookup
+### User accounts lookup
 
-With User objects being present in multiple OUs, the Best Practice is to set the `Base DN` for your LDAP Query to be the OU that is common and uplevel hierarchically relative to the User objects’ OU.
+When user objects are in multiple sub-OUs, the best practice is to set the **Base DN** for your LDAP query to be the parent organizational unit that the sub-OUs
+have in common and uplevel hierarchically relative to the user objects’ OU.
 
-In this case, since ***IT*** and ***R&D*** are Child OUs of ***Corp*** then the `Base DN` for the LDAP Query should be set to:
+In this case, because `IT` and `R&D` are child OUs of `Corp`, then the **Base DN** value for the LDAP query should be the following:
 
-`OU=Corp,DC=gcdsdemo,DC=joonix,DC=net`
+    OU=Corp,DC=gcdsdemo,DC=joonix,DC=net
 
-Testing the LDAP Query yields the following list of Users:
+This LDAP query gives the following list of users:
 
 ![GCDS Users BaseDN Screenshot](https://storage.googleapis.com/gcp-community/tutorials/gcds-use-cases-common-and-complex/06-GCDS-Users-BaseDN.png)
 
-### Groups Lookup
+### Group lookup
 
-The Group Search LDAP Query follows the same structure as the User Search LDAP Query i.e. the `Base DN` would be set to the OU that is common and uplevel hierarchically relative to the Group objects’ OU, which in this case is ***GCP*** > ***Groups***.
+The group search LDAP query follows the same structure as the user search LDAP query. Set the **Base DN** value to the OU that is common, and uplevel
+hierarchically relative to the group objects’ OU, which in this case is `GCP` > `Groups`.
 
-The `Base DN` should then be set to:
+The **Base DN** value for the LDAP query should be the following:
 
-`OU=Groups,OU=GCP,DC=gcdsdemo,DC=joonix,DC=net`
+    OU=Groups,OU=GCP,DC=gcdsdemo,DC=joonix,DC=net
 
-Testing the LDAP Query yields the following list of Groups:
+This LDAP query gives the following list of groups:
 
 ![GCDS Groups BaseDN Screenshot](https://storage.googleapis.com/gcp-community/tutorials/gcds-use-cases-common-and-complex/07-GCDS-Groups-BaseDN.png)
 
-Notice that the Builtin Security Groups like ***grouppolicycreatorowners@gcdsdemo.joonix.net*** and ***domaincontrollers@gcdsdemo.joonix.net*** don’t show up, which is the behavior we want.
-
-### Summary
-
-Setting the `Base DN` on the Search Rules is useful when you want to limit the scope of the Search and allows for a more targeted approach to syncing Identities to Google Cloud. In the next Scenario, we’ll discuss tuning the LDAP Query to further narrow the scope for syncing to ensure that only the appropriate User objects and Group objects are selected.
-
+The built-in security groups like `grouppolicycreatorowners@gcdsdemo.joonix.net` and `domaincontrollers@gcdsdemo.joonix.net` are not returned, which is the
+desired behavior.
 
 ## Scenario #2 - Selectively syncing User Accounts based on Group Membership
 
+In this scenario, you tune the LDAP query to further narrow the scope for synchronizing to ensure that only the appropriate user objects and group objects are 
+selected.
+ 
 Building on the previous scenario, some Organizations may not want to have all Users in an OU synced to Google Cloud. Instead, they would want to selectively sync Users that are part of specific Groups. Let’s examine how we can configure this in GCDS.
 
-For this example, assume the following is true:
-- [x] GCDS is installed and configured per the [documentation](https://cloud.google.com/architecture/identity/federating-gcp-with-active-directory-synchronizing-user-accounts)
-- [x] The Security Groups are ***not*** mail-enabled and ***do not*** have an email address assigned
-      For mail-enabled Groups, you would use `mail` instead of `userPrincipalName`
 - [x] Only User Accounts that are members of ***GCP*** > ***Groups*** will be synced to Google Cloud
       Example: Users in ***GCP-OrgAdmins***, ***GCP-InfraAdmins*** etc
 - [x] The Security Groups are relatively static and new Groups will be added on a case-by-case basis
@@ -190,10 +188,6 @@ In the next scenario, we’ll examine a strategy to minimize the number of User 
 
 In this scenario, we’ll examine how to configure GCDS to automatically detect new Groups and sync the Users that are part of those Groups only.
 
-For this example, assume the following is true:
-- [x] GCDS is installed and configured per the [documentation](https://cloud.google.com/architecture/identity/federating-gcp-with-active-directory-synchronizing-user-accounts)
-- [x] The Security Groups are ***not*** mail-enabled and ***do not*** have an email address assigned
-      For mail-enabled Groups, you would use `mail` instead of `userPrincipalName`
 - [x] Only User Accounts that are members of a Group that is prefixed with ***GCP*** will be synced to Google Cloud
       Example: Users in ***GCP-OrgAdmins***, ***GCP-InfraAdmins*** etc
 
@@ -267,10 +261,6 @@ Having to manage multiple User Search Rules can quickly become overwhelming to m
 
 In some cases, Organizations may choose to selectively sync Groups based on an attribute in the Group name such as a Prefix (eg. ***GCP***) or Description (eg. ***“Users in this group…”***). This can be accomplished by manipulating the LDAP Query used in the Group Search Rule to target a wildcard match of the desired attribute. Let’s examine how we can configure this in GCDS.
 
-For this example, assume the following is true:
-- [x] GCDS is installed and configured per the [documentation](https://cloud.google.com/architecture/identity/federating-gcp-with-active-directory-synchronizing-user-accounts)
-- [x] The Security Groups are ***not*** mail-enabled and ***do not*** have an email address assigned
-      For mail-enabled Groups, you would use `mail` instead of `userPrincipalName`
 - [x] User Accounts that need to be synced to Google Cloud are already added to the ***GCP-AllUsers*** Group that has no access or IAM Bindings
 - [x] The Groups that need to be synced to Google Cloud must match any of the following criteria:
        * The name must match a prefix (eg. ***GCP***)
@@ -324,9 +314,6 @@ As expected, the four (4) Security Groups matching the criteria are found. The S
 
 Having the ability to selectively sync Groups into Google Cloud using wildcards can ease the operational burden of having to constantly update or add new Group Search Rules as Groups are newly created. Additionally it encourages Administrators to follow a standardized naming convention for Groups that need to exist in Google Cloud.
 
-
 ## What's next
 
-In this tutorial we covered a few scenarios where LDAP Queries can be manipulated from within GCDS to broaden or narrow the scope of a particular User or Group Search. Each Organization’s requirements for syncing identities from on-premise to Google Cloud are different which is why the customizability of GCDS is a powerful tool for Administrators and Security Engineers to ensure that the right Users and Groups are synced to the Cloud.
-
-- To get started with GCDS today, [click here](https://support.google.com/a/answer/106368?hl=en#).
+To get started with GCDS, see the [Google Cloud Directory Sync documentation](https://support.google.com/a/answer/106368).
