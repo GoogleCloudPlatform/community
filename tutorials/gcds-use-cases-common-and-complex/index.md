@@ -3,56 +3,50 @@ title: Google Cloud Directory Sync examples
 description: Common and complex use cases for synchronizing Active Directory users to Cloud Identity using Google Cloud Directory Sync.
 author: akaashr
 tags: gcds, activedirectory
-date_published: 2021-06-17
+date_published: 2021-06-21
 ---
 
 Akaash Rampersad | Customer Engineer, Infrastructure Modernization | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-## Objectives
-
-This tutorial covers a few scenarios where Google Cloud Directory Sync (GCDS) can be used to sync existing User and Group Identities from an Active Directory Domain. In each scenario you will see the steps required to configure GCDS to solve a specific requirement.
-
+This document describes four scenarios in which you can use Google Cloud Directory Sync (GCDS) to synchronize user and group identities from an Active Directory
+domain.
 
 ## Costs
 
-[Google Cloud Directory Sync](https://support.google.com/a/answer/106368?hl=en#) and [Google Cloud Identity Free](https://cloud.google.com/identity/docs/editions) are free to use.
-
+You can use [Google Cloud Directory Sync](https://support.google.com/a/answer/106368) and
+[Google Cloud Identity Free](https://cloud.google.com/identity/docs/editions) at no charge.
 
 ## Before you begin
 
-This tutorial assumes that the following prerequisites have been met.
+To follow the instructions in this document, you need to have installed and configured
+[Google Cloud Directory Sync](https://support.google.com/a/answer/106368?hl=en#) and have
+[federated](https://cloud.google.com/architecture/identity/federating-gcp-with-active-directory-synchronizing-user-accounts) Google Cloud with Active Directory.
 
-### Prerequisites
+## The GCDSDemo Company and its Active Directory configuration
 
-- [Google Cloud Directory Sync](https://support.google.com/a/answer/106368?hl=en#) should be installed and configured
-- Google Cloud should be [federated](https://cloud.google.com/architecture/identity/federating-gcp-with-active-directory-synchronizing-user-accounts) with Active Directory
+This document use a fictitious organization, GCDSDemo Company, to demonstrate the configuration of Google Cloud Directory Sync (GCDS).
 
+In these examples, the GCDSDemo Company is in the process of migrating to Google Cloud. The first step of their migration is synchronizing their existing
+identities from Active Directory so that they can log in using the same credentials.
 
-## The GCDSDemo Company
+Consider the example domain (`gcdsdemo.joonix.net`) for the GCDSDemo Company. There are two top-level organizational units (OU) of interest: `Corp` and `GCP`.
 
-To properly demonstrate the configuration of Google Cloud Directory Sync (GCDS), let's first examine an example AD Domain built to represent a typical environment. 
+![ADUC OUs screenshot](https://storage.googleapis.com/gcp-community/tutorials/gcds-use-cases-common-and-complex/01-AD-OUs.png)
 
-Let’s assume that we’re working with a customer called The GCDSDemo Company and they are in the process of migrating to Google Cloud. The first step of their journey is syncing their existing Identities from Active Directory so that they can login using the same Credentials.
+In the `Corp` organizational unit, the nested organizational units `IT` and `R&D` contain the user objects that must be synchronized.
 
-### Active Directory Configuration
+![ADUC IT users screenshot](https://storage.googleapis.com/gcp-community/tutorials/gcds-use-cases-common-and-complex/02-AD-IT-Users.png)
 
-Let’s quickly examine the example Domain (***gcdsdemo.joonix.net***) for The GCDSDemo Company. You’ll notice there are two (2) Organizational Units (OU) of interest: ***Corp*** and ***GCP***.
+![ADUC R&D users screenshot](https://storage.googleapis.com/gcp-community/tutorials/gcds-use-cases-common-and-complex/03-AD-RD-Users.png)
 
-![ADUC OUs Screenshot](https://storage.googleapis.com/gcp-community/tutorials/gcds-use-cases-common-and-complex/01-AD-OUs.png)
+In this scenario, the IT administrators of `gcdsdemo.joonix.net` made a design decision to put the security groups for Google Cloud in a separate organizational
+unit to ensure that those groups don’t inadvertently get assigned to resources within their on-premises environment.
 
-In the ***Corp*** OU there are few sub-OUs but we’ll be focusing on the ***IT*** and ***R&D*** sub-OUs since the User objects we need synced are located there.
+![ADUC Google Cloud groups screenshot](https://storage.googleapis.com/gcp-community/tutorials/gcds-use-cases-common-and-complex/04-AD-GCP-Groups.png)
 
-![ADUC IT Users Screenshot](https://storage.googleapis.com/gcp-community/tutorials/gcds-use-cases-common-and-complex/02-AD-IT-Users.png)
-
-![ADUC R&D Users Screenshot](https://storage.googleapis.com/gcp-community/tutorials/gcds-use-cases-common-and-complex/03-AD-RD-Users.png)
-
-Let’s also assume that the IT Administrators of ***gcdsdemo.joonix.net*** made a design decision to put the Security Groups for Google Cloud in a separate OU to ensure that those Groups don’t inadvertently get assigned to resources within their on-premise environment.
-
-![ADUC GCP Groups Screenshot](https://storage.googleapis.com/gcp-community/tutorials/gcds-use-cases-common-and-complex/04-AD-GCP-Groups.png)
-
-### Google Cloud Directory Sync Configuration
+### Google Cloud Directory Sync configuration
 
 The [Installation and Configuration Guide](https://cloud.google.com/architecture/identity/federating-gcp-with-active-directory-synchronizing-user-accounts#connecting_to_active_directory) for GCDS recommends leaving the `Base DN` blank. For most Organizations this wouldn’t be an issue and normally works well. However, there are two main considerations with this approach:
 
