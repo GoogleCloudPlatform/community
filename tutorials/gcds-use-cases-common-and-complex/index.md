@@ -24,18 +24,20 @@ To follow the instructions in this document, you need to have installed and conf
 [Google Cloud Directory Sync](https://support.google.com/a/answer/106368?hl=en#) and have
 [federated](https://cloud.google.com/architecture/identity/federating-gcp-with-active-directory-synchronizing-user-accounts) Google Cloud with Active Directory.
 
-## The GCDSDemo Company and its Active Directory configuration
+## The GCDSDemo Company
 
-This document use a fictitious organization, GCDSDemo Company, to demonstrate the configuration of Google Cloud Directory Sync (GCDS).
+This document uses a fictitious organization, GCDSDemo Company, to demonstrate the configuration of Google Cloud Directory Sync.
 
 In these examples, the GCDSDemo Company is in the process of migrating to Google Cloud. The first step of their migration is synchronizing their existing
 identities from Active Directory so that they can log in using the same credentials.
 
+### Example Active Directory configuration
+ 
 Consider the example domain (`gcdsdemo.joonix.net`) for the GCDSDemo Company. There are two top-level organizational units (OU) of interest: `Corp` and `GCP`.
 
 ![ADUC OUs screenshot](https://storage.googleapis.com/gcp-community/tutorials/gcds-use-cases-common-and-complex/01-AD-OUs.png)
 
-In the `Corp` organizational unit, the nested organizational units `IT` and `R&D` contain the user objects that must be synchronized.
+In the `Corp` organizational unit, the nested organizational units (sub-OUs) `IT` and `R&D` contain the user objects that must be synchronized.
 
 ![ADUC IT users screenshot](https://storage.googleapis.com/gcp-community/tutorials/gcds-use-cases-common-and-complex/02-AD-IT-Users.png)
 
@@ -48,18 +50,22 @@ unit to ensure that those groups don’t inadvertently get assigned to resources
 
 ### Google Cloud Directory Sync configuration
 
-The [Installation and Configuration Guide](https://cloud.google.com/architecture/identity/federating-gcp-with-active-directory-synchronizing-user-accounts#connecting_to_active_directory) for GCDS recommends leaving the `Base DN` blank. For most Organizations this wouldn’t be an issue and normally works well. However, there are two main considerations with this approach:
+The
+[GCDS installation and configuration guide](https://cloud.google.com/architecture/identity/federating-gcp-with-active-directory-synchronizing-user-accounts#connecting_to_active_directory) recommends leaving the **Base DN** field blank. For most organizations, this works well. However, there are two main
+considerations with this approach:
 
-1. The larger the Forest sub-tree (number of objects) the longer queries take to run.
+- The time that a query takes to run increases with the number of objects in the subtree.
 
-2. The default search for User and Group objects will return ***all*** matching entries which can inadvertently cause unintended Users and/or Groups to sync with Google Cloud Identity. 
+- The default search for user objects and group objects returns _all_ matching entries, which can cause unintended users or groups to synchronize
+  with Google Cloud. 
 
-For example, consider that the Security Groups are not mail-enabled therefore they can only be identified by their `userPrincipalName` attribute. If the default LDAP Query were to be executed, ***all*** Security Groups including those that are out of scope will be returned as matching:
+For example, consider that the security groups are not mail-enabled, so they can only be identified by their `userPrincipalName` attribute. If the default LDAP 
+query is executed, then _all_ security groups—including those that are out of scope—are returned as matching:
 
-![GCDS Default Search Screenshot](https://storage.googleapis.com/gcp-community/tutorials/gcds-use-cases-common-and-complex/05-GCDS-Default-Search.png)
+![GCDS default search screenshot](https://storage.googleapis.com/gcp-community/tutorials/gcds-use-cases-common-and-complex/05-GCDS-Default-Search.png)
 
-This can usually be mitigated by manually assigning an email address to the Security Groups (even if they are not mail-enabled) and switching the Query to use the `mail` attribute or as we will see in the next section, manipulating the `Base DN` to be more specific.
-
+This can usually be mitigated by manually assigning an email address to the security groups (even if they are not mail-enabled) and switching the query to use
+the `mail` attribute. Alternatively, as shown in the next section, you can make the **Base DN** value more specific.
 
 ## Scenario #1 - User Accounts and Groups are not in the same Organizational Unit (OU)
 
