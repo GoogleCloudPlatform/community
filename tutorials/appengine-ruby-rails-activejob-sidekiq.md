@@ -175,7 +175,7 @@ instances together.
     
 #### Sidekiq initializer file
 
-If your application utilizes [Rails secret credentials](https://guides.rubyonrails.org/security.html#custom-credentials), you may ommit the `env_variable` field in your `app.yaml`file, and instead supply those variables via the `credentials.enc.yml` file in an initializer.
+If your application utilizes [Rails secret credentials](https://guides.rubyonrails.org/security.html#custom-credentials), you may ommit the `env_variable` field in your `app.yaml` file, and instead supply those variables via the `credentials.enc.yml` file in an initializer.
 
 Make sure to first edit the `credentials.enc.yml` file by executing `rails credentials:edit`. This will take your `master.key`, decode the file and open it in your default text editor for you to edit.
 
