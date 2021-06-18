@@ -175,44 +175,49 @@ instances together.
     
 #### Sidekiq initializer file
 
-If your application utilizes [Rails secret credentials](https://guides.rubyonrails.org/security.html#custom-credentials), you may ommit the `env_variable` field in your `app.yaml` file, and instead supply those variables via the `credentials.enc.yml` file in an initializer.
+If your application uses [Rails secret credentials](https://guides.rubyonrails.org/security.html#custom-credentials), then you can omit the `env_variable` field
+in your `app.yaml` file, and instead supply the variables with the `credentials.enc.yml` file in an initializer.
 
-Make sure to first edit the `credentials.enc.yml` file by executing `rails credentials:edit`. This will take your `master.key`, decode the file and open it in your default text editor for you to edit.
+1.  Open the `credentials.enc.yml` file for editing:
 
-```yaml
-redis_url: redis://[REDIS_IP_ADDRESS]:6379
-redis_password: [PASSWORD]
-```
+        rails credentials:edit
 
-Saving the file will re-encode the file with your 2 new entries.
+    This takes your `master.key`, decodes the file, and opens it in your default text editor for you to edit.
 
-Create a new file called `sidekiq.rb` in `config/initializers/`, and input the following:
+1.  Add the following entries:
 
-```ruby
-Sidekiq.configure_server do |config|
-  if Rails.env.production?
-    config.redis = {
-      url: Rails.application.credentials.redis_url,
-      password: Rails.application.credentials.redis_password
-    }
-  else
-    config.redis = { url: 'redis://localhost:6379/1' }
-  end
-end
+        redis_url: redis://[REDIS_IP_ADDRESS]:6379
+        redis_password: [PASSWORD]
 
-Sidekiq.configure_client do |config|
-  if Rails.env.production?
-    config.redis = {
-      url: Rails.application.credentials.redis_url,
-      password: Rails.application.credentials.redis_password
-    }
-  else
-    config.redis = { url: 'redis://localhost:6379/1' }
-  end
-end
-```
+1.  Save the file.
+  
+    It is re-encoded with your two new entries.
 
-This will ensure that when testing locally in a development environment, Redis will properly seek out the `localhost` port that Redis is using.
+1.  Create a new file called `sidekiq.rb` in `config/initializers/`, with the following content:
+
+        Sidekiq.configure_server do |config|
+          if Rails.env.production?
+            config.redis = {
+              url: Rails.application.credentials.redis_url,
+              password: Rails.application.credentials.redis_password
+            }
+          else
+            config.redis = { url: 'redis://localhost:6379/1' }
+          end
+        end
+
+        Sidekiq.configure_client do |config|
+          if Rails.env.production?
+            config.redis = {
+              url: Rails.application.credentials.redis_url,
+              password: Rails.application.credentials.redis_password
+            }
+          else
+            config.redis = { url: 'redis://localhost:6379/1' }
+          end
+        end
+
+    This ensures that Redis will seek the `localhost` port that Redis is using when you're testing locally in a development environment.
 
 1.  Deploy to App Engine
 
