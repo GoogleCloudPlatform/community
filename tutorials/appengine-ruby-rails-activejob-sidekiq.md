@@ -172,6 +172,47 @@ instances together.
 
     Replace `[REDIS_IP_ADDRESS]` and `[PASSWORD]` with the internal IP address of your Redis instance and its required password that you gave it,
     respectively. Replace `[SECRET_KEY]` with a secret key for Rails sessions.
+    
+#### Sidekiq initializer file
+
+If your application utilizes [Rails secret credentials](https://guides.rubyonrails.org/security.html#custom-credentials), you may ommit the `env_variable` field in your `app.yaml`file, and instead supply those variables via the `credentials.enc.yml` file in an initializer.
+
+Make sure to first edit the `credentials.enc.yml` file by executing `rails credentials:edit`. This will take your `master.key`, decode the file and open it in your default text editor for you to edit.
+
+```yaml
+redis_url: redis://[REDIS_IP_ADDRESS]:6379
+redis_password: [PASSWORD]
+```
+
+Saving the file will re-encode the file with your 2 new entries.
+
+Create a new file called `sidekiq.rb` in `config/initializers/`, and input the following:
+
+```ruby
+Sidekiq.configure_server do |config|
+  if Rails.env.production?
+    config.redis = {
+      url: Rails.application.credentials.redis_url,
+      password: Rails.application.credentials.redis_password
+    }
+  else
+    config.redis = { url: 'redis://localhost:6379/1' }
+  end
+end
+
+Sidekiq.configure_client do |config|
+  if Rails.env.production?
+    config.redis = {
+      url: Rails.application.credentials.redis_url,
+      password: Rails.application.credentials.redis_password
+    }
+  else
+    config.redis = { url: 'redis://localhost:6379/1' }
+  end
+end
+```
+
+This will ensure that when testing locally in a development environment, Redis will properly seek out the `localhost` port that Redis is using.
 
 1.  Deploy to App Engine
 
