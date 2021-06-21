@@ -262,24 +262,23 @@ makes it easier in the long run. It also provides a single location that can be 
 
 ## Scenario #4: Selectively synchronizing groups based on group name
 
-In some cases, Organizations may choose to selectively sync Groups based on an attribute in the Group name such as a Prefix (eg. ***GCP***) or Description (eg. ***“Users in this group…”***). This can be accomplished by manipulating the LDAP Query used in the Group Search Rule to target a wildcard match of the desired attribute. Let’s examine how we can configure this in GCDS.
+In some cases, organizations may choose to selectively synchronize groups based on an attribute in the group name (such as a prefix) or description. You can
+accomplish this by manipulating the LDAP query used in the group search rule to target a wildcard match of the desired attribute.
 
-- [x] User Accounts that need to be synced to Google Cloud are already added to the ***GCP-AllUsers*** Group that has no access or IAM Bindings
-- [x] The Groups that need to be synced to Google Cloud must match any of the following criteria:
-       * The name must match a prefix (eg. ***GCP***)
-       * The description must contain a word or phrase (eg. ***“GCP approved”***)
+In this scenario, user accounts that need to be synchronized to Google Cloud are already in the `GCP-AllUsers` group that has no access or IAM bindings.
 
 ### Group lookup
 
-Unlike the `memberOf` filter used in the User LDAP Query, the `group` Object Category does support wildcards. Here’s the format of the LDAP Query using a wildcard:
+Unlike the `memberOf` filter used in the User LDAP query, the `group` object category does accept wildcards as input. Here’s the format of the LDAP query using a
+wildcard:
 
     (&(objectCategory=group)(cn=*Name*)(|(groupType:1.2.840.113556.1.4.803:=2147483650)(groupType:1.2.840.113556.1.4.803:=2147483656)))
 
-Here’s an example of the LDAP Query that would be used to search for all Groups that have the word ***Admins*** in the name:
+Here’s an example of the LDAP query that would be used to search for all groups that have `admins` in the name:
 
     (&(objectCategory=group)(cn=*admins*)(|(groupType:1.2.840.113556.1.4.803:=2147483650)(groupType:1.2.840.113556.1.4.803:=2147483656)))
 
-Let’s assume that we need to sync the following Groups to Google Cloud:
+In this scenario, you need to synchronize the following groups to Google Cloud:
 
 - Groups in the `GCP` > `Groups` OU that are prefixed with `GCP`
 - Groups in the `Corp` > `R&D` > `Groups` OU that are either prefixed with `RD` or contain the word `GCP` in the description field
@@ -290,19 +289,20 @@ Let’s assume that we need to sync the following Groups to Google Cloud:
 
 #### 1 - Groups prefixed with `GCP`
 
-To search for Groups prefixed with `GCP` in the `GCP` > `Groups` OU, you use the following LDAP query along with the `Base DN`:
+To search for groups prefixed with `GCP` in the `GCP` > `Groups` OU, you use the following LDAP query along with the `Base DN`:
 
     (&(objectCategory=group)(cn=GCP*)(|(groupType:1.2.840.113556.1.4.803:=2147483650)(groupType:1.2.840.113556.1.4.803:=2147483656)))
 
     OU=Groups,OU=GCP,DC=gcdsdemo,DC=joonix,DC=net
 
-Testing the Query yields the following results:
+Testing the query yields the following results:
 
 ![GCDS groups GCP screenshot](https://storage.googleapis.com/gcp-community/tutorials/gcds-use-cases-common-and-complex/15-GCDS-Groups-GCP-name.png)
 
-#### 2 - Groups prefixed with RD or contain the word GCP in the description
+#### 2 - Groups prefixed with `RD` or with `GCP` in the description
 
-To search for Groups prefixed with RD or have GCP in the description, in the Corp > R&D > Groups OU, we would use the following LDAP Query along with the Base DN:
+To search for groups with names prefixed with `RD` or with `GCP` in the description in the `Corp` > `R&D` > `Groups` OU, you use the following LDAP query along 
+with the Base DN:
 
     (&(objectCategory=group)(|(cn=RD*)(description=*GCP*))(|(groupType:1.2.840.113556.1.4.803:=2147483650)(groupType:1.2.840.113556.1.4.803:=2147483656)))
 
@@ -312,12 +312,14 @@ Testing the query yields the following results:
 
 ![GCDS groups R&D screenshot](https://storage.googleapis.com/gcp-community/tutorials/gcds-use-cases-common-and-complex/16-GCDS-Groups-RD-name.png)
 
-As expected, the four security groups matching the criteria are found. The security group `Restricted-Users` does not have a name prefixed with `RD`, nor does it 
+The four security groups matching the criteria are found. The security group `Restricted-Users` does not have a name prefixed with `RD`, nor does it 
 have `GCP` in the description, so it is not returned by the search.
 
 ### Summary
 
-Having the ability to selectively sync Groups into Google Cloud using wildcards can ease the operational burden of having to constantly update or add new Group Search Rules as Groups are newly created. Additionally it encourages Administrators to follow a standardized naming convention for Groups that need to exist in Google Cloud.
+Having the ability to selectively synchronize groups into Google Cloud using wildcards can ease the operational burden of needing to frequently update or add new
+group search rules as groups are newly created. Additionally, this approach encourages administrators to follow a standardized naming convention for groups that
+need to exist in Google Cloud.
 
 ## What's next
 
