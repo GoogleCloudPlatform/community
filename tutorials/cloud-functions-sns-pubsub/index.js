@@ -1,6 +1,7 @@
 /* jslint es6 */
 /* jslint white:true */
 /* eslint-disable no-undef */
+/* eslint-disable no-case-declarations */
 
 'use strict';
 
@@ -11,8 +12,8 @@ const https = require('https');
 const { PubSub } = require('@google-cloud/pubsub');
 
 // the sns-validator package verifies the host an signature of SNS messages
-var MessageValidator = require('sns-validator');
-var validator = new MessageValidator();
+const MessageValidator = require('sns-validator');
+const validator = new MessageValidator();
 
 // our pubsub client
 const pubsub = new PubSub();
@@ -29,7 +30,7 @@ const expectedTopicArn = process.env.SNS_TOPIC_ARN;
  * @param {req} request The web request from SNS.
  * @param {res} The response returned from this function.
  */
-exports.receiveNotification = function receiveNotification(req, res) {
+exports.receiveNotification = function receiveNotification (req, res) {
   // we only respond to POST method HTTP requests
   if (req.method !== 'POST') {
     res.status(405).end('only post method accepted');
@@ -37,7 +38,7 @@ exports.receiveNotification = function receiveNotification(req, res) {
   }
 
   // all valid SNS requests should have this header
-  var snsHeader = req.get('x-amz-sns-message-type');
+  const snsHeader = req.get('x-amz-sns-message-type');
   if (snsHeader === undefined) {
     res.status(403).end('invalid SNS message');
     return;
@@ -85,13 +86,12 @@ exports.receiveNotification = function receiveNotification(req, res) {
         // this is a regular SNS notice, we relay to Pubsub
         console.log(message.MessageId + ': ' + message.Message);
 
-        // eslint-disable-next-line no-case-declarations
         const attributes = {
           snsMessageId: message.MessageId,
           snsSubject: message.Subject
         };
 
-        var msgData = Buffer.from(message.Message);
+        const msgData = Buffer.from(message.Message);
 
         // Send a message to the topic
         try {
