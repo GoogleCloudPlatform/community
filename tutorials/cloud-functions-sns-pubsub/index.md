@@ -103,7 +103,7 @@ const pubsub = new PubSub();
 const topicName = 'sns-events';
 const topic = pubsub.topic(topicName);
 
-const expectedTopicArn = process.env.SNS_TOPIC_NAME;
+const expectedTopicArn = process.env.SNS_TOPIC_ARN;
 
 /**
  * Cloud Function.
