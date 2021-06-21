@@ -26,7 +26,7 @@ To follow the instructions in this document, you need to have installed and conf
 You can use [Google Cloud Directory Sync](https://support.google.com/a/answer/106368) and
 [Google Cloud Identity Free](https://cloud.google.com/identity/docs/editions) at no charge.
 
-## The GCDSDemo Company
+## Overview of the demonstration environment
 
 This document uses a fictitious organization, GCDSDemo Company, to demonstrate the configuration of Google Cloud Directory Sync.
 
@@ -75,13 +75,13 @@ to use the `mail` attribute. Alternatively, as shown in the next section, you ca
 In this scenario, the user objects and group objects are located in different organizational units, which is typical in most on-premises environments. The users
 are in the `Corp` > `IT` > `Users` and `Corp` > `R&D` > `Users` sub-OUs, and all users in these sub-OUs will be synchronized to Google Cloud.
 
-This scenario also demonstrates configuring the **Base DN** in the search rules to make the search scope smaller, which helps to prevent unintended users and
-groups from being synchronized.
+This scenario also demonstrates configuring the **Base DN** value in the search rules to make the search scope smaller, which helps to prevent unintended users
+and groups from being synchronized.
 
 ### User accounts lookup
 
-When user objects are in multiple sub-OUs, the best practice is to set the **Base DN** for your LDAP query to be the parent organizational unit that the sub-OUs
-have in common and uplevel hierarchically relative to the user objects’ OU.
+When user objects are in multiple sub-OUs, the best practice is to set the **Base DN** value for your LDAP query to be the parent organizational unit that the 
+sub-OUs have in common and uplevel hierarchically relative to the user objects’ OU.
 
 In this case, because `IT` and `R&D` are child OUs of `Corp`, the **Base DN** value for the LDAP query should be the following:
 
@@ -174,8 +174,8 @@ The next step is to create a user search rule for the remaining groups to ensure
 
 ![GCDS users search rule memberOf screenshot](https://storage.googleapis.com/gcp-community/tutorials/gcds-use-cases-common-and-complex/09-GCDS-Users-SearchRule-memberOf.png)
 
-Notice that the `Base DN` is still configured to be `OU=Corp,DC=gcdsdemo,DC=joonix,DC=net`, but the LDAP query is still able to return the correct list of users
-because the distinguished name of the security group is used in the query, which overrides the `Base DN` scope.
+Notice that the **Base DN** value is still configured to be `OU=Corp,DC=gcdsdemo,DC=joonix,DC=net`, but the LDAP query is still able to return the correct list 
+of users because the distinguished name of the security group is used in the query, which overrides the **Base DN** scope.
 
 ### Summary
 
@@ -251,7 +251,7 @@ Using the distinguished names of the `GCP-AllUsers` group, you modify the LDAP q
 To validate that the filter is configured correctly, either create a new user search rule or update the existing one to include the new LDAP query syntax, and
 then click the ***Test LDAP Query*** button.
 
-Here’s the results of the query: 
+Here are the results of the query: 
 
 ![GCDS users all users memberOf results screenshot](https://storage.googleapis.com/gcp-community/tutorials/gcds-use-cases-common-and-complex/12-GCDS-Users-AllUsers-memberOf-results.png)
 
@@ -287,9 +287,9 @@ In this scenario, you need to synchronize the following groups to Google Cloud:
 
 ![AD R&D Groups screenshot](https://storage.googleapis.com/gcp-community/tutorials/gcds-use-cases-common-and-complex/14-AD-RD-Groups-Sync.png)
 
-#### 1 - Groups prefixed with `GCP`
+#### Groups prefixed with `GCP`
 
-To search for groups prefixed with `GCP` in the `GCP` > `Groups` OU, you use the following LDAP query along with the `Base DN`:
+To search for groups prefixed with `GCP` in the `GCP` > `Groups` OU, you use the following LDAP query along with the **Base DN**:
 
     (&(objectCategory=group)(cn=GCP*)(|(groupType:1.2.840.113556.1.4.803:=2147483650)(groupType:1.2.840.113556.1.4.803:=2147483656)))
 
@@ -299,10 +299,10 @@ Testing the query yields the following results:
 
 ![GCDS groups GCP screenshot](https://storage.googleapis.com/gcp-community/tutorials/gcds-use-cases-common-and-complex/15-GCDS-Groups-GCP-name.png)
 
-#### 2 - Groups prefixed with `RD` or with `GCP` in the description
+#### Groups prefixed with `RD` or with `GCP` in the description
 
 To search for groups with names prefixed with `RD` or with `GCP` in the description in the `Corp` > `R&D` > `Groups` OU, you use the following LDAP query along 
-with the Base DN:
+with the **Base DN**:
 
     (&(objectCategory=group)(|(cn=RD*)(description=*GCP*))(|(groupType:1.2.840.113556.1.4.803:=2147483650)(groupType:1.2.840.113556.1.4.803:=2147483656)))
 
