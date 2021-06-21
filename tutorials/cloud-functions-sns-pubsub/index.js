@@ -1,5 +1,6 @@
 /* jslint es6 */
 /* jslint white:true */
+/* eslint-disable no-undef */
 
 'use strict';
 
@@ -7,20 +8,20 @@
 const https = require('https');
 
 // import the Google Cloud Pubsub client library
-const PubSub = require('@google-cloud/pubsub');
+const { PubSub } = require('@google-cloud/pubsub');
 
 // the sns-validator package verifies the host an signature of SNS messages
 var MessageValidator = require('sns-validator');
 var validator = new MessageValidator();
 
 // our pubsub client
-const pubsub = PubSub();
+const pubsub = new PubSub();
 
 // the cloud pubsub topic we will publish messages to
 const topicName = 'sns-events';
 const topic = pubsub.topic(topicName);
 
-const expectedTopicArn = 'arn:aws:sns:us-west-2:759791620908:my-sns-topic';
+const expectedTopicArn = process.env.SNS_TOPIC_ARN;
 
 /**
  * Cloud Function.
@@ -28,7 +29,7 @@ const expectedTopicArn = 'arn:aws:sns:us-west-2:759791620908:my-sns-topic';
  * @param {req} request The web request from SNS.
  * @param {res} The response returned from this function.
  */
-exports.receiveNotification = function receiveNotification (req, res) {
+exports.receiveNotification = function receiveNotification(req, res) {
   // we only respond to POST method HTTP requests
   if (req.method !== 'POST') {
     res.status(405).end('only post method accepted');
@@ -44,7 +45,7 @@ exports.receiveNotification = function receiveNotification (req, res) {
 
   // use the sns-validator library to verify signature
   // we first parse the cloud function body into a javascript object
-  validator.validate(JSON.parse(req.body), function (err, message) {
+  validator.validate(JSON.parse(req.body), async function (err, message) {
     if (err) {
       // the message did not validate
       res.status(403).end('invalid SNS message');
@@ -84,6 +85,7 @@ exports.receiveNotification = function receiveNotification (req, res) {
         // this is a regular SNS notice, we relay to Pubsub
         console.log(message.MessageId + ': ' + message.Message);
 
+        // eslint-disable-next-line no-case-declarations
         const attributes = {
           snsMessageId: message.MessageId,
           snsSubject: message.Subject
@@ -91,10 +93,15 @@ exports.receiveNotification = function receiveNotification (req, res) {
 
         var msgData = Buffer.from(message.Message);
 
-        topic.publisher().publish(msgData, attributes).then(function (results) {
-          console.log('message published ' + results[0]);
+        // Send a message to the topic
+        try {
+          const messageId = await topic.publish(msgData, attributes);
+          console.log('message published ' + messageId);
           res.status(200).end('ok');
-        });
+        } catch (error) {
+          console.error(`Received error while publishing: ${error.message}`);
+          res.status(400).end('failed to publish message');
+        }
         break;
       default:
         console.error('should not have gotten to default block');
