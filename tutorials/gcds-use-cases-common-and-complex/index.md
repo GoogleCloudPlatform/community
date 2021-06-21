@@ -18,7 +18,7 @@ synchronizing identities from on-premises to Google Cloud are different, which i
 security engineers, to help ensure that the right users and groups are synchronized to the cloud.
 
 To follow the instructions in this document, you need to have installed and configured
-[Google Cloud Directory Sync](https://support.google.com/a/answer/106368?hl=en#) and have
+[Google Cloud Directory Sync](https://support.google.com/a/answer/106368) and have
 [federated](https://cloud.google.com/architecture/identity/federating-gcp-with-active-directory-synchronizing-user-accounts) Google Cloud with Active Directory.
 
 ## Costs
