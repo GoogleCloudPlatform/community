@@ -16,7 +16,6 @@ Notification Service][sns] (SNS) and Google Cloud Pub/Sub. The
 function is implemented in [Node.js][node].
 
 [functions]: https://cloud.google.com/functions
-[twilio]: https://www.twilio.com/
 [node]: https://nodejs.org/en/
 [sns]: https://aws.amazon.com/sns/
 
@@ -75,7 +74,7 @@ subscription.
 1.  Run the following command to install the dependencies that the function
 	uses to communicate with Cloud Pub/Sub service:
 
-        npm install --save --save-exact @google-cloud/pubsub@0.16.4
+        npm install --save --save-exact @google-cloud/pubsub@2.14.0
 
 [AWS SNS]: https://aws.amazon.com/sns/
 
@@ -91,20 +90,20 @@ Create a file named `index.js` with the following contents:
 const https = require('https');
 
 // import the Google Cloud Pubsub client library
-const PubSub = require('@google-cloud/pubsub');
+const { PubSub } = require('@google-cloud/pubsub');
 
 // the sns-validator package verifies the host an signature of SNS messages
-var MessageValidator = require('sns-validator');
-var validator = new MessageValidator();
+const MessageValidator = require('sns-validator');
+const validator = new MessageValidator();
 
 // our pubsub client
-const pubsub = PubSub();
+const pubsub = new PubSub();
 
 // the cloud pubsub topic we will publish messages to
 const topicName = 'sns-events';
 const topic = pubsub.topic(topicName);
 
-const expectedTopicArn = 'arn:aws:sns:us-west-2:759791620908:my-sns-topic';
+const expectedTopicArn = process.env.SNS_TOPIC_ARN;
 
 /**
  * Cloud Function.
@@ -120,7 +119,7 @@ exports.receiveNotification = function receiveNotification (req, res) {
   }
 
   // all valid SNS requests should have this header
-  var snsHeader = req.get('x-amz-sns-message-type');
+  const snsHeader = req.get('x-amz-sns-message-type');
   if (snsHeader === undefined) {
     res.status(403).end('invalid SNS message');
     return;
@@ -128,7 +127,7 @@ exports.receiveNotification = function receiveNotification (req, res) {
 
   // use the sns-validator library to verify signature
   // we first parse the cloud function body into a javascript object
-  validator.validate(JSON.parse(req.body), function (err, message) {
+  validator.validate(JSON.parse(req.body), async function (err, message) {
     if (err) {
       // the message did not validate
       res.status(403).end('invalid SNS message');
@@ -173,12 +172,17 @@ exports.receiveNotification = function receiveNotification (req, res) {
           snsSubject: message.Subject
         };
 
-        var msgData = Buffer.from(message.Message);
+        const msgData = Buffer.from(message.Message);
 
-        topic.publisher().publish(msgData, attributes).then(function (results) {
-          console.log('message published ' + results[0]);
+        // Send a message to the topic
+        try {
+          const messageId = await topic.publish(msgData, attributes);
+          console.log('message published ' + messageId);
           res.status(200).end('ok');
-        });
+        } catch (error) {
+          console.error(`Received error while publishing: ${error.message}`);
+          res.status(400).end('failed to publish message');
+        }
         break;
       default:
         console.error('should not have gotten to default block');
@@ -186,7 +190,6 @@ exports.receiveNotification = function receiveNotification (req, res) {
     }
   });
 };
-
 
 ```
 
@@ -212,9 +215,15 @@ points of origin can relay messages into Cloud Pub/Sub.
 1.  Read about [deploying Cloud Functions][deploying].
 1.  Run the following command to deploy the function:
 
-        gcloud beta functions deploy receiveNotification --trigger-http --stage-bucket [YOUR_STAGE_BUCKET]
+        gcloud functions deploy receiveNotification --trigger-http \
+          --security-level=secure-always \
+          --allow-unauthenticated \
+          --entry-point=receiveNotification \
+          --runtime=nodejs14 \
+          --set-env-vars SNS_TOPIC_ARN=[YOUR_SNS_TOPIC_ARN]
 
-    Replace `[YOUR_STAGE_BUCKET]` with your Cloud Functions staging bucket.
+    
+    Replace [YOUR_SNS_TOPIC_ARN] with your SNS topic ARN.
 
 1.  Copy the `httpsTrigger` URL in the output after the function deploys. You
 use the URL in the next step.
