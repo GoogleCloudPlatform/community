@@ -8,17 +8,17 @@
 // We use the https library to confirm the SNS subscription
 const https = require('https');
 
-// import the Google Cloud Pubsub client library
+// import the Google Cloud Pub/Sub client library
 const { PubSub } = require('@google-cloud/pubsub');
 
 // the sns-validator package verifies the host an signature of SNS messages
 const MessageValidator = require('sns-validator');
 const validator = new MessageValidator();
 
-// our pubsub client
+// our Pub/Sub client
 const pubsub = new PubSub();
 
-// the cloud pubsub topic we will publish messages to
+// the Pub/Sub topic we will publish messages to
 const topicName = 'sns-events';
 const topic = pubsub.topic(topicName);
 
@@ -83,7 +83,7 @@ exports.receiveNotification = function receiveNotification (req, res) {
         });
         break;
       case 'notification':
-        // this is a regular SNS notice, we relay to Pubsub
+        // this is a regular SNS notice, we relay to Pub/Sub
         console.log(message.MessageId + ': ' + message.Message);
 
         const attributes = {
