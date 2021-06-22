@@ -6,8 +6,7 @@ tags: kubernetes config connector, kcc, config sync, gate keeper
 date_published: 2021-01-01
 ---
 
-Nardos Megersa | Strategic Cloud Engineer | Google <br/>
-Casey Tin | Cloud Technical Resident | Google
+Nardos Megersa | Strategic Cloud Engineer | Google 
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
@@ -50,11 +49,8 @@ We will be implementing the following components:
 
 ## Config Connector
 
-Kubernetes Config Connector (KCC) is a Kubernetes addon that allows users to manage Google Cloud infrastructure such as Cloud Storage, Cloud Pub/Sub or Cloud SQL through Kubernetes-style declarative APIs. Config Connector enables this by registering Custom Resource Definitions (CRDs) and controllers that actuate the desired declarative state into a series of API calls. This approach of managing infrastructure is ideal for the cloud-native teams who are familiar with Kubernetes tooling for deploying applications.
+Kubernetes Config Connector (KCC) is a Kubernetes addon that allows users to manage Google Cloud infrastructure such as Cloud Storage, Cloud Pub/Sub or Cloud SQL through Kubernetes-style declarative APIs. 
 
-Follow the instructions below to install Config Connector in namespaced mode to allow the use of multiple service accounts that are bound to multiple Google Cloud projects as shown below in the diagram. This approach is recommended for users who want to manage resources in separate Google Cloud projects and securely isolate service accounts that manage the resources in each project.  
-
-![Config Connector Diagram](config-connector-diagram.png)
 
 It is recommended that Config Connector is installed in a separate cluster inside a separate Google Cloud project which will be referred to as a Host Project. The other projects where resources are managed will be known as managed projects. 
 
@@ -114,7 +110,7 @@ spec:
 ```
 kubectl apply -f configconnector.yaml
 ```
-1.  Create dedicated Kubernetes namespaces for each environment where resources will live
+9.  Create dedicated Kubernetes namespaces for each environment where resources will live
 ```
 kubectl create namespace kcc-tutorial-dev
 kubectl create namespace kcc-tutorial-prod
@@ -185,6 +181,8 @@ metadata:
   namespace: kcc-tutorial-prod
 spec:
   googleServiceAccount: "kcc-tutorial-prod@${HOST_PROJECT_ID}.iam.gserviceaccount.com"
+
+EOF
 ```
 ```
 kubectl apply -f configconnectorcontext.yaml
@@ -199,7 +197,7 @@ Optionally, you can verify Config Connector is set up correctly by [deploying a 
 
 ## Config Sync
 
-Config Sync is a Kubernetes operator that allows managing of Kubernetes resources in a GitOps approach where the configurations are stored in the git repository and automatically pulled by the operator to be applied. The Config Sync operator custom controller monitors the Git repository and the state of the clusters, keeping them consistent for each Kubernetes object chosen. By default, Config Sync applies a configuration to each enrolled cluster and namespaces. However this scope can be limited using the [ClusterSelector](https://cloud.google.com/kubernetes-engine/docs/add-on/config-sync/how-to/clusterselectors#clusterselectors) and [NamespaceSelector] configurations.
+Config Sync is a Kubernetes operator that allows managing of Kubernetes resources in a GitOps approach where the configurations are stored in the git repository and automatically pulled by the operator to be applied. 
 
 Follow the instructions below to manually install the Config Connector operator.  
 
@@ -221,38 +219,28 @@ kubectl create secret generic git-creds \
 ```
 Note: After the Kubernetes secret is created make sure to delete the private key from the local disk or store it in a safe location
 
-5. Add the SSH public key to the version control system you’re using. The process will depend on the version control system being used (e.g GitHub or GitLab)
+5. Add the SSH public key to the version control system you’re using. The process will depend on the version control system being used (e.g [GitLab]("https://docs.gitlab.com/ee/ssh/#add-an-ssh-key-to-your-gitlab-account") or [GitHub]("https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account"))
 
-6. Configure the operator by passing values for the repository information
-```
-# config-management.yaml
 
-apiVersion: configmanagement.gke.io/v1
-kind: ConfigManagement
-metadata:
-  name: config-management
-spec:
-  clusterName: kcc-host-cluster
-  git:
-    syncRepo: <GIT_REPOSITORY_URL>
-    syncBranch: <BRANCH>
-    secretType: ssh
-    policyDir: <DIRECTORY>
-```
-Apply the configuration file
-```
-kubectl apply -f config-management.yaml
-```
-8. On your local machine, [install the nomos command line tool](https://cloud.google.com/kubernetes-engine/docs/add-on/config-sync/how-to/nomos-command#installing). This tool will allow users to interact with the Config Sync operator for checking syntax, initializing the directory structure and debugging any problems with the operator or cluster.  
+6. On your local machine, install the [nomos command line tool](https://cloud.google.com/kubernetes-engine/docs/add-on/config-sync/how-to/nomos-command#installing). This tool will allow users to interact with the Config Sync operator for checking syntax, initializing the directory structure and debugging any problems with the operator or cluster.  
 
-9. Initialize a new Config Sync repo directory structure
+7. Initialize a new Config Sync repo directory structure
 ```
 nomos init
 ```
+8. The generated directory structure should look like the following
 
-10. In the `namespaces` directory, create two sub-directories named `kcc-tutorial-dev` and `kcc-tutorial-prod`. These directory names must match the namespaces created in step 10 of the Config Connector set up.
+```
+├── cluster/
+├── namespaces/
+├── README.md
+└── system/
+    └── repo.yaml
+```
 
-11. Create configuration files for namespaces in `kcc-tutorial-dev` and `kcc-tutorial-prod`. Even though the namespaces are already created during the Config Connector set up, by creating namespace configuration in these directories, it will let Config Sync know that this is a namespace directory as opposed to an abstract namespace directory.
+9. In the `namespaces` directory, create two sub-directories named `kcc-tutorial-dev` and `kcc-tutorial-prod`. These directory names must match the namespaces created in step 10 of the Config Connector set up.
+
+10. Create configuration files for namespaces in `kcc-tutorial-dev` and `kcc-tutorial-prod`. Even though the namespaces are already created during the Config Connector set up, by creating namespace configuration in these directories, it will let Config Sync know that this is a namespace directory as opposed to an abstract namespace directory.
 ```
 #namespaces/kcc-tutorial-dev/namespace.yaml
 
@@ -270,19 +258,168 @@ metadata:
   name: kcc-tutorial-prod
 ```
 
-12. Create GCP resources in the corresponding environment. For this example, you will create a Cloud SQL instance in the dev workspace. 
-```
-# namespaces/kcc-tutorial-dev/cloudsql.yaml
+11. Create a git repository in a version control system such as GitHub or GitLab and push the directories created in step 9 above to the repository.
 
-apiVersion: sql.cnrm.cloud.google.com/v1beta1
-kind: SQLInstance
+12. Configure the operator by passing values for the repository information
+```
+# config-management.yaml
+
+apiVersion: configmanagement.gke.io/v1
+kind: ConfigManagement
 metadata:
-  name: mysqlinstance-test
+  name: config-management
 spec:
-  databaseVersion: MYSQL_5_7
-  region: us-east4
-  settings:
-    tier: db-f1-micro
+  clusterName: kcc-host-cluster
+  git:
+    syncRepo: <GIT_REPOSITORY_URL>
+    syncBranch: <BRANCH>
+    secretType: ssh
+    policyDir: <DIRECTORY>
+```
+13. Apply the configuration file
+```
+kubectl apply -f config-management.yaml
+
 ```
 
-13. Commit and push the code to the repository. This will trigger the Config Sync operator to pick up the changes and create the Kubernetes objects in the appropriate `kcc-tutorial-dev` namespace. Config Connector will then take the configuration and create a Cloud SQL instance in your GCP dev project. <br /><br />
+14. Create GCP resources in the corresponding environment to test the configuration. For this example, you will create a Cloud Storage Bucket in the dev workspace. Create a file with the following content under namespaces/kcc-tutorial-dev. Make sure metadata.name has a globally unique value as it is required by Cloud Storage.
+
+```
+# namespaces/kcc-tutorial-dev/storagebucket.yaml
+
+apiVersion: storage.cnrm.cloud.google.com/v1beta1
+kind: StorageBucket
+metadata:
+  annotations:
+    cnrm.cloud.google.com/force-destroy: "false"
+  name: kcc-tutorial-bucket-dev
+spec:
+  bucketPolicyOnly: true
+  lifecycleRule:
+    - action:
+        type: Delete
+      condition:
+        age: 7
+  versioning:
+    enabled: true
+
+```
+
+13. Commit and push the code to the repository. This will trigger the Config Sync operator to pick up the changes and create the Kubernetes objects in the ```kcc-tutorial-dev``` namespace. Config Connector will then take the configuration and create a Cloud Storage Bucket in your GCP dev project. <br /><br />
+
+
+
+
+
+## Policy Enforcement
+
+ Using Gatekeeper, an open policy agent, policies can be created for GCP resources to ensure their compliance. 
+
+
+1. Deploy a released version of Gatekeeper to the Kubernetes cluster created above
+
+```
+kubectl apply -f https://raw.githubusercontent.com/open-policy-agent/gatekeeper/release-3.3/deploy/gatekeeper.yaml
+```
+
+2. Verify that Gatekeeper service is up and running
+
+```
+kubectl -n gatekeeper-system describe svc gatekeeper-webhook-service
+```
+
+3. Create a Gatekeeper constraint template and an instantiation of the template that will require all labels described by the constraint to be present for the Cloud PubSub Topic. This file should be placed in the cluster directory. The Gatekeeper constraints are placed in the cluster directory because the configurations should apply to the entire cluster.
+
+```
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: pubsubrequiredlabels
+spec:
+  crd:
+    spec:
+      names:
+        kind: PubSubRequiredLabels
+      validation:
+        openAPIV3Schema:
+          properties:
+            labels:
+              type: array
+              items: 
+                type: string
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package pubsubrequiredlabels
+
+        violation[{"msg": msg, "details": {"missing_labels": missing}}] {
+          provided := {label | input.review.object.metadata.labels[label]}
+          required := {label | label := input.parameters.labels[_]}
+          apiVersion := input.review.object.apiVersion
+          isKccType := contains(apiVersion, "cnrm.cloud.google.com")
+          missing := required - provided
+          isKccType; count(missing) > 0
+          msg := sprintf("you must provide labels: %v", [missing])
+        }
+
+
+---
+
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: PubSubRequiredLabels
+metadata:
+  name: must-contains-labels
+spec:
+  match:
+    kinds:
+    - apiGroups: ["pubsub.cnrm.cloud.google.com"]
+      kinds: ["PubSubTopic"]
+  parameters:
+    labels: ["env", "owner", "location"]
+```
+
+4. Apply the changes by committing and pushing the code to the repository
+
+
+5. Apply configuration for a Cloud PubSub Topic to the kcc-tutorial-prod directory with the necessary changes. This is where a workflow for code review is recommended before applying changes to the prod environment.
+
+```
+# namespaces/kcc-tutorial-prod/pubsub.yaml
+
+apiVersion: pubsub.cnrm.cloud.google.com/v1beta1
+kind: PubSubTopic
+metadata:
+  labels:
+    env: prod
+    location: us-east4
+  name: pubsubtopic-sample
+
+```
+
+6. Commit and push the code to the repository. 
+
+7. This process will fail because of the constraint we have introduced to the cluster. The error message can be viewed by running the nomos status command in the directory outside of the config sync repo structure. A resulting error message may look like this:
+
+```
+KNV2010: unable to apply resource: admission webhook "validation.gatekeeper.sh"
+ denied the request: [must-contains-labels] you must provide labels: {"owner"}
+```
+
+8. Make the necessary changes to apply the owner label to the resource
+
+```
+apiVersion: pubsub.cnrm.cloud.google.com/v1beta1
+kind: PubSubTopic
+metadata:
+  labels:
+    env: prod
+    location: us-east4
+    owner: john-doe
+  name: pubsubtopic-sample
+```
+
+9. Commit and push the code to the repository. The PubSub topic should be created successfully in the prod GCP project.
+
+
+
+
