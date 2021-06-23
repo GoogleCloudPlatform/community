@@ -10,143 +10,109 @@ Dom Zippilli | Solutions Architect | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-This tutorial shows you how to use Cloud Run to host
-[a streaming proxy in front of Cloud Storage](https://github.com/domZippilli/gcs-proxy-cloud-run),
+This tutorial shows you how to use [Cloud Run](https://cloud.google.com/run/) to host
+[a streaming proxy for Cloud Storage](https://github.com/domZippilli/gcs-proxy-cloud-run),
 which you can use to do custom protocol translation to HTTP and transform
-responses with little impact to performance compared to standard GCS APIs.
+responses with relatively little decrease in performance compared to standard Cloud Storage APIs.
 
-The idea of having serverless compute send media to HTTP clients isn't new, but
-there's been a relatively recent development that makes the performance and
-resource utilization for such services much different.
-[Cloud Run](https://cloud.google.com/run/ "Cloud Run")
-[added support for streaming responses in Q4 of 2020](https://cloud.google.com/blog/products/serverless/cloud-run-now-supports-http-grpc-server-streaming),
-and ever since I've been eager to try it out.
+The idea of having serverless compute send media to HTTP clients isn't new, but the 
+[addition of support in Cloud Run for streaming responses](https://cloud.google.com/blog/products/serverless/cloud-run-now-supports-http-grpc-server-streaming)
+makes the performance and resource utilization for such services much different. Prior to this feature, bytes were only sent from Cloud Run and Cloud Functions
+to clients when the function's response stream to the control plane was closed. This had a couple of implications that weren't great for some use cases:
 
-Prior to this feature, bytes were only sent from Cloud Run (and its close cousin
-Cloud Functions) to clients when the function's response stream to the control
-plane was closed. This had a couple of implications that weren't great for some
-use cases:
-
--   Since the response had to be completely read and then forwarded to the
-    client, there could be significant wall time delays for TTFB. Effectively,
+-   Because the response had to be completely read and then forwarded to the
+    client, there could be significant delays for TTFB (time to first byte). Effectively,
     the first byte wasn't sent until the function sent its _last_ byte to the
     control plane.
--   There was a limit of 32MB on responses, which makes sense since the control
+-   There was a limit of 32 MB on responses, which makes sense because the control
     plane had to hold the entire response in order to forward it.
 
 Streaming responses alleviate both of these concerns. Bytes are sent back to the
-client as soon as the function writes them. This means the delay in the delivery
-of the first byte is not tied to the overall runtime of the function, and the
-responses don't have to sit in control plane memory at all so they can be any
+client as soon as the function writes them. This means that the delay in the delivery
+of the first byte is not tied to the overall run time of the function, and the
+responses don't have to sit in control plane memory at all, so they can be any
 size and put little to no memory pressure on the control plane.
 
-## Using this new opportunity for a smart GCS proxy
+## Using this new opportunity for a smart Cloud Storage proxy
 
-With this change, we can start to imagine serverless, performant, low TTFB
+With this change, you can start to imagine serverless, high-performance, low-TTFB
 proxies for all kinds of services. Anything that could be streamed would have a
-new performance profile in serverless; transcoded video, BigQuery result sets,
-and so on. In this world of possibilities, I decided to start with a simple but
-likely useful one; an HTTP proxy for GCS.
+new performance profile in a serverless system: transcoded video, BigQuery result sets,
+and so on. This document starts with a simple but likely useful implementation:
+an HTTP proxy for Cloud Storage.
 
-You _do not_ need to do this just to serve static content out of GCS buckets.
-[There's already an established way to do that which involves no code and very little management](https://cloud.google.com/storage/docs/hosting-static-website).
-However, it has two important limitations:
+You _do not_ need to use the solution described in this document to serve static content
+from Cloud Storage buckets. There's already an
+[established way to do that](https://cloud.google.com/storage/docs/hosting-static-website),
+which involves no code and very little management. However, the existing method for serving
+static content from Cloud Storage buckets has two important limitations:
 
 -   It makes the content public. At the time of this writing, it's not really
-    feasible to host a private static website (e.g., on a VPC subnet, for
+    feasible to host a private static website (for example, on a VPC subnet, for
     intranet purposes) using this feature.
--   You can't dynamically modify the content, if that's something you need to
-    do.
+-   You can't dynamically modify the content.
 
-I had customers who couldn't live with those limitations, so I created
-[gcs-proxy-cloud-run](https://github.com/domZippilli/gcs-proxy-cloud-run) in
-Golang as a proof-of-concept to show the way. The design is pretty simple, and
-resembles most HTTP-to-HTTP proxies:
+In response to customers who could not work within those limitations, the author of this document created
+[`gcs-proxy-cloud-run`](https://github.com/domZippilli/gcs-proxy-cloud-run) in
+Go as a proof of concept to show the way. The design is simple, and it resembles most HTTP-to-HTTP proxies:
 
 ![Architecture](https://storage.googleapis.com/gcp-community/tutorials/cloud-run-golang-gcs-proxy/architecture.png)
 
-A couple of things to note here:
+This is not an HTTP-to-HTTP proxy. The backend is the Cloud Storage JSON API. This means that any Cloud Storage operations can be used, abstracted
+away from the end-user, who can just use `GET` to request items.
 
--   This is not an HTTP-to-HTTP proxy, as the backend is GCS's native JSON API.
-    This means that any and all Cloud Storage operations can be used, abstracted
-    away from the end-user who can just `GET` things.
--   This also means that Cloud IAM can be used for authentication to the bucket.
-    Only the Cloud Run service can access this bucket, and only with the
-    permissions granted. Various means can be used to secure the Cloud Run
-    service, such as Cloud Armor, Cloud IAP, and more. Thus, this endpoint is
-    not necessarily public, and neither is the data in the bucket.
+You can use Cloud IAM for authentication to the bucket. Only the Cloud Run service can access this bucket, and only with the permissions granted.
+You can use various means to secure the Cloud Run service, such as Cloud Armor or Cloud IAP. This means that this endpoint is not necessarily public, and neither
+is the data in the bucket.
 
-In addition, the code shows how to write _streaming_ responses and
-transformations (where possible), so that you can do all kinds of things to the
-media you're serving from GCS.
+The `gcs-proxy-cloud-run` code shows how to write _streaming_ responses and transformations (where possible), so that you can do many kinds of things to the
+media that you're serving from Cloud Storage.
 
-## Why not _x_?
+## Some alternatives
 
-Since Cloud Run just runs a container, pretty much any software could be a proxy
-to GCS. Here are some alternatives I considered:
+Because Cloud Run just runs a container, there are a lot of options for software that could be a proxy
+to Cloud Storage. The following are some alternatives that were considered:
 
--   haproxy/nginx/Envoy/etc.
-    -   Battle-tested proxies with features like load balancing, caching, and
-        powerful DSLs for configuration languages. These will work in cases
-        where you like the proxy, and you don't need to do a lot of
-        transformation -- or you do, and you're good at Lua. Besides
-        customization, the main problem with these is they are typically used
-        with HTTP backends, and I wanted to be able to use the Google Cloud
-        Client SDK for the backend.
--   `net/http/httpproxy`
-    -   A proxy built into Golang! It's useful for HTTP backends, and if I write
-        more backends for this proxy, I'll probably use some or all of it. But
-        since I wanted to use the Google Cloud Client SDK for the backend, and I
-        had a particular way I wanted to do customizations, I decided to use the
-        `net/http` library instead.
+-   Proxies like HAProxy, Nginx, and Envoy: There are several proxies with features like load balancing, caching, and
+    powerful domain-specific languages (DSLs) for configuration. These will work in cases where you like the proxy, and you don't need to do a lot of
+    transformation (or you do, and you're good at Lua). Besides customization, the main problem with these alternatives is that they are typically used
+    with HTTP backends, and the solution described in this document uses the Google Cloud Client SDK for the backend.
+-   `net/http/httpproxy`: This is a proxy built into Go, and it's useful for HTTP backends. But because the solution described in this document uses
+    the Google Cloud Client SDK for the backend and has some specific requirements for customizations, the `gcs-proxy-cloud-run` proxy is built on the
+    `net/http` library instead.
 
-That said, for your use case, Cloud Run combined with any of the above could be
-a potent and low-toil, low-risk way to get the job done.
+For your use case, Cloud Run combined with any of the above could be a powerful, low-toil, low-risk way to get the job done.
 
-But truthfully, Golang has incredible "batteries-included" support for server
-stuff -- from the rich `io` library that has everything you need to stream, to
-the `http` library that puts HTTP server writing on rails, to dead-simple
-concurrency with goroutines, a lot of this proxy is just "glue code." The real
-work is done by the Golang developers on whose shoulders I'm standing.
+Go has excellent built-in support for server functionality. From the rich `io` library that has everything that you need for streaming, to
+the `http` library that makes HTTP server writing easy, to simple concurrency with goroutines, a lot of the `gcs-proxy-cloud-run` proxy is just glue code. The 
+real work is done by the Go developers.
 
 ## How gcs-proxy-cloud-run works
 
-Besides the aforementioned glue code, there are two substantial bits of code to
-look at, both of which are optional.
+Besides the aforementioned glue code, there are two substantial bits of code to look at, both of which are optional:
 
 -   `config/config.go`
 
-    -   This file is where you configure the proxy. Yes, I am suggesting you
-        hard-code the configuration into the binary. It's a lot safer to write
-        expressive Go code that compiles into a configured binary, as you get
-        compile-time analysis that catches a lot of mistakes. And with CI/CD,
-        particularly in serverless, there's not a huge difference operationally
-        between config baked into a statically linked binary, and a more stable
-        binary that reads a config file. Either way, you'll end up deploying a
-        new container image when things change. Plus, you don't end up investing
-        in some mini-domain-specific-langauge of a config file; just write Go,
-        and extend it however you need to. All of that said, **you don't need to
-        change this** in order to use the proxy to just serve static content
-        from GCS. The bucket name is taken from an environment variable, and the
-        rest of the configuration that you can do with Cloud Run is adequate for
-        both public and private proxies.
+    This file is where you configure the proxy. Yes, in this case, we recommend that you
+    hard-code the configuration into the binary. When you write expressive Go code that compiles into a configured binary,
+    you get compile-time analysis that catches a lot of mistakes. And with CI/CD, particularly in serverless systems,
+    there's not a huge difference operationally between configuration in a statically linked binary and a more stable
+    binary that reads a configuration file. Either way, you deploy a new container image when things change. Plus, you don't
+    need to invest in some mini-DSL of a configuration file; just write Go, and extend it however you need to.
+    All of that said, *you don't need to change this configuration file* to use the proxy to just serve static content from Cloud Storage. The bucket
+    name is taken from an environment variable, and the rest of the configuration that you can do with Cloud Run is adequate for
+    both public and private proxies.
 
 -   `filter/*.go`
-    -   This package contains example (and in some cases, pretty workable)
-        "filters" for responses. Wherever possible, these are written as
-        streaming filters, so they add minimal latency and memory pressure to
-        the proxy. These enable you to do all kinds of things, from logging and
-        filling caches, to blocking regexes from being served, to translating
-        languages on the fly. More on this later, but the bottom line is **these
-        are completely optional.** The proxy is useful without them.
-    -   If you choose to use filters, take a look at `config/pipelines.go` for
-        examples of how to chain them together into useful combinations.
-        Multiple **filters** combine together into a **pipeline**, where the GCS
-        object media stream is the input, and the client response stream is the
-        output.
 
-For our first demonstration, we will bypass both of these and run the default
-configuration.
+    This package contains example (and in some cases, rather workable) filters for responses. Wherever possible, these are written as
+    streaming filters, so they add minimal latency and memory pressure to the proxy. These enable you to do such things as logging and
+    filling caches, blocking regular expressions from being served, and translating languages. These filters are completely optional;
+    the proxy is useful without them. These filters are discussed in more detail later in this document.
+    
+    If you choose to use filters, take a look at `config/pipelines.go` for examples of how to chain them together into useful combinations.
+    Multiple filters combine together into a pipeline, in which the Cloud Storage object media stream is the input, and the client response
+    stream is the output.
 
 ## Demonstration 1: Just an HTTP proxy to GCS
 
