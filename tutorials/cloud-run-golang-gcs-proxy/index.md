@@ -25,12 +25,12 @@ to clients when the function's response stream to the control plane was closed. 
     the first byte wasn't sent until the function sent its _last_ byte to the
     control plane.
 -   There was a limit of 32 MB on responses, which makes sense because the control
-    plane had to hold the entire response in order to forward it.
+    plane had to hold the entire response in memory in order to forward it.
 
 Streaming responses alleviate both of these concerns. Bytes are sent back to the
 client as soon as the function writes them. This means that the delay in the delivery
 of the first byte is not tied to the overall run time of the function, and the
-responses don't have to sit in control plane memory at all, so they can be any
+responses don't need to sit in control plane memory at all, so they can be any
 size and put little to no memory pressure on the control plane.
 
 ## Using this new opportunity for a smart Cloud Storage proxy
@@ -38,7 +38,7 @@ size and put little to no memory pressure on the control plane.
 With this change, you can start to imagine serverless, high-performance, low-TTFB
 proxies for all kinds of services. Anything that could be streamed would have a
 new performance profile in a serverless system: transcoded video, BigQuery result sets,
-and so on. This document starts with a simple but likely useful implementation:
+and so on. This document starts with a simple but useful implementation:
 an HTTP proxy for Cloud Storage.
 
 You _do not_ need to use the solution described in this document to serve static content
@@ -85,90 +85,90 @@ For your use case, Cloud Run combined with any of the above could be a powerful,
 
 Go has excellent built-in support for server functionality. From the rich `io` library that has everything that you need for streaming, to
 the `http` library that makes HTTP server writing easy, to simple concurrency with goroutines, a lot of the `gcs-proxy-cloud-run` proxy is just glue code. The 
-real work is done by the Go developers.
+real work has been done by the Go developers.
 
 ## How gcs-proxy-cloud-run works
 
-Besides the aforementioned glue code, there are two substantial bits of code to look at, both of which are optional:
+Besides the aforementioned glue code, there are two substantial pieces of code to look at, both of which are optional:
 
--   `config/config.go`
+### `config/config.go`
 
-    This file is where you configure the proxy. Yes, in this case, we recommend that you
-    hard-code the configuration into the binary. When you write expressive Go code that compiles into a configured binary,
-    you get compile-time analysis that catches a lot of mistakes. And with CI/CD, particularly in serverless systems,
-    there's not a huge difference operationally between configuration in a statically linked binary and a more stable
-    binary that reads a configuration file. Either way, you deploy a new container image when things change. Plus, you don't
-    need to invest in some mini-DSL of a configuration file; just write Go, and extend it however you need to.
-    All of that said, *you don't need to change this configuration file* to use the proxy to just serve static content from Cloud Storage. The bucket
-    name is taken from an environment variable, and the rest of the configuration that you can do with Cloud Run is adequate for
-    both public and private proxies.
+This file is where you configure the proxy. Yes, in this case, we recommend that you
+hard-code the configuration into the binary. When you write expressive Go code that compiles into a configured binary,
+you get compile-time analysis that catches a lot of mistakes. And with CI/CD, particularly in serverless systems,
+there's not a huge difference operationally between configuration in a statically linked binary and a more stable
+binary that reads a configuration file. Either way, you deploy a new container image when things change. Plus, you don't
+need to invest in some mini-DSL of a configuration file; just write Go, and extend it however you need to.
+All of that said, *you don't need to change this configuration file* to use the proxy to just serve static content from Cloud Storage. The bucket
+name is taken from an environment variable, and the rest of the configuration that you can do with Cloud Run is adequate for
+both public and private proxies.
 
--   `filter/*.go`
+### `filter/*.go`
 
-    This package contains example (and in some cases, rather workable) filters for responses. Wherever possible, these are written as
-    streaming filters, so they add minimal latency and memory pressure to the proxy. These enable you to do such things as logging and
-    filling caches, blocking regular expressions from being served, and translating languages. These filters are completely optional;
-    the proxy is useful without them. These filters are discussed in more detail later in this document.
+This package contains example (and in some cases, rather workable) filters for responses. Wherever possible, these are written as
+streaming filters, so they add minimal latency and memory pressure to the proxy. These enable you to do such things as logging and
+filling caches, blocking regular expressions from being served, and translating languages. These filters are optional;
+the proxy is useful without them. These filters are discussed in more detail later in this document.
     
-    If you choose to use filters, take a look at `config/pipelines.go` for examples of how to chain them together into useful combinations.
-    Multiple filters combine together into a pipeline, in which the Cloud Storage object media stream is the input, and the client response
-    stream is the output.
+If you choose to use filters, take a look at `config/pipelines.go` for examples of how to chain them together into useful combinations.
+Multiple filters combine together into a pipeline, in which the Cloud Storage object media stream is the input, and the client response
+stream is the output.
 
 ## Demonstration 1: Just an HTTP proxy to GCS
 
-This is the default configuration of `gcs-proxy-cloud-run`. It will simply serve
+This is the default configuration of `gcs-proxy-cloud-run`. It simply serves
 HTTP `GET` requests by mapping the `GET` URL to an object path in a bucket. The
-only "filter" applied is a logging filter, which emits information about the
+only filter applied is a logging filter, which emits information about the
 request and response into the log.
 
 The
 [Quickstart Deployment](https://github.com/domZippilli/gcs-proxy-cloud-run#quickstart-deployment)
-section of the `README.md` shows exactly how to do this. To make it easy, I've
-provided shell scripts that build and deploy the service using the `gcloud`
-command line. It's as simple as:
+section of the `README.md` file shows exactly how to do this. To make it easy, the repository
+provides shell scripts that build and deploy the service using the `gcloud`
+command line. 
 
--   Clone the repo locally
--   From the repo root, run:
-    -   `./build.sh && ./deploy.sh mybucket us-central1`, where:
-    -   `mybucket` is the bucket you want to serve content from.
-    -   `us-central1` is the region where you want the proxy to run.
+To use the scripts to build and deploy the service, do the following:
 
-Assuming everything works and all the APIs are enabled, you should see the
+1.  Clone the repository locally.
+1.  From the repository root directory, run the script:
+
+        ./build.sh && ./deploy.sh mybucket us-central1
+        
+    Replace `mybucket` with the bucket you want to serve content from.
+    Replace `us-central1` with the region where you want the proxy to run.
+
+If everything works and all of the APIs are enabled, you should see the
 service named `gcs-mybucket` in the
-[Cloud Run console](https://console.cloud.google.com/run). Clicking on the
-service, you should see a link to a public endpoint for the service. Now, for
-this to do anything interesting, you will at least need something at
-`index.html` in your bucket. For my purposes, I have this serving up a very
-simple demo page, so I just load it up in my browser:
+[Cloud Console](https://console.cloud.google.com/run).
+
+To see a link to a public endpoint for the service, you can click the service name in the Cloud Console.
+
+For the service to do anything interesting, you need something at
+`index.html` in your bucket. For example, here is the author's very simple demonstration page loaded in the browser:
 
 ![justlogging](https://storage.googleapis.com/gcp-community/tutorials/cloud-run-golang-gcs-proxy/justlogging.png)
 
-This is very straightforward, and returns acceptable latency (note this is run
-from my home internet connection, which is nothing special and must travel a bit
-to the Oregon region).
+This is very straightforward, and returns with acceptable latency. When the author tested this setup, it was
+from a home internet connection, and the data needed to travel to the Oregon region.
 
 ![justlogging-network](https://storage.googleapis.com/gcp-community/tutorials/cloud-run-golang-gcs-proxy/justlogging-network.png)
 
-I should note that during development, I would just run this proxy in a Docker
-container on my dev workstation. This might not sound like something relevant,
-but for some workloads, some of the filter configurations -- particularly those
-with caching -- might make a proxy like this a good "sidecar." Running locally,
-the latency for cached responses was on the order of 2ms.
+During development, the author ran this proxy in a Docker container on a development workstation. For some workloads, some of the filter
+configurations—particularly those with caching—might make a proxy like this a good *sidecar*. Running locally,
+the latency for cached responses was on the order of 2 ms.
 
-As expected, logging messages are easily found in
-[Logs Explorer](https://console.cloud.google.com/logs) for this service, and
+Logging messages are available in [Logs Explorer](https://console.cloud.google.com/logs) for this service, and
 they show the usual information for an HTTP server.
 
 ![justlogging-logs](https://storage.googleapis.com/gcp-community/tutorials/cloud-run-golang-gcs-proxy/justlogging-logs.png)
 
-### Using this for an intranet site
+### Using this setup for an intranet site
 
 You could take this configuration a step further and use the proxy to support a
-GCS-hosted static intranet site (in fact, could easily add dynamic content) that
-is secured by using
+static intranet site hosted on Cloud Storage that is secured by using
 [one of the restricted ingress settings](https://cloud.google.com/run/docs/securing/ingress).
 These can be combined with IAM invoker permissions to restrict where requests
-can ingress to your service, and thus request the content in your GCS bucket.
+can ingress to your service, and thus request the content in your Cloud Storage bucket. You could even add dynamic content. 
 
 ## Demonstration 2: A simple filter to lowercase
 
