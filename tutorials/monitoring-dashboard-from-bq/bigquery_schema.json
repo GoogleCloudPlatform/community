@@ -1,0 +1,16 @@
+[
+  {
+    "name": "item_id",
+    "mode": "REQUIRED",
+    "type": "STRING"
+  },
+  {
+    "name": "item_sold",
+    "mode": "REQUIRED",
+    "type": "INTEGER"
+  },
+  {
+    "name": "report_time",
+    "type": "TIMESTAMP"
+  }
+]

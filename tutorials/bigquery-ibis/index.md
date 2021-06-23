@@ -52,11 +52,11 @@ Install the Ibis package, which you can download from
 
 ```
 # PyPI
-pip install --upgrade 'ibis-framework[bigquery]=='
+pip install --upgrade ibis-framework ibis-bigquery
 
 # conda-forge
 conda config --add channels conda-forge
-conda install ibis-framework
+conda install ibis-framework ibis-bigquery
 ```
 
 **Note**: At the time of this post, the latest release of Ibis (1.4.0) has an
@@ -71,8 +71,9 @@ default dataset for queries.
 [embedmd]:# (ibis_bigquery.py /^.*START bigquery_ibis_connect.*/ /END bigquery_ibis_connect]/)
 ```py
 import ibis
+import ibis_bigquery
 
-conn = ibis.bigquery.connect(
+conn = ibis_bigquery.connect(
     project_id=YOUR_PROJECT_ID,
     dataset_id='bigquery-public-data.stackoverflow')
 ```
@@ -261,9 +262,6 @@ You've just run a query on BigQuery with Ibis. No SQL required! Next, you may
 wish to explore how to build more complex queries with Ibis.
 
 ### Write a UDF
-
-**Note**: [UDF functionality is broken](https://github.com/ibis-project/ibis-bigquery/issues/6) in the latest
-version of Ibis (1.4.0).
 
 Ibis supports [user defined functions in BigQuery](https://ibis-project.org/backends/bigquery.html) by compiling Python
 code into JavaScript. This means that you can write UDFs for BigQuery in
