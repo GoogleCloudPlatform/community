@@ -1,8 +1,8 @@
 ---
 title: Infrastructure Automation with Config Connector, Config Sync and Gatekeeper
 description: An end-to-end workflow of provisioning and managing Google Cloud resources using Config Connector, Config Sync and OPA Gatekeeper
-author: nardosm, caseytin
-tags: kubernetes config connector, kcc, config sync, gate keeper
+author: nardosm
+tags: kubernetes config connector, kcc, config sync, gatekeeper, gitops
 date_published: 2021-01-01
 ---
 
@@ -10,7 +10,7 @@ Nardos Megersa | Strategic Cloud Engineer | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-This guide walks you through an end-to-end workflow of provisioning and managing Google Cloud resources using the following tools:
+This guide walks you through a GitOps end-to-end workflow of provisioning and managing Google Cloud resources using the following tools:
 
 * [**Kubernetes Config Connector (KCC)**](https://cloud.google.com/config-connector/docs/overview): to manage Google Cloud infrastructure
 * [**Config Sync**](https://cloud.google.com/kubernetes-engine/docs/add-on/config-sync/config-sync-overview): to synchronize declarative Config Connector infrastructure configurations from a Git repository
@@ -22,26 +22,30 @@ This guide walks you through an end-to-end workflow of provisioning and managing
 
 ## Before you begin
 
-This tutorial assumes that you already have a [Google Cloud account](https://console.cloud.google.com/freetrial). You should also ensure that the projects used in this tutorial are tied to a billing account, and that your `gcloud components` are updated to the latest version. <br/><br/>
-
+* This tutorial assumes that you already have a [Google Cloud account](https://console.cloud.google.com/freetrial). 
+* That your `gcloud components` are updated to the latest version. <br/><br/>
 
 
 ## Objectives
 
-You will use the following architecture as an example to:
-* Install and set up Config Connector in namespaced mode 
-* Install and set up the Config Sync operator
-* Enforce constraint policies using OPA Gatekeeper
-
-You will be implementing the following components:
-* A source code repository where the infrastructure Kubernetes Config Connector manifest files will live
-* A Google Kubernetes Engine cluster that will run Config Connector and Config Sync operators and OPA Gatekeeper
-* Dev and prod namespaces for Config Connector resources
-* Corresponding dev and prod Google Cloud Projects 
+* Deploy a Google Kubernetes Engine cluster that will run Config Connector, Config Sync operators and OPA Gatekeeper
+* Use a source code repository to deploy GCP resources to multiple environments through Kubernetes manifest files
+* Enforce constraint policies on GCP resources using OPA Gatekeeper
 
 <br/><br/>
 
 ![Sample Architecture](sample-architecture.png) <br/><br/>
+
+## Set up
+
+1. Create three Google Cloud projects:
+    * Host project that will contain the Google Kubernetes Engine cluster
+    * Dev project: this will be a managed project that will contain GCP resources
+    * Prod project: this will be a managed project that will contain GCP resources
+2. Ensure that the three projects are tied to a billing account. 
+
+
+<br></br>
 
 ## Config Connector
 
