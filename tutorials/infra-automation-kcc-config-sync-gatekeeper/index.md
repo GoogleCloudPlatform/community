@@ -23,12 +23,12 @@ This guide walks you through a GitOps end-to-end workflow of provisioning and ma
 ## Before you begin
 
 * This tutorial assumes that you already have a [Google Cloud account](https://console.cloud.google.com/freetrial). 
-* That your `gcloud components` are updated to the latest version. <br/><br/>
+* Make sure your `gcloud components` are updated to the latest version. <br/><br/>
 
 
 ## Objectives
 
-* Deploy a Google Kubernetes Engine cluster that will run Config Connector, Config Sync operators and OPA Gatekeeper
+* Deploy a Google Kubernetes Engine cluster that will run Config Connector, Config Sync operator and OPA Gatekeeper
 * Use a source code repository to deploy GCP resources to multiple environments through Kubernetes manifest files
 * Enforce constraint policies on GCP resources using OPA Gatekeeper
 
@@ -39,9 +39,9 @@ This guide walks you through a GitOps end-to-end workflow of provisioning and ma
 ## Set up
 
 1. Create three Google Cloud projects:
-    * Host project that will contain the Google Kubernetes Engine cluster
-    * Dev project: this will be a managed project that will contain GCP resources
-    * Prod project: this will be a managed project that will contain GCP resources
+    * Host project: will contain the Google Kubernetes Engine cluster
+    * Dev project: a managed project that will contain GCP resources
+    * Prod project: a managed project that will contain GCP resources
 2. Ensure that the three projects are tied to a billing account. 
 
 
@@ -123,7 +123,7 @@ kcc-tutorial-dev cnrm.cloud.google.com/project-id=$DEV_PROJECT_ID
 kubectl annotate namespace \
 kcc-tutorial-prod cnrm.cloud.google.com/project-id=$PROD_PROJECT_ID
 ```
-11. Create a dedicated IAM service account for each environment in the host project for workload identity and to be able to create resources in GCP.
+11. Create a dedicated IAM service account for each environment in the host project for workload identity to be able to create resources in GCP.
 ```
 gcloud iam service-accounts create kcc-tutorial-dev --project=$HOST_PROJECT_ID
 
@@ -209,9 +209,9 @@ gsutil cp gs://config-management-release/released/latest/config-sync-operator.ya
 ```
 kubectl apply -f config-sync-operator.yaml
 ```
-3. [Create a SSH key pair]("https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent") and copy the file path to the private key
+3. [Create a SSH key pair](https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) and copy the file path to the private key
 
-4. Create a Kubernetes secret in to store the private key for GitHub
+4. Create a Kubernetes secret to store the private key for the repository
 ```
 kubectl create secret generic git-creds \
  --namespace=config-management-system \
@@ -219,7 +219,7 @@ kubectl create secret generic git-creds \
 ```
 Note: After the Kubernetes secret is created make sure to delete the private key from the local disk or store it in a safe location
 
-5. Add the SSH public key to the version control system you’re using. The process will depend on the version control system being used (e.g [GitLab]("https://docs.gitlab.com/ee/ssh/#add-an-ssh-key-to-your-gitlab-account") or [GitHub]("https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account"))
+5. Add the SSH public key to the version control system you’re using. The process will depend on the version control system being used (e.g [GitLab](https://docs.gitlab.com/ee/ssh/#add-an-ssh-key-to-your-gitlab-account) or [GitHub](https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account))
 
 
 6. On your local machine, install the [nomos command line tool](https://cloud.google.com/kubernetes-engine/docs/add-on/config-sync/how-to/nomos-command#installing). This tool will allow users to interact with the Config Sync operator for checking syntax, initializing the directory structure and debugging any problems with the operator or cluster.  
@@ -240,7 +240,7 @@ nomos init
 
 9. In the `namespaces` directory, create two sub-directories named `kcc-tutorial-dev` and `kcc-tutorial-prod`. These directory names must match the namespaces created previously in the Config Connector set up.
 
-10. Create configuration files for namespaces in `kcc-tutorial-dev` and `kcc-tutorial-prod`. Even though the namespaces are already created during the Config Connector set up, by creating namespace configuration in these directories, it will let Config Sync know that this is a namespace directory as opposed to an abstract namespace directory.
+10. Create configuration files for namespaces in `kcc-tutorial-dev` and `kcc-tutorial-prod`. Even though the namespaces are already created during the Config Connector set up, by creating namespace configuration in these directories, it will let Config Sync know that this is a namespace directory as opposed to an [abstract namespace directory](https://cloud.google.com/anthos-config-management/docs/concepts/namespace-inheritance#inheritance).
 ```
 #namespaces/kcc-tutorial-dev/namespace.yaml
 
