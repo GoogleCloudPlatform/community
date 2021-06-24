@@ -3,22 +3,22 @@ title: Use Cloud Run and Go to create a customizable serverless proxy for Cloud 
 description: Customize this Go proxy for Cloud Storage to transform, or even translate, objects in Cloud Storage.
 author: domz
 tags: Serverless, GCS, Cloud Storage, Cloud Run, Golang, Go, Translate
-date_published: 2021-06-17
+date_published: 2021-06-24
 ---
 
 Dom Zippilli | Solutions Architect | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-This tutorial shows you how to use [Cloud Run](https://cloud.google.com/run/) to host
+This document shows you how to use [Cloud Run](https://cloud.google.com/run/) to host
 [a streaming proxy for Cloud Storage](https://github.com/domZippilli/gcs-proxy-cloud-run),
 which you can use to do custom protocol translation to HTTP and transform
 responses with relatively little decrease in performance compared to standard Cloud Storage APIs.
 
-The idea of having serverless compute send media to HTTP clients isn't new, but the 
-[addition of support in Cloud Run for streaming responses](https://cloud.google.com/blog/products/serverless/cloud-run-now-supports-http-grpc-server-streaming)
-makes the performance and resource utilization for such services much different. Prior to this feature, bytes were only sent from Cloud Run and Cloud Functions
-to clients when the function's response stream to the control plane was closed. This had a couple of implications that weren't great for some use cases:
+The idea of having serverless compute send media to HTTP clients isn't new, but the addition of
+[streaming responses from Cloud Run](https://cloud.google.com/blog/products/serverless/cloud-run-now-supports-http-grpc-server-streaming)
+makes the performance and resource utilization for such services much different. Before this feature, bytes were only sent from Cloud Run and Cloud Functions
+to clients when the function's response stream to the control plane was closed. This had limitations for some use cases:
 
 -   Because the response had to be completely read and then forwarded to the
     client, there could be significant delays for TTFB (time to first byte). Effectively,
@@ -68,7 +68,7 @@ is the data in the bucket.
 The `gcs-proxy-cloud-run` code shows how to write _streaming_ responses and transformations (where possible), so that you can do many kinds of things to the
 media that you're serving from Cloud Storage.
 
-## Some alternatives
+## Some proxy alternatives
 
 Because Cloud Run just runs a container, there are a lot of options for software that could be a proxy
 to Cloud Storage. The following are some alternatives that were considered:
@@ -91,30 +91,31 @@ real work has been done by the Go developers.
 
 Besides the aforementioned glue code, there are two substantial pieces of code to look at, both of which are optional:
 
-### `config/config.go`
+-   `config/config.go`
 
-This file is where you configure the proxy. Yes, in this case, we recommend that you
-hard-code the configuration into the binary. When you write expressive Go code that compiles into a configured binary,
-you get compile-time analysis that catches a lot of mistakes. And with CI/CD, particularly in serverless systems,
-there's not a huge difference operationally between configuration in a statically linked binary and a more stable
-binary that reads a configuration file. Either way, you deploy a new container image when things change. Plus, you don't
-need to invest in some mini-DSL of a configuration file; just write Go, and extend it however you need to.
-All of that said, *you don't need to change this configuration file* to use the proxy to just serve static content from Cloud Storage. The bucket
-name is taken from an environment variable, and the rest of the configuration that you can do with Cloud Run is adequate for
-both public and private proxies.
+    This file is where you configure the proxy. Yes, in this case, we recommend that you
+    hard-code the configuration into the binary. When you write expressive Go code that compiles into a configured binary,
+    you get compile-time analysis that catches a lot of mistakes. And with CI/CD, particularly in serverless systems,
+    there's not much difference operationally between configuration in a statically linked binary and a more stable
+    binary that reads a configuration file. Either way, you deploy a new container image when things change. Plus, you don't
+    need to invest in some mini-DSL of a configuration file; just write Go, and extend it however you need to.
+    
+    You don't need to change this configuration file to use the proxy to just serve static content from Cloud Storage. The bucket
+    name is taken from an environment variable, and the rest of the configuration that you can do with Cloud Run is adequate for
+    both public and private proxies.
 
-### `filter/*.go`
+-   `filter/*.go`
 
-This package contains example (and in some cases, rather workable) filters for responses. Wherever possible, these are written as
-streaming filters, so they add minimal latency and memory pressure to the proxy. These enable you to do such things as logging and
-filling caches, blocking regular expressions from being served, and translating languages. These filters are optional;
-the proxy is useful without them. These filters are discussed in more detail later in this document.
+    This package contains example (and in some cases, rather workable) filters for responses. Wherever possible, these are written as
+    streaming filters, so they add minimal latency and memory pressure to the proxy. These enable you to do such things as logging and
+    filling caches, blocking regular expressions from being served, and translating languages. These filters are optional;
+    the proxy is useful without them. These filters are discussed in more detail later in this document.
     
 If you choose to use filters, take a look at `config/pipelines.go` for examples of how to chain them together into useful combinations.
 Multiple filters combine together into a pipeline, in which the Cloud Storage object media stream is the input, and the client response
 stream is the output.
 
-## Demonstration 1: Just an HTTP proxy to GCS
+## Demonstration 1: Just an HTTP proxy to Cloud Storage
 
 This is the default configuration of `gcs-proxy-cloud-run`. It simply serves
 HTTP `GET` requests by mapping the `GET` URL to an object path in a bucket. The
@@ -141,7 +142,7 @@ If everything works and all of the APIs are enabled, you should see the
 service named `gcs-mybucket` in the
 [Cloud Console](https://console.cloud.google.com/run).
 
-To see a link to a public endpoint for the service, you can click the service name in the Cloud Console.
+To see a link to a public endpoint for the service, click the service name in the Cloud Console.
 
 For the service to do anything interesting, you need something at
 `index.html` in your bucket. For example, here is the author's very simple demonstration page loaded in the browser:
@@ -154,7 +155,7 @@ from a home internet connection, and the data needed to travel to the Oregon reg
 ![justlogging-network](https://storage.googleapis.com/gcp-community/tutorials/cloud-run-golang-gcs-proxy/justlogging-network.png)
 
 During development, the author ran this proxy in a Docker container on a development workstation. For some workloads, some of the filter
-configurations—particularly those with caching—might make a proxy like this a good *sidecar*. Running locally,
+configurations—particularly those with caching—might make a proxy like this a good *sidecar*. Running locally during development,
 the latency for cached responses was on the order of 2 ms.
 
 Logging messages are available in [Logs Explorer](https://console.cloud.google.com/logs) for this service, and
@@ -170,11 +171,11 @@ static intranet site hosted on Cloud Storage that is secured by using
 These can be combined with IAM invoker permissions to restrict where requests
 can ingress to your service, and thus request the content in your Cloud Storage bucket. You could even add dynamic content. 
 
-## Demonstration 2: A simple filter to lowercase
+## Demonstration 2: A simple filter to transform to lowercase
 
-Now that we are looking into more complex usage of a Cloud Run proxy for GCS,
-it's time to take a look at the configuration file. The default configuration we
-ran above looks like this:
+To understand this example of a more complex usage of a Cloud Run proxy for Cloud Storage,
+it's useful to take a look at the configuration file. The default configuration for the previous example
+looks like this:
 
 ```go
 // This function will be called in main.go for GET requests
@@ -183,22 +184,19 @@ func GET(ctx context.Context, output http.ResponseWriter, input *http.Request) {
 }
 ```
 
-Here's what this is saying. When a GET request is sent to the Cloud Run service,
-the `config.GET` function is called. You could do whatever you want here! You
-could write your own code to just print "Hello World!" You could even return
-`405 -- Method Not Allowed`! In the default configuration, however, it calls the
-`Read` function from the `gcs` package, which as you might guess, reads a GCS
-object and returns it in the response.
+Here's what this is saying: When a `GET` request is sent to the Cloud Run service,
+the `config.GET` function is called. You could do whatever you want in this function. You
+could write your own code to just print `"Hello World!"`. You could even return
+`405 -- Method Not Allowed`. The function in the default configuration, however, calls the
+`Read` function from the `gcs` package, which reads a Cloud Storage object and returns it in the response.
 
 The arguments to the `Read` function are as follows:
 
 -   The `context` value for the request, established by the `ProxyHTTPGCS`
     function in `main.go`.
--   The `output` and `input`, which are exactly what are required in the
-    entrypoint for a Cloud Run HTTP service. Those are just passed through
-    without modification to the backend code.
--   `LoggingOnly`, which is defined in the `pipelines.go` file. It is a "filter
-    pipeline" that just logs requests.
+-   The `output` and `input`, which are required in the entrypoint for a Cloud Run HTTP service.
+    These areguments are passed through without modification to the backend code.
+-   `LoggingOnly`, which is defined in the `pipelines.go` file. It is a filter pipeline that simply logs requests.
 
 The `LoggingOnly` pipeline definition is simple:
 
@@ -210,12 +208,11 @@ var LoggingOnly = filter.Pipeline{
 ```
 
 This means that responses are run through one filter, `filter.LogRequest`, which
-is a function defined in `filter/logging.go`. You can probably guess what it
-does by now.
+is a function defined in `filter/logging.go`.
 
-We can add multiple filters to the pipeline, and they will be run in the order
-they are written. So, a pipeline for a proxy that lowercases everything looks
-like this:
+You can add multiple filters to the pipeline, and they are run in the order in which
+they appear in the pipeline. So, a pipeline for a proxy that transforms everything to lowercase
+looks like this:
 
 ```go
 // EXAMPLE: Send everything lowercase. Undefined behavior with binaries.
@@ -225,20 +222,21 @@ var LowercasingProxy = filter.Pipeline{
 }
 ```
 
-This will do two things; run all the bytes sent through `bytes.ToLower()`, and
-then log the requests as before. I will deploy it using the same scripts as the
-first demonstration, make **no** changes to the bucket, and then reload my
+This does two things: runs all of the bytes through `bytes.ToLower()` and
+then logs the requests.
+
+Here is the result of deploying the service using the same scripts as in the
+first demonstration, making no changes to the bucket, and then reloading the
 webpage:
 
 ![lowercasing](https://storage.googleapis.com/gcp-community/tutorials/cloud-run-golang-gcs-proxy/lowercasing.png)
 
-The differences might not be immediately obvious, but note that "Lake
-Washington" is now "lake washington," and "Google Cloud" is "google cloud." The
-filter worked!
+The differences might not be immediately obvious, but note that the filter has transformed `Lake Washington` to `lake washington`,
+and `Google Cloud` to `google cloud`.
 
-If you were to look closer at the network performance and TTFB, you'd find
-they're unchanged. This is because this filter is a streaming filter. Let's take
-a quick look at how that works.
+Network performance and TTFB are unchanged because this filter is a streaming filter.
+
+Here's an example of a streaming filter:
 
 ```go
 // ToLower applies bytes.ToLower to the media.
@@ -264,30 +262,27 @@ func ToLower(ctx context.Context, handle MediaFilterHandle) error {
 ```
 
 The function is of a `MediaFilter` type, defined in `filter/filter.go`. A
-`MediaFilter` must accept a `MediaFilterHandle`, which includes references to
-all the bits needed to do media filtering. These include:
+`MediaFilter` accepts a `MediaFilterHandle`, which includes references to
+all of the pieces needed to do media filtering:
 
--   the `input`, which is either the object media itself, or the previous
-    filter's output, and
--   the `output`, which is either the response stream itself, or the next
-    filter's input.
+-   the `input`, which is either the object media itself or the previous
+    filter's output
+-   the `output`, which is either the response stream itself or the next
+    filter's input
 
 The chaining together of filters is taken care of by a pipeline builder
-function, also in `filter/filter.go`. We don't need to look at those internals
-right now, however.
+function, also in `filter/filter.go`.
 
-So the idea with this filter, then, is to read the input 4096 bytes at a time,
-call `bytes.ToLower` on the read bytes, and then send them along. This is
-repeated until the input is exhausted. That's all there is to it!
+This filter reads the input 4096 bytes at a time, calls `bytes.ToLower` on the read bytes, and then sends them along. This is
+repeated until the input is exhausted. That's all there is to it.
 
-If we didn't have streaming responses, this would still work as-is, but
-`handle.output.Write` wouldn't actually write to the client. For example, if we
-ran this function in Cloud Functions, we would find that the writes would be
-buffered until the entrypoint function returned, and we would be limited to
-32MB. Effectively, it wouldn't be much different from just reading the entire
+Without streaming responses, this would still work as it is, but
+`handle.output.Write` wouldn't actually write to the client. For example, if you
+ran this function in Cloud Functions, you would find that the writes would be
+buffered until the entrypoint function returned, and you would be limited to
+32 MB. Effectively, it wouldn't be much different from just reading the entire
 object into memory, running `ToLower` on the whole thing, and then writing it.
-Streaming responses make this all pretty slick, like it was running on a
-traditional server!
+Streaming responses make this behave like it was running on a conventional server.
 
 ## Demonstration 3: gzip encoding
 
