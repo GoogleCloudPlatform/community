@@ -359,30 +359,35 @@ write the input to that. This is just glue code.
 
 ## Demonstration 4: Dynamic translation
 
-Now let's suppose I want to be able to translate my webpage on the fly. Perhaps
-I have multiple domain names for it, and I'll check the request URI to determine
+Suppose that you want to be able to translate your webpage on demand. Perhaps
+you have multiple domain names for the page, and you would like to check the request URI to determine
 which one the caller used and direct them to an appropriate translation (French
-for `.fr`, Chinese for `.cn`, Spanish for `.mx`, and so on). How should I do
-this?
+for `.fr`, Chinese for `.cn`, Spanish for `.mx`, and so on).
 
--   Automated translation, with a copy saved of each language. I will have many
-    copies to store, and I'll have to run a batch update job for any changes to
-    the website. I also will not benefit from any changes to the translation ML
-    model unless I run the batch re-translation.
--   Client-side code to translate. This is good, but now I need to have
-    JavaScript code in my site, and hope clients run it properly. I also have
-    the added "wall time" that users will get from downloading my English
-    source, and then making a Translate API call on the client side, and finally
-    rendering the translated content.
--   Dynamic server-side translation. This way, I only store one copy of the
-    website (my source English copy), but clients only ever see static content,
-    no Javascript. When my page is updated, the translations change. As the
-    translation ML models improve, I automatically get the improvements. This
-    could be slow and expensive if I make a translation each time, but I can
-    trivially add some caching or CDN, so that the translation is only made on
-    cache fills. **This is the approach I'll use here.**
+Here is are some options for approaches that you could take to do this:
 
-Easy enough; I can just change my `config.go` to:
+-   Automated translation, with a copy saved of each language:
+
+    You would have many copies to store, and you would need to run a batch update job for any changes to
+    the website. You would not benefit from any changes to the translation machine learning model unless you
+    ran a batch re-translation.
+    
+-   Client-side code to translate:
+
+    This is good, but you would need to have JavaScript code in your site, and hope that clients run it properly.
+    This would also add a delay for the time that it would take between users downloading the English
+    source, making a Translate API call on the client side, and then finally rendering the translated content.
+
+-   Dynamic server-side translation:
+
+    This way, you only store one copy of the website (your source English copy), but clients only ever see static content,
+    no JavaScript. When your page is updated, the translations change. As the translation machine learning models improve, 
+    you automatically get the improvements. This could be slow and expensive if you make a translation each time, but you can
+    add some caching or CDN, so that the translation is only made on cache fills.
+    
+     This dyanmic server-side approach is the one that is described in this section.
+
+Change the `config.go` contents to the following:
 
 ```go
 // This function will be called in main.go for GET requests
@@ -391,8 +396,7 @@ func GET(ctx context.Context, output http.ResponseWriter, input *http.Request) {
 }
 ```
 
-But what is `DynamicTranslationFromEnToEs`? It's a pipeline included in the
-sample confguration, and it bears some examination:
+`DynamicTranslationFromEnToEs` is a pipeline included in the sample confguration:
 
 ```go
 // EXAMPLE: Translate HTML files from English to Spanish dynamically.
@@ -421,51 +425,40 @@ func isHTML(r http.Request) bool {
 }
 ```
 
-Hopefully most of this is self-explanatory. The `Translate` filter requires
-arguments for source and target language, so `englishToSpanish` applies those
-arguments as English and Spanish within the context of a private function that
-conforms to the `MediaFilter` type.
+The `Translate` filter requires arguments for source and target language, so `englishToSpanish` applies those
+arguments as English and Spanish within the context of a private function that conforms to the `MediaFilter` type.
 
-`FilterIf` might be more opaque, but it's really quite simple.
 `htmlEnglishToSpanish` is similarly emulating partial application with the
-`FilterIf` filter, here applying a test that examines the request -- `isHTML` --
+`FilterIf` filter, here applying a test that examines the request (`isHTML`)
 and a filter to run if that test is true, `englishToSpanish`. If the test is
 false, `FilterIf` runs a no-op filter instead.
 
-The key point to get across is that you can compose filters to make pipelines
-that suit your needs, even writing little bits of code to customize behaviors.
+You can compose filters to make pipelines that suit your needs, even writing little bits of code to customize behaviors.
 
-So after deploying with this new configuration, what happens when I load my
-webpage?
+After deploying with this new configuration, here is the result when loading the webpage:
 
 ![translating](https://storage.googleapis.com/gcp-community/tutorials/cloud-run-golang-gcs-proxy/translating.png)
 
-¡Que guay! Just like that, my webpage is in Spanish! This filter uses the
+Just like that, the webpage is in Spanish. This filter uses
 [Cloud Translation](https://cloud.google.com/translate) basic API, but there are
-lots of ways to use Cloud Translation with all kinds of degrees of
+lots of ways to use Cloud Translation with varying degrees of
 sophistication.
 
-There is one small downside to what I've got here:
+There is one small disadvantage to this solution, which is the 128 ms that it takes to receive `index.html`:
 
 ![translating-network](https://storage.googleapis.com/gcp-community/tutorials/cloud-run-golang-gcs-proxy/translating-network.png)
 
-See that 128ms for index.html? It makes sense, as there are two things working
-against us on this translate filter:
+This latency makes sense, because there are a couple of factors that add time for this translation filter:
 
--   It's _not_ streaming. It could probably be optimized a bit to use less RAM,
-    but since it has to make a remote API call for translate with the complete
-    document included, and I wanted to use the SDK, it just loads the whole page
-    into a byte array before sending. It then waits for a response, and does
-    stream that back as it reads it.
--   As mentioned, _it uses a whole other remote API_. We're no longer just
-    talking about reading from GCS, we're taking the content to a translation
-    model and getting new text back. This will involve time-intensive network
-    trips, computation time, and overhead. No matter how slick we are with input
-    and output streams, there's nothing we can really do about this.
+-   It's not streaming. It could probably be optimized to use less RAM, but because it needs to make a remote API call for translation with the complete
+    document included, it just loads the whole page into a byte array before sending. It then waits for a response, and streams the response back as it reads it.
+-   It uses a whole other remote API. This system is not just reading from Cloud Storage; it's taking the content to a translation
+    model and getting new text back. This involves time-intensive network trips, computation time, and overhead. No matter what you do with input
+    and output streams, there's nothing that you can really do about this.
 
-Now, an easy way to solve this is with caching. A CDN would work particularly
+An easy way to solve this is with caching. A CDN would work particularly
 well here; re-translation and the ~120ms latency penalty would only be incurred
-when the CDN has to fill the cache. Most, if not all requests, would be very
+when the CDN has to fill the cache. Most, if not all, requests would be very
 fast using cached data.
 
 In fact, you could easily achieve this using a
@@ -475,11 +468,9 @@ which is in turn
 
 ## Hola, Mundo!
 
-The `gcs-proxy-cloud-run` repo contains even more filters, and demonstrations of
-capability. This is really a "Hello World!" for what you can do with a
-combination of Cloud Run, streaming responses, and GCS. For example, check out
-`config/pipelines.go` for a pipeline that blocks sending of any data that
-matches a certain regex pattern:
+The [`gcs-proxy-cloud-run`](https://github.com/domZippilli/gcs-proxy-cloud-run) repository contains even more filters, and demonstrations of capability. This is
+really a "Hello, World!" for what you can do with a combination of Cloud Run, streaming responses, and Cloud Storage. For example, check out 
+`config/pipelines.go` for a pipeline that blocks sending of any data that matches a certain regular expression pattern:
 
 ```go
 // BlockSSNs will block content that matches SSN regex.
@@ -492,8 +483,7 @@ func blockSSNs(c context.Context, mfh filter.MediaFilterHandle) error {
 }
 ```
 
-This, too, is implemented as a streaming filter. For the sake of brevity, I
-won't demonstrate it, but you get the idea.
+This, too, is implemented as a streaming filter. Go to the [`gcs-proxy-cloud-run`](https://github.com/domZippilli/gcs-proxy-cloud-run) repository
+to explore this and other filters.
 
-What combinations can you think of? What use cases might you use a serverless
-proxy for object storage for? Let us know, and let's build Awesome GCP together!
+You can use the ideas from this document to build all sorts of combinations and use cases for a serverless proxy for object storage.
