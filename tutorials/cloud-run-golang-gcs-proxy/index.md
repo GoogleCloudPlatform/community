@@ -286,17 +286,16 @@ Streaming responses make this behave like it was running on a conventional serve
 
 ## Demonstration 3: gzip encoding
 
-Did you know that GCS has built-in
-[decompressive transcoding](https://cloud.google.com/storage/docs/transcoding)?
-This lets you store compressed files, but serve them to readers in decompressed
-form on-the-fly. This is great for saving on storage and retrieval costs.
+Cloud Storage has built-in
+[decompressive transcoding](https://cloud.google.com/storage/docs/transcoding),
+which lets you store compressed files and serve them to readers in decompressed
+form. This compression is great for saving on storage and retrieval costs.
 
-But what if you want to go the other way? What if you wanted to be able to serve
-clients that are on mobile or other constrained internet connections compressed
-forms of the objects, to conserve bandwidth? Using a proxy like this, you can
-easily do _streaming_ compressive transcoding.
+You can also go the other way, to conserve bandwidth by serving compressed objects
+to clients on mobile or other constrained internet connections. Using a proxy, you can
+do _streaming_ compressive transcoding.
 
-As before, edit `config/config.go` and re-deploy. This time, use the
+Begin by editing `config/config.go` and redeploying the service. This time, you use
 `ZippingProxy`:
 
 ```go
@@ -316,21 +315,19 @@ func GET(ctx context.Context, output http.ResponseWriter, input *http.Request) {
 }
 ```
 
-Loading my webpage, I now see the original, unchanged content. But one critical
-thing has changed -- the size of the downloads for my content. As noted above in
-the logs screenshot, the size of `index.html` is 1113 bytes. Now, it's just 531
-bytes:
+When the webpage is reloaded, the content is the original, unchanged content, but
+the size of the download has changed. As you can see in the logs screenshots, the
+size of `index.html` has gone from 1113 bytes to only 531 bytes:
 
 ![zipping-network](https://storage.googleapis.com/gcp-community/tutorials/cloud-run-golang-gcs-proxy/zipping-network.png)
 
-The file `style.css` is also compressed, from 1185 bytes to 591 bytes. Overall
-transfer decreased from 18.0kB to 16.6kB. Nothing earth-shattering in terms of
-bytes as these file sizes are trivial, but ~50% compression isn't too shabby!
-More importantly, it illustrates the point: Just by adding a simple filter to
-the configuration, we can add a very cool feature to GCS content serving.
+The file `style.css` is also compressed, from 1185 bytes to 591 bytes. Overall,
+transfer decreased from 18.0 kB to 16.6 kB. For these files, the absolute difference
+is small, because the files are small, but ~50% compression is not bad.
+More important, this illustrates that by adding a simple filter to
+the configuration, you can add a useful feature to your Cloud Storage content serving.
 
-Once again, this filter is mostly glue code, carefully applied to ensure a
-streaming response:
+The filter is mostly glue code, applied to ensure a streaming response:
 
 ```go
 // GZip applies gzip encoding to the media.
@@ -356,9 +353,9 @@ func GZip(ctx context.Context, handle MediaFilterHandle) error {
 ```
 
 Though it has to do some header modification, this filter is even simpler than
-the `ToLower` filter when it comes to handling the bytes! It simply creates a
-`gzip.Writer` which targets the output, and then uses the `io.Copy` function to
-write the input to that. Just glue code!
+the `ToLower` filter when it comes to handling the bytes. It simply creates a
+`gzip.Writer` that targets the output, and then uses the `io.Copy` function to
+write the input to that. This is just glue code.
 
 ## Demonstration 4: Dynamic translation
 
