@@ -1,6 +1,6 @@
 ---
 title: Use Cloud Run and Go to create a customizable serverless proxy for Cloud Storage
-description: Customize this Go proxy for Cloud Storage to transform, or even translate, objects in Cloud Storage.
+description: Customize this Go proxy for Cloud Storage to transform, compress, or translate objects in Cloud Storage.
 author: domz
 tags: Serverless, GCS, Cloud Storage, Cloud Run, Golang, Go, Translate
 date_published: 2021-06-24
@@ -195,7 +195,7 @@ The arguments to the `Read` function are as follows:
 -   The `context` value for the request, established by the `ProxyHTTPGCS`
     function in `main.go`.
 -   The `output` and `input`, which are required in the entrypoint for a Cloud Run HTTP service.
-    These areguments are passed through without modification to the backend code.
+    These arguments are passed through without modification to the backend code.
 -   `LoggingOnly`, which is defined in the `pipelines.go` file. It is a filter pipeline that simply logs requests.
 
 The `LoggingOnly` pipeline definition is simple:
@@ -222,8 +222,7 @@ var LowercasingProxy = filter.Pipeline{
 }
 ```
 
-This does two things: runs all of the bytes through `bytes.ToLower()` and
-then logs the requests.
+This pipeline runs all of the bytes through `bytes.ToLower()` and then logs the requests.
 
 Here is the result of deploying the service using the same scripts as in the
 first demonstration, making no changes to the bucket, and then reloading the
@@ -231,8 +230,7 @@ webpage:
 
 ![lowercasing](https://storage.googleapis.com/gcp-community/tutorials/cloud-run-golang-gcs-proxy/lowercasing.png)
 
-The differences might not be immediately obvious, but note that the filter has transformed `Lake Washington` to `lake washington`,
-and `Google Cloud` to `google cloud`.
+The filter has transformed `Lake Washington` to `lake washington`, and `Google Cloud` to `google cloud`.
 
 Network performance and TTFB are unchanged because this filter is a streaming filter.
 
@@ -439,7 +437,7 @@ After deploying with this new configuration, here is the result when loading the
 
 ![translating](https://storage.googleapis.com/gcp-community/tutorials/cloud-run-golang-gcs-proxy/translating.png)
 
-Just like that, the webpage is in Spanish. This filter uses
+Just like that, the webpage is in Spanish. This filter uses the
 [Cloud Translation](https://cloud.google.com/translate) basic API, but there are
 lots of ways to use Cloud Translation with varying degrees of
 sophistication.
