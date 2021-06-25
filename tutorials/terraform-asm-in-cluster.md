@@ -1,14 +1,13 @@
 ---
 title: Install Anthos Service Mesh (in-cluster control plane) on GKE with Terraform
-description: Use Terraform to deploy a Kubernetes Engine cluster and Anthos Service Mesh with in-cluster control plane
+description: Use Terraform to deploy a Kubernetes Engine cluster and Anthos Service Mesh with in-cluster control plane.
 author: ameer00
 tags: Kubernetes Engine, ASM
-date_published: 2021-06-24
+date_published: 2021-06-30
 ---
 
 Ameer Abbas | Solutions Architect | Google
 
-<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This tutorial shows you how to install Anthos Service Mesh 1.9 with an in-cluster control plane on a Google Kubernetes Engine (GKE) cluster using the [GKE Anthos Service Mesh Terraform submodule](https://github.com/terraform-google-modules/terraform-google-kubernetes-engine/tree/master/modules/asm).
