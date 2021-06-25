@@ -11,7 +11,7 @@ Billy Jacobson | Developer Programs Engineer | Google
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This tutorial walks you through importing data into a Cloud Bigtable table.
-Using Dataflow, we will take a CSV file and map each row to a table row
+Using Dataflow, you take a CSV file and map each row to a table row
 and use the headers as column qualifiers all placed under the same column 
 family for simplicity.
 
@@ -19,20 +19,22 @@ family for simplicity.
 
 ### Install software and download sample code
 
-Make sure you have the following software installed. If you use Cloud Shell, those software packages have already been installed for you.
+Make sure that you have the following software installed:
 
 - [Git](https://help.github.com/articles/set-up-git/)
 - [Java SE 11](https://openjdk.java.net/install/)
 - [Apache Maven 3.6.x or later](https://maven.apache.org/install.html)
 
-If you haven't used Maven before check out this
+These software packages are already installed for Cloud Shell.
+
+If you haven't used Maven before, check out this
 [5 minute quickstart](https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html).
 
 ### Set up your Google Cloud project
 
 1.  Create a project in the [Cloud Console](https://console.cloud.google.com/).
 1.  Enable billing for your project.
-1.  Install the **[Cloud SDK](https://cloud.google.com/sdk/)** if you do
+1.  Install the [Cloud SDK](https://cloud.google.com/sdk/) if you do
     not already have it. Make sure you
     [initialize](https://cloud.google.com/sdk/docs/initializing) the SDK.
 
@@ -43,9 +45,9 @@ You can use your own CSV file or the
 
 ### Remove and store the headers
 
-The method we are using to import data isn't able to automatically handle the
+The method used in this tutorial to import data isn't able to automatically handle the
 headers. Before uploading your file, make a copy of the comma-separated list of
-headers and remove that row from the CSV if you don't want it imported into your
+headers and remove the header row from the CSV if you don't want it imported into your
 table. 
 
 ### Upload the CSV file
@@ -54,35 +56,36 @@ table.
 
 ## Prepare your Cloud Bigtable table for data import
 
-Follow the steps in [cbt quickstart](https://cloud.google.com/bigtable/docs/quickstart-cbt)
-to create a Cloud Bigtable instance and install the command line tool for Cloud
+Follow the steps in the [cbt quickstart](https://cloud.google.com/bigtable/docs/quickstart-cbt)
+to create a Cloud Bigtable instance and install the command-line tool for Cloud
 Bigtable. You can use an existing instance if you want.
 
-Use an existing table or create a table:
+1.  Create a table:
 
-    cbt createtable my-table
+        cbt createtable my-table
 
-The Dataflow job inserts data into column family 'csv'. Create that column
-family in your table:  
+1.  Create the `csv` column family in your table:  
 
-    cbt createfamily my-table csv
+        cbt createfamily my-table csv
+   
+    The Dataflow job inserts data into the column family `csv`.
 
-You can verify this worked by running:
+1.  Verify that the creation worked:
 
-    cbt ls my-table
-    
-Expect to see the following:
+        cbt ls my-table
 
-    Family Name GC Policy
-    ----------- ---------
-    csv   [default]
+    The output should be the following:
+
+        Family Name GC Policy
+        ----------- ---------
+        csv   [default]
 
 ## Run the Dataflow job 
 
 Dataflow is a fully-managed serverless service for transforming and
-enriching data in stream (real time) and batch (historical) modes. We are using
-it as an easy and quick way to process the CSV concurrently and easily perform
-writes at a large scale to our table. You also only pay for what you use, so it
+enriching data in stream (real-time) and batch (historical) modes. This tutorial uses Dataflow
+as quick way to process the CSV concurrently and perform
+writes at a large scale to the table. You also only pay for what you use, so it
 keeps costs down.
 
 ### Clone the repository
@@ -98,7 +101,7 @@ code:
     mvn package exec:exec -DCsvImport -Dbigtable.projectID=YOUR_PROJECT_ID -Dbigtable.instanceID=YOUR_INSTANCE_ID \
     -DinputFile="YOUR_FILE" -Dbigtable.table="YOUR_TABLE_ID" -Dheaders="YOUR_HEADERS"
 
-replacing `YOUR_PROJECT_ID`, `YOUR_INSTANCE_ID`, `YOUR_FILE`, `YOUR_TABLE_ID`, and `YOUR_HEADERS`
+Replace `YOUR_PROJECT_ID`, `YOUR_INSTANCE_ID`, `YOUR_FILE`, `YOUR_TABLE_ID`, and `YOUR_HEADERS`
 with appropriate values.
 
 Here is an example command:
@@ -106,9 +109,9 @@ Here is an example command:
     mvn package exec:exec -DCsvImport -Dbigtable.projectID=YOUR_PROJECT_ID -Dbigtable.instanceID=YOUR_INSTANCE_ID \
     -DinputFile="gs://YOUR_BUCKET/sample.csv" -Dbigtable.table="my-table" -Dheaders="rowkey,a,b"
 
-The first column will always be used as the row key. 
+The first column is always used as the row key. 
 
-If you see an error saying "Unable to get application default credentials.", this means that you likely need to
+If you see an error saying `"Unable to get application default credentials."`, this means that you likely need to
 set up application credentials as outlined [here](https://cloud.google.com/docs/authentication/production). If you are
 setting up a custom service account, be sure to assign the necessary roles for this job. For testing purposes, you can use
 Bigtable Administrator, Dataflow Admin, and Storage Admin. 
