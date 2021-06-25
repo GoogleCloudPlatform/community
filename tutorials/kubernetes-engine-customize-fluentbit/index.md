@@ -16,6 +16,8 @@ option when creating the Google Kubernetes Engine (GKE) cluster, which does not 
 
 This tutorial assumes that you're familiar with [Kubernetes](https://kubernetes.io/docs/home/).
 
+This tutorial applies to Linux nodes only.
+
 Unless otherwise noted, you enter all commands for this tutorial in Cloud Shell.
 
 ## Objectives 
