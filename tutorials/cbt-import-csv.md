@@ -19,14 +19,11 @@ family for simplicity.
 
 ### Install software and download sample code
 
-Make sure you have the following software installed:
+Make sure you have the following software installed. If you use Cloud Shell, those software packages have already been installed for you.
 
 - [Git](https://help.github.com/articles/set-up-git/)
-- [Java SE 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
-
-  Java 9 will not work for this.
-
-- [Apache Maven 3.3.x or later](https://maven.apache.org/install.html)
+- [Java SE 11](https://openjdk.java.net/install/)
+- [Apache Maven 3.6.x or later](https://maven.apache.org/install.html)
 
 If you haven't used Maven before check out this
 [5 minute quickstart](https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html).
