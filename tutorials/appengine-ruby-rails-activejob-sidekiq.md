@@ -219,7 +219,7 @@ in your `app.yaml` file, and instead supply the variables with the `credentials.
 
     This ensures that Redis will seek the `localhost` port that Redis is using when you're testing locally in a development environment.
 
-1.  Deploy to App Engine
+1.  Deploy to App Engine:
 
         gcloud app deploy app.yaml
 
@@ -304,7 +304,7 @@ request with a `200` HTTP status code.
     If you choose an `automatic_scaling` option, be aware that scaling for the background processing is based off
     of CPU utilization, not queue size.
 
-1.  Deploy both services to App Engine
+1.  Deploy both services to App Engine:
 
         gcloud app deploy app.yaml worker.yaml
 
