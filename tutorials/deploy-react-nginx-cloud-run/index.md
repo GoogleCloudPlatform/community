@@ -8,8 +8,8 @@ date_published: 2020-01-01
 
 <p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
-In this tutorial, you'll learn how to run a Create React App (CRA) with Nginx and deploy it to Cloud Run. Although other 
-services in Google Cloud can easily serve similar web applications, Cloud Run is a good option in cases where some
+In this tutorial, you learn how to run a Create React App (CRA) with Nginx and deploy it to Cloud Run. Although other 
+services in Google Cloud can serve similar web applications, Cloud Run is a good option in cases where some
 customization is needed to the underlying runtime.
 
 ## Before you begin
@@ -26,7 +26,7 @@ This tutorial presumes a basic understanding of single-page applications (SPAs).
 
 ## Get the React code
 
-1.  Clone the GitHub repository for this tutorial by running the following command:
+1.  Clone the GitHub repository for this tutorial:
 
         git clone https://github.com/GoogleCloudPlatform/community
         
