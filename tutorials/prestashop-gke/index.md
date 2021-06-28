@@ -183,98 +183,120 @@ In this section, you temporarily deploy the official Prestashop Docker image so 
 
 1.  Return to initial the Cloud Shell terminal and press `Ctrl+C` to stop the `cloud_sql_proxy` process.
 
-## Create the GKE cluster and deploy the services
+## Create the GKE cluster
 
-1.  Create the cluster 
+1.  Create the cluster:
 
-    We need to add a special scope ***sql-admin*** to the default scopes in order to allow access from the Google Compute VM to Cloud SQL API.
+        gcloud container clusters create $CLUSTER_NAME \
+          --zone $ZONE --machine-type "e2-medium" \
+          --enable-ip-alias \
+          --num-nodes=3 --scopes=gke-default,sql-admin
+ 
+    To allow access from the Compute Engine VM to the Cloud SQL API, this command adds a special scope, `sql-admin`.
 
-    ```bash
-    gcloud container clusters create $CLUSTER_NAME \
-            --zone $ZONE --machine-type "e2-medium" \
-            --enable-ip-alias \
-            --num-nodes=3 --scopes=gke-default,sql-admin
-    ```
+## Deploy the NFS server and copy files
 
-1.  Deploy the NFS server
+1.  Deploy the NFS server for persistent user data and cached templates:
 
-    NFS Server is required here because Prestashop persist some of the user information to disk, like product images and attachments, cached smarty templates and all these files need to be shared across all instances.
+    1.  Create a persistent disk:
 
-    ```bash
-    # create a persistent disk
-    gcloud compute disks create nfs-pv-disk --size=10GB \
-            --type=pd-ssd --zone=$ZONE
-    # create a persistent volume 
-    kubectl apply -f gke/nfs/nfs-persistent-volume.yaml
-    # create a persistent volume claim
-    kubectl apply -f gke/nfs/nfs-persistent-volume-claim.yaml
-    # create the deployment 
-    kubectl apply -f gke/nfs/nfs-deployment.yaml
-    # expose the deployment service 
-    kubectl apply -f gke/nfs/nfs-service.yaml 
-    ```
+            gcloud compute disks create nfs-pv-disk --size=10GB \
+              --type=pd-ssd --zone=$ZONE
 
-1.  Copy the required files to the NFS volume
+    1.  Create a persistent volume:
 
-    In order to transfer the Prestashop user files we need to mount the nfs volume to Cloud Shell machine
+            kubectl apply -f gke/nfs/nfs-persistent-volume.yaml
 
-    ```bash
-    # get the required information
-    NFS_NODE_PORT=$(kubectl get service service-nfs \
-        -o jsonpath='{.spec.ports[?(@.name=="nfs")].nodePort}')
-    NFS_NODE_ADDRESS=$(kubectl get nodes \
-        -o jsonpath='{.items[0].status.addresses[?(@.type=="ExternalIP")].address}')
-    GKE_NETWORK_TAG=$(gcloud compute instances describe $(kubectl get nodes \
-        -o jsonpath='{.items[0].metadata.name}') --zone=$ZONE \
-        --format="value(tags.items[0])")
-    SHELL_IP_ADDRESS=$(curl http://ifconfig.me)
-    # update firewall - never expose more than is required
-    gcloud compute firewall-rules create ps-demo-nfs \
-        --direction=INGRESS --priority=1000 --network=default \
-        --action=ALLOW --rules=tcp:$NFS_NODE_PORT \
-        --source-ranges=$SHELL_IP_ADDRESS \
-        --target-tags=$GKE_NETWORK_TAG
-    # copy files
-    sudo mkdir -p /mnt/nfs/ps
-    sudo chmod a+rw /mnt/nfs/ps
-    sudo apt-get -y install nfs-common
-    sudo mount -t nfs4 -o port=$NFS_NODE_PORT $NFS_NODE_ADDRESS:/ /mnt/nfs/ps
-    sudo mkdir /mnt/nfs/ps/psdata
-    sudo cp -r prestashop/nfs/* /mnt/nfs/ps/psdata
-    # wait for the files to copy, it might take a while, I don't know why
-    sudo chmod a+rw -R /mnt/nfs/ps/psdata
-    # cleanup
-    sudo umount /mnt/nfs/ps
-    gcloud -q compute firewall-rules delete ps-demo-nfs
-    ```
+    1.  Create a persistent volume claim:
 
-1.  Create the required service account and kubernetes secrets
+            kubectl apply -f gke/nfs/nfs-persistent-volume-claim.yaml
 
-    In order to connect from GKE to Cloud SQL we will use Cloud SQL Auth proxy deployed as a sidecar to our Prestashop deployment. The next steps are taken form this [GCP guide](https://cloud.google.com/sql/docs/mysql/connect-kubernetes-engine)
+    1.  Create the deployment:
 
-    ```bash
-    # create the service account
-    gcloud iam service-accounts create ps-mysql-user-2 \
-        --description="A service account to access mysql" \
-        --display-name="ps-mysql-user-2"
-    # get the service account email address
-    SQL_SERVICE_ACCOUNT=$(gcloud iam service-accounts list --format="value(email)" --filter="displayName=ps-mysql-user-2")
-    # add the require roles
-    gcloud projects add-iam-policy-binding ${PROJECT_ID} \
-        --member=serviceAccount:${SQL_SERVICE_ACCOUNT} \
-        --role=roles/cloudsql.client
-    # create the service account key
-    gcloud iam service-accounts keys create gke/presta/key.json \
-    --iam-account ${SQL_SERVICE_ACCOUNT}
-    # save key the key as k8s secret
-    kubectl create secret generic ps-mysql-credentials \
-    --from-file=service_account.json=gke/presta/key.json
-    # save the root password as k8s secret too
-    kubectl create secret generic mysql-pass \
-            --from-literal=password=$MYSQL_ROOT_PASS
-    ```
+            kubectl apply -f gke/nfs/nfs-deployment.yaml
 
-1.  Deploy the Prestashop application
+    1.  Expose the deployment service:
+
+            kubectl apply -f gke/nfs/nfs-service.yaml
+
+1.  Set up the NFS volume, mount it to the Cloud Shell VM, and copy the files:
+
+    1.  Set variables with configuration information:
+
+            NFS_NODE_PORT=$(kubectl get service service-nfs \
+              -o jsonpath='{.spec.ports[?(@.name=="nfs")].nodePort}')
+            NFS_NODE_ADDRESS=$(kubectl get nodes \
+              -o jsonpath='{.items[0].status.addresses[?(@.type=="ExternalIP")].address}')
+            GKE_NETWORK_TAG=$(gcloud compute instances describe $(kubectl get nodes \
+              -o jsonpath='{.items[0].metadata.name}') --zone=$ZONE \
+              --format="value(tags.items[0])")
+            SHELL_IP_ADDRESS=$(curl http://ifconfig.me)
+        
+    1.  Update the firewall to temporarily allow access for the copying of the files:
+
+            gcloud compute firewall-rules create ps-demo-nfs \
+              --direction=INGRESS --priority=1000 --network=default \
+              --action=ALLOW --rules=tcp:$NFS_NODE_PORT \
+              --source-ranges=$SHELL_IP_ADDRESS \
+              --target-tags=$GKE_NETWORK_TAG
+
+    1.  Set up the directories and mout the volume:
+
+            sudo mkdir -p /mnt/nfs/ps
+            sudo chmod a+rw /mnt/nfs/ps
+            sudo apt-get -y install nfs-common
+            sudo mount -t nfs4 -o port=$NFS_NODE_PORT $NFS_NODE_ADDRESS:/ /mnt/nfs/ps
+            sudo mkdir /mnt/nfs/ps/psdata
+            
+    1.  Copy the files and set permissions for them:
+
+            sudo cp -r prestashop/nfs/* /mnt/nfs/ps/psdata
+            sudo chmod a+rw -R /mnt/nfs/ps/psdata
+
+1.  Unmount the volume and remove the temporary firewall rules:
+
+        sudo umount /mnt/nfs/ps
+
+        gcloud -q compute firewall-rules delete ps-demo-nfs
+
+## Create the service account and Kubernetes secrets
+
+To connect from GKE to Cloud SQL, you use Cloud SQL Auth proxy deployed as a sidecar to your Prestashop deployment.
+
+The steps in this section are based on [Connecting from Google Kubernetes Engine](https://cloud.google.com/sql/docs/mysql/connect-kubernetes-engine).
+
+1.  Create the service account:
+
+        gcloud iam service-accounts create ps-mysql-user-2 \
+          --description="A service account to access mysql" \
+          --display-name="ps-mysql-user-2"
+
+1.  Get the service account email address:
+
+        SQL_SERVICE_ACCOUNT=$(gcloud iam service-accounts list --format="value(email)" --filter="displayName=ps-mysql-user-2")
+
+1.  Add the required roles:
+
+        gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+          --member=serviceAccount:${SQL_SERVICE_ACCOUNT} \
+          --role=roles/cloudsql.client
+
+1.  Create the service account key:
+
+        gcloud iam service-accounts keys create gke/presta/key.json \
+          --iam-account ${SQL_SERVICE_ACCOUNT}
+
+1.  Save the key as a Kubernetes secret:
+
+        kubectl create secret generic ps-mysql-credentials \
+          --from-file=service_account.json=gke/presta/key.json
+
+1.  Save the root password as a Kubernetes secret:
+
+        kubectl create secret generic mysql-pass \
+          --from-literal=password=$MYSQL_ROOT_PASS
+
+## Deploy the Prestashop application
 
     The persistent volume and the persistent volume claim that connects to the NFS server and we will use it to map folders inside the Prestashop container. The backend config is required here in order to enable Cloud CDN.
 
