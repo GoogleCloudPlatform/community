@@ -298,75 +298,78 @@ The steps in this section are based on [Connecting from Google Kubernetes Engine
 
 ## Deploy the Prestashop application
 
-    The persistent volume and the persistent volume claim that connects to the NFS server and we will use it to map folders inside the Prestashop container. The backend config is required here in order to enable Cloud CDN.
+In this section, you create the persistent volume and the persistent volume claim that connects to the NFS server, and you use it to map folders inside the 
+Prestashop container. The backend configuration is required here in order to enable Cloud CDN.
 
-    ```bash
-    # create the persistent volume
-    kubectl apply -f gke/presta/ps-persistent-volume.yaml
-    # create the persistent volume claim
-    kubectl apply -f gke/presta/ps-persistent-volume-claim.yaml
-    # export the instance name as environment variable
-    export INSTANCE_CONNECTION_NAME=$PROJECT_ID:$REGION:$MYSQL_NAME
-    export PROJECT_ID=$PROJECT_ID
-    # create the deployment
-    cat gke/presta/ps-deployment.yaml | envsubst | kubectl apply -f -
-    # create the service and the backend config
-    kubectl apply -f gke/presta/ps-backend-config.yaml
-    kubectl apply -f gke/presta/ps-service.yaml
-    ```
+1.  Create the persistent volume:
 
-1.  Create the ingress controller
+        kubectl apply -f gke/presta/ps-persistent-volume.yaml
 
-    In GKE, the Ingress object defines rules for routing HTTP(S) traffic to applications running in a cluster. You can read more about this on page [GKE Ingress for HTTP(S) Load Balancing](https://cloud.google.com/kubernetes-engine/docs/concepts/ingress)
+1.  Create the persistent volume claim:
 
-    ```bash
-    kubectl apply -f gke/ingress/ps-ingress.yaml
-    ```
+        kubectl apply -f gke/presta/ps-persistent-volume-claim.yaml
 
-1.  Wait for the controller to create the backend services and the load balancer
+1.  Export the instance name and project ID as environment variables:
 
-## Test
+        export INSTANCE_CONNECTION_NAME=$PROJECT_ID:$REGION:$MYSQL_NAME
+        export PROJECT_ID=$PROJECT_ID
 
-1.  Grab the external ip address of the ingress controller
+1.  Create the deployment:
 
-    ```bash 
-    IP_ADDRESS=$(kubectl get ingress ingress-psweb \
-                -o jsonpath='{.status.loadBalancer.ingress[0].ip}') \
-                && echo $IP_ADDRESS
-    ```
+        cat gke/presta/ps-deployment.yaml | envsubst | kubectl apply -f -
 
-1.  Test it using curl
+1.  Create the service and the backend configuration:
 
-    ```bash
-    curl --head http://ps.example.com/ \
-            --resolve ps.example.com:80:$IP_ADDRESS
-    ```
+        kubectl apply -f gke/presta/ps-backend-config.yaml
+        kubectl apply -f gke/presta/ps-service.yaml
 
-    you should see a result similar to this
+## Create and test the GKE Ingress controller
 
-    ```text
-    HTTP/1.1 200 OK
-    Server: nginx
-    Date: Tue, 25 May 2021 12:36:49 GMT
-    Content-Type: text/html; charset=utf-8
-    Vary: Accept-Encoding
-    X-Powered-By: PHP/7.3.28
-    Expires: Thu, 19 Nov 1981 08:52:00 GMT
-    Cache-Control: no-store, no-cache, must-revalidate
-    Pragma: no-cache
-    X-Backend-Server: server-psweb-79df96f6f5-abc
-    Via: 1.1 google
-    Transfer-Encoding: chunked
-    ```
+In GKE, the Ingress object defines rules for routing HTTP(S) traffic to applications running in a cluster. For details, see
+[GKE Ingress for HTTP(S) Load Balancing](https://cloud.google.com/kubernetes-engine/docs/concepts/ingress).
 
-    and if you execute the command multiple times you should be able to see that the header value ```X-Backend-Server``` header is changing, and this means that multiple backend are serving the request.
+1.  Create the GKE Ingress controller:
 
-    If you setup you /etc/hosts file to point to ps.example.com you can view the online shop in your browser. For the admin page you must access **ps.example.com/admin942** and the user is **demo@prestashop.com** with password **prestashop_demo**.
+        kubectl apply -f gke/ingress/ps-ingress.yaml
+
+    It might take a few minutes for the controller to create the backend services and the load balancer.
+
+1.  Get the external IP address of the GKE Ingress controller:
+
+        IP_ADDRESS=$(kubectl get ingress ingress-psweb \
+          -o jsonpath='{.status.loadBalancer.ingress[0].ip}') \
+          && echo $IP_ADDRESS
+
+1.  Test it using `curl`:
+
+        curl --head http://ps.example.com/ \
+          --resolve ps.example.com:80:$IP_ADDRESS
+
+    The output should be similar to the following:
+
+        HTTP/1.1 200 OK
+        Server: nginx
+        Date: Tue, 25 May 2021 12:36:49 GMT
+        Content-Type: text/html; charset=utf-8
+        Vary: Accept-Encoding
+        X-Powered-By: PHP/7.3.28
+        Expires: Thu, 19 Nov 1981 08:52:00 GMT
+        Cache-Control: no-store, no-cache, must-revalidate
+        Pragma: no-cache
+        X-Backend-Server: server-psweb-79df96f6f5-abc
+        Via: 1.1 google
+        Transfer-Encoding: chunked
+
+    If you run the command multiple times, you should be able to see that the header value `X-Backend-Server` changes, which means that multiple backends are 
+    serving the request.
+
+If you set up your `/etc/hosts` file to point to `ps.example.com`, you can view the online shop in your browser. For the admin page, you must access
+`ps.example.com/admin942`, and the user is `demo@prestashop.com` with password `prestashop_demo`.
 
 
 ## Cleaning up
 
-1.  To remove all of the resources, you can either delete the project or run this clean-up script:
+1.  To remove all of the resources, you can either delete the project or run these cleanup commands:
 
     ```bash
     # delete the cluster 
