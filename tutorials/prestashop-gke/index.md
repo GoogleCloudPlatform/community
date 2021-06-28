@@ -3,16 +3,17 @@ title: Deploy Prestashop on Google Kubernetes Engine
 description: Deploy Prestashop on Google Kubernetes Engine (GKE) with Cloud SQL and NFS, and scale it horizontally.
 author: gabihodoroaga
 tags: kubernetes, gke
-date_published: 2021-06-21
+date_published: 2021-06-29
 ---
 
 Gabriel Hodoroaga | Software developer | hodo.dev
 
 <p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
-Prestashop is one of the popular platform for e-commerce, it's open-source and has more then 300,000 online stores according their website.
+[Prestashop](https://www.prestashop.com/en) is a popular open-source platform for ecommerce.
 
-This tutorial will walk you through the steps required to deploy Prestashop on GKE in a way to be able to scale up during peaks and scale down when needed to save resources.
+This tutorial shows you how to deploy Prestashop on Google Kubernetes Engine (GKE) so that it can scale up during peaks and scale down when needed to save 
+resources.
 
 This entire tutorial can be completed in the Cloud Shell in the Cloud Console.
 
@@ -22,12 +23,12 @@ The following diagram illustrates the components and interactions that are part 
 
 ## Objectives
 
-* Create a custom Prestashop docker image
-* Create a Cloud SQL instance
-* Create a GKE cluster
-* Deploy a NFS server
-* Deploy and scale Prestashop on GKE
-* Use GCE Ingress, Cloud Load Balancer and Cloud CDN
+* Create a custom Prestashop Docker image.
+* Create a Cloud SQL instance.
+* Create a GKE cluster.
+* Deploy an NFS server.
+* Deploy and scale Prestashop on GKE.
+* Use load balancing and Cloud CDN to manage traffic.
 
 ## Costs
 
@@ -69,7 +70,7 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
 
         cd community/tutorials/prestashop-gke/
 
-1.  Setup the environment variables
+1.  Set up the environment variables:
 
         MYSQL_NAME=demo-ps-mysql-2
         MYSQL_ROOT_PASS=admin
