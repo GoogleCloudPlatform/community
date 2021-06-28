@@ -70,7 +70,7 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
 
         cd community/tutorials/prestashop-gke/
 
-1.  Set up the environment variables:
+1.  Set environment variables:
 
         MYSQL_NAME=demo-ps-mysql-2
         MYSQL_ROOT_PASS=admin
@@ -79,106 +79,109 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
         CLUSTER_NAME=demo-ps-cluster
         PROJECT_ID=$(gcloud config list project --format='value(core.project)')
 
-
 ## Prepare the Prestashop image
 
-Prestashop uses file system to persists some of the user information like product images and attachments, also uses cached smarty templates and all these files need to be shared across all instances.
+Prestashop uses the file system to make user information like product images and attachments persistent. Prestashop also uses cached templates. These files need
+to be shared across all instances.
 
-For this step we will use the official prestashop docker image and we will extract all the required files.
+In this section, you temporarily deploy the official Prestashop Docker image so that you can extract the required files.
 
-1.  Deploy Prestashop inside Cloud Shell VM (this is just temporary)
+### Deploy Prestashop in the Cloud Shell VM
 
-    ```bash
-    # create a docker network
-    docker network create prestashop-net
-    # deploy mysql
-    docker run -ti -p 3307:3306 --network prestashop-net \
-            --name some-mysql -e MYSQL_ROOT_PASSWORD=admin -d mysql \
-            --character-set-server=utf8 \
-            --default-authentication-plugin=mysql_native_password \
-            --sql-mode=ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
-    # create a database - wait a few seconds before
-    docker exec -it some-mysql mysql -u root -p$MYSQL_ROOT_PASS \
-                -e "CREATE DATABASE prestashop"
-    # deploy prestashop
-    docker run -ti --name some-prestashop --network prestashop-net \
-            -e DB_SERVER=some-mysql \
-            -e PS_DOMAIN=ps.example.com \
-            -e PS_INSTALL_AUTO=1 \
-            -p 8080:80 -d prestashop/prestashop:latest
-    ```
+1.  Create a Docker network:
+    
+        docker network create prestashop-net
 
-1. Extract all the information that we need from the running docker containers
+1.  Deploy MySQL:
 
-    ```bash
-    # backup database
-    mkdir database
-    docker exec some-mysql mysqldump -u root -p$MYSQL_ROOT_PASS \
-                prestashop > database/prestashop.sql
-    # extract the files out from docker image 
-    docker cp some-prestashop:/var/www/html prestashop/
-    mv prestashop/html/admin prestashop/html/admin942
-    chmod a+rw -R prestashop/html/var 
-    mkdir prestashop/nfs
-    mv prestashop/html/img prestashop/nfs
-    mv prestashop/html/download prestashop/nfs
-    mv prestashop/html/cache prestashop/nfs
-    mkdir -p prestashop/nfs/themes/classic/cache
-    mkdir -p prestashop/nfs/themes/classic/assets/cache
-    mkdir -p prestashop/nfs/var/log 
-    mkdir prestashop/nfs/config
-    mv prestashop/html/config/xml prestashop/nfs/config
-    chmod a+rw -R prestashop/nfs
-    ```
+        docker run -ti -p 3307:3306 --network prestashop-net \
+          --name some-mysql -e MYSQL_ROOT_PASSWORD=admin -d mysql \
+          --character-set-server=utf8 \
+          --default-authentication-plugin=mysql_native_password \
+          --sql-mode=ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
 
-## Create a new Prestashop image
+    This deployment may take a few seconds to complete.
 
-1.  Create a base image for php:7.3-fpm-alpine with nginx
+1.  Create a database:
 
-    ```bash
-    docker build -t php-nginx:7.3-fpm-alpine php-nginx/7.3-fpm-alpine/
-    ```
+        docker exec -it some-mysql mysql -u root -p$MYSQL_ROOT_PASS \
+          -e "CREATE DATABASE prestashop"
+       
+1.  Deploy Prestashop:
 
-1.  Create the new image and push it to the container registry
+        docker run -ti --name some-prestashop --network prestashop-net \
+          -e DB_SERVER=some-mysql \
+          -e PS_DOMAIN=ps.example.com \
+          -e PS_INSTALL_AUTO=1 \
+          -p 8080:80 -d prestashop/prestashop:latest
 
-    ```bash
-    # build the image
-    docker build -t mypresta prestashop/
-    # tag the image
-    docker tag mypresta gcr.io/$PROJECT_ID/mypresta:1.0.1
-    # push the image to container registry
-    docker push gcr.io/$PROJECT_ID/mypresta:1.0.1
-    ```
+### Extract information from the running Docker containers
+
+1.  Back up the database:
+
+        mkdir database
+        docker exec some-mysql mysqldump -u root -p$MYSQL_ROOT_PASS \
+          prestashop > database/prestashop.sql
+
+1.  Extract the files from the Docker image:
+
+        docker cp some-prestashop:/var/www/html prestashop/
+        mv prestashop/html/admin prestashop/html/admin942
+        chmod a+rw -R prestashop/html/var 
+        mkdir prestashop/nfs
+        mv prestashop/html/img prestashop/nfs
+        mv prestashop/html/download prestashop/nfs
+        mv prestashop/html/cache prestashop/nfs
+        mkdir -p prestashop/nfs/themes/classic/cache
+        mkdir -p prestashop/nfs/themes/classic/assets/cache
+        mkdir -p prestashop/nfs/var/log 
+        mkdir prestashop/nfs/config
+        mv prestashop/html/config/xml prestashop/nfs/config
+        chmod a+rw -R prestashop/nfs
+
+### Create a new Prestashop image
+
+1.  Create a base image for php:7.3-fpm-alpine with Nginx:
+
+        docker build -t php-nginx:7.3-fpm-alpine php-nginx/7.3-fpm-alpine/
+
+1.  Build the new Prestashop image:
+
+        docker build -t mypresta prestashop/
+
+1.  Tag the image:
+
+        docker tag mypresta gcr.io/$PROJECT_ID/mypresta:1.0.1
+
+1.  Push the image to Container Registry:
+
+        docker push gcr.io/$PROJECT_ID/mypresta:1.0.1
 
 ## Prepare the database
 
-1.  Create the Cloud SQL instance
+1.  Create the Cloud SQL instance:
 
-    ```bash
-    gcloud sql instances create $MYSQL_NAME  --database-version=MYSQL_8_0 \
-        --tier=db-g1-small  --region=$REGION --root-password=admin \
-        --database-flags=^+^character-set-server=utf8+default-authentication-plugin=mysql_native_password+sql-mode=ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
-    ```
+        gcloud sql instances create $MYSQL_NAME  --database-version=MYSQL_8_0 \
+          --tier=db-g1-small  --region=$REGION --root-password=admin \
+          --database-flags=^+^character-set-server=utf8+default-authentication-plugin=mysql_native_password+sql-mode=ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
 
-1.  Connect to the Cloud SQL instance using [Cloud SQL Auth proxy](https://cloud.google.com/sql/docs/mysql/sql-proxy)
+1.  Connect to the Cloud SQL instance using [Cloud SQL Auth proxy](https://cloud.google.com/sql/docs/mysql/sql-proxy):
 
-    ```bash 
-    cloud_sql_proxy -instances=$PROJECT_ID:$REGION:$MYSQL_NAME=tcp:3306
-    ```
+        cloud_sql_proxy -instances=$PROJECT_ID:$REGION:$MYSQL_NAME=tcp:3306
 
-1.  On a **separate** cloud shell terminal window, run the following commands create the database
+1.  In a separate Cloud Shell terminal, run the following commands create the database:
 
-    ```bash 
-    MYSQL_ROOT_PASS=admin
-    cd gke-prestashop-deployment
-    mysql -u root -p$MYSQL_ROOT_PASS -h 127.0.0.1 \
+        MYSQL_ROOT_PASS=admin
+
+        cd gke-prestashop-deployment
+
+        mysql -u root -p$MYSQL_ROOT_PASS -h 127.0.0.1 \
           -e "CREATE DATABASE prestashop;"
-    mysql -u root -p$MYSQL_ROOT_PASS -h 127.0.0.1 \
-            prestashop < database/prestashop.sql
-    ```
 
-1.  Return to initial the terminal window and press CTRL+C to terminate the cloud_sql_proxy process
+        mysql -u root -p$MYSQL_ROOT_PASS -h 127.0.0.1 \
+          prestashop < database/prestashop.sql
 
+1.  Return to initial the Cloud Shell terminal and press `Ctrl+C` to stop the `cloud_sql_proxy` process.
 
 ## Create the GKE cluster and deploy the services
 
@@ -341,18 +344,22 @@ For this step we will use the official prestashop docker image and we will extra
 
 ## Cleaning up
 
-1.  To remove all the resources you can either delete the project or run the clean-up script.
+1.  To remove all of the resources, you can either delete the project or run this clean-up script:
 
     ```bash
     # delete the cluster 
     gcloud -q container clusters delete $CLUSTER_NAME --zone=$ZONE
-    # delete the sql instance
+
+    # delete the SQL instance
     gcloud -q sql instances delete $MYSQL_NAME
+
     # delete the service account
     gcloud -q iam service-accounts delete $SQL_SERVICE_ACCOUNT
-    # delete the disc
+
+    # delete the disk
     gcloud -q compute disks delete nfs-pv-disk --zone=$ZONE
-    # delete container registry images
+
+    # delete Container Registry images
     gcloud -q container images delete gcr.io/$PROJECT_ID/mypresta:1.0.1
     ```
 
