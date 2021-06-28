@@ -240,7 +240,7 @@ In this section, you temporarily deploy the official Prestashop Docker image so 
               --source-ranges=$SHELL_IP_ADDRESS \
               --target-tags=$GKE_NETWORK_TAG
 
-    1.  Set up the directories and mout the volume:
+    1.  Set up the directories and mount the volume:
 
             sudo mkdir -p /mnt/nfs/ps
             sudo chmod a+rw /mnt/nfs/ps
