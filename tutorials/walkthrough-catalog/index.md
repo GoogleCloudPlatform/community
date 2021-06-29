@@ -145,21 +145,21 @@ what additional walkthroughs you'd like to see.
 	</tr>
 	<tr>
         <td width="250" style="vertical-align: top;" >
-            <h3>Google Kubernetes Engine quickstart - Create a guestbook with Redis and PHP</h3>
-            <a href="https://console.cloud.google.com/getting-started?tutorial=gke_guestbook" >
-                <img style="border: 1px solid #ccc; min-height: 175px;" src="https://storage.googleapis.com/gcp-community/tutorials/gke-guestbook/tutorial.png" width="300" alt="Open in Cloud Console" />
+            <h3>Google Kubernetes Engine quickstart - Deploy a sample application to a cluster</h3>
+            <a href="https://console.cloud.google.com/getting-started?tutorial=gke_quickstart" >
+                <img style="border: 1px solid #ccc; min-height: 175px;" src="https://storage.googleapis.com/gcp-community/tutorials/gke-quickstart/tutorial.png" width="300" alt="Open in Cloud Console" />
             </a> 
-            <p>Use Google Kubernetes Engine to deploy a guestbook application with Redis and PHP.</p>
+            <p>Create and deploy to a GKE cluster.</p>
             <ul>
                 <li>Kubernetes</li>
             </ul>
         </td>
         <td width="250" style="vertical-align: top;" >
-            <h3>Google Kubernetes Engine quickstart - Deploy a prebuilt Docker container image</h3>
-            <a href="https://console.cloud.google.com/getting-started?tutorial=gke_guestbook" >
-                <img style="border: 1px solid #ccc; min-height: 175px;" src="https://storage.googleapis.com/gcp-community/tutorials/gke-quickstart/tutorial.png" width="300" alt="Open in Cloud Console" />
+            <h3>Google Kubernetes Engine - Create an cluster in Autopilot mode</h3>
+            <a href="https://console.cloud.google.com/getting-started?tutorial=gke_autopilot" >
+                <img style="border: 1px solid #ccc; min-height: 175px;" src="https://storage.googleapis.com/gcp-community/tutorials/gke-autopilot/tutorial.png" width="300" alt="Open in Cloud Console" />
             </a> 
-            <p>Deploy a prebuilt Docker container image using GKE.</p>
+            <p>Create and deploy an Autopilot cluster using GKE.</p>
             <ul>
                 <li>Kubernetes</li>
             </ul>
