@@ -155,7 +155,7 @@ what additional walkthroughs you'd like to see.
             </ul>
         </td>
         <td width="250" style="vertical-align: top;" >
-            <h3>Google Kubernetes Engine - Create an cluster in Autopilot mode</h3>
+            <h3>Google Kubernetes Engine quickstart - Create a cluster in Autopilot mode</h3>
             <a href="https://console.cloud.google.com/getting-started?tutorial=gke_autopilot" >
                 <img style="border: 1px solid #ccc; min-height: 175px;" src="https://storage.googleapis.com/gcp-community/tutorials/gke-autopilot/tutorial.png" width="300" alt="Open in Cloud Console" />
             </a> 
