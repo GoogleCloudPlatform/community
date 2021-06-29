@@ -1,7 +1,7 @@
 ---
 title: Google Kubernetes Engine quickstart - Deploy a sample application to a cluster
 description: Create and deploy to a GKE cluster.
-author: obourgeois
+author: bourgeoisor
 tags: Kubernetes, Walkthrough
 date_published: 2021-03-12
 ---
