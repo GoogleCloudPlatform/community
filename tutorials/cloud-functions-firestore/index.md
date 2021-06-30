@@ -39,7 +39,7 @@ which you can simulate with `curl`.
 [native_mode]: https://cloud.google.com/firestore/docs/firestore-or-datastore
 [billing]: https://cloud.google.com/billing/docs/how-to/modify-project#enable_billing_for_a_project
 
-This guide uses `cloud-functions-firestore` as the project ID, as well as the firestore collection.
+This guide uses `cloud-functions-firestore` as the firestore collection.
 
 ## Preparing the Cloud Function
 
@@ -216,7 +216,8 @@ To do that, you need to install the functions framework:
 
     npm install --save-dev @google-cloud/functions-framework
 
-And start the function:
+Follow the [instructions](https://cloud.google.com/functions/docs/running/function-frameworks#per-language_instructions) to configure the `package.json` file if you are not using the downloaded version.
+After that, you can start the function:
 
     npm start
 
