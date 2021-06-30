@@ -11,7 +11,8 @@ Alan Blount | Product Solutions Engineer | Google
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This tutorial demonstrates using [Cloud Functions][functions] to store and retrieve data with
-[Firestore][firestore]. The Cloud Function is implemented in [Node.js][node] version 6 or 8.
+[Firestore][firestore]. The Cloud Function is implemented in [Node.js][node] and tested with
+versions 10, 12, 14.
 
 [functions]: https://cloud.google.com/functions
 [firestore]: https://cloud.google.com/firestore/
@@ -23,11 +24,11 @@ which you can simulate with `curl`.
 ## Prerequisites
 
 1.  Create a project in the [Cloud Console][console].
-1.  Enable billing for your project.
+1.  [Enable billing](billing) for your project.
 1.  [Enable the Cloud Functions API][enable_functions].
 1.  [Enable the Firestore API][enable_firestore] (with Firestore in [Native mode][native_mode]).
-1.  Install and initialize the [Cloud SDK][sdk].
-1.  Configure the `gcloud` command-line interface for your project, replacing `[PROJECT_ID]` with your project ID:
+1.  Open [Cloud Shell](https://cloud.google.com/shell/docs/using-cloud-shell).
+1.  Set the project ID for the Cloud SDK:
 
         gcloud config set project [PROJECT_ID]
 
@@ -36,6 +37,7 @@ which you can simulate with `curl`.
 [enable_firestore]: https://console.cloud.google.com/firestore/welcome
 [sdk]: https://cloud.google.com/sdk/
 [native_mode]: https://cloud.google.com/firestore/docs/firestore-or-datastore
+[billing]: https://cloud.google.com/billing/docs/how-to/modify-project#enable_billing_for_a_project
 
 This guide uses `cloud-functions-firestore` as the project ID, as well as the firestore collection.
 
@@ -45,15 +47,11 @@ This Cloud Function will either
 store a basic POST payload as a document in Firestore
 or retrieve a document from Firestore by ID.
 
-    <!--
-    You can find the
-    [zerobin codebase on github](...)
-    which is the source of this example.
-    -->
+You can find the [source code](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/cloud-functions-firestore) on GitHub.
 
 Alternatively, you can download
 [package.json](https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/cloud-functions-firestore/package.json)
-&amp;
+and
 [index.js](https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/cloud-functions-firestore/index.js)
 
 ### Start a new npm app
@@ -61,6 +59,8 @@ Alternatively, you can download
 If you do not already have an npm project,
 go ahead and create one in a new directory:
 
+    mkdir cloud-functions-firestore
+    cd cloud-functions-firestore
     npm init
 
 ### Install @google-cloud/firestore
@@ -76,52 +76,116 @@ into `index.js` (or
 [download](https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/cloud-functions-firestore/index.js)).
 
     const Firestore = require('@google-cloud/firestore');
-    const PROJECTID = 'cloud-functions-firestore';
+    // Please use your project id here
+    const PROJECTID = '[YOUR-PROJECT-ID]';
     const COLLECTION_NAME = 'cloud-functions-firestore';
+
     const firestore = new Firestore({
       projectId: PROJECTID,
-      timestampsInSnapshots: true,
+      timestampsInSnapshots: true
+      // NOTE don't hardcode your project credentials here.
+      // If you have to, export the following to your shell:
+      //   GOOGLE_APPLICATION_CREDENTIALS=<path>
+      // keyFilename: '/cred/cloud-functions-firestore-000000000000.json',
     });
 
+    /**
+    * Retrieve or Store a method into Firestore
+    *
+    * Responds to any HTTP request.
+    *
+    * GET = retrieve
+    * POST = store (no update)
+    *
+    * success: returns the document content in JSON format & status=200
+    *    else: returns an error:<string> & status=404
+    *
+    * @param {!express:Request} req HTTP request context.
+    * @param {!express:Response} res HTTP response context.
+    */
     exports.main = (req, res) => {
-      if (req.method === 'DELETE') throw 'not yet built';
       if (req.method === 'POST') {
         // store/insert a new document
         const data = (req.body) || {};
         const ttl = Number.parseInt(data.ttl);
-        const ciphertext = (data.ciphertext || '').replace(/[^a-zA-Z0-9\-]*/g, '');
+        const ciphertext = (data.ciphertext || '')
+          .replace(/[^a-zA-Z0-9\-_!.,; ']*/g, '')
+          .trim();
         const created = new Date().getTime();
-        return firestore.collection(COLLECTION_NAME)
-          .add({ created, ttl, ciphertext })
-          .then(doc => {
-            return res.status(200).send(doc);
-          }).catch(err => {
-            console.error(err);
-            return res.status(404).send({ error: 'unable to store', err });
+
+        // .add() will automatically assign an id
+        return firestore.collection(COLLECTION_NAME).add({
+          created,
+          ttl,
+          ciphertext
+        }).then(doc => {
+          console.info('stored new doc id#', doc.id);
+          return res.status(200).send(doc);
+        }).catch(err => {
+          console.error(err);
+          return res.status(404).send({
+            error: 'unable to store',
+            err
           });
+        });
       }
-      // read/retrieve an existing document by id
+
+      // everything below this requires an id
       if (!(req.query && req.query.id)) {
-        return res.status(404).send({ error: 'No Id' });
+        return res.status(404).send({
+          error: 'No Id'
+        });
       }
       const id = req.query.id.replace(/[^a-zA-Z0-9]/g, '').trim();
       if (!(id && id.length)) {
-        return res.status(404).send({ error: 'Empty Id' });
+        return res.status(404).send({
+          error: 'Empty Id'
+        });
       }
+
+      if (req.method === 'DELETE') {
+        // delete an existing document by id
+        return firestore.collection(COLLECTION_NAME)
+          .doc(id)
+          .delete()
+          .then(() => {
+            return res.status(200).send({ status: 'ok' });
+          }).catch(err => {
+            console.error(err);
+            return res.status(404).send({
+              error: 'unable to delete',
+              err
+            });
+          });
+      }
+
+      // read/retrieve an existing document by id
       return firestore.collection(COLLECTION_NAME)
         .doc(id)
         .get()
         .then(doc => {
           if (!(doc && doc.exists)) {
-            return res.status(404).send({ error: 'Unable to find the document' });
+            return res.status(404).send({
+              error: 'Unable to find the document'
+            });
           }
           const data = doc.data();
+          if (!data) {
+            return res.status(404).send({
+              error: 'Found document is empty'
+            });
+          }
           return res.status(200).send(data);
         }).catch(err => {
           console.error(err);
-          return res.status(404).send({ error: 'Unable to retrieve the document' });
+          return res.status(404).send({
+            error: 'Unable to retrieve the document',
+            err
+          });
         });
     };
+
+**Note**: Please replace `[YOUR-PROJECT-ID]` in the code with your project id.
 
 In that code, the function is going to listen for a POST
 with the data fields of `ciphertext` and `ttl`.
@@ -145,84 +209,104 @@ You will use the `gcloud` command-line tool to deploy our function, and configur
 ### (optional) Install functions-emulator for local testing
 
 Testing things is nice.
-You can install a
-[local emulator for Cloud Functions](https://github.com/GoogleCloudPlatform/cloud-functions-emulator).
+You can
+[run and test your function locally](https://cloud.google.com/functions/docs/running/overview).
 
-    npm install -g @google-cloud/functions-emulator
-    export GOOGLE_APPLICATION_CREDENTIALS=/Users/myname/.cred/myserviceaccount.json
-    functions start
-    functions deploy main --trigger-http --runtime=nodejs10
+To do that, you need to install the functions framework:
 
-In this case, `main` is the name of the function you want to trigger in your code, triggered by an HTTP request.
+    npm install --save-dev @google-cloud/functions-framework
 
-**Note**: If you're on `zsh`, you may not be able to execute `functions`.
-Either start `bash`, or execute `sh -c 'which functions'`
-to find the proper path for you.
-For example: `/Users/myname/.npm-global/bin/functions`
+And start the function:
 
-Now you can test your function by sending `curl` requests.
+    npm start
 
-You can create a new document:
+By default, the function listens on port 8080 and you can test it by sending `curl` requests.
+
+You can open a new terminal by click the `+` sign in the menu bar and run the following command
+to create a new document:
 
     curl --header "Content-Type: application/json" \
       --request POST \
       --data '{"ttl":1,"ciphertext":"daa5370871aa301e5e12d4274d80691f75e295d648aa84b73e291d8c82"}' \
-      http://localhost:8010/cloud-functions-firestore/us-central1/main
-    {"id":"wLcIOzic6BeoEk3tV4sH"}
+      http://localhost:8080
 
-And retrieve that document:
+You will have the output as following:
 
-    curl http://localhost:8010/cloud-functions-firestore/us-central1/main?id=wLcIOzic6BeoEk3tV4sH
-    {"created":15369690190000,"ttl":1,"ciphertext":"daa5370871aa301e5e12d4274d80691f75e295d648aa84b73e291d8c82"}
+    {"_firestore":{"projectId":"xxxxx"},"_path":{"segments":["cloud-functions-firestore","bdgb7hQKbTL6PCROwLsO"]},"_converter":{}}
 
-Note that our function code added `created`.
+And, you can retrieve that document:
+
+    curl http://localhost:8080?id=bdgb7hQKbTL6PCROwLsO
+    
+    
+The output is similar to the following:
+
+    {"ttl":1,"created":1625077880857,"ciphertext":"daa5370871aa301e5e12d4274d80691f75e295d648aa84b73e291d8c82"}
+
+Note that our function code added the field `created`.
 
 ### Deploy the code to Google Cloud Functions
 
 This is very easy thanks to the gcloud command-line interface.
 
-    gcloud functions deploy main --trigger-http --runtime=nodejs10
+    gcloud functions deploy cloud-functions-firestore \
+      --entry-point=main \
+      --trigger-http \
+      --runtime=nodejs12 \
+      --allow-unauthenticated
 
-In this case, `main` is the name of the function you want to trigger in your code, triggered by an HTTP request.
+In this case, `cloud-functions-firestore` is the name of the function you want to trigger in your code, triggered by an HTTP request. `main` is the entry point of the function.
 
-If you used the emulator above, you can simply prefix the command with `gcloud`.
+The output is similar to the following:
 
+    eploying function (may take a while - up to 2 minutes)...⠹
+    For Cloud Build Logs, visit: https://console.cloud.google.com/cloud-build/builds;region=us-central1/1538f6d2-e6b6-4deb-8583-b872ae5e2de1?project=xxxxx
     Deploying function (may take a while - up to 2 minutes)...done.
     availableMemoryMb: 256
+    buildId: 1538f6d2-e6b6-4deb-8583-b872ae5e2de1
     entryPoint: main
     httpsTrigger:
-      url: https://us-central1-cloud-functions-firestore.cloudfunctions.net/main
+      securityLevel: SECURE_OPTIONAL
+      url: us-central1-[YOUR-PROJECT-ID].cloudfunctions.net/cloud-functions-firestore
+    ingressSettings: ALLOW_ALL
     labels:
       deployment-tool: cli-gcloud
-    name: projects/cloud-functions-firestore/locations/us-central1/functions/main
-    runtime: nodejs10
-    serviceAccountEmail: cloud-functions-firestore@appspot.gserviceaccount.com
-    sourceUploadUrl: https://storage.googleapis.com/gcf-upload-us-central1-0000000000.zip?GoogleAccessId=service-...
+    name: projects/xxxxx/locations/us-central1/functions/cloud-functions-firestore
+    runtime: nodejs12
+    serviceAccountEmail: xxxxx@appspot.gserviceaccount.com
+    sourceUploadUrl: https://storage.googleapis.com/......
     status: ACTIVE
     timeout: 60s
-    updateTime: '2018-09-15T01:25:59Z'
+    updateTime: '2021-06-30T18:54:10.142Z'
     versionId: '1'
 
 ## Testing the deployed Cloud Function in production
 
 You should now be able to send HTTP requests to the endpoint and test out the function in production.
 
-Now you can test your function by sending `curl` requests.
+Now you can test your function by sending `curl` requests to the HTTPS trigger URL(you can find 
+it from the deployment output or from the Cloud Functions console).
 
 You can create a new document:
 
     curl --header "Content-Type: application/json" \
       --request POST \
       --data '{"ttl":1,"ciphertext":"daa5370871aa301e5e12d4274d80691f75e295d648aa84b73e291d8c82"}' \
-      https://us-central1-cloud-functions-firestore.cloudfunctions.net/main
-    {"id":"wLcIOzic6BeoEk3tV4sH"}
+      https://us-central1-[YOUR-PROJECT-ID].cloudfunctions.net/cloud-functions-firestore
+
+The output is similar to the following:
+
+    {"_firestore":{"projectId":"[YOUR-PROJECT-ID]"},"_path":{"segments":["cloud-functions-firestore","61Eej99ONcqY4jVvj1Ij"]},"_converter":{}}
 
 And retrieve that document:
 
-    curl https://us-central1-cloud-functions-firestore.cloudfunctions.net/main?id=wLcIOzic6BeoEk3tV4sH
-    {"created":15369690190000,"ttl":1,"ciphertext":"daa5370871aa301e5e12d4274d80691f75e295d648aa84b73e291d8c82"}
+    curl https://us-central1-[YOUR-PROJECT-ID].cloudfunctions.net/cloud-functions-firestore?id=61Eej99ONcqY4jVvj1Ij
 
-Note that our function code added `created`.
+You should have an output similar to the following:
+
+    {"created":1625079401209,"ttl":1,"ciphertext":"daa5370871aa301e5e12d4274d80691f75e295d648aa84b73e291d8c82"}
+
+Note that our function code added field `created`.
 
 ## Iterate
 
@@ -233,7 +317,7 @@ When you deploy, you overwrite the current version, at the function's URL *(blue
 
 If you need to access a previously deployed version, you can append `/revisions/${REVISION}` with the value of the `versionId` that deploy gives you back.
 
-There are lot of other settings available. Review [docs][function-docs] and help:
+There are a lot of other settings available. Review [docs][function-docs] and help:
 
      gcloud functions deploy --help
 
