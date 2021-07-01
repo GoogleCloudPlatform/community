@@ -1,17 +1,17 @@
 ---
 title: Google Kubernetes Engine quickstart - Create a cluster in Autopilot mode
 description: Create and deploy an Autopilot cluster using GKE.
-author: heidistadel
+author: bourgeoisor
 tags: Kubernetes, Walkthrough
 date_published: 2021-01-28
 ---
 
-Heidi Stadel‎ | Technical Writer | Google
+Heidi Stadel and Olivier Bourgeois | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 Use this interactive walkthrough to learn how to deploy a sample application
-using [Google Kubernetes Engine (GKE)][gke-docs]'s [Autopilot mode][autopilot].
+using [Autopilot mode][autopilot] in [Google Kubernetes Engine (GKE)][gke-docs].
 There are step-by-step instructions in the **Learn** panel on the right side of
 the Cloud Console to guide you.
 
