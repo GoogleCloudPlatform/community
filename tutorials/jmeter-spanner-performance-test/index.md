@@ -42,7 +42,7 @@ projected usage.
 * Better understand the optimizations needed for schema and sql queries.
 * Determine latency of select, insert, update and delete with Cloud Spanner.
 
-### Use Cases
+## Use cases
 
 Below are some possible use cases for doing JMeter based performance tests:
 
@@ -50,7 +50,7 @@ Below are some possible use cases for doing JMeter based performance tests:
 * You have a spikey workload and you need an elastic database.
 * You want to standardize on Cloud Spanner for different applications.
 
-### Limitations
+## Limitations
 
 * You cannot test non-jdbc Cloud Spanner client side libraries (like python, r2dbc etc). Although you can bypass the
   client library using underlying [gRPC](https://cloud.google.com/spanner/docs/reference/rpc)
@@ -64,34 +64,34 @@ Below are some possible use cases for doing JMeter based performance tests:
 
 This guide will demonstrate JMeter performance tests using an example Cloud Spanner schema.
 
-## 1.1. What do you want to understand about Cloud Spanner performance?
+## What do you want to understand about Cloud Spanner performance?
 
 Performance tests are executed to understand application behaviour with Spanner for speed, scalability and stability.
 Following factors need to be considered to design and execute a test that can answer your specific questions.
 
-### 1.1.1. Transactions per second (TPS)
+### Transactions per second (TPS)
 
 TPS metrics should be based on your application workload requirements, mostly to support the peak load. example - 7K
 reads/sec, 4K inserts/sec, 2K updates/sec, etc.  (overall TPS 13K/sec)
 
-### 1.1.2. Query latency
+### Query latency
 
 Expected response time for different DMLs needs to be established as a success criteria. This can be either based on
 your business SLAs or current DB response time in case of an existing application.
 
-### 1.1.3. Sizing - Number of nodes
+### Sizing: Number of nodes
 
 Sizing of the Spanner cluster depends on the data volume, TPS and latency requirements of application workload. In
 addition, [CPU utilization](https://cloud.google.com/spanner/docs/cpu-utilization)
 is another important factor to decide the optimal number of nodes. You can increase or decrease the initial cluster size
 in order to maintain the recommended 45% CPU utilization for multi-region and 65% for regional deployment.
 
-### 1.1.4. Test Cloud Spanner Autoscaler
+### Test Cloud Spanner Autoscaler
 
 [Cloud Spanner Autoscaler](https://github.com/cloudspannerecosystem/autoscaler) is a solution to elastically scalable
 Cloud Spanner. Simulate spikey workload via JMeter tests in order to tune autoscaling scaling parameters.
 
-# 2. Preparing for tests
+## Preparing for tests
 
 Developing performance tests takes time and effort, hence planning ahead of time is important. Before you begin writing
 tests following preparation needs to be made:
@@ -112,7 +112,7 @@ tests following preparation needs to be made:
    Cloud Spanner nodes on a given region / multi-region. It can take up to 1 business day. Although it depends on
    workload, asking for 100 nodes quota for a performance test can be reasonable.
 
-# 3. Creating Cloud Spanner schema
+## Creating a Cloud Spanner schema
 
 Assuming you are migrating an existing application from a common RDBMS database(s) like MySQL, Postgresql, SQL Server or
 Oracle etc. You will need to keep in
@@ -136,7 +136,7 @@ Below is list of common items which you should keep in mind, but it not an exhau
    [precision higher than NUMERIC](https://cloud.google.com/spanner/docs/storing-numeric-data#recommendation_store_arbitrary_precision_numbers_as_strings)
    data type.
 
-For this guide I'm going to create database Singers with the schema as below.
+This example uses the database `Singers`, which is created with the following schema:
 
     CREATE TABLE Singers (
       SingerId   STRING(36) NOT NULL,
@@ -160,16 +160,16 @@ For this guide I'm going to create database Singers with the schema as below.
     ) PRIMARY KEY (SingerId, AlbumId, TrackId),
       INTERLEAVE IN PARENT Albums ON DELETE CASCADE;
 
-# 4. Setup JMeter
+## Set up JMeter
 
 JMeter provides a GUI for easy development of tests. Once tests are developed you should use the command line to execute
 JMeter tests. You may create a VM (in the same region as Cloud Spanner’s Leader) with GUI enabled. Therefore the same VM
 instance can be used for development and execution of tests.
 
-**NOTE: You can use a local workstation for test development too. But, DO NOT use a local workstation for execution of
+You can use a local workstation for test development, too. *Do not* use a local workstation for execution of
 performance tests, due to potential network latency.**
 
-## 4.1. Installation
+### Installation
 
 1. Download and install [JMeter](https://jmeter.apache.org/download_jmeter.cgi) 5.3+ (and Java8+).
 2. Install [maven](https://maven.apache.org/install.html) used to download Cloud Spanner client libraries.
@@ -189,24 +189,23 @@ Sample windows command:
 
     for /r /Y %x in (*.jar) do copy "%x" .\
 
-## 4.2. Setup authentication for JMeter
+### Set up authentication for JMeter
 
 JMeter uses Cloud Spanner JDBC Client libraries to connect. It
 supports [various authentication mechanisms](https://github.com/googleapis/google-cloud-java#authentication) including
-service accounts etc. In this example we are going to use application default credentials to keep it simple. Detailed
+service accounts etc. This example uses application default credentials to keep it simple. Detailed
 steps are described [here](https://cloud.google.com/spanner/docs/getting-started/set-up).
 
 In summary, you need to set up gcloud and execute the below command to store credentials locally.
 
     gcloud auth application-default login
 
-# 5. JMeter basics
+## JMeter basics
 
-JMeter is a highly configurable tool and has various components to pick and choose. So in this section we try to provide
-a basic overview of how to create a Jmeter test along with some minimal configurations you can use as a base for your
-own tests.
+JMeter is a highly configurable tool and has various components to pick and choose. This section provides
+a basic overview of how to create a JMeter test along with some minimal configurations that you can use as a base for your tests.
 
-## 5.1 JMeter test plan
+### JMeter test plan
 
 JMeter has a hierarchical structure to the tests with a top node
 called [test plan](https://jmeter.apache.org/usermanual/test_plan.html). It consists of one or more thread groups, logic
@@ -221,7 +220,7 @@ executed serially per thread.
 Test plan (and/or Thread group) can also have config elements such as JDBC Connection, CSV Data Reader etc. Configs can
 then be shared with child nodes.
 
-## 5.2. <a name="connection"></a> Configuring connection parameters
+### Configuring connection parameters
 
 Within each JMeter test (screenshot below) you will need to provide connection parameters which will be used by the JDBC
 library to connect to Cloud Spanner (next).
@@ -238,12 +237,12 @@ Following properties should be updated:
 * grpc_channel: There can be a maximum of 100 sessions per grpc channel.
 
 Following may not need to be changed. It will be passed from the command line. While default values shall be used when
-tested from jmeter gui.
+tested from JMeter graphical user interface.
 
 * users: Number of parallel threads per thread group, increasing stress on target.
 * iterations: Number of times each thread should loop, extending duration of tests.
 
-## 5.3. JDBC Connection Configuration
+### JDBC connection configuration
 
 Above parameters will be utilized in JDBC Connection Configuration.  
 Check complete list of jdbs properties 
@@ -260,7 +259,7 @@ Also there can
 be [additional configurations](https://cloud.google.com/spanner/docs/use-oss-jdbc#session_management_statements) such as
 Read Only or Staleness etc which can be configured as needed.
 
-## 5.4. Thread Groups
+### Thread groups
 
 A Thread group represents a group of users, and the number of threads you assign a thread group is equivalent to the
 number of users that you want querying Cloud Spanner. Example thread group configuration as below.
@@ -272,23 +271,22 @@ below. Where duration can be supplied as command line value with default of 5 mi
 
 ![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/04_thread_groups_2.png)
 
-## 5.5. JDBC Request Sampler
+### JDBC request sampler
 
 ![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/05_jdbc_sampler.png)
 
 Using JDBC Sampler you can fire SQL Queries. Using Prepared Select or Prepared Update is recommended as it
 is [more performant](https://cloud.google.com/spanner/docs/sql-best-practices#query-parameters) on Cloud Spanner.
 
-## 5.6 Listeners
+### Listeners
 
-You can add an aggregate report (or other types of reports) after all the thread groups. This will show stats from
-JMeter gui in real time for all the samplers. However, running performance tests in gui mode is not recommended as
-JMeter gui can be slow. Hence, use it for test development purposes.
+You can add an aggregate report (or other types of reports) after all the thread groups. This will show stats from the
+JMeter graphical user interface (GUI) in real time for all the samplers. However, we don't recommend running performance
+tests in GUI mode, because the JMeter GUI can be slow. You can use it for test development purposes, though.
 
-It is recommended to execute tests command line mode which generates html reports with the different JMeter reports.
-More on this later.
+We recommend running tests in command-line mode, which generates HTML reports with the different JMeter reports.
 
-# 6. Loading initial data into Cloud Spanner
+## Loading initial data into Cloud Spanner
 
 Before you start doing performance tests, you will need to initialize the database with seed data. It is recommended to
 load the volume of rows in each table, representative of current production data size.
@@ -315,7 +313,7 @@ Ideally you should reset your database to the same seed data for comparison betw
 use backup/restore (or export/import)  to initialize each run to the same initial dataset. The latter is better if
 different configurations are tested.
 
-## 6.1. Using JMeter to mock seed data
+### Using JMeter to mock seed data
 
 Sometimes it is non trivial to import existing data into Cloud Spanner due to various reasons like data massaging,
 operations difficulties. Hence, mock data can be generated by writing insert queries in JMeter.
@@ -323,25 +321,24 @@ operations difficulties. Hence, mock data can be generated by writing insert que
 Below is an example Spanner-Initial-Load.jmx used to load sample schema. You will need to update 
 [connection parameters](#connection) as discussed previously.
 
-### [Spanner-Initial-Load.jmx](Spanner-Initial-Load.jmx)
+#### [Spanner-Initial-Load.jmx](Spanner-Initial-Load.jmx)
 
 The above test will generate random data hierarchically into Singer, Album and Song tables. Each Singer will get a
 random number of Albums between 0-20. Similarly, 0-15 Songs per Album will get generated. Parallel threads (aka users)
 will be used to insert data concurrently.
 
-Executing the above jmeter test can be done using the command as below. Please make sure to update the connection
-parameters and jdbc library path.
+You can run this JMeter test with the following command:
 
     jmeter -n -t Spanner-Initial-Load.jmx -l load-out.csv -Jusers=1000 -Jiterations=1000
 
-**Note**: Watchout for [cpu utilization](https://cloud.google.com/spanner/docs/cpu-utilization#recommended-max) of Cloud
-Spanner. Increase the number of nodes and jmeter’s parallel threads (users) to increase data generation rate. Increase
+Watch out for [cpu utilization](https://cloud.google.com/spanner/docs/cpu-utilization#recommended-max) of Cloud
+Spanner. Increase the number of nodes and JMeter’s parallel threads (users) to increase data generation rate. Increase
 iterations count to longer execution time.  
 
 Initial load should be done with randomly generated keys. Using monotonically increasing keys will lead to write 
 hotspotting and cause a lengthy delay in populating the database.
 
-# 7. Developing performance tests
+## Developing performance tests
 
 Guidelines to develop performance tests:
 
@@ -375,7 +372,7 @@ Guidelines to develop performance tests:
    use [csv config](https://jmeter.apache.org/usermanual/component_reference.html#CSV_Data_Set_Config) in JMeter to
    supply parameters from the csv file.
 
-## 7.1. Sample JMeter Test for Singers schema
+### Sample JMeter test for Singers schema
 
 Let us assume the following baseline needs to be performance tested.
 
@@ -388,7 +385,7 @@ Let us assume the following baseline needs to be performance tested.
 Below is the Sample JMeter test to simulate the above load. You will need to update 
 [connection parameters](#connection) as discussed previously.
 
-### [Spanner-Perf-Test.jmx](Spanner-Perf-Test.jmx)
+#### [Spanner-Perf-Test.jmx](Spanner-Perf-Test.jmx)
 
 Note: It uses a csv config to get SingerId and AlbumId parameters, example top few lines as below.
 
@@ -401,13 +398,12 @@ Above csv can be created using a sql query such as below. This is to randomly se
 
     SELECT SingerId,AlbumId FROM Albums TABLESAMPLE BERNOULLI (0.1 PERCENT) limit 10000;
 
-Let's take a brief walkthrough of the test. As the below screenshot shows, there are three thread groups with the
-transaction as defined previously.
+There are three thread groups with the transaction as defined previously, as shown in the following screenshot:
 
 ![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/06_test-ss-1.png)
 
-The CSV Read' config reads data from a csv file which is being used in all the three thread groups. Since all the three
-thread groups are very similar we will take a look at Search Albums.
+The CSV Read config reads data from a csv file which is being used in all the three thread groups. All the three
+thread groups are very similar. The following screenshot shows the Search Albums thread group.
 
 ![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/07_test-ss-2.png)
 
@@ -427,7 +423,7 @@ Finally a timer is configured to throttle load to meet the requirement. It need 
 
 ![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/09_test-ss-4.png)
 
-# 8. Executing performance test
+## Executing performance test
 
 Guidelines for executing the tests, for best results:
 
@@ -440,8 +436,7 @@ Guidelines for executing the tests, for best results:
    having at least a 15 min test can ensure that enough ramp up time is available.
 6. Scaling Cloud Spanner can take some time to stabilize. It is recommended to generate load on Cloud Spanner for faster
    stabilization.
-7. Ensure that client machine running jmeter should have enough resources and is not maxing out. JMeter is a CPU
-   intensive process.
+7. Ensure that client machine running JMeter has enough resources. JMeter is a CPU-intensive process.
 8. Increase
    JMeter’s [jvm heap size](https://www.blazemeter.com/blog/9-easy-solutions-jmeter-load-test-%E2%80%9Cout-memory%E2%80%9D-failure)
    , if needed.
@@ -455,7 +450,7 @@ Guidelines for executing the tests, for best results:
     start [system tasks](https://cloud.google.com/spanner/docs/cpu-utilization#task-priority) which may have performance
     impact.
 
-## 8.1. Sample test execution
+### Sample test execution
 
 For executing the test developed in the previous section, the following command needs to be executed. Number of users
 and duration can be passed using the command line as needed.
@@ -468,7 +463,7 @@ to [create a JMeter report from it](https://jmeter.apache.org/usermanual/generat
 
     jmeter -g test-out.csv -o <Path to output folder>
 
-# 9. Collecting the performance test results
+### Collecting performance test results
 
 You will need to gather performance metrics after the test execution.
 
@@ -480,7 +475,7 @@ We suggest capturing these performance metrics from Spanner monitoring rather th
 information with added latency for each query execution depending on how busy the VM has been. Therefore it will not be
 the true measure of Spanner response time.
 
-Based on the success criteria we will be mostly interested in
+Based on the success criteria, the most important metrics are the following:
 
 1. Operations/sec (read/write).
 2. Latency at 50th and 99th percentile for different types of operations.
@@ -497,11 +492,10 @@ For example, the following chart shows a total TPS of 43744 per second for the s
 
 ![alt_text](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/10_results-ss-1.png)
 
-**Latency:**
+**Latency**
 
 An example of read and write operations latency at 50th and 99th percentile is captured in the following chart.  
 **Note:** You can also get **95th percentile** latency from [Cloud Monitoring](https://cloud.google.com/spanner/docs/monitoring-cloud)
-
 
 ![alt_text](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/11_results-ss-2.png)
 
@@ -517,15 +511,14 @@ and higher latency and
 apply [best practice](https://cloud.google.com/spanner/docs/introspection/lock-statistics#applying_best_practices_to_reduce_lock_contention)
 to reduce the lock time.
 
-**CPU utilization:**
+**CPU utilization**
 
-This metric is important to understand the CPU utilization throughout the test duration and provides information whether
-the cluster is under-utilized or over-utilized.
+This metric is important for understanding whether the cluster is under-utilized or over-utilized.
 
 ![alt_text](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/12_results-ss-3.png)
 
-This information can be used to further optimize the cluster size. More details on how to investigate high CPU
-utilization can be found [here](https://cloud.google.com/spanner/docs/introspection/investigate-cpu-utilization).
+This information can be used to further optimize the cluster size. For details, see
+[Investigating high CPU utilization](https://cloud.google.com/spanner/docs/introspection/investigate-cpu-utilization).
 
 ## Cleaning up
 
@@ -537,9 +530,9 @@ To avoid incurring charges to your Google Cloud account for the resources used i
 
 ## What's next
 
-- [Cloud Spanner Schema and data model](https://cloud.google.com/spanner/docs/schema-and-data-model)
+- [Cloud Spanner schema and data model](https://cloud.google.com/spanner/docs/schema-and-data-model)
 - [Schema design best practices](https://cloud.google.com/spanner/docs/schema-design)
 - [Demystifying Cloud Spanner multi-region configurations](https://cloud.google.com/blog/topics/developers-practitioners/demystifying-cloud-spanner-multi-region-configurations)
-- [Introspection Tools](https://cloud.google.com/spanner/docs/introspection)
-- [Handling auto-incrementing keys data migration](https://cloud.google.com/community/tutorials/db-migration-spanner-handle-increasing-pks).
+- [Introspection tools](https://cloud.google.com/spanner/docs/introspection)
+- [Handling auto-incrementing keys data migration](https://cloud.google.com/community/tutorials/db-migration-spanner-handle-increasing-pks)
 - Try out other Google Cloud features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
