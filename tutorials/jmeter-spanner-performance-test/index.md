@@ -1,9 +1,9 @@
 ---
-title: Measure Cloud Spanner performance test using JMeter
+title: Measure Cloud Spanner performance using JMeter
 description: Evaluate Cloud Spanner for custom workloads using the JMeter JDBC Sampler.
 author: shashank-google,chbussler,rlota
 tags: spanner, cloud spanner, evaluation, migration, performance test, jdbc
-date_published: 2021-06-21
+date_published: 2021-06-30
 ---
 
 Shashank Agarwal, Ravinder Lota, Christoph Bussler | Google
