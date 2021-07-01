@@ -187,83 +187,80 @@ performance tests, because network latency can interfere with the tests.
 
 ### Set up authentication for JMeter
 
-JMeter uses Cloud Spanner JDBC Client libraries to connect. It
-supports [various authentication mechanisms](https://github.com/googleapis/google-cloud-java#authentication) including
-service accounts etc. This example uses application default credentials to keep it simple. Detailed
-steps are described [here](https://cloud.google.com/spanner/docs/getting-started/set-up).
+JMeter uses Cloud Spanner JDBC client libraries to connect. It
+supports [various authentication mechanisms](https://github.com/googleapis/google-cloud-java#authentication), including
+service accounts. For simplicity, this example uses application default credentials. For detailed
+steps, see [the Cloud Spanner setup documentation](https://cloud.google.com/spanner/docs/getting-started/set-up).
 
-In summary, you need to set up gcloud and execute the below command to store credentials locally.
+In summary, you need to set up `gcloud` and run the following command to store credentials locally:
 
     gcloud auth application-default login
 
 ## JMeter basics
 
-JMeter is a highly configurable tool and has various components to pick and choose. This section provides
+JMeter is a highly configurable tool and has various components from which you can choose. This section provides
 a basic overview of how to create a JMeter test along with some minimal configurations that you can use as a base for your tests.
 
 ### JMeter test plan
 
-JMeter has a hierarchical structure to the tests with a top node
-called [test plan](https://jmeter.apache.org/usermanual/test_plan.html). It consists of one or more thread groups, logic
-controllers, sample generating controllers, listeners, timers, assertions, and configuration elements. Since a Test Plan
-is the top level configuration element, saving a Test Plan to disk will also save all nested objects and the resulting
-file is saved with a .jmx file extension.
+JMeter has a hierarchical structure to the tests, with a top node
+called the [*test plan*](https://jmeter.apache.org/usermanual/test_plan.html). It consists of one or more thread groups, logic
+controllers, sample generating controllers, listeners, timers, assertions, and configuration elements. Because a test plan
+is the top-level configuration element, saving a test plan to disk also saves all nested objects, and the resulting
+file is saved with a `.jmx` filename extension.
 
-For simplicity, it's sufficient to have the top level Test Plan contain a single Thread Group, which in turn contains
-one or more Samplers. There can be multiple Samplers (and other components) within a thread group, each will get
+For simplicity, it's sufficient to have the top-level test plan contain a single thread group, which in turn contains
+one or more samplers. There can be multiple samplers (and other components) within a thread group; each is
 executed serially per thread.
 
-Test plan (and/or Thread group) can also have config elements such as JDBC Connection, CSV Data Reader etc. Configs can
-then be shared with child nodes.
+Test plans and thread groups can also have configuration elements such as a JDBC connection or CSV data reader. Configurations can
+be shared with child nodes.
 
 ### Configuring connection parameters
 
-Within each JMeter test (screenshot below) you will need to provide connection parameters which will be used by the JDBC
-library to connect to Cloud Spanner (next).
+As shown in the following screenshot, within each JMeter test, you need to provide connection parameters, which are used by the JDBC
+library to connect to Cloud Spanner.
 
 ![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/01_Connection_Params.png)
 
-Following properties should be updated:
+* `project_id`: Google Cloud project ID
+* `instance`: Cloud Spanner instance ID
+* `db`: Cloud Spanner database name
+* `connections`: Cloud Spanner [sessions](https://cloud.google.com/spanner/docs/sessions). You should have 1 session per thread.
+* `grpc_channel`: There can be a maximum of 100 sessions per gRPC channel.
 
-* project_id: GCP Project ID
-* instance: Cloud Spanner Instance ID
-* db: Cloud Spanner database Name
-* connections: Cloud Spanner [sessions](https://cloud.google.com/spanner/docs/sessions). Ensure you should have 1
-  session per thread (users * thread groups).
-* grpc_channel: There can be a maximum of 100 sessions per grpc channel.
+The following parameters may not need to be changed; they will be passed from the command line, and default values are used when
+testing from JMeter graphical user interface.
 
-Following may not need to be changed. It will be passed from the command line. While default values shall be used when
-tested from JMeter graphical user interface.
-
-* users: Number of parallel threads per thread group, increasing stress on target.
-* iterations: Number of times each thread should loop, extending duration of tests.
+* `users`: Number of parallel threads per thread group, increasing stress on target.
+* `iterations`: Number of times each thread should loop, extending duration of tests.
 
 ### JDBC connection configuration
 
-Above parameters will be utilized in JDBC Connection Configuration.  
-Check complete list of jdbs properties 
-[here](https://javadoc.io/doc/com.google.cloud/google-cloud-spanner-jdbc/latest/com/google/cloud/spanner/jdbc/JdbcDriver.html)
+The parameters listed above are used for the JDBC connection configuration.
+
+For a complete list of JDBC properties, see the 
+[JdbcDriver documentation](https://javadoc.io/doc/com.google.cloud/google-cloud-spanner-jdbc/latest/com/google/cloud/spanner/jdbc/JdbcDriver.html).
 
 ![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/02_JDBC_Connection_Params.png)
 
-Connection pool variable name (conn_pool) will be used by JDBC Samplers to obtain connection and JDBC Connection URL as below:
+The connection pool variable (`conn_pool`) is used by JDBC samplers to obtain a connection. The JDBC connection URL is as follows:
 
     jdbc:cloudspanner:/projects/${project_id}/instances/${instance}/databases/${db}?minSessions=${connections};maxSessions=${connections};numChannels=${grpc_channel}
 
-
-Also there can
-be [additional configurations](https://cloud.google.com/spanner/docs/use-oss-jdbc#session_management_statements) such as
-Read Only or Staleness etc which can be configured as needed.
+You can use [additional configurations](https://cloud.google.com/spanner/docs/use-oss-jdbc#session_management_statements) such as
+`READ_ONLY_STALENESS` as needed.
 
 ### Thread groups
 
 A Thread group represents a group of users, and the number of threads you assign a thread group is equivalent to the
-number of users that you want querying Cloud Spanner. Example thread group configuration as below.
+number of users that you want querying Cloud Spanner.
+
+The following screnshot shows an example thread group configuration:
 
 ![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/03_thread_groups.png)
 
-In case you want a thread group to execute for a given time duration, then you can change it as shown in screenshot
-below. Where duration can be supplied as command line value with default of 5 mins.
+If you want a thread group to run for a given duration, then you can change the beahvior as shown in the following screenshot:
 
 ![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/04_thread_groups_2.png)
 
