@@ -10,16 +10,16 @@ Shashank Agarwal, Ravinder Lota, Christoph Bussler | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-Cloud Spanner is a fully managed, horizontally scalable, transactional and SQL compliant database as service. For more
-key features read [here](https://cloud.google.com/spanner#section-2). However in order to evaluate Cloud Spanner’s cost
-and latency, you might want to run performance tests before you start migration.
+[Cloud Spanner](https://cloud.google.com/spanner) is a fully managed, horizontally scalable, transactional, and SQL-compliant
+database as service. 
 
-In this tutorial we do performance testing Cloud Spanner **before making application code changes and executing data
-migration**.  
-[Apache JMeter(TM)](https://jmeter.apache.org/) is a popular open source tool for load testing. It includes scriptable
-Samplers in JSR223-compatible languages like Groovy and BeanShell. Using JDBC Sampler which can trigger queries and/or
-simulate transactions on database(s). The core idea is to use JMeter as an application which is sending DML to the
-database, thus performance testing it.
+Before you migrate to Cloud Spanner, you might want to run performance tests to evaluate its cost and latency. In this tutorial,
+you do performance testing with Cloud Spanner before making application code changes and executing data migration.
+
+[Apache JMeter](https://jmeter.apache.org/) is a popular open source tool for load testing. It includes scriptable
+samplers in JSR 223-compatible languages, such as Groovy and BeanShell. In this tutorial, you use the JDBC Sampler,
+which can trigger queries and simulate transactions on databases. You use JMeter to send DML (data manipulation language)
+commands to the database to test its performance.
 
 ## Costs
 
