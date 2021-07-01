@@ -65,77 +65,73 @@ using JSR223 Sampler, but that is out of scope for this document.
 
 Even if you use JMeter performance tests, you should also do application-based performance tests later.
 
-## What do you want to understand about Cloud Spanner performance?
+## Design considerations for Cloud Spanner performance tests
 
-Performance tests are executed to understand application behaviour with Spanner for speed, scalability and stability.
-Following factors need to be considered to design and execute a test that can answer your specific questions.
+You run performance tests to understand application behavior. Consider the following factors when deciding
+how to design and run tests that can answer your specific questions.
 
 ### Transactions per second (TPS)
 
-TPS metrics should be based on your application workload requirements, mostly to support the peak load. example - 7K
-reads/sec, 4K inserts/sec, 2K updates/sec, etc.  (overall TPS 13K/sec)
+TPS metrics should be based on your application workload requirements, mostly to support the peak load.
+
+For example, 7,000 read operations per second, 4,000 insert operations per second, and 2,000 update operations per
+second comes to an overall rate of 13,000 transactions per second (TPS).
 
 ### Query latency
 
-Expected response time for different DMLs needs to be established as a success criteria. This can be either based on
-your business SLAs or current DB response time in case of an existing application.
+You should establish expected response time for different DMLs as success criteria. This can be either based on
+your business SLAs or current database response time in the case of an existing application.
 
 ### Sizing: Number of nodes
 
-Sizing of the Spanner cluster depends on the data volume, TPS and latency requirements of application workload. In
-addition, [CPU utilization](https://cloud.google.com/spanner/docs/cpu-utilization)
-is another important factor to decide the optimal number of nodes. You can increase or decrease the initial cluster size
-in order to maintain the recommended 45% CPU utilization for multi-region and 65% for regional deployment.
+Sizing of the Spanner cluster depends on the data volume, TPS, and latency requirements of the application workload.
+
+[CPU utilization](https://cloud.google.com/spanner/docs/cpu-utilization)
+is another important factor when deciding the optimal number of nodes.
+
+You can increase or decrease the initial cluster size to maintain the recommended 45% CPU utilization for multi-region
+deployment and 65% for regional deployment.
 
 ### Test Cloud Spanner Autoscaler
 
-[Cloud Spanner Autoscaler](https://github.com/cloudspannerecosystem/autoscaler) is a solution to elastically scalable
-Cloud Spanner. Simulate spikey workload via JMeter tests in order to tune autoscaling scaling parameters.
+[Cloud Spanner Autoscaler](https://github.com/cloudspannerecosystem/autoscaler) is a solution to elastically scale
+Cloud Spanner. Use JMeter to simulate workloads that vary with spikes of activity to tune autoscaling scaling parameters.
 
 ## Preparing for tests
 
-Developing performance tests takes time and effort, hence planning ahead of time is important. Before you begin writing
-tests following preparation needs to be made:
+Before you begin writing performance tests, make the following preparations:
 
-1. Identify top SQL queries, latency, frequency / hour and avg number of rows returned or updated for each. This
-   information will also serve as a BASELINE for the current system.
-3. Determine Cloud Spanner region / multi-region deployment. Ideally, load should be generated from Cloud Spanner’s
-   leader region for minimum latency and best performance.
-   Read [Demystifying Cloud Spanner multi-region configurations](https://cloud.google.com/blog/topics/developers-practitioners/demystifying-cloud-spanner-multi-region-configurations)
-   for more details on various configurations of Cloud Spanner.
-4. Guestimate range of Cloud Spanner nodes required for a given workload based on (step 1). It is recommended to have a
-   minimum of 2 nodes for linear scaling.
-   **Note**: Peak performance numbers
-   of [regional performance](https://cloud.google.com/spanner/docs/instances#regional-performance)
-   and [multi regional performance](https://cloud.google.com/spanner/docs/instances#multi-region-performance) are
-   published. However it is based on a 1KB single row transaction with no secondary indexes.
-4. [Request quota](https://cloud.google.com/spanner/quotas#increasing_your_quotas) - Request enough surplus quota for
-   Cloud Spanner nodes on a given region / multi-region. It can take up to 1 business day. Although it depends on
-   workload, asking for 100 nodes quota for a performance test can be reasonable.
+1. Identify top SQL queries. Determine the latency, frequency, and average number of rows returned or updated for each
+   of the top queries. This information will also serve as a baseline for the current system.
+1. Determine the Cloud Spanner region or multi-region deployment. Ideally, load should be generated from Cloud Spanner’s
+   leader region for minimum latency and best performance. For more information, see
+   [Demystifying Cloud Spanner multi-region configurations](https://cloud.google.com/blog/topics/developers-practitioners/demystifying-cloud-spanner-multi-region-configurations).
+1. Estimate the range of Cloud Spanner nodes required for the workload. We recommend that you have at
+   least 2 nodes for linear scaling.
+4. [Request quota](https://cloud.google.com/spanner/quotas#increasing_your_quotas) so that you have enough surplus quota for
+   Cloud Spanner nodes on a given region or multi-region. Changes in quota can take up to 1 business day. Although it depends on
+   workload, asking for a quota of 100 nodes for a performance test can be reasonable.
 
 ## Creating a Cloud Spanner schema
 
-Assuming you are migrating an existing application from a common RDBMS database(s) like MySQL, Postgresql, SQL Server or
-Oracle etc. You will need to keep in
-mind [schema design best practices](https://cloud.google.com/spanner/docs/schema-design) when modeling your schema.
+This section assumes that you are migrating an existing application from a common RDBMS database such as MySQL, Postgresql, SQL Server, or
+Oracle.
 
-Below is list of common items which you should keep in mind, but it not an exhaustive list:
+For information about modeling your schema, see the [schema design best practices](https://cloud.google.com/spanner/docs/schema-design).
 
-1. Cloud Spanner needs primary keys to be generated from the application layer. Also, monotonically increasing PKs will
+Keep the following in mind:
+
+-  Cloud Spanner needs primary keys to be generated from the application layer. Also, monotonically increasing primary keys will
    introduce [hotspots](https://cloud.google.com/spanner/docs/schema-design#primary-key-prevent-hotspots).
-   Hence, [using a UUID](https://cloud.google.com/spanner/docs/schema-design#uuid_primary_key) could be a fair
-   alternative.
-2. Use an interleaved table to improve performance where most (ex 90%+) of the access is using join to the parent
-   table.   
-   *Note: Interleaving must be created from the start. You cannot change table interleaving once the tables have been
-   created*
-3. Secondary indexes on monotonically increasing values may introduce hotspots. (ex: index on timestamp).
-4. Secondary indexes can
-   utilize [storing clauses](https://cloud.google.com/spanner/docs/secondary-indexes#storing-clause)
+   [Using a UUID](https://cloud.google.com/spanner/docs/schema-design#uuid_primary_key) can be a good alternative.
+-  Use an interleaved table to improve performance where most (more than 90%) of the access is using join to the parent
+   table. Interleaving must be created from the start; you can't change table interleaving after the tables have been
+   created.
+-  Secondary indexes on monotonically increasing values (such as indexes on a timestamp) may introduce hotspots.
+-  Secondary indexes can use [storing clauses](https://cloud.google.com/spanner/docs/secondary-indexes#storing-clause)
    to improve performance of certain queries.
-5. Use STRING datatype if you need to have a
-   [precision higher than NUMERIC](https://cloud.google.com/spanner/docs/storing-numeric-data#recommendation_store_arbitrary_precision_numbers_as_strings)
-   data type.
+-  Use the `STRING` data type if you need to have
+   [greater precision than `NUMERIC`](https://cloud.google.com/spanner/docs/storing-numeric-data#recommendation_store_arbitrary_precision_numbers_as_strings).
 
 This example uses the database `Singers`, which is created with the following schema:
 
@@ -163,32 +159,31 @@ This example uses the database `Singers`, which is created with the following sc
 
 ## Set up JMeter
 
-JMeter provides a GUI for easy development of tests. Once tests are developed you should use the command line to execute
-JMeter tests. You may create a VM (in the same region as Cloud Spanner’s Leader) with GUI enabled. Therefore the same VM
+JMeter provides a GUI for easy development of tests. After tests are developed, use the command line to run the
+JMeter tests. You can create a VM (in the same region as Cloud Spanner’s Leader) with the GUI enabled, so the same VM
 instance can be used for development and execution of tests.
 
-You can use a local workstation for test development, too. *Do not* use a local workstation for execution of
-performance tests, due to potential network latency.**
+You can use a local workstation for test development, too. Don't use a local workstation to run
+performance tests, because network latency can interfere with the tests.
 
 ### Installation
 
-1. Download and install [JMeter](https://jmeter.apache.org/download_jmeter.cgi) 5.3+ (and Java8+).
-2. Install [maven](https://maven.apache.org/install.html) used to download Cloud Spanner client libraries.
-3. Open terminal / command prompt and change directory (cd) to an empty directory, where you will keep JMeter
-   dependencies.
-4. Download Cloud Spanner JDBC library and dependencies using maven command as below.
+1.  Download and install [JMeter](https://jmeter.apache.org/download_jmeter.cgi) 5.3 or higher, which requires Java 8 or higher.
+1.  Install [Maven](https://maven.apache.org/install.html), which is used to download Cloud Spanner client libraries.
+1.  In a command shell, go to an empty directory, where you will keep JMeter dependencies.
+1.  Download the Cloud Spanner JDBC library and dependencies:
 
-   mvn dependency:get -Dartifact=com.google.cloud:google-cloud-spanner-jdbc:RELEASE -Dmaven.repo.local=.
+        mvn dependency:get -Dartifact=com.google.cloud:google-cloud-spanner-jdbc:RELEASE -Dmaven.repo.local=.
 
-5. Move (or Copy) all the downloaded jars into one single folder for JMeter to load in its classpath.
+1.  Move the downloaded JAR files into a folder for JMeter to load in its classpath:
 
-Sample linux command:
+    Linux:
+    
+        find . -name *.jar -exec mv '{}' . \;
 
-    find . -name *.jar -exec mv '{}' . \;
+    Windows:
 
-Sample windows command:
-
-    for /r /Y %x in (*.jar) do copy "%x" .\
+        for /r /Y %x in (*.jar) do copy "%x" .\
 
 ### Set up authentication for JMeter
 
