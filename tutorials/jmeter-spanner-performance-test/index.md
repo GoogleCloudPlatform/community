@@ -114,7 +114,7 @@ Before you begin writing performance tests, make the following preparations:
 
 ## Creating a Cloud Spanner schema
 
-This section assumes that you are migrating an existing application from a common RDBMS database such as MySQL, Postgresql, SQL Server, or
+This section assumes that you are migrating an existing application from a common RDBMS database such as MySQL, PostgreSQL, SQL Server, or
 Oracle.
 
 For information about modeling your schema, see the [schema design best practices](https://cloud.google.com/spanner/docs/schema-design).
@@ -378,9 +378,10 @@ Below is the sample JMeter test to simulate the above load. You will need to upd
 
 #### Spanner-Perf-Test.jmx
 
-[Spanner-Perf-Test.jmx](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/jmeter-spanner-performance-test/Spanner-Perf-Test.jmx)
+[Spanner-Perf-Test.jmx](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/jmeter-spanner-performance-test/Spanner-Perf-Test.jmx) 
+uses a CSV configuration to get `SingerId` and `AlbumId` parameters.
 
-Note: It uses a CSV configuration to get `SingerId` and `AlbumId` parameters, example top few lines as below.
+The following are the first few lines, for example:
 
     "singerid","albumid"
     "0002aad0-30e9-4eae-b1a0-952ebec9de76","328e1b6f-a449-42d1-bc8b-3d6ba2615d2f"
