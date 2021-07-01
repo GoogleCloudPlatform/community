@@ -10,16 +10,18 @@ Shashank Agarwal, Ravinder Lota, Christoph Bussler | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-[Cloud Spanner](https://cloud.google.com/spanner) is a fully managed, horizontally scalable, transactional, and SQL-compliant
-database as service. 
+[Cloud Spanner](https://cloud.google.com/spanner) is a fully managed, horizontally scalable, transactional, SQL-compliant
+database service. 
 
 Before you migrate to Cloud Spanner, you might want to run performance tests to evaluate its cost and latency. In this tutorial,
-you do performance testing with Cloud Spanner before making application code changes and executing data migration.
+you do performance testing with Cloud Spanner before making application code changes and migrating data.
 
 [Apache JMeter](https://jmeter.apache.org/) is a popular open source tool for load testing. It includes scriptable
 samplers in JSR 223-compatible languages, such as Groovy and BeanShell. In this tutorial, you use the JDBC Sampler,
-which can trigger queries and simulate transactions on databases. You use JMeter to send DML (data manipulation language)
-commands to the database to test its performance.
+which can trigger queries and simulate transactions on databases.
+
+This document demonstrates JMeter performance tests using an example Cloud Spanner schema. You use JMeter to send
+DML (data manipulation language) commands to the database to test its performance. 
 
 ## Costs
 
@@ -33,36 +35,35 @@ projected usage.
 
 ## Objectives
 
-* Determine if Cloud Spanner is suitable for **an existing workload, before application code changes.**
-* Enable you to write a performance test on Cloud Spanner using JMeter, for your workload. No generic performance
-  benchmarks are discussed in this guide.
+* Determine whether Cloud Spanner is suitable for an existing workload, before application code changes.
+* Write a performance test for your workload on Cloud Spanner using JMeter.
 * Estimate the number of Cloud Spanner nodes needed (and therefore cost).
-* Performance test the most frequent set of queries and transactions.
+* Test the performance of frequent queries and transactions.
 * Demonstrate the ability to scale horizontally.
-* Better understand the optimizations needed for schema and sql queries.
-* Determine latency of select, insert, update and delete with Cloud Spanner.
+* Explain optimizations needed for schema and SQL queries.
+* Determine latency of select, insert, update, and delete operations with Cloud Spanner.
 
 ## Use cases
 
-Below are some possible use cases for doing JMeter based performance tests:
+Possible use cases for doing performance tests with JMeter:
 
-* You want to consolidate current multi-sharded RDBMS into Cloud Spanner.
-* You have a spikey workload and you need an elastic database.
+* You want to consolidate current multi-sharded relational database management systems into Cloud Spanner.
+* You have a workload that varies with spikes of activity, and you need a database that scales to meet the demand.
 * You want to standardize on Cloud Spanner for different applications.
 
 ## Limitations
 
-* You cannot test non-jdbc Cloud Spanner client side libraries (like python, r2dbc etc). Although you can bypass the
-  client library using underlying [gRPC](https://cloud.google.com/spanner/docs/reference/rpc)
-  or [REST](https://cloud.google.com/spanner/docs/reference/rest) apis, that is out of scope for this guide.
-* You should not bypass application based performance tests later.
-* You cannot test non-dml features like [mutations](https://cloud.google.com/spanner/docs/modify-mutation-api)
-  , [parallel reads](https://cloud.google.com/spanner/docs/reads#read_data_in_parallel) (aka partitioned selects) etc
-  using JDBC Sampler. In such a case you
-  can [embed custom java code](https://stackoverflow.com/questions/21266923/using-a-jmeter-jdbc-connection-in-java-code)
-  using JSR223 Sampler, that is out of scope for this guide.
+You can't use JMeter to test non-JDBC Cloud Spanner client-side libraries like Python and R2DBC. You can bypass the
+client library using underlying [gRPC](https://cloud.google.com/spanner/docs/reference/rpc)
+or [REST](https://cloud.google.com/spanner/docs/reference/rest) APIs, but that is out of scope for this document.
 
-This guide will demonstrate JMeter performance tests using an example Cloud Spanner schema.
+You can't test non-DML features like [mutations](https://cloud.google.com/spanner/docs/modify-mutation-api) and
+[parallel reads (partitioned selects)](https://cloud.google.com/spanner/docs/reads#read_data_in_parallel)
+using JDBC Sampler. In such cases, you can
+[embed custom Java code](https://stackoverflow.com/questions/21266923/using-a-jmeter-jdbc-connection-in-java-code)
+using JSR223 Sampler, but that is out of scope for this document.
+
+Even if you use JMeter performance tests, you should also do application-based performance tests later.
 
 ## What do you want to understand about Cloud Spanner performance?
 
