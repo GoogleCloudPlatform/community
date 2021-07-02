@@ -19,35 +19,36 @@
  */
 package com.example.bigtable;
 
-import com.google.cloud.bigtable.hbase.BigtableConfiguration;
 import com.google.cloud.ServiceOptions;
-
+import com.google.cloud.bigtable.hbase.BigtableConfiguration;
 import io.opencensus.common.Scope;
 import io.opencensus.contrib.grpc.metrics.RpcViews;
 import io.opencensus.exporter.stats.stackdriver.StackdriverStatsExporter;
 import io.opencensus.exporter.trace.stackdriver.StackdriverTraceConfiguration;
 import io.opencensus.exporter.trace.stackdriver.StackdriverTraceExporter;
-
 import io.opencensus.stats.Aggregation;
 import io.opencensus.stats.Aggregation.Distribution;
 import io.opencensus.stats.BucketBoundaries;
-import io.opencensus.stats.Measure.MeasureLong;
 import io.opencensus.stats.Measure.MeasureDouble;
+import io.opencensus.stats.Measure.MeasureLong;
 import io.opencensus.stats.Stats;
 import io.opencensus.stats.StatsRecorder;
-import io.opencensus.tags.TagKey;
 import io.opencensus.stats.View;
 import io.opencensus.stats.View.Name;
 import io.opencensus.stats.ViewManager;
-
 import io.opencensus.tags.TagKey;
-
-import io.opencensus.trace.Span;
 import io.opencensus.trace.Sampler;
+import io.opencensus.trace.Span;
 import io.opencensus.trace.Tracer;
 import io.opencensus.trace.Tracing;
 import io.opencensus.trace.config.TraceConfig;
 import io.opencensus.trace.samplers.Samplers;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.UUID;
 import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;
 import org.apache.hadoop.hbase.TableName;
@@ -60,25 +61,16 @@ import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.util.Bytes;
-
-import java.io.IOException;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.UUID;
-
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 public class App {
+
     private static final Logger logger = Logger.getLogger(App.class);
 
     // [START configChanges]
     private static final String PROJECT_ID = ServiceOptions.getDefaultProjectId();
-    private static final String INSTANCE_ID = System.getenv( "INSTANCE_ID");
+    private static final String INSTANCE_ID = System.getenv("INSTANCE_ID");
     // [END configChanges]
     // Refer to table metadata names by byte array in the HBase API
     private static final byte[] TABLE_NAME = Bytes.toBytes("Hello-Bigtable");
@@ -87,15 +79,18 @@ public class App {
 
 
     // The read latency in milliseconds
-    private static final MeasureDouble M_READ_LATENCY_MS = MeasureDouble.create("btapp/read_latency", "The latency in milliseconds for read", "ms");
+    private static final MeasureDouble M_READ_LATENCY_MS = MeasureDouble
+        .create("btapp/read_latency", "The latency in milliseconds for read", "ms");
 
     // [START config_oc_write_latency_measure]
     // The write latency in milliseconds
-    private static final MeasureDouble M_WRITE_LATENCY_MS = MeasureDouble.create("btapp/write_latency", "The latency in milliseconds for write", "ms");
+    private static final MeasureDouble M_WRITE_LATENCY_MS = MeasureDouble
+        .create("btapp/write_latency", "The latency in milliseconds for write", "ms");
     // [END config_oc_write_latency_measure]
 
     // Counts the number of transactions
-    private static final MeasureLong M_TRANSACTION_SETS = MeasureLong.create("btapp/transaction_set_count", "The count of transactions", "1");
+    private static final MeasureLong M_TRANSACTION_SETS = MeasureLong
+        .create("btapp/transaction_set_count", "The count of transactions", "1");
 
     // Define the tags for potential grouping
     private static final TagKey KEY_LATENCY = TagKey.create("latency");
@@ -107,54 +102,55 @@ public class App {
 
     // Write some friendly greetings to Cloud Bigtable
     private static final String[] GREETINGS =
-      { "Hello World!", "Hello Cloud Bigtable!", "Hello HBase!" };
+        {"Hello World!", "Hello Cloud Bigtable!", "Hello HBase!"};
 
 
     private static void registerMetricViews() {
-        // [START config_oc_latency_distribution] 
+        // [START config_oc_latency_distribution]
         Aggregation latencyDistribution = Distribution.create(BucketBoundaries.create(
-                Arrays.asList(
-                    0.0, 5.0, 10.0, 25.0, 100.0, 200.0, 400.0, 800.0, 10000.0)));
-        // [END config_oc_latency_distribution] 
+            Arrays.asList(
+                0.0, 5.0, 10.0, 25.0, 100.0, 200.0, 400.0, 800.0, 10000.0)));
+        // [END config_oc_latency_distribution]
 
         // Define the count aggregation
         Aggregation countAggregation = Aggregation.Count.create();
 
-
         View[] views = new View[]{
             View.create(Name.create("btappmetrics/read_latency"),
-                        "The distribution of the read latencies",
-                        M_READ_LATENCY_MS,
-                        latencyDistribution,
-                        Collections.singletonList(KEY_LATENCY)),
+                "The distribution of the read latencies",
+                M_READ_LATENCY_MS,
+                latencyDistribution,
+                Collections.singletonList(KEY_LATENCY)),
 
             // [START config_oc_write_latency_view]
             View.create(Name.create("btappmetrics/write_latency"),
-                        "The distribution of the write latencies",
-                        M_WRITE_LATENCY_MS,
-                        latencyDistribution,
-                        Collections.singletonList(KEY_LATENCY)),
+                "The distribution of the write latencies",
+                M_WRITE_LATENCY_MS,
+                latencyDistribution,
+                Collections.singletonList(KEY_LATENCY)),
             // [END config_oc_write_latency_view]
 
             View.create(Name.create("btappmetrics/transaction_set_count"),
-                        "The number of transaction sets performed",
-                        M_TRANSACTION_SETS,
-                        countAggregation, 
-                        Collections.singletonList(KEY_TRANSACTIONS))
-	};
+                "The number of transaction sets performed",
+                M_TRANSACTION_SETS,
+                countAggregation,
+                Collections.singletonList(KEY_TRANSACTIONS))
+        };
 
-	// Ensure that they are registered so
+        // Ensure that they are registered so
         // that measurements won't be dropped.
         ViewManager manager = Stats.getViewManager();
-        for (View view : views)
+        for (View view : views) {
             manager.registerView(view);
+        }
     }
 
 
     /**
      * Connects to Cloud Bigtable, runs some basic operations and prints the results.
      */
-    private static void doBigTableOperations(String projectId, String instanceId, int demoRowCount) {
+    private static void doBigTableOperations(String projectId, String instanceId,
+        int demoRowCount) {
 
         long startRead;
         long endRead;
@@ -183,34 +179,34 @@ public class App {
             Table table = connection.getTable(TableName.valueOf(TABLE_NAME));
 
             for (int i = 0; i < demoRowCount; i++) {
-            // [START opencensus_scope_main]
-                try (Scope ss = tracer.spanBuilder("opencensus.Bigtable.Tutorial").startScopedSpan()) {
-    
+                // [START opencensus_scope_main]
+                try (Scope ss = tracer.spanBuilder("opencensus.Bigtable.Tutorial")
+                    .startScopedSpan()) {
+
                     // generate unique UUID
                     UUID uuid = UUID.randomUUID();
                     String randomUUIDString = uuid.toString();
-    
+
                     startWrite = System.currentTimeMillis();
                     // write to Bigtable
                     writeRows(table, randomUUIDString);
-                    endWrite = System.currentTimeMillis(); 
-    
-    
+                    endWrite = System.currentTimeMillis();
+
                     startRead = System.currentTimeMillis();
                     // read from Bigtable
                     readRows(table, randomUUIDString);
-                    endRead = System.currentTimeMillis(); 
-    
-            // [END opencensus_scope_main]
-            // [START opencensus_metric_record]
+                    endRead = System.currentTimeMillis();
+
+                    // [END opencensus_scope_main]
+                    // [START opencensus_metric_record]
                     // record read, write latency metrics and count
                     STATS_RECORDER.newMeasureMap()
-                                  .put(M_READ_LATENCY_MS, endRead - startRead)
-                                  .put(M_WRITE_LATENCY_MS, endWrite - startWrite)
-                                  .put(M_TRANSACTION_SETS, 1)
-                                  .record();
-            // [END opencensus_metric_record]
-    
+                        .put(M_READ_LATENCY_MS, endRead - startRead)
+                        .put(M_WRITE_LATENCY_MS, endWrite - startWrite)
+                        .put(M_TRANSACTION_SETS, 1)
+                        .record();
+                    // [END opencensus_metric_record]
+
                 }
             }
             // [START deleting_a_table]
@@ -262,16 +258,16 @@ public class App {
         try (Scope ss = tracer.spanBuilder("ReadRows").startScopedSpan()) {
             // [START getting_a_row]
             // Get the first greeting by row key
-            String rowKey =  uuidPrefix + "#greeting0";
+            String rowKey = uuidPrefix + "#greeting0";
             Result getResult = table.get(new Get(Bytes.toBytes(rowKey)));
             String greeting = Bytes
-              .toString(getResult.getValue(COLUMN_FAMILY_NAME, COLUMN_NAME));
+                .toString(getResult.getValue(COLUMN_FAMILY_NAME, COLUMN_NAME));
             logger.debug("Get a single greeting by row key");
             logger.debug(String.format("\t%s = %s\n", rowKey, greeting));
             // [END getting_a_row]
 
             // [START scanning_all_rows]
-            // Now scan across all rows for UUID prefix. 
+            // Now scan across all rows for UUID prefix.
             byte[] startRow = (uuidPrefix + "#greeting0").getBytes();
             byte[] stopRow = (uuidPrefix + "#greeting3").getBytes();
             Scan scan = new Scan().withStartRow(startRow).withStopRow(stopRow);
@@ -293,18 +289,18 @@ public class App {
         // For demo purposes, lets always sample.
 
         traceConfig.updateActiveTraceParams(
-          traceConfig.getActiveTraceParams().toBuilder().setSampler(sampler).build());
+            traceConfig.getActiveTraceParams().toBuilder().setSampler(sampler).build());
 
         // Create the Stackdriver trace exporter
         StackdriverTraceExporter.createAndRegister(
-          StackdriverTraceConfiguration.builder()
-            .setProjectId(PROJECT_ID)
-            .build());
+            StackdriverTraceConfiguration.builder()
+                .setProjectId(PROJECT_ID)
+                .build());
 
         // [Start Stackdriver Monitoring]
         StackdriverStatsExporter.createAndRegister();
 
-    // [END config_oc_stackdriver_export]
+        // [END config_oc_stackdriver_export]
 
         // -------------------------------------------------------------------------------------------
         // Register all the gRPC views
@@ -315,11 +311,11 @@ public class App {
     }
 
     private static void sleep(int ms) {
-      try {
-        Thread.sleep(ms);
-      } catch (Exception e) {
-        logger.error("Exception while sleeping " + e.getMessage());
-      }
+        try {
+            Thread.sleep(ms);
+        } catch (Exception e) {
+            logger.error("Exception while sleeping " + e.getMessage());
+        }
     }
 
     public static void main(String[] args) throws IOException {
@@ -327,12 +323,12 @@ public class App {
 
         // set up the views to expose the metrics
         registerMetricViews();
-	    
+
         // [START config_oc_trace_sample]
         // sample every 1000 transactions
-        configureOpenCensusExporters(Samplers.probabilitySampler(1/1000.0));
+        configureOpenCensusExporters(Samplers.probabilitySampler(1 / 1000.0));
         // [END config_oc_trace_sample]
-	    
+
         doBigTableOperations(PROJECT_ID, INSTANCE_ID, 10000);
 
         // IMPORTANT: do NOT exit right away. Wait for a duration longer than reporting
