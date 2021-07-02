@@ -17,7 +17,7 @@
     <maven.compiler.source>1.8</maven.compiler.source>
 
     <gax.version>1.43.0</gax.version>
-    <jetty.version>9.4.35.v20201120</jetty.version>
+    <jetty.version>9.4.41.v20210516</jetty.version>
     <opencensus.version>0.28.3</opencensus.version>
     <grpc.version>1.34.1</grpc.version>
     <bigtable.version>1.22.0</bigtable.version>
