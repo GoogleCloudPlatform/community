@@ -79,9 +79,9 @@ Create a Compute Engine VM with the necessary security scopes by running the fol
 
         gcloud compute ssh trace-client --zone=us-central1-c
         
-1.  Run the following command to install Git, the Java 8 JDK, and Maven:
+1.  Run the following command to install Git, the Java 11 JDK, and Maven:
 
-        sudo apt-get install git openjdk-8-jdk maven -y
+        sudo apt-get install git openjdk-11-jdk maven -y
 
 1.  Clone the source repository for this tutorial:
 
@@ -133,11 +133,13 @@ occurred outside of the manually defined tracing scope, so these are included as
 
 1.  In the **Find resource type and metric** field, enter the following:
 
+        gce_instance
+
         opencensus/btappmetrics/write_latency
 
 1.  Select this metric from the list.
 
-1.  In the right pane, the distribution heatmap graph is shown.
+1.  In the right pane, select `Heatmap` from the dropdown list. And the distribution heatmap graph is shown.
 
 ![](https://storage.googleapis.com/gcp-community/tutorials/bigtable-oc/metrics-heatmap.png)
 
