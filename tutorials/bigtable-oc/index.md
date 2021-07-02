@@ -11,10 +11,10 @@ Drew Stevens | Solutions Architect | Google
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This tutorial shows how to implement client-side tracing and metrics recording in your Bigtable
-workloads using OpenCensus and Cloud Trace. While Bigtable surfaces a number of helpful server-side
+workloads using OpenCensus and Cloud Trace. Though Bigtable surfaces a number of helpful server-side
 metrics through the Google Cloud operations suite, applications can realize added benefits by implementing client-side tracing and
-application defined metrics. For example, server-side metrics do not give you a window into the round-trip
-latency of calls made to your Bigtable endpoint and can only be surfaced using client-side tracing.
+application-defined metrics. For example, server-side metrics do not give you information about the round-trip
+latency of calls made to your Bigtable endpoint; this can only be seen using client-side tracing.
 
 ## Costs
 
@@ -29,7 +29,7 @@ estimate based on your projected usage.
 
 New Google Cloud users might be eligible for a [free trial](https://cloud.google.com/free/).
 
-We recommend that you deploy this tutorial into an ephemeral project, which can then be deleted once you’re done.
+We recommend that you deploy this tutorial into an ephemeral project, which can then be deleted after you’re done.
 
 ## Before you begin
 
@@ -79,9 +79,9 @@ Create a Compute Engine VM with the necessary security scopes by running the fol
 
         gcloud compute ssh trace-client --zone=us-central1-c
         
-1.  Run the following command to install Git, the Java 8 JDK, and Maven:
+1.  Run the following command to install Git, the Java 11 JDK, and Maven:
 
-        sudo apt-get install git openjdk-8-jdk maven -y
+        sudo apt-get install git openjdk-11-jdk maven -y
 
 1.  Clone the source repository for this tutorial:
 
@@ -133,11 +133,13 @@ occurred outside of the manually defined tracing scope, so these are included as
 
 1.  In the **Find resource type and metric** field, enter the following:
 
+        gce_instance
+
         opencensus/btappmetrics/write_latency
 
 1.  Select this metric from the list.
 
-1.  In the right pane, the distribution heatmap graph is shown.
+1.  In the right pane, select **Heatmap** from the dropdown list, which shows the distribution heatmap graph:
 
 ![](https://storage.googleapis.com/gcp-community/tutorials/bigtable-oc/metrics-heatmap.png)
 
