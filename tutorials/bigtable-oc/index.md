@@ -11,10 +11,10 @@ Drew Stevens | Solutions Architect | Google
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This tutorial shows how to implement client-side tracing and metrics recording in your Bigtable
-workloads using OpenCensus and Cloud Trace. While Bigtable surfaces a number of helpful server-side
+workloads using OpenCensus and Cloud Trace. Though Bigtable surfaces a number of helpful server-side
 metrics through the Google Cloud operations suite, applications can realize added benefits by implementing client-side tracing and
-application defined metrics. For example, server-side metrics do not give you a window into the round-trip
-latency of calls made to your Bigtable endpoint and can only be surfaced using client-side tracing.
+application-defined metrics. For example, server-side metrics do not give you information about the round-trip
+latency of calls made to your Bigtable endpoint; this can only be seen using client-side tracing.
 
 ## Costs
 
@@ -29,7 +29,7 @@ estimate based on your projected usage.
 
 New Google Cloud users might be eligible for a [free trial](https://cloud.google.com/free/).
 
-We recommend that you deploy this tutorial into an ephemeral project, which can then be deleted once you’re done.
+We recommend that you deploy this tutorial into an ephemeral project, which can then be deleted after you’re done.
 
 ## Before you begin
 
@@ -139,7 +139,7 @@ occurred outside of the manually defined tracing scope, so these are included as
 
 1.  Select this metric from the list.
 
-1.  In the right pane, select `Heatmap` from the dropdown list. And the distribution heatmap graph is shown.
+1.  In the right pane, select **Heatmap** from the dropdown list, which shows the distribution heatmap graph:
 
 ![](https://storage.googleapis.com/gcp-community/tutorials/bigtable-oc/metrics-heatmap.png)
 
