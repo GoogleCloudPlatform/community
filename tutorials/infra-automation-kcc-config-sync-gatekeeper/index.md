@@ -1,9 +1,9 @@
 ---
-title: Infrastructure Automation with Config Connector, Config Sync and Gatekeeper
-description: An end-to-end workflow of provisioning and managing Google Cloud resources using Config Connector, Config Sync and OPA Gatekeeper
+title: Infrastructure automation with Config Connector, Config Sync, and OPA Gatekeeper
+description: An end-to-end workflow of provisioning and managing Google Cloud resources using Config Connector, Config Sync, and OPA Gatekeeper.
 author: nardosm
 tags: kubernetes config connector, kcc, config sync, gatekeeper, gitops
-date_published: 2021-01-01
+date_published: 2021-07-05
 ---
 
 Nardos Megersa | Strategic Cloud Engineer | Google 
@@ -18,59 +18,46 @@ This guide walks you through a GitOps end-to-end workflow of provisioning and ma
 
 **Although these tools are offered under the umbrella of Anthos Config Management for Anthos customers, they can be used independently.**
 
-
+![Sample Architecture](https://storage.googleapis.com/gcp-community/tutorials/infra-automation-kcc-config-sync-gatekeeper/sample-architecture.png)
 
 ## Before you begin
 
 * This tutorial assumes that you already have a [Google Cloud account](https://console.cloud.google.com/freetrial). 
-* Make sure your `gcloud components` are updated to the latest version. <br/><br/>
+* Make sure your `gcloud components` are updated to the latest version.
 
+1. Create three Google Cloud projects:
+    * Host project: will contain the Google Kubernetes Engine cluster
+    * Dev project: a managed project that will contain Google Cloud resources
+    * Prod project: a managed project that will contain Google Cloud resources
+1. Ensure that the three projects are tied to a billing account. 
 
 ## Objectives
 
 * Deploy a Google Kubernetes Engine cluster that will run Config Connector, Config Sync operator and OPA Gatekeeper
-* Use a source code repository to deploy GCP resources to multiple environments through Kubernetes manifest files
-* Enforce constraint policies on GCP resources using OPA Gatekeeper
-
-<br/><br/>
-
-![Sample Architecture](sample-architecture.png) <br/><br/>
-
-## Set up
-
-1. Create three Google Cloud projects:
-    * Host project: will contain the Google Kubernetes Engine cluster
-    * Dev project: a managed project that will contain GCP resources
-    * Prod project: a managed project that will contain GCP resources
-2. Ensure that the three projects are tied to a billing account. 
-
-
-<br></br>
+* Use a source code repository to deploy Google Cloud resources to multiple environments through Kubernetes manifest files
+* Enforce constraint policies on Google Cloud resources using OPA Gatekeeper
 
 ## Config Connector
 
 Kubernetes Config Connector (KCC) is a Kubernetes addon that allows users to manage Google Cloud infrastructure such as Cloud Storage, Cloud Pub/Sub or Cloud SQL through Kubernetes-style declarative APIs. 
 
-
 It is recommended that Config Connector is installed in a separate cluster inside a separate Google Cloud project which will be referred to as a Host Project. The other projects where resources are managed will be known as managed projects. 
 
 This tutorial refers to the host project for Config Connector with the environment variable HOST_PROJECT_ID and two other projects that will be used as managed projects with variables DEV_PROJECT_ID and PROD_PROJECT_ID
 
-1. Define the environment variables
-```
-export HOST_PROJECT_ID=<your-host-project-id>
-export DEV_PROJECT_ID=<your-dev-project-id>
-export PROD_PROJECT_ID=<your-prod-project-id>
-export CLUSTER_NAME=kcc-host-cluster
-export ZONE=us-east4-a
-```
+1.  Define the environment variables:
 
-2. Enable the Kubernetes Engine API
-```
-gcloud services enable container.googleapis.com --project $HOST_PROJECT_ID
-```
+        export HOST_PROJECT_ID=<your-host-project-id>
+        export DEV_PROJECT_ID=<your-dev-project-id>
+        export PROD_PROJECT_ID=<your-prod-project-id>
+        export CLUSTER_NAME=kcc-host-cluster
+        export ZONE=us-east4-a
 
-3. Create a Google Kubernetes Engine cluster in the host project that will serve as a host cluster for provisioning GCP resources
+1.  Enable the Kubernetes Engine API:
+
+        gcloud services enable container.googleapis.com --project $HOST_PROJECT_ID
+
+3. Create a Google Kubernetes Engine cluster in the host project that will serve as a host cluster for provisioning Google Cloud resources
 ```
 gcloud beta container clusters create ${CLUSTER_NAME} --project=$HOST_PROJECT_ID --zone=${ZONE} --machine-type=e2-standard-4 \
 --workload-pool=${HOST_PROJECT_ID}.svc.id.goog
@@ -115,7 +102,7 @@ kubectl apply -f configconnector.yaml
 kubectl create namespace kcc-tutorial-dev
 kubectl create namespace kcc-tutorial-prod
 ```    
-10. Annotate the namespaces so that resources are created in the correct GCP project
+10. Annotate the namespaces so that resources are created in the correct Google Cloud project
 ```
 kubectl annotate namespace \
 kcc-tutorial-dev cnrm.cloud.google.com/project-id=$DEV_PROJECT_ID
@@ -123,7 +110,7 @@ kcc-tutorial-dev cnrm.cloud.google.com/project-id=$DEV_PROJECT_ID
 kubectl annotate namespace \
 kcc-tutorial-prod cnrm.cloud.google.com/project-id=$PROD_PROJECT_ID
 ```
-11. Create a dedicated IAM service account for each environment in the host project for workload identity to be able to create resources in GCP.
+11. Create a dedicated IAM service account for each environment in the host project for workload identity to be able to create resources in Google Cloud.
 ```
 gcloud iam service-accounts create kcc-tutorial-dev --project=$HOST_PROJECT_ID
 
@@ -137,7 +124,7 @@ gcloud projects add-iam-policy-binding $DEV_PROJECT_ID \
 gcloud projects add-iam-policy-binding $PROD_PROJECT_ID \
 --member="serviceAccount:kcc-tutorial-prod@${HOST_PROJECT_ID}.iam.gserviceaccount.com" --role="roles/editor"
 ```
-13. Create binding between GCP service accounts and Kubernetes service accounts through Workload Identity for both dev and prod Kubernetes service accounts
+13. Create binding between Google Cloud service accounts and Kubernetes service accounts through Workload Identity for both dev and prod Kubernetes service accounts
 ```
 gcloud iam service-accounts add-iam-policy-binding \
 kcc-tutorial-dev@${HOST_PROJECT_ID}.iam.gserviceaccount.com \
@@ -151,7 +138,8 @@ kcc-tutorial-prod@${HOST_PROJECT_ID}.iam.gserviceaccount.com \
     --role="roles/iam.workloadIdentityUser" \
     --project=${HOST_PROJECT_ID}
 ```
-14. Give IAM service accounts permission to publish Prometheus metrics to GCP Cloud Operations
+14. Give IAM service accounts permission to publish Prometheus metrics to Google Cloud:
+
 ```
 gcloud projects add-iam-policy-binding $HOST_PROJECT_ID \
 --member="serviceAccount:kcc-tutorial-dev@${HOST_PROJECT_ID}.iam.gserviceaccount.com" --role="roles/monitoring.metricWriter"
@@ -193,7 +181,7 @@ kubectl apply -f configconnectorcontext.yaml
 kubectl wait -n cnrm-system --for=condition=Ready pod --all
 ```
 
-Optionally, you can verify Config Connector is set up correctly by [deploying a GCP resource](https://cloud.google.com/config-connector/docs/reference/overview) (e.g Cloud Storage). <br /><br />
+Optionally, you can verify Config Connector is set up correctly by [deploying a Google Cloud resource](https://cloud.google.com/config-connector/docs/reference/overview) (e.g Cloud Storage). <br /><br />
 
 ## Config Sync
 
@@ -282,7 +270,7 @@ kubectl apply -f config-management.yaml
 
 ```
 
-14. Create GCP resources in the corresponding environment to test the configuration. For this example, you will create a Cloud Storage Bucket in the dev workspace. Create a file with the following content under the ```namespaces/kcc-tutorial-dev``` directory. Make sure metadata.name has a globally unique value as it is required by Cloud Storage.
+14. Create Google Cloud resources in the corresponding environment to test the configuration. For this example, you will create a Cloud Storage Bucket in the dev workspace. Create a file with the following content under the ```namespaces/kcc-tutorial-dev``` directory. Make sure metadata.name has a globally unique value as it is required by Cloud Storage.
 
 ```
 # namespaces/kcc-tutorial-dev/storagebucket.yaml
@@ -305,7 +293,7 @@ spec:
 
 ```
 
-15. Commit and push the code to the repository. This will trigger the Config Sync operator to pick up the changes and create the Kubernetes objects in the ```kcc-tutorial-dev``` namespace. Config Connector will then take the configuration and create a Cloud Storage Bucket in your GCP dev project. 
+15. Commit and push the code to the repository. This will trigger the Config Sync operator to pick up the changes and create the Kubernetes objects in the ```kcc-tutorial-dev``` namespace. Config Connector will then take the configuration and create a Cloud Storage Bucket in your Google Cloud dev project. 
 
 
 >Note: It may take some time for Config Sync to synchronize changes from the repository
@@ -318,7 +306,7 @@ spec:
 
 ## Policy Enforcement
 
- Using Gatekeeper, an open policy agent, policies can be created for GCP resources to ensure their compliance. 
+ Using Gatekeeper, an open policy agent, policies can be created for Google Cloud resources to ensure their compliance. 
 
 
 1. Deploy a released version of Gatekeeper to the Kubernetes cluster created above
@@ -333,7 +321,7 @@ kubectl apply -f https://raw.githubusercontent.com/open-policy-agent/gatekeeper/
 kubectl -n gatekeeper-system describe svc gatekeeper-webhook-service
 ```
 
-3. Create a Gatekeeper constraint template and an instantiation of the template that will require all labels described by the constraint to be present for the Cloud PubSub Topic. This file should be placed in the cluster directory because the configurations should apply to the entire cluster.
+3. Create a Gatekeeper constraint template and an instantiation of the template that will require all labels described by the constraint to be present for the Cloud Pub/Sub topic. This file should be placed in the cluster directory because the configurations should apply to the entire cluster.
 
 ```
 apiVersion: templates.gatekeeper.sh/v1beta1
@@ -386,7 +374,7 @@ spec:
 4. Apply the changes by committing and pushing the code to the repository
 
 
-5. Create a manifest file for a Cloud PubSub Topic resource in the kcc-tutorial-prod directory. In production scenario, this is where a workflow for code review is recommended before applying changes to the prod environment.
+5. Create a manifest file for a Cloud Pub/Sub topic resource in the kcc-tutorial-prod directory. In production scenario, this is where a workflow for code review is recommended before applying changes to the prod environment.
 
 ```
 # namespaces/kcc-tutorial-prod/pubsub.yaml
@@ -423,8 +411,4 @@ metadata:
   name: pubsubtopic-sample
 ```
 
-9. Commit and push the code to the repository. The PubSub topic should be created successfully in the prod GCP project.
-
-
-
-
+9. Commit and push the code to the repository. The Pub/Sub topic should be created successfully in the prod Google Cloud project.
