@@ -32,6 +32,7 @@ This tutorial uses billable components of Google Cloud, including the following:
 * [Vision API](https://cloud.google.com/vision/pricing)
 * [Cloud Run](https://cloud.google.com/run/pricing)
 * [Cloud Build](https://cloud.google.com/build/pricing)
+* [Artifact Registry](https://cloud.google.com/artifact-registry/pricing)
 * [Secret Manager](https://cloud.google.com/secret-manager/pricing)
 
 The completion of this tutorial should not exceed the free tier. 
@@ -51,7 +52,7 @@ We recommend that you create a new Google Cloud project for this tutorial, so th
 
 1.  Enable the Cloud Build, Cloud Scheduler, and Cloud Functions APIs:
 
-    - [Enable the APIs in the Cloud Console.](https://console.cloud.google.com/flows/enableapi?apiid=vision.googleapis.com,run.googleapis.com,cloudbuild.googleapis.com,secretmanager.googleapis.com)
+    - [Enable the APIs in the Cloud Console.](https://console.cloud.google.com/flows/enableapi?apiid=vision.googleapis.com,run.googleapis.com,cloudbuild.googleapis.com,secretmanager.googleapis.com,artifactregistry.googleapis.com)
     - Enable the APIs from the command line:
 
     ```
@@ -59,7 +60,8 @@ We recommend that you create a new Google Cloud project for this tutorial, so th
         vision.googleapis.com \
         run.googleapis.com \
         cloudbuild.googleapis.com \
-        secretmanager.googleapis.com
+        secretmanager.googleapis.com \
+        artifactregistry.googleapis.com
     ```
 
 
@@ -114,6 +116,10 @@ In this section, you will gain familiarity with the Vision API through `gcloud`.
     ]
     }
     ```
+
+    **Note**: Each time this API is invoked, **results may differ slightly**. As such, the values of `score` and `topicality` may differ slightly in your results, but should genereally match the example code.
+
+    TODO
 
 2. Run the same command using the [`--format`](https://cloud.google.com/blog/products/it-ops/filtering-and-formatting-fun-with) option to return partial results: 
 
@@ -190,7 +196,7 @@ The remaining examples in this tutorial use samples and examples from the commun
 1. Navigate to the sample code: 
 
     ```shell
-    cd community/tutorials/TODONAME
+    cd community/tutorials/develop-serverless-app-with-vision-api
     ```
 
 ### Configure Application Credentials
@@ -334,7 +340,7 @@ In this section, we extend the previous example by isolating each object detecte
 1. Run the code sample:
 
     ```shell
-    python3 2_vision_image_markup/markup.py
+    python3 3_vision_split_labels/split_labels.py
     ```
 
     You should get two images created, `doggo_1.png` and `doggo_2.png`, with their labels printed in your result.
@@ -350,12 +356,13 @@ In this section, you'll start to look at the Knowledge Graph Search API, and use
 
 Before trying the Knowledge Graph Search API, you will need to register a developer key. 
 
-1. [Enable the kgsearch API through the Console](https://console.developers.google.com/start/api?id=kgsearch.googleapis.com&credential=client_key)
+1. [Enable the kgsearch API through the Console](https://console.developers.google.com/start/api?id=kgsearch.googleapis.com&credential=client_key). Ensure you select the project for your tutorial.
 1. Click **Go to credentials**.
+1. Confirm "Knowledge Graph Search API" is selected under "Which API are you using?"
 1. Under "Credential Type", select "Public data". 
 1. Click **Next**. 
 1. Copy the value of the "API Key". 
-1. Set this value into the `KGSEARCH_API` environment variable: 
+1. Store this value in the `KGSEARCH_API` environment variable: 
 
     ```shell
     export KGSEARCH_API="<value>"
@@ -387,9 +394,9 @@ You can retrieve this value again by going to the [Credentials](https://console.
 
     This code: 
 
-    1. Initialises the Discovery API.
-    1. Builds a resource class for the Knowledge Graph Search API.
-    1. Searches for a `mid`, printing the results.
+    1. Imports the Discovery API
+    1. Builds a resource class for the Knowledge Graph Search API, allowing it to be used.
+    1. Searches for entities with the `mid`, printing the results.
 
 1. Run the code sample:
 
@@ -429,7 +436,14 @@ In this section, you'll connect the Vision API and Knowledge Graph Search API an
     python3 5_kgsearch_and_vision/showbreeds.py
     ```
 
-    You should get two detected breeds: a Standard Schnauzer, and a Pug. 
+    You should get: 
+     
+      * two generated images, `doggo_1.png` and `doggo_2.png`
+      * for both images: 
+        * the list of labels, and 
+        * which label was detected as the breed. 
+        
+    The result should be: Standard Schnauzer, and Pug. 
 
 ## <a name="6_doggo_demo"></a>Running the functionality as a service
 
@@ -442,19 +456,26 @@ In this section, you'll run a small Flask application that provides a richer imp
 1. Navigate to the code sample and list the directory contents: 
 
     ```shell
-    ls 6_doggo_demo
+    cd 6_doggo_demo
+    ls
     ```
 
     You'll notice several files:
 
         * `app.py`, a Flask app with similar contents to the most recent example.
         * `requirements.txt`, a file listing all the packages installed so far, plus `Flask`
+        * a copy of the sample image, for ease of use.
     
-1. Create a new virtualenv in this directory, installing the depedencies: 
+1. Create a new virtualenv in this directory (if you haven't already): 
 
     ```shell
     python3 -m venv venv
     source venv/bin/activate
+    ```
+
+1. Install the dependencies: 
+
+    ```shell
     pip3 install -r requirements.txt
     ```
 
@@ -484,8 +505,8 @@ You'll also notice from the last section that there are images being created and
 1. Navigate to the code sample and list the directory contents: 
 
     ```
-    cd 7_doggo_service
-    ls
+    cd ../7_doggo_service
+    ls -R
     ```
 
     You'll notice several files: 
@@ -503,21 +524,29 @@ You'll also notice from the last section that there are images being created and
     pip3 install -r requirements.txt
     ```
 
-1. Run the application locally: 
+1. Run the application locally through `gunicorn`: 
 
     ```
-    python app.py
+    python3 -m gunicorn app:app
     ```
+
+    The previous step used the Flask development server, and when you started it, it said not to use it in production. `gunicorn` is a production-ready web server. 
 
 1. Navigate to the application: [http://localhost:8080](http://localhost:8080)
 
     Note that this application allows for custom uploaded images. 
 
-1. Upload the provided `two-doggos.jpg` file. Note how the result is similar to the previous output, but in a refined visual format.
+1. In the upload dialog, select the provided `two-doggos.jpg` and click **Upload**. Wait while the image is processed.
 
-1. Upload the provided `doggo.jpg` file. Note how the output is for a single dog. 
+    Note how the result is similar to the previous output, but in a refined visual format.
 
-1. Upload an image without a dog, such as the [Google Cloud logo](https://upload.wikimedia.org/wikipedia/en/thumb/5/51/Google_Cloud_logo.svg/2880px-Google_Cloud_logo.svg.png). Note how the output detects no dogs.
+1. Upload the provided `doggo.jpg` file. 
+
+    Note how the output is for a single dog. 
+
+1. Upload an image without a dog, such as the [Google Cloud logo](https://upload.wikimedia.org/wikipedia/en/thumb/5/51/Google_Cloud_logo.svg/2880px-Google_Cloud_logo.svg.png). 
+
+    Note how the output detects no dogs.
 
 ### Setup elements
 
@@ -572,7 +601,15 @@ Now you have setup the secret, you can deploy your application:
         --set-secrets KGSEARCH_API=kgsearch_key:latest
     ```
 
-    Note the returned service URL from this command. 
+    If prompted to create a new Artifact Registry repository, type 'Y' to continue.
+
+    This command: 
+    
+    * Creates a new image for the code within the current directory using [Cloud Buildpacks](https://github.com/GoogleCloudPlatform/buildpacks)
+    * Stores the image in Artifact Registry
+    * Deploys a new public service, using the newly created image, referencing the secret.
+
+    Once complete, note the returned service URL from this command. 
 
 1. Open the generated service URL. You can also find the URL from the command line: 
 
@@ -581,6 +618,20 @@ Now you have setup the secret, you can deploy your application:
     ```
 
 1. Try uploading the sample image, and viewing the results. 
+
+1. Try uploading other images, and viewing the results. 
+
+    The application will:
+
+     * if one or more dogs are detected:
+       * return the breed, if found.
+       * otherwise, say "An amazing doggo".
+     * if no dogs are detected:
+       * return "Uploaded image contains no dogs". 
+
+You have now successfully deployed a serverless application that uses the Vision API and Knowledge Graph API to detect dogs in uploaded images. 
+
+
 
 ## <a name="9-cleanup"></a> Clean up
 

@@ -3,15 +3,16 @@ from pprint import pprint
 
 from google.cloud import vision
 
-# initialise object within the API
+# initialise the Vision API
 client = vision.ImageAnnotatorClient()
 
+# local the sample image from file
 with io.open("doggo.jpg", "rb") as image:
     content = image.read()
 
 image = vision.Image(content=content)
 
-# perform localisation
+# detect objects
 objects = client.object_localization(image=image).localized_object_annotations
 
 pprint(objects)
@@ -19,7 +20,7 @@ pprint(objects)
 for item in objects:
     print(item.name)
 
-# perform label detection
+# detect labels
 labels = client.label_detection(image=image)
 
 pprint(labels)

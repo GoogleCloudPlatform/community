@@ -74,7 +74,6 @@ def get_breeds(stream):
     return output
 
 
-# {% if error %}Sad{% else %}Good{% endif %} doggo{% if data|length > 1 %}s{% endif %}
 @app.route("/", methods=["GET", "POST"])
 def main():
     if request.method == "POST":
