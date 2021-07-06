@@ -1,0 +1,105 @@
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><!-- CSS Reset -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.css">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐶</text></svg>">
+</head>
+<title>Doggos</title>
+<style>
+    .column img {
+        max-height: 400px;
+    }
+
+    .column.center {
+        justify-content: center;
+        align-items: center;
+        display: flex;
+    }
+
+    .header {
+        margin-top: 3rem;
+        text-align: center;
+    }
+
+    .row {
+        padding: 2rem;
+    }
+
+    .image {
+        text-align: center;
+    }
+
+    .image img {
+        max-height: 250px;
+    }
+
+    .footer {
+        text-align: center;
+    }
+</style>
+
+<body>
+    <main class="wrapper">
+
+        <header class="header" id="home">
+            <section class="container">
+                <h1>{% if title %}{{title}}{% else %}Show me your doggo{% endif %}</h1>
+            </section>
+        </header>
+        <section class="container">
+            {% if data %}
+            {% for dog in data %}
+            <div class="row">
+                <div class="column image">
+                    <img src="data:image/png;base64,{{dog['image']}}" />
+                </div>
+                <div class="column">
+                    {% if dog["breed"] %}
+                    Yes, this is <b>{{dog['breed']}}</b>.
+                    {% else %}
+                    An amazing doggo
+                    {% endif %}
+                </div>
+            </div>
+            <hr>
+            {% endfor %}
+            {% endif %}
+            {% if error %}
+            <div class="row error">
+                <div class="column center">
+                    {{error}}
+                </div>
+            </div>
+            {% endif %}
+            <div class="row">
+                <div class="column center">
+                    <form method="post" enctype="multipart/form-data">
+                        <input type="file" name="file">
+                        <input id="uploadButton" onclick="updateButton()" type="submit" value="Upload">
+                    </form>
+                </div>
+            </div>
+        </section>
+        <footer class="footer">
+            <section class="container">
+                <div class="row">
+                    <div class="column">
+                        Made with 🐶
+                    </div>
+                </div>
+            </section>
+        </footer>
+    </main>
+    <script>
+        function updateButton() {
+            var button = document.getElementById("uploadButton");
+            button.value = "Processing..."
+        }
+    </script>
+</body>
+
+</html>
