@@ -12,14 +12,13 @@ from PIL import Image
 app = Flask(__name__)
 
 
-
 client = vision.ImageAnnotatorClient()
 kgapi = build("kgsearch", "v1", developerKey=os.environ["KGSEARCH_API"])
 
 
-@app.route('/<path:path>')
+@app.route("/<path:path>")
 def send_img(path):
-    return send_from_directory('', path)
+    return send_from_directory("", path)
 
 
 def get_breeds(stream):
@@ -36,12 +35,14 @@ def get_breeds(stream):
         data = {}
         count += 1
 
-        # Split image
+        # split image
         box = [
             (vertex.x * im.width, vertex.y * im.height)
             for vertex in obj.bounding_poly.normalized_vertices
         ]
         item = im.crop((box[0][0], box[0][1], box[2][0], box[2][1]))
+
+        # save cropped image to file, load into vision API
         item_io = io.BytesIO()
         item.save(item_io, format="png")
 
@@ -54,11 +55,11 @@ def get_breeds(stream):
         labels = [label.description for label in response.label_annotations]
         descs = [label.description for label in response.label_annotations]
         mids = [label.mid for label in response.label_annotations]
-        
+
         if "Dog" not in descs:
             continue
 
-        # Check MIDs
+        # check MIDs
         response = kgapi.entities().search(ids=mids).execute()
         results = [resp["result"] for resp in response["itemListElement"]]
         breed = None
@@ -67,12 +68,13 @@ def get_breeds(stream):
                 breed = item["name"]
                 continue
 
-        data["breed"] = breed if breed else None 
+        data["breed"] = breed if breed else None
         output.append(data)
 
     return output
 
-#{% if error %}Sad{% else %}Good{% endif %} doggo{% if data|length > 1 %}s{% endif %}
+
+# {% if error %}Sad{% else %}Good{% endif %} doggo{% if data|length > 1 %}s{% endif %}
 @app.route("/", methods=["GET", "POST"])
 def main():
     if request.method == "POST":
@@ -86,10 +88,12 @@ def main():
                 else:
                     error = None
                     title = f"Good doggo{'s' if len(data) > 1 else ''}"
-                return render_template("index.html", data=data, error=error, title=title)
+                return render_template(
+                    "index.html", data=data, error=error, title=title
+                )
 
     return render_template("index.html")
 
 
-if __name__ == "__main__": 
+if __name__ == "__main__":
     app.run(host="localhost", port=8080, debug=True)

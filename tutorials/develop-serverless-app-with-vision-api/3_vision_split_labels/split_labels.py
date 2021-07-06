@@ -26,12 +26,12 @@ for obj in objects:
         for vertex in obj.bounding_poly.normalized_vertices
     ]
 
-    # Crop the subimage, save it to disk
+    # crop the subimage, save it to disk
     item = im.crop((box[0][0], box[0][1], box[2][0], box[2][1]))
     item_fn = this_folder.joinpath(f"doggo_{count}.png")
     item.save(item_fn)
 
-    # Open the new image, and process it as we did earlier
+    # open the new image and process it
     with io.open(item_fn, "rb") as image:
         content = image.read()
 

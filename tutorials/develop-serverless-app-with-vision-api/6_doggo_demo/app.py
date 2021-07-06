@@ -14,9 +14,9 @@ client = vision.ImageAnnotatorClient()
 kgapi = build("kgsearch", "v1", developerKey=os.environ["KGSEARCH_API"])
 
 
-@app.route('/<path:path>')
+@app.route("/<path:path>")
 def send_img(path):
-    return send_from_directory('', path)
+    return send_from_directory("", path)
 
 
 def get_breeds():
@@ -37,7 +37,7 @@ def get_breeds():
     for obj in objects:
         count += 1
 
-        # Split image
+        # split image
         box = [
             (vertex.x * im.width, vertex.y * im.height)
             for vertex in obj.bounding_poly.normalized_vertices
@@ -48,7 +48,7 @@ def get_breeds():
         item.save(item_fn)
         output.append(f"<img src='/{item_fn.name}' />")
 
-        # Detect labels on individual image
+        # detect labels on individual image
         with io.open(item_fn, "rb") as image:
             content = image.read()
 
@@ -60,7 +60,7 @@ def get_breeds():
         output.append(f"Doggo {count}")
         output.append(str(labels))
 
-        # Check MIDs
+        # check MIDs
         response = kgapi.entities().search(ids=mids).execute()
         results = [resp["result"] for resp in response["itemListElement"]]
         breed = None
@@ -77,12 +77,12 @@ def get_breeds():
     return "<br>".join(output)
 
 
-@app.route('/')
+@app.route("/")
 def hello_doggo():
     result = get_breeds()
 
     return result
 
 
-if __name__ == "__main__": 
+if __name__ == "__main__":
     app.run(host="localhost", port=8080, debug=True)

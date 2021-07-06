@@ -26,7 +26,7 @@ count = 0
 for obj in objects:
     count += 1
 
-    # Split image
+    # split image
     box = [
         (vertex.x * im.width, vertex.y * im.height)
         for vertex in obj.bounding_poly.normalized_vertices
@@ -36,7 +36,7 @@ for obj in objects:
     item_fn = this_folder.joinpath(f"doggo_{count}.png")
     item.save(item_fn)
 
-    # Detect labels on individual image
+    # detect labels on individual image
     with io.open(item_fn, "rb") as image:
         content = image.read()
 
@@ -48,7 +48,7 @@ for obj in objects:
     print(f"Doggo {count}")
     print(labels)
 
-    # Check MIDs
+    # check MIDs
     response = kgapi.entities().search(ids=mids).execute()
     results = [resp["result"] for resp in response["itemListElement"]]
     breed = None
