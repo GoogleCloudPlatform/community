@@ -1,6 +1,6 @@
 ---
 title: Develop a Serverless Application with Vision API
-description: TODO
+description: Discover the functionality of Vision API and KGSearch API and deploy a serverless application to Cloud Run that detects breeds of dogs in an image.
 author: glasnt
 tags: Python 
 date_published: 2021-??-??
@@ -119,7 +119,6 @@ In this section, you will gain familiarity with the Vision API through `gcloud`.
 
     **Note**: Each time this API is invoked, **results may differ slightly**. As such, the values of `score` and `topicality` may differ slightly in your results, but should genereally match the example code.
 
-    TODO
 
 2. Run the same command using the [`--format`](https://cloud.google.com/blog/products/it-ops/filtering-and-formatting-fun-with) option to return partial results: 
 
