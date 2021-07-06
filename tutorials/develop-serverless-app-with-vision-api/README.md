@@ -6,9 +6,6 @@ tags: Python
 date_published: 2021-??-??
 ---
 
-***This code is now in glasnt/community***
-
-
 Katie McLaughlin | Senior Developer Advocate | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
