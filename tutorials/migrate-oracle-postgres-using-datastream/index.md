@@ -58,7 +58,7 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
 ## Source database requirements
 
 For the migration to be successful, you must ensure that several requirements are satisfied on the source Oracle database, to ensure compatibility with the 
-toolchain used in this tutorial.
+toolchain used in this tutorial. Refer to the [product documentation](https://cloud.google.com/datastream/docs/sources#versionsfororaclesourcedb) for the most up-to-date information.
 
 *   **Version**: Oracle 10g v10.2, 11g v11.2.0.4, 12c v12.1.0.2/1, 18c, or 19c
 
@@ -70,12 +70,6 @@ toolchain used in this tutorial.
 *   **Change replication**: [LogMiner with supplemental logging](https://cloud.google.com/datastream/docs/configure-your-source-database) is required.
 
 *   **Size**:
-
-    *   Oracle databases up to 10 TB.
-
-        You can check the database size with this SQL query:
-
-            select sum(bytes)/1024/1024 size_in_mb from dba_segments;
 
     *   Tables of up to 100 GB.
 
@@ -94,7 +88,7 @@ toolchain used in this tutorial.
 ## Notable behaviors and limitations
 
 This section describes notable behaviors and limitations of the migration process. It is important for you to understand these behaviors and limitations and plan
-ahead to avoid running into problems during the migration.
+ahead to avoid running into problems during the migration. Refer to the [product documentation](https://cloud.google.com/datastream/docs/sources#oracleknownlimitations) for the most up-to-date information.
 
 *   **Primary key and ROWID**: We recommend that you have a primary key on all tables.
 
@@ -109,11 +103,9 @@ ahead to avoid running into problems during the migration.
 
 *   **Column support**:
 
-    *   **Not supported**: Abstract DataTypes (ADT), Collections (VARRAY), LOB, UDT, CACHESYNC_MESSAGE, UROWID, ANYDATA, LONG, LONG RAW, XMLType.
+    *   Columns of data types ANYDATA, BLOB, CLOB, LONG/LONG RAW, NCLOB, UDT, UROWID, XMLTYPE aren't supported, and will be replaced with NULL values.
 
-        These replicate as null values for their columns.
-
-    *   BLOB and CLOB data types are limited to a maximum size of 4 kilobytes.
+    *   For Oracle 11g, tables that have columns of data types ANYDATA or UDT aren't supported, and the entire table won't be replicated.
 
 *   Deferred constraints are converted to non-deferred constraints as part of the standard conversion. This can be customized by setting `FKEY_DEFERRABLE=0` in
     the `ora2pg.conf` configuration file.
