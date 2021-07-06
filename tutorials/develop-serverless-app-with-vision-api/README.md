@@ -631,6 +631,13 @@ Now you have setup the secret, you can deploy your application:
 
 You have now successfully deployed a serverless application that uses the Vision API and Knowledge Graph API to detect dogs in uploaded images. 
 
+## Extending the application
+
+This application focuses on dogs and dog breeds, but could be extended for other objects and label group classifications. 
+
+For instance, try editing the service to detect difference types of food in an uploaded image. 
+
+To find other potential categories, use the [`gcloud ml`](#0_gcloud) CLI on a few test images, then use the [kgsearch API](#4_kgsearch_client_api) to inspect common mids. 
 
 
 ## <a name="9-cleanup"></a> Clean up
