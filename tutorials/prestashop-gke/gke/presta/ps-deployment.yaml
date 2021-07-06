@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-psweb
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: server-psweb
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: server-psweb
+    spec:
+      containers:
+      - name: server-psweb
+        image: gcr.io/${PROJECT_ID}/mypresta:1.0.1
+        ports:
+          - name: http
+            containerPort: 80
+        env:
+        - name: DB_PASSWD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: password
+        - name: DB_SERVER
+          value: 127.0.0.1
+        - name: DB_USER
+          value: root
+        volumeMounts:
+          - name: ps-server-volume
+            mountPath: /var/www/html/img
+            subPath: img
+          - name: ps-server-volume
+            mountPath: /var/www/html/download
+            subPath: download
+          - name: ps-server-volume
+            mountPath: /var/www/html/cache
+            subPath: cache
+          - name: ps-server-volume
+            mountPath: /var/www/html/themes/classic/cache
+            subPath: themes/classic/cache
+          - name: ps-server-volume
+            mountPath: /var/www/html/themes/classic/assets/cache
+            subPath: themes/classic/assets/cache
+          - name: ps-server-volume
+            mountPath: /var/www/html/var/log
+            subPath: var/log
+          - name: ps-server-volume
+            mountPath: /var/www/html/config/xml
+            subPath: config/xml
+          - name: ps-server-volume
+            mountPath: /var/lib/php/sessions
+            subPath: sessions
+      - name: cloud-sql-proxy
+        image: gcr.io/cloudsql-docker/gce-proxy:1.17
+        command:
+          - "/cloud_sql_proxy"
+          - "-instances=${INSTANCE_CONNECTION_NAME}=tcp:3306"
+        securityContext:
+          runAsNonRoot: true
+      volumes:
+        - name: ps-server-volume
+          persistentVolumeClaim:
+            claimName: pvc-psweb

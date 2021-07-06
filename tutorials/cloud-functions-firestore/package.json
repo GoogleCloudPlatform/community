@@ -1,8 +1,17 @@
 {
   "name": "cloud-functions-firestore",
-  "version": "0.0.1-alpha1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+      "start": "npx functions-framework --target=main"
+  },
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "@google-cloud/firestore": "0.17.0",
-    "semver": "^5.5.1"
+      "@google-cloud/firestore": "4.13.0"
+  },
+  "devDependencies": {
+      "@google-cloud/functions-framework": "^1.9.0"
   }
 }
