@@ -442,7 +442,8 @@ In this section, you'll run a small Flask application that provides a richer imp
     ls 6_doggo_demo
     ```
 
-    You'll notice several files: 
+    You'll notice several files:
+
         * `app.py`, a Flask app with similar contents to the most recent example.
         * `requirements.txt`, a file listing all the packages installed so far, plus `Flask`
     
@@ -485,6 +486,7 @@ You'll also notice from the last section that there are images being created and
     ```
 
     You'll notice several files: 
+
         * `app.py`, a Flask app with similar contents to the most recent example, with some changes to have information output in a dictionary, and streamed images. 
         * `requirements.txt`, the same packages as the last example, adding `gunicorn`.
         * `Procfile`, a file defining how to start the Flask app. 
