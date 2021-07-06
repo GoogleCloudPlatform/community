@@ -3,7 +3,7 @@ title: Develop a Serverless Application with Vision API
 description: Discover the functionality of Vision API and KGSearch API and deploy a serverless application to Cloud Run that detects breeds of dogs in an image.
 author: glasnt
 tags: Python 
-date_published: 2021-??-??
+date_published: 2021-07-13
 ---
 
 Katie McLaughlin | Senior Developer Advocate | Google
