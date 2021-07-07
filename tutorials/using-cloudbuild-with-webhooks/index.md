@@ -1,13 +1,19 @@
-## Using webhooks to trigger a central Cloud Build pipeline from multiple Git repositories
+---
+title: Using webhooks to trigger a central Cloud Build pipeline from multiple Git repositories
+description: Learn how to trigger centrally managed Cloud Build pipeline with a webhoo
+author: gmogr, MrTrustor
+tags: cloudbuild, ci/cd, webhooks
+date_published: 2021-07-07
+---
 
-<p style="text-align: right">
-author: mogr@</p>
+Grigory Movsesyan | Cloud Engineer | Google
 
-<p style="text-align: right">
-review: isapovoa@, theochamley@</p>
+Théo Chamley | Cloud Solutions Architect | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 ### Objectives
-In this tutorial,  you build a centrally managed Cloud Build pipeline step by step. Using webhook triggers, you also trigger builds from a source code repository which is not natively supported by Cloud Build. You use GitLab in this tutorial, but you can apply the same principles to other source code repositories. \
+In this tutorial, you build a centrally managed Cloud Build pipeline step by step. Using webhook triggers, you also trigger builds from a source code repository which is not natively supported by Cloud Build. You use GitLab in this tutorial, but you can apply the same principles to other source code repositories. \
 One example of why a setup like this one is useful is a Terraform automation pipeline.Terraform typically uses powerful service accounts to apply changes to the infrastructure. In this scenario, you might want to control exactly which commands are executed in the pipeline, and therefore to keep the automation pipeline code separate from the Terraform code.
 
 To achieve this result, you need a pipeline that follows these 4 steps:
@@ -16,7 +22,7 @@ To achieve this result, you need a pipeline that follows these 4 steps:
 3. The build pipeline clones the Git repository.
 4. The build pipeline applies the code changes.
 
-![pipeline_schema](schema.jpg)
+![pipeline_schema](schema.png)
 
 ### Costs
 This tutorial uses the following billable components of Google Cloud:
