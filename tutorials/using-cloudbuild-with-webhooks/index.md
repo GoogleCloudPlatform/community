@@ -14,7 +14,7 @@ Théo Chamley | Cloud Solutions Architect | Google
 
 ### Objectives
 In this tutorial, you build a centrally managed Cloud Build pipeline step by step. Using webhook triggers, you also trigger builds from a source code repository which is not natively supported by Cloud Build. You use GitLab in this tutorial, but you can apply the same principles to other source code repositories. \
-One example of why a setup like this one is useful is a Terraform automation pipeline.Terraform typically uses powerful service accounts to apply changes to the infrastructure. In this scenario, you might want to control exactly which commands are executed in the pipeline, and therefore to keep the automation pipeline code separate from the Terraform code.
+One example of why a setup like this one is useful is a Terraform automation pipeline. Terraform typically uses powerful service accounts to apply changes to the infrastructure. In this scenario, you might want to control exactly which commands are executed in the pipeline, and therefore to keep the automation pipeline code separate from the Terraform code.
 
 To achieve this result, you need a pipeline that follows these 4 steps:
 1. When a developer pushes a code change to the repository, it triggers the build pipeline via a webhook.
@@ -134,16 +134,17 @@ You can use the token to clone the repository with the following command: \
 8. Modify the Cloud Build Trigger inline config again, replacing `[GITLAB_TOKEN]` with actual value.
     ```
     steps: 
-      - name: <strong>gcr.io/cloud-builders/git 
+      - name: gcr.io/cloud-builders/git 
         args: 
           - '-c' 
-          - 'git clone https://gitlab-token:[GITLAB_TOKEN]@[${_REPO_URL](https://gitlab-token:[GITLAB_TOKEN]@${_REPO_URL)}' 
+          - 'git clone https://gitlab-token:[GITLAB_TOKEN]@${_REPO_URL}'
         entrypoint: bash 
     substitutions: 
       _GIT_REPO: $(body.project.git_http_url) 
       _REPO_URL: '${_GIT_REPO##https://}'
     ```
-The parameter **project.git\_http\_url** from the event payload already contains the protocol: **https://**<git\_url>. You need to insert the token after the protocol but before the actual URL. To achieve this, you remove the protocol from the string and then build the URL again using [bash parameter extension](https://cloud.google.com/build/docs/configuring-builds/use-bash-and-bindings-in-substitutions#bash_parameter_expansions).
+   The parameter **project.git\_http\_url** from the event payload already contains the protocol: **https://**<git\_url>. You need to insert the token after the protocol but before the actual URL. To achieve this, you remove the protocol from the string and then build the URL again using [bash parameter extension](https://cloud.google.com/build/docs/configuring-builds/use-bash-and-bindings-in-substitutions#bash_parameter_expansions).
+
 9. Test the new Trigger config, trigger the test push event from GitLab. \
 You should see the repository successfully cloned in the Build logs on the Build history page.
 
@@ -235,22 +236,26 @@ Now, whenever you push changes to the Terraform repository, you also trigger the
 ### Cleaning up
 You can clean up all the resources created in this tutorial by [shutting down the project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#shutting_down_projects). However, if you used an existing project that contains resources other than the one created in this tutorial, you should remove the resources one by one instead:
 
-1. In Cloud Shell, delete the cloud build trigger: \
+1. In Cloud Shell set the PROJECT_ID env variable: \
+`export PROJECT_ID=$(gcloud config get-value project)` 
+2. Delete the cloud build trigger: \
 `gcloud beta builds triggers delete webhook-trigger`
-2. Delete the Cloud Secrets manager: \
-`gcloud secrets delete webhook-trigger-secret`
-`gcloud secrets delete gitlab-token`
-3. Delete the IAM policy: \
-`gcloud projects remove-iam-policy-binding <project_id_or_number> --member=serviceAccount:<project_number>@cloudbuild.gserviceaccount.com --role=roles/secretmanager.secretAccessor`
-4. Delete the Storage Buckets \
-`gsutil rm -r gs://test-bucket-[project_id]`
-`gsutil rm -r gs://tf-state-[project_id]`
+3. Delete the Cloud Secrets manager: \
+```gcloud secrets delete webhook-trigger-secret```
+```gcloud secrets delete gitlab-token```
+4. Delete the IAM policy: \
+`gcloud projects remove-iam-policy-binding ${PROJECT_ID} --member=serviceAccount:${PROJECT_ID}@cloudbuild.gserviceaccount.com --role=roles/secretmanager.secretAccessor`
+5. Delete the Storage Buckets \
+```gsutil rm -r gs://test-bucket-${PROJECT_ID}```
+```gsutil rm -r gs://tf-state-${PROJECT_ID}```
 
 ##### Delete the Deploy token key from your repository
 1. In GitLab, click on **settings** and then choose **Repository**.
 2. Click on the **Expand** button next to **Deploy tokens**.
 3. In the **Active deploy tokens** block find the “cloudbuild” and click on **Revoke**.
 
-##### Delete the GitLab Webhook
-1. In your GitLab repository, click **settings** then click **webhooks**.
-2. At the bottom of the page, find **Project Hooks** block and click on **Delete** next to your webhook.
+##### Delete the GitLab repository
+1. In your GitLab repository, click **settings** then click **general**.
+2. Click on the **Expand** button next to **Advanced**.
+3. At the bottom of the page, click on **Delete project**.
+4. Confirm deletion by typing the repoository name and clicking **Yes, delete project**.
