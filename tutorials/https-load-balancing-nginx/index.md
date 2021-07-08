@@ -352,11 +352,10 @@ balancer:
 
         server {
           listen 80;
-           if ($scheme = "http") {
-           return 301 https://$host$request_uri;
-          }
+            if ($scheme = "http") {
+            return 301 https://$host$request_uri;
+            }
         }
-        
 
 1.  Save and close the virtual host file.
 
