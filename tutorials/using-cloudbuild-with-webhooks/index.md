@@ -190,7 +190,7 @@ Up until now, you did not execute any code contained in the Git repository. In t
     2. Click on **Create bucket**.
     3. In the Name your bucket field enter “tf-state-<project\_id>” replacing the <project\_id> with your actual project\_id.
     4. Click on the **create** button.
-2. Modify the inline Build config as shown below. \
+2. Modify the inline Build config as shown below.
     ```
     steps:
       - name: gcr.io/cloud-builders/git
@@ -241,13 +241,17 @@ You can clean up all the resources created in this tutorial by [shutting down th
 2. Delete the cloud build trigger: \
 `gcloud beta builds triggers delete webhook-trigger`
 3. Delete the Cloud Secrets manager: \
-```gcloud secrets delete webhook-trigger-secret```
-```gcloud secrets delete gitlab-token```
+    ```
+    gcloud secrets delete webhook-trigger-secret
+    gcloud secrets delete gitlab-token
+    ```
 4. Delete the IAM policy: \
 `gcloud projects remove-iam-policy-binding ${PROJECT_ID} --member=serviceAccount:${PROJECT_ID}@cloudbuild.gserviceaccount.com --role=roles/secretmanager.secretAccessor`
 5. Delete the Storage Buckets \
-```gsutil rm -r gs://test-bucket-${PROJECT_ID}```
-```gsutil rm -r gs://tf-state-${PROJECT_ID}```
+    ```
+    gsutil rm -r gs://test-bucket-${PROJECT_ID}
+    gsutil rm -r gs://tf-state-${PROJECT_ID}
+    ```
 
 ##### Delete the Deploy token key from your repository
 1. In GitLab, click on **settings** and then choose **Repository**.
