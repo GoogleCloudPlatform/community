@@ -1,6 +1,6 @@
 ---
 title: Using webhooks to trigger a central Cloud Build pipeline from multiple Git repositories
-description: Learn how to trigger centrally managed Cloud Build pipeline with a webhoo
+description: Learn how to trigger centrally managed Cloud Build pipeline with a webhooks
 author: gmogr, MrTrustor
 tags: cloudbuild, ci/cd, webhooks
 date_published: 2021-07-07
@@ -237,28 +237,36 @@ Now, whenever you push changes to the Terraform repository, you also trigger the
 You can clean up all the resources created in this tutorial by [shutting down the project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#shutting_down_projects). However, if you used an existing project that contains resources other than the one created in this tutorial, you should remove the resources one by one instead:
 
 1. In Cloud Shell set the PROJECT_ID env variable: \
-`export PROJECT_ID=$(gcloud config get-value project)` 
+    ```
+    export PROJECT_ID=$(gcloud config get-value project)
+    ```
 2. Delete the cloud build trigger: \
-`gcloud beta builds triggers delete webhook-trigger`
+    ```
+    gcloud beta builds triggers delete webhook-trigger
+    ```
 3. Delete the Cloud Secrets manager: \
     ```
     gcloud secrets delete webhook-trigger-secret
     gcloud secrets delete gitlab-token
     ```
 4. Delete the IAM policy: \
-`gcloud projects remove-iam-policy-binding ${PROJECT_ID} --member=serviceAccount:${PROJECT_ID}@cloudbuild.gserviceaccount.com --role=roles/secretmanager.secretAccessor`
+    ```
+    gcloud projects remove-iam-policy-binding ${PROJECT_ID} \
+      --member=serviceAccount:${PROJECT_ID}@cloudbuild.gserviceaccount.com \
+      --role=roles/secretmanager.secretAccessor
+    ```
 5. Delete the Storage Buckets \
     ```
     gsutil rm -r gs://test-bucket-${PROJECT_ID}
     gsutil rm -r gs://tf-state-${PROJECT_ID}
     ```
 
-##### Delete the Deploy token key from your repository
+#### Delete the Deploy token key from your repository
 1. In GitLab, click on **settings** and then choose **Repository**.
 2. Click on the **Expand** button next to **Deploy tokens**.
 3. In the **Active deploy tokens** block find the “cloudbuild” and click on **Revoke**.
 
-##### Delete the GitLab repository
+#### Delete the GitLab repository
 1. In your GitLab repository, click **settings** then click **general**.
 2. Click on the **Expand** button next to **Advanced**.
 3. At the bottom of the page, click on **Delete project**.
