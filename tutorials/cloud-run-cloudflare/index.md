@@ -1,9 +1,9 @@
 ---
-title: Set up a loadbalancer for Cloudrun using Google Cloud and connect using Cloudflare
-description: Learn how to setup a loadbalancer for Cloud Run applications and connect a custom domain
+title: Set up a load balancer for Cloud Run using Google Cloud and connect using Cloudflare
+description: Learn how to set up a load balancer for Cloud Run applications and connect a custom domain.
 author: eblaauw
 tags: cloudflare, cloudrun
-date_published: 2021-7-15
+date_published: 2021-7-20
 ---
 
 Edzo Blaauw | Cloud & Data Engineer | talabat 
