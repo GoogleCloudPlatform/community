@@ -58,7 +58,8 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
 ## Source database requirements
 
 For the migration to be successful, you must ensure that several requirements are satisfied on the source Oracle database, to ensure compatibility with the 
-toolchain used in this tutorial. Refer to the [product documentation](https://cloud.google.com/datastream/docs/sources#versionsfororaclesourcedb) for the most up-to-date information.
+toolchain used in this tutorial. For up-to-date information about version requirements, see the
+[Datastream documentation](https://cloud.google.com/datastream/docs/sources#versionsfororaclesourcedb).
 
 *   **Version**: Oracle 10g v10.2, 11g v11.2.0.4, 12c v12.1.0.2/1, 18c, or 19c
 
@@ -88,7 +89,8 @@ toolchain used in this tutorial. Refer to the [product documentation](https://cl
 ## Notable behaviors and limitations
 
 This section describes notable behaviors and limitations of the migration process. It is important for you to understand these behaviors and limitations and plan
-ahead to avoid running into problems during the migration. Refer to the [product documentation](https://cloud.google.com/datastream/docs/sources#oracleknownlimitations) for the most up-to-date information.
+ahead to avoid running into problems during the migration. For up-to-date information about known limitations, see the
+[Datastream documentation](https://cloud.google.com/datastream/docs/sources#oracleknownlimitations).
 
 *   **Primary key and ROWID**: We recommend that you have a primary key on all tables.
 
@@ -105,7 +107,7 @@ ahead to avoid running into problems during the migration. Refer to the [product
 
     *   Columns of data types ANYDATA, BLOB, CLOB, LONG/LONG RAW, NCLOB, UDT, UROWID, XMLTYPE aren't supported, and will be replaced with NULL values.
 
-    *   For Oracle 11g, tables that have columns of data types ANYDATA or UDT aren't supported, and the entire table won't be replicated.
+    *   For Oracle database 11g, tables that have columns of data types ANYDATA or UDT aren't supported, and the entire table won't be replicated.
 
 *   Deferred constraints are converted to non-deferred constraints as part of the standard conversion. This can be customized by setting `FKEY_DEFERRABLE=0` in
     the `ora2pg.conf` configuration file.
