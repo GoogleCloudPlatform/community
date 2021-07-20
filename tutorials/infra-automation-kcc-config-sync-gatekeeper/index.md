@@ -179,39 +179,42 @@ Cloud resources are managed, are known as _managed projects_.
 
 ## Config Sync
 
-Config Sync is a Kubernetes operator that allows managing Kubernetes resources in a GitOps approach where the configurations are stored in the git
+Config Sync is a Kubernetes operator that allows managing Kubernetes resources in a GitOps approach, in which the configurations are stored in the Git
 repository and automatically pulled by the operator to be applied. 
 
-Follow the instructions below to manually install the Config Connector operator.  
+In this section, you install the Config Sync operator.  
 
-1.  Download the config sync operator yaml file:
+1.  Download the Config Sync operator YAML file:
 
         gsutil cp gs://config-management-release/released/latest/config-sync-operator.yaml config-sync-operator.yaml
 
-1.  Install the operator on the Config Sync cluster created previously:
+1.  Install the operator on the Config Sync cluster:
 
         kubectl apply -f config-sync-operator.yaml
 
-1.  [Create a SSH key pair](https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+1.  [Create an SSH key pair](https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
     and copy the file path to the private key.
 
 1.  Create a Kubernetes secret to store the private key for the repository:
 
         kubectl create secret generic git-creds \
-         --namespace=config-management-system \
-         --from-file=ssh=</path/to/KEYPAIR_PRIVATE_KEY_FILENAME>
+          --namespace=config-management-system \
+          --from-file=ssh=[/PATH/TO/KEYPAIR_PRIVATE_KEY_FILENAME]
 
-    After the Kubernetes secret is created make sure to delete the private key from the local disk or store it in a safe location.
+    Replace `[/PATH/TO/KEYPAIR_PRIVATE_KEY_FILENAME]` with the path to the private key.
 
-1.  Add the SSH public key to the version control system you’re using. The process will depend on the version control system being used
-    (e.g [GitLab](https://docs.gitlab.com/ee/ssh/#add-an-ssh-key-to-your-gitlab-account) or
-    [GitHub](https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)).
+    After the Kubernetes secret is created, make sure to delete the private key from the local disk or store it in a safe location.
+
+1.  Add the SSH public key to the version control system that you’re using. The process depends on the version control system, such as
+    [GitLab](https://docs.gitlab.com/ee/ssh/#add-an-ssh-key-to-your-gitlab-account) or
+    [GitHub](https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account).
 
 1.  On your local machine, install the
-    [nomos command line tool](https://cloud.google.com/kubernetes-engine/docs/add-on/config-sync/how-to/nomos-command#installing). This tool will allow users to
-    interact with the Config Sync operator for checking syntax, initializing the directory structure and debugging any problems with the operator or cluster.  
+    [`nomos` command-line tool](https://cloud.google.com/kubernetes-engine/docs/add-on/config-sync/how-to/nomos-command#installing),
+    which you can use to interact with the Config Sync operator to check syntax, initialize the directory structure, and debug problems with the operator or
+    cluster.  
 
-1.  Initialize a new Config Sync repo directory structure:
+1.  Initialize a new Config Sync repository directory structure:
 
         nomos init
 
@@ -223,12 +226,10 @@ Follow the instructions below to manually install the Config Connector operator.
         └── system/
             └── repo.yaml
 
-1.  In the `namespaces` directory, create two sub-directories named `cc-tutorial-dev` and `cc-tutorial-prod`. These directory names must match the namespaces
-    created previously in the Config Connector set up.
+1.  In the `namespaces` directory, create two sub-directories, `cc-tutorial-dev` and `cc-tutorial-prod`. These directory names must match the namespaces that
+    you created in the Config Connector setup.
 
-1.  Create configuration files for namespaces in `cc-tutorial-dev` and `cc-tutorial-prod`. Even though the namespaces are already created during the Config 
-    Connector set up, by creating namespace configuration in these directories, it will let Config Sync know that this is a namespace directory as opposed to an
-    [abstract namespace directory](https://cloud.google.com/anthos-config-management/docs/concepts/namespace-inheritance#inheritance):
+1.  Create configuration files for namespaces in `cc-tutorial-dev` and `cc-tutorial-prod`:
 
         #namespaces/cc-tutorial-dev/namespace.yaml
 
@@ -244,9 +245,13 @@ Follow the instructions below to manually install the Config Connector operator.
         metadata:
           name: cc-tutorial-prod
 
-1.  Create a git repository in a version control system such as GitHub or GitLab.
+    Even though the namespaces were already created during the Config Connector setup, creating namespace configuration in these directories tells Config Sync
+    that this is a namespace directory, as opposed to an
+    [abstract namespace directory](https://cloud.google.com/anthos-config-management/docs/concepts/namespace-inheritance#inheritance).
 
-1.  Configure the operator by passing values for the repository information:
+1.  Create a Git repository in a version control system such as GitHub or GitLab.
+
+1.  Configure the operator:
 
         # config-management.yaml
 
@@ -257,18 +262,20 @@ Follow the instructions below to manually install the Config Connector operator.
         spec:
           clusterName: cc-host-cluster
           git:
-            syncRepo: <GIT_REPOSITORY_URL>
-            syncBranch: <BRANCH>
+            syncRepo: [GIT_REPOSITORY_URL]
+            syncBranch: [BRANCH_NAME]
             secretType: ssh
-            policyDir: <DIRECTORY>
+            policyDir: [DIRECTORY_NAME]
 
-1.  Apply the configuration file:
+    Replace `[GIT_REPOSITORY_URL]`, `[BRANCH_NAME]`, and `[DIRECTORY_NAME]` with the values for your repository.
+
+1.  Apply the configuration:
 
         kubectl apply -f config-management.yaml
 
-1.  Create Google Cloud resources in the corresponding environment to test the configuration. For this example, you will create a Cloud Storage Bucket in the
-    dev workspace. Create a file with the following content under the `namespaces/cc-tutorial-dev` directory. Make sure metadata.name has a globally unique 
-    value as it is required by Cloud Storage:
+1.  Create Google Cloud resources in the corresponding environment to test the configuration. For this example, you create a Cloud Storage bucket in the
+    dev workspace. Create a file with the following content under the `namespaces/cc-tutorial-dev` directory. Make sure that `metadata.name` has a globally 
+    unique value, as required by Cloud Storage.
 
         # namespaces/cc-tutorial-dev/storagebucket.yaml
 
@@ -288,25 +295,27 @@ Follow the instructions below to manually install the Config Connector operator.
           versioning:
             enabled: true
 
-1.  Commit and push the code to the repository. This will trigger the Config Sync operator to pick up the changes and create the Kubernetes objects in the
-    `cc-tutorial-dev` namespace. Config Connector will then take the configuration and create a Cloud Storage Bucket in your Google Cloud dev project. 
+1.  Commit and push the code to the repository.
 
-    It may take some time for Config Sync to synchronize changes from the repository
+    This triggers the Config Sync operator to pick up the changes and create the Kubernetes objects in the
+    `cc-tutorial-dev` namespace. Config Connector then uses the configuration to create a Cloud Storage bucket in your Google Cloud dev project. 
+
+    It may take some time for Config Sync to synchronize changes from the repository.
 
 ## Policy enforcement
 
- Using Gatekeeper, an open policy agent, policies can be created for Google Cloud resources to ensure their compliance. 
+ You can use Gatekeeper to create and enforce policies for Google Cloud resources. 
 
-1.  Deploy a released version of Gatekeeper to the Kubernetes cluster created above:
+1.  Deploy a released version of Gatekeeper to your Kubernetes cluster:
 
         kubectl apply -f https://raw.githubusercontent.com/open-policy-agent/gatekeeper/release-3.3/deploy/gatekeeper.yaml
 
-1.  Verify that Gatekeeper service is up and running:
+1.  Verify that the Gatekeeper service is running:
 
         kubectl -n gatekeeper-system describe svc gatekeeper-webhook-service
 
-1.  Create a Gatekeeper constraint template and an instantiation of the template that will require all labels described by the constraint to be present for the 
-    Cloud Pub/Sub topic. This file should be placed in the cluster directory because the configurations should apply to the entire cluster:
+1.  Create a Gatekeeper constraint template and an instantiation of the template that requires all labels described by the constraint to be present for the 
+    Pub/Sub topic. This file should be placed in the cluster directory because the configurations should apply to the entire cluster.
 
         apiVersion: templates.gatekeeper.sh/v1beta1
         kind: ConstraintTemplate
@@ -355,8 +364,7 @@ Follow the instructions below to manually install the Config Connector operator.
 
 1.  Apply the changes by committing and pushing the code to the repository.
 
-1.  Create a manifest file for a Cloud Pub/Sub topic resource in the cc-tutorial-prod directory. In production scenario, this is where a workflow for code 
-    review is recommended before applying changes to the prod environment:
+1.  Create a manifest file for a Pub/Sub topic resource in the `cc-tutorial-prod` directory:
 
         # namespaces/cc-tutorial-prod/pubsub.yaml
 
@@ -368,10 +376,17 @@ Follow the instructions below to manually install the Config Connector operator.
             location: us-east4
           name: pubsubtopic-sample
 
-1.  Commit and push the code to the repository. 
+    In a production scenario, this is where a workflow for code review is recommended before applying changes to the prod environment.
+    
+1.  Commit and push the code to the repository.
 
-1.  This process will fail because of the constraint we have introduced to the cluster. The error message can be viewed by running the ```nomos status``` command 
-    in the root directory. A resulting error message may look something like this:
+    This process will fail because of the constraint that you introduced to the cluster.
+
+1.  View the error message by running this command in the root directory:
+
+        nomos status
+        
+    The error message should look something like this:
 
         KNV2010: unable to apply resource: admission webhook "validation.gatekeeper.sh"
          denied the request: [must-contains-labels] you must provide labels: {"owner"}
