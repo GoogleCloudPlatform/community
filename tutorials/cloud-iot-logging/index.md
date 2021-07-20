@@ -44,7 +44,20 @@ This tutorial should not generate any usage that would not be covered by the [fr
 
 If you do not already have a development environment set up with [gcloud](https://cloud.google.com/sdk/downloads) and [Firebase](https://firebase.google.com/docs/cli/) tools, it is recommended that you use [Cloud Shell](https://cloud.google.com/shell/docs/) for any command line instructions.
 
-Set the name of the Cloud IoT Core settings you are using to environment variables:
+### Get the sample code
+
+The sample code for this tutorial is in the
+[Google Cloud Community GitHub repository](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/metrics-export-with-mql).
+
+1.  Clone the repository:
+
+        git clone https://github.com/GoogleCloudPlatform/community.git
+
+1.  Go to the tutorial directory:
+
+        cd community/tutorials/cloud-iot-logging
+
+### Set the environment variables
 
 ```sh
 export REGISTRY_ID=[your registry here]
