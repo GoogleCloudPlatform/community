@@ -15,9 +15,7 @@ This tutorial walks you through a GitOps end-to-end workflow for provisioning an
 * [**Config Connector**](https://cloud.google.com/config-connector/docs/overview) to manage Google Cloud infrastructure
 * [**Config Sync**](https://cloud.google.com/kubernetes-engine/docs/add-on/config-sync/config-sync-overview) to synchronize declarative Config Connector 
   infrastructure configurations from a Git repository
-* [**OPA Gatekeeper**](https://github.com/open-policy-agent/gatekeeper) to create and enforce constrait policies for Google Cloud
-
-![Sample architecture](https://storage.googleapis.com/gcp-community/tutorials/infra-automation-kcc-config-sync-gatekeeper/sample-architecture.png)
+* [**OPA Gatekeeper**](https://github.com/open-policy-agent/gatekeeper) to create and enforce constraint policies for Google Cloud
 
 ## Before you begin
 
