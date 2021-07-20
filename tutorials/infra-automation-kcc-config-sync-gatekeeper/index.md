@@ -39,7 +39,7 @@ This tutorial assumes that you already have a [Google Cloud account](https://con
 
 ## Config Connector
 
-Config Connector is an addon for Kubernetes that allows users to manage Google Cloud infrastructure such as Cloud Storage, Pub/Sub, or Cloud SQL through 
+Config Connector is an addon for Kubernetes that you can use to manage Google Cloud infrastructure such as Cloud Storage, Pub/Sub, and Cloud SQL through 
 Kubernetes-style declarative APIs. 
 
 We recommend that you install Config Connector in a separate cluster in a separate Google Cloud project, the _host project_. The other projects, where Google
@@ -93,13 +93,13 @@ Cloud resources are managed, are known as _managed projects_.
 
         kubectl apply -f configconnector.yaml
 
-1.  Create dedicated Kubernetes namespaces for each environment that will contain resources:
+1.  Create a dedicated Kubernetes namespace for each environment that will contain resources:
 
         kubectl create namespace cc-tutorial-dev
 
         kubectl create namespace cc-tutorial-prod
 
-1.  Annotate the namespaces so that resources are created in the correct Google Cloud project:
+1.  Annotate the namespaces so that resources are created in the correct Google Cloud projects:
 
         kubectl annotate namespace cc-tutorial-dev cnrm.cloud.google.com/project-id=$DEV_PROJECT_ID
 
@@ -177,10 +177,10 @@ Cloud resources are managed, are known as _managed projects_.
 
 ## Config Sync
 
-Config Sync is a Kubernetes operator that allows managing Kubernetes resources in a GitOps approach, in which the configurations are stored in the Git
-repository and automatically pulled by the operator to be applied. 
-
 In this section, you install the Config Sync operator.  
+
+Config Sync is a Kubernetes operator that allows managing Kubernetes resources in a GitOps workflow, in which the configurations are stored in the Git
+repository and automatically pulled by the operator to be applied. 
 
 1.  Download the Config Sync operator YAML file:
 
@@ -243,8 +243,8 @@ In this section, you install the Config Sync operator.
         metadata:
           name: cc-tutorial-prod
 
-    Even though the namespaces were already created during the Config Connector setup, creating namespace configuration in these directories tells Config Sync
-    that this is a namespace directory, as opposed to an
+    Even though the namespaces were already created during the Config Connector setup, creating the namespace configuration in these directories tells Config 
+    Sync that this is a namespace directory, as opposed to an
     [abstract namespace directory](https://cloud.google.com/anthos-config-management/docs/concepts/namespace-inheritance#inheritance).
 
 1.  Create a Git repository in a version control system such as GitHub or GitLab.
@@ -272,7 +272,7 @@ In this section, you install the Config Sync operator.
         kubectl apply -f config-management.yaml
 
 1.  Create Google Cloud resources in the corresponding environment to test the configuration. For this example, you create a Cloud Storage bucket in the
-    dev workspace. Create a file with the following content under the `namespaces/cc-tutorial-dev` directory. Make sure that `metadata.name` has a globally 
+    dev workspace. Create a file with the following content in the `namespaces/cc-tutorial-dev` directory. Make sure that `metadata.name` has a globally 
     unique value, as required by Cloud Storage.
 
         # namespaces/cc-tutorial-dev/storagebucket.yaml
@@ -401,3 +401,13 @@ In this section, you install the Config Sync operator.
           name: pubsubtopic-sample
 
 1.  Commit and push the code to the repository. The Pub/Sub topic should be created successfully in the prod Google Cloud project.
+
+## Cleaning up
+
+To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the projects.
+
+To delete a project, do the following:
+
+1.  In the Cloud Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
+1.  In the project list, select the project you want to delete and click **Delete**.
+1.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
