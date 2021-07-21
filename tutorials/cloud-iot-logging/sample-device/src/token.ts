@@ -14,31 +14,30 @@
 # limitations under the License.
 */
 
-
 import fs = require('fs');
 import jwt = require('jsonwebtoken');
 
 export enum SignAlgorithm {
-    ES256 = 'ES256',
-    RS256 = 'RS256'
+  ES256 = 'ES256',
+  RS256 = 'RS256',
 }
 
 export class TokenGenerator {
   private privateKey: Buffer;
-  constructor (
+  constructor(
     private projectId: string,
     private privateKeyFile: string,
     private algorithm: SignAlgorithm = SignAlgorithm.ES256
-    ) {
-        this.privateKey = fs.readFileSync(String(this.privateKeyFile));
-    }
- 
-  create () {
+  ) {
+    this.privateKey = fs.readFileSync(String(this.privateKeyFile));
+  }
+
+  create() {
     const token = {
-      'iat': Number(new Date()) / 1000,
-      'exp': Number(new Date()) / 1000 + (20 * 60),  // 20 minutes
-      'aud': this.projectId
+      iat: Number(new Date()) / 1000,
+      exp: Number(new Date()) / 1000 + 20 * 60, // 20 minutes
+      aud: this.projectId,
     };
-    return jwt.sign(token, this.privateKey, { algorithm: this.algorithm });
+    return jwt.sign(token, this.privateKey, {algorithm: this.algorithm});
   }
 }

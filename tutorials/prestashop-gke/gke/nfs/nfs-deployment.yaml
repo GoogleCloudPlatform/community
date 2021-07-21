@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-nfs
+  labels:
+    type: local
+spec:
+  selector:
+    matchLabels:
+      app: server-nfs
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: server-nfs
+    spec:
+      containers:
+      - name: server-nfs
+        image: k8s.gcr.io/volume-nfs:0.8
+        ports:
+          - name: nfs
+            containerPort: 2049
+          - name: mountd
+            containerPort: 20048
+          - name: rpcbind
+            containerPort: 111
+        securityContext:
+          privileged: true
+        volumeMounts:
+          - name: server-pvc
+            mountPath: /exports
+      volumes:
+        - name: server-pvc
+          persistentVolumeClaim:
+            claimName: pvc-nfs

@@ -10,10 +10,8 @@ Preston Holmes | Senior Technical Solutions Consultant | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-This tutorial and sample function demonstrates using [Google Cloud
-Functions][functions] as an integration point between the [Amazon Simple
-Notification Service][sns] (SNS) and Google Cloud Pub/Sub. The
-function is implemented in [Node.js][node].
+This tutorial and sample function demonstrates using [Google Cloud Functions][functions] as an integration point between the
+[Amazon Simple Notification Service][sns] (SNS) and Google Cloud Pub/Sub. The function is implemented in [Node.js][node].
 
 [functions]: https://cloud.google.com/functions
 [node]: https://nodejs.org/en/
@@ -23,7 +21,7 @@ The SNS service makes a POST request to the Cloud Function URL when a
 message is published to the corresponding SNS topic. The function validates the
 sender and topic.
 
-The function then publishes the message to Cloud Pub/Sub, tagging the message
+The function then publishes the message to Pub/Sub, tagging the message
 with attributes of SNS subject, and message ID.
 
 ## Prerequisites
@@ -71,8 +69,7 @@ subscription.
 
         npm install --save sns-validator
 
-1.  Run the following command to install the dependencies that the function
-	uses to communicate with Cloud Pub/Sub service:
+1.  Run the following command to install the dependencies that the function uses to communicate with the Pub/Sub service:
 
         npm install --save --save-exact @google-cloud/pubsub@2.14.0
 
@@ -89,17 +86,17 @@ Create a file named `index.js` with the following contents:
 // We use the https library to confirm the SNS subscription
 const https = require('https');
 
-// import the Google Cloud Pubsub client library
+// import the Google Cloud Pub/Sub client library
 const { PubSub } = require('@google-cloud/pubsub');
 
 // the sns-validator package verifies the host an signature of SNS messages
 const MessageValidator = require('sns-validator');
 const validator = new MessageValidator();
 
-// our pubsub client
+// our Pub/Sub client
 const pubsub = new PubSub();
 
-// the cloud pubsub topic we will publish messages to
+// the Pub/Sub topic we will publish messages to
 const topicName = 'sns-events';
 const topic = pubsub.topic(topicName);
 
@@ -126,7 +123,7 @@ exports.receiveNotification = function receiveNotification (req, res) {
   }
 
   // use the sns-validator library to verify signature
-  // we first parse the cloud function body into a javascript object
+  // we first parse the Cloud Function body into a JavaScript object
   validator.validate(JSON.parse(req.body), async function (err, message) {
     if (err) {
       // the message did not validate
@@ -164,7 +161,7 @@ exports.receiveNotification = function receiveNotification (req, res) {
         });
         break;
       case 'notification':
-        // this is a regular SNS notice, we relay to Pubsub
+        // this is a regular SNS notice, we relay to Pub/Sub
         console.log(message.MessageId + ': ' + message.Message);
 
         const attributes = {
@@ -199,16 +196,15 @@ SNS message is sent to your SNS topic.
 The `receiveNotification` function does the following:
 
 1.  Validates that the request came from SNS. SNS signs each message.
-1.  Confirms a pending subscription when the function is first set up as an SNS
-subscription.
-1.  Relays messages published to the SNS topic into Cloud Pub/Sub
+1.  Confirms a pending subscription when the function is first set up as an SNS subscription.
+1.  Relays messages published to the SNS topic into Google Cloud Pub/Sub.
 
-Be sure to update the Cloud Pub/Sub topic if it is different in your project, and
+Be sure to update the Pub/Sub topic if it is different in your project, and
 update the `expectedTopicArn` to match the ARN of your SNS topic.
 
 This is an important security point. Because HTTPS Cloud Function endpoints are
 otherwise unauthenticated, you want to ensure that only the intended SNS
-points of origin can relay messages into Cloud Pub/Sub.
+points of origin can relay messages into Pub/Sub.
 
 ## Deploying the Cloud Function
 
@@ -245,11 +241,11 @@ pending state replaced with a subscription ARN.
 
 Use the Publish feature in the SNS section of the AWS console to generate a test
 message in raw format. Wait a few seconds and then run the following command to
-confirm that Cloud Function relayed the message to Cloud Pub/Sub:
+confirm that Cloud Function relayed the message to Google Cloud Pub/Sub:
 
 	gcloud pubsub subscriptions pull sns-watcher --auto-ack
 
-Note that the SNS subject was converted to a Cloud Pub/Sub attribute.
+Note that the SNS subject was converted to a Pub/Sub attribute.
 
 [deploying]: https://cloud.google.com/functions/docs/deploying/filesystem
 [pubsubconcepts]: https://cloud.google.com/pubsub/docs/overview#concepts
