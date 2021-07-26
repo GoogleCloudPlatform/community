@@ -34,311 +34,295 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
 
 ## Before you begin
 
-1. [Select or create a Google Cloud project](https://console.cloud.google.com/projectselector2).
-1. [Verify that billing is enabled](https://cloud.google.com/billing/docs/how-to/modify-project) for your project.
+1.  [Select or create a Google Cloud project](https://console.cloud.google.com/projectselector2).
 
-### Install the required tools
+1.  [Verify that billing is enabled](https://cloud.google.com/billing/docs/how-to/modify-project) for your project.
 
-1. Install krew and plugins:
+1.  Install [Krew](https://github.com/kubernetes-sigs/krew), the package manager for kubectl plugins:
 
-    ```
-    (
-    set -x; cd "$(mktemp -d)" &&
-    curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/krew.{tar.gz,yaml}" &&
-    tar zxvf krew.tar.gz &&
-    KREW=./krew-"$(uname | tr '[:upper:]' '[:lower:]')_amd64" &&
-    $KREW install --manifest=krew.yaml --archive=krew.tar.gz &&
-    $KREW update
-    )
-    echo -e "export PATH="${PATH}:${HOME}/.krew/bin"" >> ~/.bashrc && source ~/.bashrc
+        (
+        set -x; cd "$(mktemp -d)" &&
+        curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/krew.{tar.gz,yaml}" &&
+        tar zxvf krew.tar.gz &&
+        KREW=./krew-"$(uname | tr '[:upper:]' '[:lower:]')_amd64" &&
+        $KREW install --manifest=krew.yaml --archive=krew.tar.gz &&
+        $KREW update
+        )
+        echo -e "export PATH="${PATH}:${HOME}/.krew/bin"" >> ~/.bashrc && source ~/.bashrc
 
-    kubectl krew install ctx ns neat
-    ```
+1.  Install the ctx, ns, and neat [plugins](https://krew.sigs.k8s.io/plugins/):
 
-1. Install kpt:
+        kubectl krew install ctx ns neat
 
-    ```
-   sudo apt-get update && sudo apt-get install -y google-cloud-sdk-kpt netcat
-    ```
+1.  Install [kpt](https://cloud.google.com/architecture/managing-cloud-infrastructure-using-kpt):
 
-### Set up your environment
+        sudo apt-get update && sudo apt-get install -y google-cloud-sdk-kpt netcat
 
-1. Create environment variables:
+1.  Set an environment variable for your project ID, replacing `[YOUR_PROJECT_ID]` with your project ID:
 
-    ```
-    export PROJECT_ID=YOUR_PROJECT_ID
+        export PROJECT_ID=[YOUR_PROJECT_ID]
 
-    gcloud config set project ${PROJECT_ID}
-    export PROJECT_NUM=$(gcloud projects describe ${PROJECT_ID} --format='value(projectNumber)')
-    export CLUSTER_1=gke-central
-    export CLUSTER_1_ZONE=us-central1-a
-    export WORKLOAD_POOL=${PROJECT_ID}.svc.id.goog
-    export MESH_ID="proj-${PROJECT_NUM}"
-    export TERRAFORM_SA="terraform-sa"
-    export ASM_MAJOR_VERSION=1.9
-    export ASM_VERSION=1.9.5-asm.2
-    export ASM_REV=asm-195-2
-    export ASM_MCP_REV=asm-managed
-    ```
+1.  Set the working project to your project:
 
-    where you replace `YOUR_PROJECT_ID` with your project ID.
+        gcloud config set project ${PROJECT_ID}
+        
+1.  Set other environment variables:       
 
-1. Create a WORKDIR folder:
+        export PROJECT_NUM=$(gcloud projects describe ${PROJECT_ID} --format='value(projectNumber)')
+        export CLUSTER_1=gke-central
+        export CLUSTER_1_ZONE=us-central1-a
+        export WORKLOAD_POOL=${PROJECT_ID}.svc.id.goog
+        export MESH_ID="proj-${PROJECT_NUM}"
+        export TERRAFORM_SA="terraform-sa"
+        export ASM_MAJOR_VERSION=1.9
+        export ASM_VERSION=1.9.5-asm.2
+        export ASM_REV=asm-195-2
+        export ASM_MCP_REV=asm-managed
 
-    ```
-    mkdir -p asm-tf && cd asm-tf && export WORKDIR=`pwd`
-    ```
+1.  Create a `WORKDIR` folder:
 
-1. Create a KUBECONFIG file for this tutorial:
+        mkdir -p asm-tf && cd asm-tf && export WORKDIR=`pwd`
+    
+1.  Create a `KUBECONFIG` file for this tutorial:
 
-    ```
-    touch asm-kubeconfig && export KUBECONFIG=`pwd`/asm-kubeconfig
-    ```
+        touch asm-kubeconfig && export KUBECONFIG=`pwd`/asm-kubeconfig
 
-1. Verify that your current Terraform version is version 0.13. If it is not version 0.13, you can download Terraform ver 0.13 [here](https://releases.hashicorp.com/terraform/).
+1.  Verify that your Terraform version is 0.13.
+  
+    If you don't have Terraform version 0.13, then download and install Terraform version 0.13:
 
-    ```
-    wget https://releases.hashicorp.com/terraform/0.13.7/terraform_0.13.7_linux_amd64.zip
-    unzip terraform_0.13.7_linux_amd64.zip
-    export TERRAFORM_CMD=`pwd`/terraform # Path of your terraform binary
-    ```
+        wget https://releases.hashicorp.com/terraform/0.13.7/terraform_0.13.7_linux_amd64.zip
+        unzip terraform_0.13.7_linux_amd64.zip
+        export TERRAFORM_CMD=`pwd`/terraform # Path of your terraform binary
 
 ## Prepare Terraform
 
-1. Create a Google Cloud Platform Service account and give it the following roles:
+1.  Create a Google Cloud Service account and give it the following roles:
 
-    ```
-    gcloud --project=${PROJECT_ID} iam service-accounts create ${TERRAFORM_SA} \
-      --description="terraform-sa" \
-      --display-name=${TERRAFORM_SA}
+        gcloud --project=${PROJECT_ID} iam service-accounts create ${TERRAFORM_SA} \
+          --description="terraform-sa" \
+          --display-name=${TERRAFORM_SA}
 
-    ROLES=(
-      'roles/servicemanagement.admin' \
-      'roles/storage.admin' \
-      'roles/serviceusage.serviceUsageAdmin' \
-      'roles/meshconfig.admin' \
-      'roles/compute.admin' \
-      'roles/container.admin' \
-      'roles/resourcemanager.projectIamAdmin' \
-      'roles/iam.serviceAccountAdmin' \
-      'roles/iam.serviceAccountUser' \
-      'roles/iam.serviceAccountKeyAdmin' \
-      'roles/gkehub.admin')
-    for role in "${ROLES[@]}"
-    do
-      gcloud projects add-iam-policy-binding ${PROJECT_ID} \
-      --member "serviceAccount:${TERRAFORM_SA}@${PROJECT_ID}.iam.gserviceaccount.com" \
-      --role="$role"
-    done
-    ```
+        ROLES=(
+          'roles/servicemanagement.admin' \
+          'roles/storage.admin' \
+          'roles/serviceusage.serviceUsageAdmin' \
+          'roles/meshconfig.admin' \
+          'roles/compute.admin' \
+          'roles/container.admin' \
+          'roles/resourcemanager.projectIamAdmin' \
+          'roles/iam.serviceAccountAdmin' \
+          'roles/iam.serviceAccountUser' \
+          'roles/iam.serviceAccountKeyAdmin' \
+          'roles/gkehub.admin')
+        for role in "${ROLES[@]}"
+        do
+          gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+          --member "serviceAccount:${TERRAFORM_SA}@${PROJECT_ID}.iam.gserviceaccount.com" \
+          --role="$role"
+        done
 
-1. Create the Service Account credential JSON key for Terraform:
+1.  Create the service account credential JSON key for Terraform:
 
-    ```
-    gcloud iam service-accounts keys create ${TERRAFORM_SA}.json \
+        gcloud iam service-accounts keys create ${TERRAFORM_SA}.json \
           --iam-account=${TERRAFORM_SA}@${PROJECT_ID}.iam.gserviceaccount.com
-    ```
 
-1. Set the Terraform credentials and project ID:
+1.  Set the Terraform credentials and project ID:
 
-    ```
-    export GOOGLE_APPLICATION_CREDENTIALS=`pwd`/${TERRAFORM_SA}.json
-    export TF_VAR_project_id=${PROJECT_ID}
-    ```
+        export GOOGLE_APPLICATION_CREDENTIALS=`pwd`/${TERRAFORM_SA}.json
+        export TF_VAR_project_id=${PROJECT_ID}
 
-1. Create a Google Cloud Storage bucket and the backend resource for the Terraform state file:
+1.  Create a Cloud Storage bucket and the backend resource for the Terraform state file:
 
-    ```
-    gsutil mb -p ${PROJECT_ID} gs://${PROJECT_ID}
-    gsutil versioning set on gs://${PROJECT_ID}
+        gsutil mb -p ${PROJECT_ID} gs://${PROJECT_ID}
+        gsutil versioning set on gs://${PROJECT_ID}
 
-    cat <<'EOF' > backend.tf_tmpl
-    terraform {
-     backend "gcs" {
-     bucket  = "${PROJECT_ID}"
-     prefix  = "tfstate"
-     }
-    }
-    EOF
-
-    envsubst < backend.tf_tmpl > backend.tf
-    ```
-
-## Using Terraform
-
-1. Create `main.tf` and `variables.tf` files to deploy a VPC, GKE cluster and Anthos Service Mesh:
-
-    ```
-    cat <<'EOF' > main.tf_tmpl
-    data "google_client_config" "default" {}
-
-    provider "kubernetes" {
-      host                   = "https://${module.gke.endpoint}"
-      token                  = data.google_client_config.default.access_token
-      cluster_ca_certificate = base64decode(module.gke.ca_certificate)
-    }
-
-    data "google_project" "project" {
-      project_id = var.project_id
-    }
-
-    module "vpc" {
-      source  = "terraform-google-modules/network/google"
-      version = "~> 3.0"
-
-      project_id   = var.project_id
-      network_name = var.network
-      routing_mode = "GLOBAL"
-
-      subnets = [
-        {
-          subnet_name   = var.subnetwork
-          subnet_ip     = var.subnetwork_ip_range
-          subnet_region = var.region
+        cat <<'EOF' > backend.tf_tmpl
+        terraform {
+         backend "gcs" {
+         bucket  = "${PROJECT_ID}"
+         prefix  = "tfstate"
+         }
         }
-      ]
+        EOF
 
-      secondary_ranges = {
-        (var.subnetwork) = [
-          {
-            range_name    = var.ip_range_pods
-            ip_cidr_range = var.ip_range_pods_cidr
-          },
-          {
-            range_name    = var.ip_range_services
-            ip_cidr_range = var.ip_range_services_cidr
+        envsubst < backend.tf_tmpl > backend.tf
+
+## Deploy resources with Terraform
+
+In this section, you create and apply Terraform files that define the deployment of a VPC network, GKE cluster, and Anthos Service Mesh.
+
+1.  Create the `main.tf`, `variables.tf`, and `output.tf` files:
+
+        cat <<'EOF' > main.tf_tmpl
+        data "google_client_config" "default" {}
+
+        provider "kubernetes" {
+          host                   = "https://${module.gke.endpoint}"
+          token                  = data.google_client_config.default.access_token
+          cluster_ca_certificate = base64decode(module.gke.ca_certificate)
+        }
+
+        data "google_project" "project" {
+          project_id = var.project_id
+        }
+
+        module "vpc" {
+          source  = "terraform-google-modules/network/google"
+          version = "~> 3.0"
+
+          project_id   = var.project_id
+          network_name = var.network
+          routing_mode = "GLOBAL"
+
+          subnets = [
+            {
+              subnet_name   = var.subnetwork
+              subnet_ip     = var.subnetwork_ip_range
+              subnet_region = var.region
+            }
+          ]
+
+          secondary_ranges = {
+            (var.subnetwork) = [
+              {
+                range_name    = var.ip_range_pods
+                ip_cidr_range = var.ip_range_pods_cidr
+              },
+              {
+                range_name    = var.ip_range_services
+                ip_cidr_range = var.ip_range_services_cidr
+              }
+            ]
           }
-        ]
-      }
-    }
+        }
 
-    module "gke" {
-      source                  = "terraform-google-modules/kubernetes-engine/google"
-      project_id              = var.project_id
-      name                    = var.cluster_name
-      regional                = false
-      region                  = var.region
-      zones                   = var.zones
-      release_channel         = "REGULAR"
-      network                 = module.vpc.network_name
-      subnetwork              = module.vpc.subnets_names[0]
-      ip_range_pods           = var.ip_range_pods
-      ip_range_services       = var.ip_range_services
-      network_policy          = false
-      identity_namespace      = "enabled" # This is required for ASM
-      cluster_resource_labels = { "mesh_id" : "proj-${data.google_project.project.number}" }
-      node_pools = [
-        {
-          name         = "asm-node-pool"
-          autoscaling  = false
-          auto_upgrade = true
-          # ASM requires minimum 4 nodes and e2-standard-4
-          node_count   = 2
-          machine_type = "e2-standard-4"
-        },
-      ]
-    }
+        module "gke" {
+          source                  = "terraform-google-modules/kubernetes-engine/google"
+          project_id              = var.project_id
+          name                    = var.cluster_name
+          regional                = false
+          region                  = var.region
+          zones                   = var.zones
+          release_channel         = "REGULAR"
+          network                 = module.vpc.network_name
+          subnetwork              = module.vpc.subnets_names[0]
+          ip_range_pods           = var.ip_range_pods
+          ip_range_services       = var.ip_range_services
+          network_policy          = false
+          identity_namespace      = "enabled" # This is required for ASM
+          cluster_resource_labels = { "mesh_id" : "proj-${data.google_project.project.number}" }
+          node_pools = [
+            {
+              name         = "asm-node-pool"
+              autoscaling  = false
+              auto_upgrade = true
+              # ASM requires minimum 4 nodes and e2-standard-4
+              node_count   = 2
+              machine_type = "e2-standard-4"
+            },
+          ]
+        }
 
-    module "asm" {
-      source                = "github.com/terraform-google-modules/terraform-google-kubernetes-engine//modules/asm"
-      cluster_name          = module.gke.name
-      cluster_endpoint      = module.gke.endpoint
-      project_id            = var.project_id
-      location              = module.gke.location
-      enable_all            = false
-      enable_cluster_roles  = true
-      enable_cluster_labels = true
-      enable_gcp_apis       = true
-      enable_gcp_iam_roles  = true
-      enable_gcp_components = true
-      enable_registration   = true
-      asm_version           = "1.9"
-      managed_control_plane = true
-      service_account       = "${TERRAFORM_SA}@${PROJECT_ID}.iam.gserviceaccount.com"
-      key_file              = "./${TERRAFORM_SA}.json"
-      skip_validation       = false
-      outdir                = "./${module.gke.name}-outdir-${var.asm_version}"
-      # ca                    = "citadel"
-      # ca_certs = {
-      #   "ca_cert"    = "./ca-cert.pem"
-      #   "ca_key"     = "./ca-key.pem"
-      #   "root_cert"  = "./root-cert.pem"
-      #   "cert_chain" = "./cert-chain.pem"
-      # }
-    }
-    EOF
+        module "asm" {
+          source                = "github.com/terraform-google-modules/terraform-google-kubernetes-engine//modules/asm"
+          cluster_name          = module.gke.name
+          cluster_endpoint      = module.gke.endpoint
+          project_id            = var.project_id
+          location              = module.gke.location
+          enable_all            = false
+          enable_cluster_roles  = true
+          enable_cluster_labels = true
+          enable_gcp_apis       = true
+          enable_gcp_iam_roles  = true
+          enable_gcp_components = true
+          enable_registration   = true
+          asm_version           = "1.9"
+          managed_control_plane = true
+          service_account       = "${TERRAFORM_SA}@${PROJECT_ID}.iam.gserviceaccount.com"
+          key_file              = "./${TERRAFORM_SA}.json"
+          skip_validation       = false
+          outdir                = "./${module.gke.name}-outdir-${var.asm_version}"
+          # ca                    = "citadel"
+          # ca_certs = {
+          #   "ca_cert"    = "./ca-cert.pem"
+          #   "ca_key"     = "./ca-key.pem"
+          #   "root_cert"  = "./root-cert.pem"
+          #   "cert_chain" = "./cert-chain.pem"
+          # }
+        }
+        EOF
 
-    cat <<'EOF' > variables.tf
-    variable "project_id" {}
+        cat <<'EOF' > variables.tf
+        variable "project_id" {}
 
-    variable "cluster_name" {
-      default = "gke-central"
-    }
+        variable "cluster_name" {
+          default = "gke-central"
+        }
 
-    variable "region" {
-      default = "us-central1"
-    }
+        variable "region" {
+          default = "us-central1"
+        }
 
-    variable "zones" {
-      default = ["us-central1-a"]
-    }
+        variable "zones" {
+          default = ["us-central1-a"]
+        }
 
-    variable "network" {
-      default = "asm-vpc"
-    }
+        variable "network" {
+          default = "asm-vpc"
+        }
 
-    variable "subnetwork" {
-      default = "subnet-01"
-    }
+        variable "subnetwork" {
+          default = "subnet-01"
+        }
 
-    variable "subnetwork_ip_range" {
-      default = "10.10.10.0/24"
-    }
+        variable "subnetwork_ip_range" {
+          default = "10.10.10.0/24"
+        }
 
-    variable "ip_range_pods" {
-      default = "subnet-01-pods"
-    }
+        variable "ip_range_pods" {
+          default = "subnet-01-pods"
+        }
 
-    variable "ip_range_pods_cidr" {
-      default = "10.100.0.0/16"
-    }
+        variable "ip_range_pods_cidr" {
+          default = "10.100.0.0/16"
+        }
 
-    variable "ip_range_services" {
-      default = "subnet-01-services"
-    }
+        variable "ip_range_services" {
+          default = "subnet-01-services"
+        }
 
-    variable "ip_range_services_cidr" {
-      default = "10.101.0.0/16"
-    }
+        variable "ip_range_services_cidr" {
+          default = "10.101.0.0/16"
+        }
 
-    variable "asm_version" {
-      default = "1.9"
-    }
-    EOF
+        variable "asm_version" {
+          default = "1.9"
+        }
+        EOF
 
-    cat <<'EOF' > output.tf
-    output "kubernetes_endpoint" {
-      sensitive = true
-      value     = module.gke.endpoint
-    }
+        cat <<'EOF' > output.tf
+        output "kubernetes_endpoint" {
+          sensitive = true
+          value     = module.gke.endpoint
+        }
 
-    output "client_token" {
-      sensitive = true
-      value     = base64encode(data.google_client_config.default.access_token)
-    }
+        output "client_token" {
+          sensitive = true
+          value     = base64encode(data.google_client_config.default.access_token)
+        }
 
-    output "ca_certificate" {
-      value = module.gke.ca_certificate
-    }
+        output "ca_certificate" {
+          value = module.gke.ca_certificate
+        }
 
-    output "service_account" {
-      description = "The default service account used for running nodes."
-      value       = module.gke.service_account
-    }
-    EOF
+        output "service_account" {
+          description = "The default service account used for running nodes."
+          value       = module.gke.service_account
+        }
+        EOF
 
-    envsubst < main.tf_tmpl > main.tf
-    ```
+        envsubst < main.tf_tmpl > main.tf
 
 1. Initialize and apply Terraform:
 
