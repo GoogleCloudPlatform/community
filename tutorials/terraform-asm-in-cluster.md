@@ -174,7 +174,7 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
 
 In this section, you create and apply Terraform files that define the deployment of a VPC network, GKE cluster, and Anthos Service Mesh.
 
-1.  Create the `main.tf` file:
+1.  Create the `main.tf`, `variables.tf`, and `output.tf` files:
 
         cat <<'EOF' > main.tf_tmpl
         data "google_client_config" "default" {}
@@ -276,8 +276,6 @@ In this section, you create and apply Terraform files that define the deployment
           # }
         }
         EOF
-
-1.  Create the `variables.tf` file:
  
         cat <<'EOF' > variables.tf
         variable "project_id" {}
