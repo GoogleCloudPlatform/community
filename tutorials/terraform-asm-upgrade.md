@@ -1,33 +1,36 @@
 ---
 title: Upgrade Anthos Service Mesh on GKE with Terraform
-description: Use Terraform to deploy a GKE cluster and Anthos Service Mesh with in-cluster control plane and perform a revision-based upgrade.
+description: Use Terraform to deploy a GKE cluster and Anthos Service Mesh with an in-cluster control plane and perform a revision-based upgrade.
 author: cloud-pharaoh
 tags: Kubernetes Engine, ASM
-date_published: 2021-06-23
+date_published: 2021-07-28
 ---
 
 Amina Mansour | Solutions Architect | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-This tutorial shows you how to install Anthos Service Mesh 1.9 with an in-cluster control plane on a GKE cluster using the [GKE Anthos Service Mesh Terraform submodule](https://github.com/terraform-google-modules/terraform-google-kubernetes-engine/tree/master/modules/asm) then upgrade to 1.10 following the revision upgrade process (or "canary" upgrades in Istio).
+This tutorial shows you how to install Anthos Service Mesh 1.9 with an in-cluster control plane on a GKE cluster using the
+[GKE Anthos Service Mesh Terraform submodule](https://github.com/terraform-google-modules/terraform-google-kubernetes-engine/tree/master/modules/asm) and then 
+upgrade to version 1.10 following the revision upgrade process (_canary_ upgrade in Istio).
 
-With a revision-based upgrade, you install a new revision of the control plane alongside the existing control plane. When installing the new version, the script includes a revision label that identifies the new control plane.
+With a revision-based upgrade, you install a new revision of the control plane alongside the existing control plane. When installing the new version, the script 
+includes a revision label that identifies the new control plane. You then migrate to the new version by setting the same revision label on your workloads and 
+performing a rolling restart to re-inject the proxies so that they use the new Anthos Service Mesh version and configuration. With this approach, you can monitor
+the effects of the upgrade on a small fraction of your workloads.
 
-You then migrate to the new version by setting the same revision label on your workloads and performing a rolling restart to re-inject the proxies so they use
-the new Anthos Service Mesh version and configuration. With this approach, you can monitor the effects of the upgrade on a small percentage of your workloads.
-
-After testing your application, you can migrate all traffic to the new version or rollback the changes. This approach is much safer than doing an in-place upgrade where new control plane components replace the previous version.
+After testing your application, you can migrate all traffic to the new version or roll back the changes. This approach is much safer than doing an in-place 
+upgrade in which new control plane components replace the previous version.
 
 ## Objectives
 
-- Use the GKE Anthos Service Mesh Terraform submodule to
-  - Create a Virtual Private Cloud (VPC)
-  - Create a GKE cluster
-  - Install Anthos Service Mesh 1.9
-- Deploy the [Online Boutique](https://cloud.google.com/service-mesh/docs/onlineboutique-install-kpt) sample app on an Anthos Service Mesh labeled `online-boutique` namespace
-- Upgrade to Anthos Service Mesh 1.10 using revision upgrade process
-- Cleanup or destroy all resources via Terraform
+- Use the GKE Anthos Service Mesh Terraform submodule to do the following:
+  - Create a Virtual Private Cloud (VPC) network.
+  - Create a GKE cluster.
+  - Install Anthos Service Mesh 1.9.
+- Deploy the [Online Boutique](https://cloud.google.com/service-mesh/docs/onlineboutique-install-kpt) sample app on an Anthos Service Mesh.
+- Upgrade to Anthos Service Mesh 1.10 using the revision upgrade process.
+- Clean up or destroy all resources with Terraform.
 
 ## Costs 
 
