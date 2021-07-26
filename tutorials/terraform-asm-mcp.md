@@ -1,26 +1,26 @@
 ---
-title: Install Anthos Service Mesh (Google-managed control plane) on GKE with Terraform
-description: Use Terraform to deploy a Kubernetes Engine cluster and install Anthos Service Mesh with Google managed control plane.
+title: Install Anthos Service Mesh with a Google-managed control plane on GKE with Terraform
+description: Use Terraform to deploy a Kubernetes Engine cluster and install Anthos Service Mesh with a Google-managed control plane.
 author: ameer00
 tags: Kubernetes Engine, ASM, MCP
-date_published: 2021-07-21
+date_published: 2021-07-28
 ---
 
 Ameer Abbas | Solutions Architect | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-This tutorial shows you how to install Anthos Service Mesh 1.9 with a Google
-managed control plane (MCP) on a Google Kubernetes Engine (GKE) cluster using the [GKE Anthos Service Mesh Terraform submodule](https://github.com/terraform-google-modules/terraform-google-kubernetes-engine/tree/master/modules/asm).
+This tutorial shows you how to install Anthos Service Mesh 1.9 with a Google-managed control plane on a Google Kubernetes Engine (GKE) cluster using the
+[GKE Anthos Service Mesh Terraform submodule](https://github.com/terraform-google-modules/terraform-google-kubernetes-engine/tree/master/modules/asm).
 
 ## Objectives
 
-- Use the GKE Anthos Service Mesh Terraform submodule to
-  - Create a Virtual Private Cloud (VPC)
-  - Create a GKE cluster
-  - Install Anthos Service Mesh 1.9
-- Deploy the [Online Boutique](https://cloud.google.com/service-mesh/docs/onlineboutique-install-kpt) sample app on an Anthos Service Mesh labeled `online-boutique` namespace
-- Cleanup or destroy all resources via Terraform
+- Use the GKE Anthos Service Mesh Terraform submodule to do the following:
+  - Create a Virtual Private Cloud (VPC) network.
+  - Create a GKE cluster.
+  - Install Anthos Service Mesh 1.9.
+- Deploy the [Online Boutique](https://cloud.google.com/service-mesh/docs/onlineboutique-install-kpt) sample app on an Anthos Service Mesh.
+- Clean up or destroy all resources with Terraform.
 
 ## Costs
 
