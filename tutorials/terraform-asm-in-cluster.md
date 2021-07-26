@@ -19,8 +19,7 @@ This tutorial shows you how to install Anthos Service Mesh 1.9 with an in-cluste
   - Create a Virtual Private Cloud (VPC) network.
   - Create a GKE cluster.
   - Install Anthos Service Mesh 1.9.
-- Deploy the [Online Boutique](https://cloud.google.com/service-mesh/docs/onlineboutique-install-kpt) sample app on an Anthos Service Mesh
-  labeled `online-boutique` namespace
+- Deploy the [Online Boutique](https://cloud.google.com/service-mesh/docs/onlineboutique-install-kpt) sample app on an Anthos Service Mesh.
 - Clean up or destroy all resources with Terraform.
 
 ## Costs
@@ -139,7 +138,7 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
         export GOOGLE_APPLICATION_CREDENTIALS=`pwd`/${TERRAFORM_SA}.json
         export TF_VAR_project_id=${PROJECT_ID}
 
-1.  Create a Google Cloud Storage bucket and the backend resource for the Terraform state file:
+1.  Create a Cloud Storage bucket and the backend resource for the Terraform state file:
 
         gsutil mb -p ${PROJECT_ID} gs://${PROJECT_ID}
         gsutil versioning set on gs://${PROJECT_ID}
@@ -171,7 +170,7 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
                   minReplicas: 2
         EOF
 
-## Using Terraform
+## Deploy resources with Terraform
 
 In this section, you create and apply Terraform files that define the deployment of a VPC network, GKE cluster, and Anthos Service Mesh.
 
@@ -410,7 +409,7 @@ In this section, you create and apply Terraform files that define the deployment
 
 ## Access the Online Boutique app
 
-Access the appl using the `istio-ingressgateway` Service hostname:
+Access the app using the `istio-ingressgateway` Service hostname:
 
     kubectl --context=${CLUSTER_1} -n istio-system get service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
 
