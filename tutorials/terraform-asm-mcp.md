@@ -334,180 +334,156 @@ In this section, you create and apply Terraform files that define the deployment
 
 ## Configure access to your cluster
 
-1. Connect to the GKE cluster:
+1.  Connect to the GKE cluster:
 
-    ```
-    gcloud container clusters get-credentials ${CLUSTER_1} --zone ${CLUSTER_1_ZONE}
-    ```
+        gcloud container clusters get-credentials ${CLUSTER_1} --zone ${CLUSTER_1_ZONE}
    
-   Remember to unset your `KUBECONFIG` var when you're finished.
+   Remember to unset your `KUBECONFIG` variable when you're finished.
 
-1. Rename the cluster context for easy switching:
+1.  Rename the cluster context for easy switching:
 
-    ```
-    kubectl ctx ${CLUSTER_1}=gke_${PROJECT_ID}_${CLUSTER_1_ZONE}_${CLUSTER_1}
-    ```
+        kubectl ctx ${CLUSTER_1}=gke_${PROJECT_ID}_${CLUSTER_1_ZONE}_${CLUSTER_1}
 
-1. Confirm cluster context:
+1.  Confirm the cluster context:
 
-    ```
-    kubectl ctx
-    ```
+        kubectl ctx
 
-   The output is similar to:
+    The output is similar to the following:
 
-    ```
-    gke-central
-    ```
+        gke-central
 
-## Injection based gateways for MCP
+## Set up injection-based gateways for the Google-managed control plane
 
-1. Create a namespace for ingress gateways:
+1.  Create a namespace for ingress gateways:
 
-    ```
-    kubectl --context=${CLUSTER_1} create namespace asm-gateways
-    kubectl --context=${CLUSTER_1} label namespace asm-gateways istio.io/rev=${ASM_MCP_REV}
-    ```
+        kubectl --context=${CLUSTER_1} create namespace asm-gateways
+        kubectl --context=${CLUSTER_1} label namespace asm-gateways istio.io/rev=${ASM_MCP_REV}
 
-1. Create a basic istio-ingress gateway using the injection based method:
+1.  Create a basic Istio ingress gateway using the injection-based method:
 
-    ```
-    cat <<EOF > istio-ingressgateway-injection.yaml
-    apiVersion: v1
-    kind: Service
-    metadata:
-      name: istio-ingressgateway
-      namespace: asm-gateways
-    spec:
-      type: LoadBalancer
-      selector:
-        istio: ingressgateway
-      ports:
-      - port: 80
-        name: http
-      - port: 443
-        name: https
-    ---
-    apiVersion: apps/v1
-    kind: Deployment
-    metadata:
-      name: istio-ingressgateway
-      namespace: asm-gateways
-    spec:
-      selector:
-        matchLabels:
-          istio: ingressgateway
-      template:
+        cat <<EOF > istio-ingressgateway-injection.yaml
+        apiVersion: v1
+        kind: Service
         metadata:
-          annotations:
-            # This is required to tell Anthos Service Mesh to inject the gateway with the
-            # required configuration.
-            inject.istio.io/templates: gateway
-          labels:
-            istio: ingressgateway
-            istio.io/rev: asm-managed # This is required only if the namespace is not labeled.
+          name: istio-ingressgateway
+          namespace: asm-gateways
         spec:
-          containers:
-          - name: istio-proxy
-            image: auto # The image will automatically update each time the pod starts.
-    ---
-    apiVersion: rbac.authorization.k8s.io/v1
-    kind: Role
-    metadata:
-      name: istio-ingressgateway-sds
-      namespace: asm-gateways
-    rules:
-    - apiGroups: [""]
-      resources: ["secrets"]
-      verbs: ["get", "watch", "list"]
-    ---
-    apiVersion: rbac.authorization.k8s.io/v1
-    kind: RoleBinding
-    metadata:
-      name: istio-ingressgateway-sds
-      namespace: asm-gateways
-    roleRef:
-      apiGroup: rbac.authorization.k8s.io
-      kind: Role
-      name: istio-ingressgateway-sds
-    subjects:
-    - kind: ServiceAccount
-      name: default
-    EOF
+          type: LoadBalancer
+          selector:
+            istio: ingressgateway
+          ports:
+          - port: 80
+            name: http
+          - port: 443
+            name: https
+        ---
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          name: istio-ingressgateway
+          namespace: asm-gateways
+        spec:
+          selector:
+            matchLabels:
+              istio: ingressgateway
+          template:
+            metadata:
+              annotations:
+                # This is required to tell Anthos Service Mesh to inject the gateway with the
+                # required configuration.
+                inject.istio.io/templates: gateway
+              labels:
+                istio: ingressgateway
+                istio.io/rev: asm-managed # This is required only if the namespace is not labeled.
+            spec:
+              containers:
+              - name: istio-proxy
+                image: auto # The image will automatically update each time the pod starts.
+        ---
+        apiVersion: rbac.authorization.k8s.io/v1
+        kind: Role
+        metadata:
+          name: istio-ingressgateway-sds
+          namespace: asm-gateways
+        rules:
+        - apiGroups: [""]
+          resources: ["secrets"]
+          verbs: ["get", "watch", "list"]
+        ---
+        apiVersion: rbac.authorization.k8s.io/v1
+        kind: RoleBinding
+        metadata:
+          name: istio-ingressgateway-sds
+          namespace: asm-gateways
+        roleRef:
+          apiGroup: rbac.authorization.k8s.io
+          kind: Role
+          name: istio-ingressgateway-sds
+        subjects:
+        - kind: ServiceAccount
+          name: default
+        EOF
 
-    kubectl --context=${CLUSTER_1} apply -f istio-ingressgateway-injection.yaml
-    ```
-   The output is similar to:
+        kubectl --context=${CLUSTER_1} apply -f istio-ingressgateway-injection.yaml
 
-    ```
-    service/istio-ingressgateway created
-    deployment.apps/istio-ingressgateway created
-    role.rbac.authorization.k8s.io/istio-ingressgateway-sds created
-    rolebinding.rbac.authorization.k8s.io/istio-ingressgateway-sds created
-    ```
+    The output is similar to the following:
 
-1. Verify the resources are created:
+        service/istio-ingressgateway created
+        deployment.apps/istio-ingressgateway created
+        role.rbac.authorization.k8s.io/istio-ingressgateway-sds created
+        rolebinding.rbac.authorization.k8s.io/istio-ingressgateway-sds created
 
-    ```
-    kubectl --context=${CLUSTER_1} get pod,service -n asm-gateways
-    ```
+1.  Verify that the the resources have been created:
 
-   The output is similar to:
-    ```
-    NAME                                        READY   STATUS    RESTARTS   AGE
-    pod/istio-ingressgateway-857f6ffd86-59x8x   1/1     Running   0          63s
+        kubectl --context=${CLUSTER_1} get pod,service -n asm-gateways
 
-    NAME                           TYPE           CLUSTER-IP       EXTERNAL-IP     PORT(S)                      AGE
-    service/istio-ingressgateway   LoadBalancer   10.101.184.118   104.197.18.53   80:32711/TCP,443:30587/TCP   63s
-    ```
+   The output is similar to the following:
 
-## Deploy Online boutique app
+        NAME                                        READY   STATUS    RESTARTS   AGE
+        pod/istio-ingressgateway-857f6ffd86-59x8x   1/1     Running   0          63s
 
-1. Set the Anthos Service Mesh revision variable:
+        NAME                           TYPE           CLUSTER-IP       EXTERNAL-IP     PORT(S)                      AGE
+        service/istio-ingressgateway   LoadBalancer   10.101.184.118   104.197.18.53   80:32711/TCP,443:30587/TCP   63s
 
-    ```
-    export ASM_REVISION=${ASM_MCP_REV}
-    ```
+## Deploy the Online Boutique app
 
-1. Deploy Online Boutique to the GKE cluster:
+1.  Set the Anthos Service Mesh revision variable:
 
-    ```
-    kpt pkg get \
-    https://github.com/GoogleCloudPlatform/microservices-demo.git/release \
-    online-boutique
+        export ASM_REVISION=${ASM_MCP_REV}
 
-    kubectl --context=${CLUSTER_1} create namespace online-boutique
-    kubectl --context=${CLUSTER_1} label namespace online-boutique istio.io/rev=${ASM_REVISION}
-    kubectl --context=${CLUSTER_1} -n online-boutique apply -f online-boutique
-    ```
+1.  Deploy the Online Boutique app to the GKE cluster:
 
-1. Wait until all Deployments are Ready:
+        kpt pkg get \
+          https://github.com/GoogleCloudPlatform/microservices-demo.git/release \
+          online-boutique
 
-    ```
-    kubectl --context=${CLUSTER_1} -n online-boutique wait --for=condition=available --timeout=5m deployment adservice
-    kubectl --context=${CLUSTER_1} -n online-boutique wait --for=condition=available --timeout=5m deployment checkoutservice
-    kubectl --context=${CLUSTER_1} -n online-boutique wait --for=condition=available --timeout=5m deployment currencyservice
-    kubectl --context=${CLUSTER_1} -n online-boutique wait --for=condition=available --timeout=5m deployment emailservice
-    kubectl --context=${CLUSTER_1} -n online-boutique wait --for=condition=available --timeout=5m deployment frontend
-    kubectl --context=${CLUSTER_1} -n online-boutique wait --for=condition=available --timeout=5m deployment paymentservice
-    kubectl --context=${CLUSTER_1} -n online-boutique wait --for=condition=available --timeout=5m deployment productcatalogservice
-    kubectl --context=${CLUSTER_1} -n online-boutique wait --for=condition=available --timeout=5m deployment shippingservice
-    kubectl --context=${CLUSTER_1} -n online-boutique wait --for=condition=available --timeout=5m deployment cartservice
-    kubectl --context=${CLUSTER_1} -n online-boutique wait --for=condition=available --timeout=5m deployment loadgenerator
-    kubectl --context=${CLUSTER_1} -n online-boutique wait --for=condition=available --timeout=5m deployment recommendationservice
-    ```
+        kubectl --context=${CLUSTER_1} create namespace online-boutique
+        kubectl --context=${CLUSTER_1} label namespace online-boutique istio.io/rev=${ASM_REVISION}
+        kubectl --context=${CLUSTER_1} -n online-boutique apply -f online-boutique
 
-## Access Online Boutique
+1.  Wait until all Deployments are ready:
+
+        kubectl --context=${CLUSTER_1} -n online-boutique wait --for=condition=available --timeout=5m deployment adservice
+        kubectl --context=${CLUSTER_1} -n online-boutique wait --for=condition=available --timeout=5m deployment checkoutservice
+        kubectl --context=${CLUSTER_1} -n online-boutique wait --for=condition=available --timeout=5m deployment currencyservice
+        kubectl --context=${CLUSTER_1} -n online-boutique wait --for=condition=available --timeout=5m deployment emailservice
+        kubectl --context=${CLUSTER_1} -n online-boutique wait --for=condition=available --timeout=5m deployment frontend
+        kubectl --context=${CLUSTER_1} -n online-boutique wait --for=condition=available --timeout=5m deployment paymentservice
+        kubectl --context=${CLUSTER_1} -n online-boutique wait --for=condition=available --timeout=5m deployment productcatalogservice
+        kubectl --context=${CLUSTER_1} -n online-boutique wait --for=condition=available --timeout=5m deployment shippingservice
+        kubectl --context=${CLUSTER_1} -n online-boutique wait --for=condition=available --timeout=5m deployment cartservice
+        kubectl --context=${CLUSTER_1} -n online-boutique wait --for=condition=available --timeout=5m deployment loadgenerator
+        kubectl --context=${CLUSTER_1} -n online-boutique wait --for=condition=available --timeout=5m deployment recommendationservice
+
+## Access the Online Boutique app
 
 Run the following command to get the IP address of the external load balancer:
 
-```
-kubectl --context=${CLUSTER_1} -n asm-gateways get service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
-```
+    kubectl --context=${CLUSTER_1} -n asm-gateways get service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
     
-Now that you have deployed Online Boutique, you can view the Anthos Service Mesh Telemetry Dashboards to view the metrics for the application.
+Now that you've deployed Online Boutique app, you can view the Anthos Service Mesh telemetry dashboards to view the metrics for the application.
 
-For more information about metrics, logs and tracing with Anthos Service Mesh,
+For more information about metrics, logs, and tracing with Anthos Service Mesh,
 see [Exploring Anthos Service Mesh in the Cloud Console](https://cloud.google.com/service-mesh/docs/observability/explore-dashboard).
 
 ## Clean up
@@ -516,9 +492,7 @@ see [Exploring Anthos Service Mesh in the Cloud Console](https://cloud.google.co
 
 Use the `terraform destory` command to destroy all Terraform resources:
 
-```
-${TERRAFORM_CMD} destroy -auto-approve
-```
+    ${TERRAFORM_CMD} destroy -auto-approve
 
 ### Delete the project
 
@@ -527,7 +501,8 @@ Alternatively, you can delete the project.
 Deleting a project has the following consequences:
 
 - If you used an existing project, you'll also delete any other work that you've done in the project.
-- You can't reuse the project ID of a deleted project. If you created a custom project ID that you plan to use in the future, delete the resources inside the project instead. This ensures that URLs that use the project ID, such as an `appspot.com` URL, remain available.
+- You can't reuse the project ID of a deleted project. If you created a custom project ID that you plan to use in the future, delete the resources inside the 
+  project instead. This ensures that URLs that use the project ID, such as an `appspot.com` URL, remain available.
 
 To delete a project, do the following:
 
@@ -537,6 +512,5 @@ To delete a project, do the following:
 
 ## What's next
 
-- Learn more about [community support for Terraform](https://cloud.google.com/docs/terraform#terraform_support_for)
-
-- Learn more about [Anthos Service Mesh](https://cloud.google.com/service-mesh)
+- Learn more about [community support for Terraform](https://cloud.google.com/docs/terraform#terraform_support_for).
+- Learn more about [Anthos Service Mesh](https://cloud.google.com/service-mesh).
