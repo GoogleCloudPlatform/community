@@ -431,7 +431,8 @@ Alternatively, you can delete the project.
 Deleting a project has the following consequences:
 
 - If you used an existing project, you'll also delete any other work that you've done in the project.
-- You can't reuse the project ID of a deleted project. If you created a custom project ID that you plan to use in the future, delete the resources inside the project instead. This ensures that URLs that use the project ID, such as an `appspot.com` URL, remain available.
+- You can't reuse the project ID of a deleted project. If you created a custom project ID that you plan to use in the future, delete the resources inside the 
+  project instead. This ensures that URLs that use the project ID, such as an `appspot.com` URL, remain available.
 
 To delete a project, do the following:
 
