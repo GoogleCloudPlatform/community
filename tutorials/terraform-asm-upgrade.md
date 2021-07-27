@@ -202,7 +202,7 @@ In this section, you create and apply Terraform files that define the deployment
               autoscaling  = false
               auto_upgrade = true
               # ASM requires minimum 4 nodes and e2-standard-4
-              node_count   = 2
+              node_count   = 4
               machine_type = "e2-standard-4"
             },
           ]
@@ -347,7 +347,7 @@ In this section, you create and apply Terraform files that define the deployment
 
 ### Access the Online Boutique app
 
-Access the app using the `istio-ingressgateway` Service hostname:
+Run the following command to get the IP address of the external load balancer:
 
     kubectl --context=${CLUSTER_1_CTX} -n istio-system get service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
 
