@@ -146,8 +146,8 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
         cat <<'EOF' > backend.tf_tmpl
         terraform {
           backend "gcs" {
-          bucket  = "${PROJECT_ID}"
-          prefix  = "tfstate"
+            bucket  = "${PROJECT_ID}"
+            prefix  = "tfstate"
           }
         }
         EOF
@@ -388,7 +388,6 @@ In this section, you create and apply Terraform files that define the deployment
 
         kubectl --context=${CLUSTER_1} create namespace online-boutique
         kubectl --context=${CLUSTER_1} label namespace online-boutique istio.io/rev=${ASM_REVISION}
-
         kubectl --context=${CLUSTER_1} -n online-boutique apply -f online-boutique
 
 1.  Wait until all Deployments are ready:
