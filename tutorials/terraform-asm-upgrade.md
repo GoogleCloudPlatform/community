@@ -85,8 +85,8 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
 
 1.  Create a Google Cloud service account and give it the following roles:
 
-        gcloud --project=${PROJECT_ID} iam service-accounts create \
-          ${TERRAFORM_SA} --description="terraform-sa" \
+        gcloud --project=${PROJECT_ID} iam service-accounts create ${TERRAFORM_SA} \
+          --description="terraform-sa" \
           --display-name=${TERRAFORM_SA}
 
         ROLES=(
@@ -127,178 +127,178 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
 
         cat <<'EOF' > ${WORKDIR}/backend.tf_tmpl
         terraform {
-         backend "gcs" {
-           bucket  = "${PROJECT_ID}"
-           prefix  = "tfstate"
-         }
+          backend "gcs" {
+            bucket  = "${PROJECT_ID}"
+            prefix  = "tfstate"
+          }
         }
         EOF
 
         envsubst < ${WORKDIR}/backend.tf_tmpl > ${WORKDIR}/backend.tf
 
-## Install Anthos Service Mesh
+## Deploy resources with Terraform
 
 In this section, you create and apply Terraform files that define the deployment of a VPC network, GKE cluster, and Anthos Service Mesh.
 
 1.  Create the `main.tf`, `variables.tf`, and `output.tf` files:
 
-    cat <<'EOF' > main.tf_tmpl
-    data "google_client_config" "default" {}
+        cat <<'EOF' > main.tf_tmpl
+        data "google_client_config" "default" {}
 
-    provider "kubernetes" {
-      host                   = "https://${module.gke.endpoint}"
-      token                  = data.google_client_config.default.access_token
-      cluster_ca_certificate = base64decode(module.gke.ca_certificate)
-    }
-
-    module "vpc" {
-      source  = "terraform-google-modules/network/google"
-      version = "~> 3.0"
-
-      project_id   = var.project_id
-      network_name = var.network
-      routing_mode = "GLOBAL"
-
-      subnets = [
-        {
-          subnet_name   = var.subnetwork
-          subnet_ip     = var.subnetwork_ip_range
-          subnet_region = var.region
+        provider "kubernetes" {
+          host                   = "https://${module.gke.endpoint}"
+          token                  = data.google_client_config.default.access_token
+          cluster_ca_certificate = base64decode(module.gke.ca_certificate)
         }
-      ]
 
-      secondary_ranges = {
-        (var.subnetwork) = [
-          {
-            range_name    = var.ip_range_pods
-            ip_cidr_range = var.ip_range_pods_cidr
-          },
-          {
-            range_name    = var.ip_range_services
-            ip_cidr_range = var.ip_range_services_cidr
+        module "vpc" {
+          source  = "terraform-google-modules/network/google"
+          version = "~> 3.0"
+
+          project_id   = var.project_id
+          network_name = var.network
+          routing_mode = "GLOBAL"
+
+          subnets = [
+            {
+              subnet_name   = var.subnetwork
+              subnet_ip     = var.subnetwork_ip_range
+              subnet_region = var.region
+            }
+          ]
+
+          secondary_ranges = {
+            (var.subnetwork) = [
+              {
+                range_name    = var.ip_range_pods
+                ip_cidr_range = var.ip_range_pods_cidr
+              },
+              {
+                range_name    = var.ip_range_services
+                ip_cidr_range = var.ip_range_services_cidr
+              }
+            ]
           }
-        ]
-      }
-    }
+        }
 
-    module "gke" {
-      source                  = "terraform-google-modules/kubernetes-engine/google"
-      project_id              = var.project_id
-      name                    = var.cluster_name
-      regional                = false
-      region                  = var.region
-      zones                   = var.zones
-      release_channel         = "REGULAR"
-      network                 = module.vpc.network_name
-      subnetwork              = module.vpc.subnets_names[0]
-      ip_range_pods           = var.ip_range_pods
-      ip_range_services       = var.ip_range_services
-      network_policy          = false
-      identity_namespace      = "enabled"
-      cluster_resource_labels = { "mesh_id" : "proj-${var.project_number}" }
-      node_pools = [
-        {
-          name         = "asm-node-pool"
-          autoscaling  = false
-          auto_upgrade = true
-          # ASM requires minimum 4 nodes and e2-standard-4
-          node_count   = 2
-          machine_type = "e2-standard-4"
-        },
-      ]
-     }
+        module "gke" {
+          source                  = "terraform-google-modules/kubernetes-engine/google"
+          project_id              = var.project_id
+          name                    = var.cluster_name
+          regional                = false
+          region                  = var.region
+          zones                   = var.zones
+          release_channel         = "REGULAR"
+          network                 = module.vpc.network_name
+          subnetwork              = module.vpc.subnets_names[0]
+          ip_range_pods           = var.ip_range_pods
+          ip_range_services       = var.ip_range_services
+          network_policy          = false
+          identity_namespace      = "enabled"
+          cluster_resource_labels = { "mesh_id" : "proj-${var.project_number}" }
+          node_pools = [
+            {
+              name         = "asm-node-pool"
+              autoscaling  = false
+              auto_upgrade = true
+              # ASM requires minimum 4 nodes and e2-standard-4
+              node_count   = 2
+              machine_type = "e2-standard-4"
+            },
+          ]
+         }
 
-    module "asm" {
-      source = "github.com/terraform-google-modules/terraform-google-kubernetes-engine//modules/asm"
-      cluster_name          = module.gke.name
-      cluster_endpoint      = module.gke.endpoint
-      project_id            = var.project_id
-      location              = module.gke.location
-      enable_all            = true
-      asm_version           = var.asm_version
-      managed_control_plane = false
-      service_account       = "${TERRAFORM_SA}@${PROJECT_ID}.iam.gserviceaccount.com"
-      key_file              = "${TERRAFORM_SA}.json"
-      options               = ["envoy-access-log"]
-      skip_validation       = false
-      outdir                = "./${module.gke.name}-outdir-${var.asm_version}"
-    }
-    EOF
+        module "asm" {
+          source = "github.com/terraform-google-modules/terraform-google-kubernetes-engine//modules/asm"
+          cluster_name          = module.gke.name
+          cluster_endpoint      = module.gke.endpoint
+          project_id            = var.project_id
+          location              = module.gke.location
+          enable_all            = true
+          asm_version           = var.asm_version
+          managed_control_plane = false
+          service_account       = "${TERRAFORM_SA}@${PROJECT_ID}.iam.gserviceaccount.com"
+          key_file              = "${TERRAFORM_SA}.json"
+          options               = ["envoy-access-log"]
+          skip_validation       = false
+          outdir                = "./${module.gke.name}-outdir-${var.asm_version}"
+        }
+        EOF
 
-    cat <<'EOF' > variables.tf_tmpl
-    variable "project_id" {}
+        cat <<'EOF' > variables.tf_tmpl
+        variable "project_id" {}
 
-    variable "project_number" {}
+        variable "project_number" {}
 
-    variable "cluster_name" {
-      default = "gke-central"
-    }
+        variable "cluster_name" {
+          default = "gke-central"
+        }
 
-    variable "region" {
-      default = "us-central1"
-    }
+        variable "region" {
+          default = "us-central1"
+        }
 
-    variable "zones" {
-      default = ["us-central1-a"]
-    }
+        variable "zones" {
+          default = ["us-central1-a"]
+        }
 
-    variable "network" {
-      default = "asm-vpc"
-    }
+        variable "network" {
+          default = "asm-vpc"
+        }
 
-    variable "subnetwork" {
-      default = "subnet-01"
-    }
+        variable "subnetwork" {
+          default = "subnet-01"
+        }
 
-    variable "subnetwork_ip_range" {
-      default = "10.10.10.0/24"
-    }
+        variable "subnetwork_ip_range" {
+          default = "10.10.10.0/24"
+        }
 
-    variable "ip_range_pods" {
-      default = "subnet-01-pods"
-    }
+        variable "ip_range_pods" {
+          default = "subnet-01-pods"
+        }
 
-    variable "ip_range_pods_cidr" {
-      default = "10.100.0.0/16"
-    }
+        variable "ip_range_pods_cidr" {
+          default = "10.100.0.0/16"
+        }
 
-    variable "ip_range_services" {
-      default = "subnet-01-services"
-    }
+        variable "ip_range_services" {
+          default = "subnet-01-services"
+        }
 
-    variable "ip_range_services_cidr" {
-      default = "10.101.0.0/16"
-    }
+        variable "ip_range_services_cidr" {
+          default = "10.101.0.0/16"
+        }
 
-    variable "asm_version" {
-      default = "$ASM_MAJOR_VERSION"
-    }
-    EOF
+        variable "asm_version" {
+          default = "$ASM_MAJOR_VERSION"
+        }
+        EOF
 
-    cat <<'EOF' > output.tf
-    output "kubernetes_endpoint" {
-      sensitive = true
-      value     = module.gke.endpoint
-    }
+        cat <<'EOF' > output.tf
+        output "kubernetes_endpoint" {
+          sensitive = true
+          value     = module.gke.endpoint
+        }
 
-    output "client_token" {
-      sensitive = true
-      value     = base64encode(data.google_client_config.default.access_token)
-    }
+        output "client_token" {
+          sensitive = true
+          value     = base64encode(data.google_client_config.default.access_token)
+        }
 
-    output "ca_certificate" {
-      sensitive = true
-      value = module.gke.ca_certificate
-    }
+        output "ca_certificate" {
+          sensitive = true
+          value = module.gke.ca_certificate
+        }
 
-    output "service_account" {
-      description = "The default service account used for running nodes."
-      value       = module.gke.service_account
-    }
-    EOF
+        output "service_account" {
+          description = "The default service account used for running nodes."
+          value       = module.gke.service_account
+        }
+        EOF
 
-    envsubst < main.tf_tmpl > main.tf
-    envsubst < variables.tf_tmpl > variables.tf
+        envsubst < main.tf_tmpl > main.tf
+        envsubst < variables.tf_tmpl > variables.tf
 
 1.  Initialize and apply Terraform:
 
@@ -329,7 +329,6 @@ In this section, you create and apply Terraform files that define the deployment
 
         kubectl --context=${CLUSTER_1_CTX} create namespace online-boutique
         kubectl --context=${CLUSTER_1_CTX} label namespace online-boutique istio.io/rev=${ASM_REV}
-
         kubectl --context=${CLUSTER_1_CTX} -n online-boutique apply -f online-boutique
 
 1.  Wait until all Deployments are ready:
