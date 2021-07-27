@@ -38,7 +38,8 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
 1.  [Verify that billing is enabled](https://cloud.google.com/billing/docs/how-to/modify-project) for your project.
 1.  Enable the required APIs:
 
-        gcloud services enable cloudresourcemanager.googleapis.com \
+        gcloud services enable \
+          cloudresourcemanager.googleapis.com \
           container.googleapis.com
 
 1.  Install [Krew](https://github.com/kubernetes-sigs/krew), the package manager for kubectl plugins:
@@ -348,7 +349,7 @@ In this section, you create and apply Terraform files that define the deployment
 
         envsubst < main.tf_tmpl > main.tf
 
-1. Initialize Terraform and apply the configurations:
+1.  Initialize Terraform and apply the configurations:
 
         ${TERRAFORM_CMD} init
         ${TERRAFORM_CMD} plan
