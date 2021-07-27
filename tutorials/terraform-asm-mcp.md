@@ -324,7 +324,7 @@ In this section, you create and apply Terraform files that define the deployment
 
         envsubst < main.tf_tmpl > main.tf
 
-1.  Initialize and apply Terraform:
+1.  Initialize Terraform and apply the configurations:
 
         ${TERRAFORM_CMD} init
         ${TERRAFORM_CMD} plan
@@ -435,7 +435,7 @@ In this section, you create and apply Terraform files that define the deployment
 
         kubectl --context=${CLUSTER_1} get pod,service -n asm-gateways
 
-   The output is similar to the following:
+    The output is similar to the following:
 
         NAME                                        READY   STATUS    RESTARTS   AGE
         pod/istio-ingressgateway-857f6ffd86-59x8x   1/1     Running   0          63s
