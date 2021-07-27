@@ -139,10 +139,10 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
 
         cat <<'EOF' > backend.tf_tmpl
         terraform {
-         backend "gcs" {
-         bucket  = "${PROJECT_ID}"
-         prefix  = "tfstate"
-         }
+          backend "gcs" {
+            bucket  = "${PROJECT_ID}"
+            prefix  = "tfstate"
+          }
         }
         EOF
 
@@ -336,7 +336,7 @@ In this section, you create and apply Terraform files that define the deployment
 
         gcloud container clusters get-credentials ${CLUSTER_1} --zone ${CLUSTER_1_ZONE}
    
-   Remember to unset your `KUBECONFIG` variable when you're finished.
+    Remember to unset your `KUBECONFIG` variable when you're finished.
 
 1.  Rename the cluster context for easy switching:
 
