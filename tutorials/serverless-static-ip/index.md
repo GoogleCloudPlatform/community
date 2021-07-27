@@ -1,7 +1,7 @@
 ---
 title: Routing Cloud Run and Cloud Functions egress traffic through a static external IP
 description: This tutorial walks you through the steps to route all egress traffic from Cloud Run and Cloud Function to a static IP address.
-author: Julien Phalip
+author: jphalip
 tags: serverless, cloud-run, cloud-functions, networking
 date_published: 2021-07-05
 ---

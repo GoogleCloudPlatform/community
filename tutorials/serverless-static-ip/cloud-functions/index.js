@@ -12,19 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-const http = require('http')
-
+const http = require('http');
 
 exports.function_ip = (req, res) => {
-    http.get("http://checkip.dyndns.org", response => {
-        let data = ""
-        response .on("data", d => {
-            data += d
-        })
-        response.on("end", () => {
-            const regexp = RegExp('[0-9]+(?:\.[0-9]+){3}','g')
-            ip = regexp.exec(data)
-            res.status(200).send(`The Cloud Function's external IP address is: ${ip}\n`)
-        })
+  http.get('http://checkip.dyndns.org', response => {
+    let data = '';
+    response .on('data', d => {
+      data += d;
     })
+    response.on('end', () => {
+      const regexp = RegExp('[0-9]+(?:\.[0-9]+){3}', 'g');
+      ip = regexp.exec(data);
+      res.status(200).send(`The Cloud Function's external IP address is: ${ip}\n`);
+    })
+  })
 };
