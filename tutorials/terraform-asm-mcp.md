@@ -324,13 +324,11 @@ In this section, you create and apply Terraform files that define the deployment
 
         envsubst < main.tf_tmpl > main.tf
 
-1. Initialize and apply Terraform:
+1.  Initialize and apply Terraform:
 
-    ```
-    ${TERRAFORM_CMD} init
-    ${TERRAFORM_CMD} plan
-    ${TERRAFORM_CMD} apply -auto-approve
-    ```
+        ${TERRAFORM_CMD} init
+        ${TERRAFORM_CMD} plan
+        ${TERRAFORM_CMD} apply -auto-approve
 
 ## Configure access to your cluster
 
