@@ -218,7 +218,7 @@ In this section, you create and apply Terraform files that define the deployment
               autoscaling  = false
               auto_upgrade = true
               # ASM requires minimum 4 nodes and e2-standard-4
-              node_count   = 2
+              node_count   = 4
               machine_type = "e2-standard-4"
             },
           ]
@@ -472,6 +472,20 @@ In this section, you create and apply Terraform files that define the deployment
         kubectl --context=${CLUSTER_1} -n online-boutique wait --for=condition=available --timeout=5m deployment cartservice
         kubectl --context=${CLUSTER_1} -n online-boutique wait --for=condition=available --timeout=5m deployment loadgenerator
         kubectl --context=${CLUSTER_1} -n online-boutique wait --for=condition=available --timeout=5m deployment recommendationservice
+
+    The output is similar to the following:
+
+        deployment "adservice" successfully rolled out
+        deployment "checkoutservice" successfully rolled out
+        deployment "currencyservice" successfully rolled out
+        deployment "emailservice" successfully rolled out
+        deployment "frontend" successfully rolled out
+        deployment "paymentservice" successfully rolled out
+        deployment "productcatalogservice" successfully rolled out
+        deployment "shippingservice" successfully rolled out
+        deployment "cartservice" successfully rolled out
+        deployment "loadgenerator" successfully rolled out
+        deployment "recommendationservice" successfully rolled out
 
 ## Access the Online Boutique app
 
