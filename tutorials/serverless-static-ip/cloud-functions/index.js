@@ -17,13 +17,13 @@ const http = require('http');
 exports.function_ip = (req, res) => {
   http.get('http://checkip.dyndns.org', response => {
     let data = '';
-    response .on('data', d => {
+    response.on('data', d => {
       data += d;
-    })
+    });
     response.on('end', () => {
-      const regexp = RegExp('[0-9]+(?:\.[0-9]+){3}', 'g');
-      ip = regexp.exec(data);
+      const regexp = RegExp('[0-9]+(?:.[0-9]+){3}', 'g');
+      let ip = regexp.exec(data);
       res.status(200).send(`The Cloud Function's external IP address is: ${ip}\n`);
-    })
-  })
+    });
+  });
 };
