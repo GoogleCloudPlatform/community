@@ -5,7 +5,7 @@ RUN apk add --no-cache \
     python3 py3-pip \
   && pip3 install --upgrade pip
 # Image specific layers under this line
-RUN apk add --no-cache fcron rsyslog bash
+RUN apk add --no-cache fcron rsyslog bash findutils
 RUN mkdir -p /logs/archive
 RUN echo `date`: File created >> /logs/fimscan.log
 RUN chmod +r /etc/fcron/*
