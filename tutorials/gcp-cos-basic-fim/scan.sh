@@ -1,6 +1,20 @@
 #!/usr/bin/env bash
+# Usage:
+# Mount the filesystem you wish to scan in $FIM_PATH
+# Launch the container and let the scans run
+# Monitor log files for unexpected changes
+
 # This is the primary mover for basic-fim. You can add more paths to the IGNORE
 # array below. All paths are based in the root of the Docker server
+# Set the env variable $FIM_THREADS to control how many parallel processes are used to calculate file hashes
+# Paths to ignore in $FIM_PATH
+# Env vars:
+#  FIM_PATH       [/host-fs]   Path to monitor
+#  FIM_THREADS    [4]          Number of threads to use when hashing
+#  FIM_SYMLINKS   [false]      Follow symlinks found in FIM_PATH
+#  FIM_DATDIR     [/root/.fim] Data file directory
+#  FIM_LOGDIR     [/logs]      Log file directory
+
 IGNORE=(
   '/dev'
   '/sys'
@@ -35,17 +49,31 @@ IGNORE=(
   '/var/log'
   '/log/journal'
   )
+DATE_FORMAT="+%Y-%m-%d %H:%M:%S"
+DEFAULT_FIM_THREADS=4
 
-LOGDIR=/logs
+THREADS="${FIM_THREADS:=$DEFAULT_FIM_THREADS}"
+DATDIR="${FIM_DATDIR:=/root/.fim}"
+LOGDIR="${FIM_LOGDIR:=/logs}"
+FOLLOW_SYMLINKS=`[ "$FIM_SYMLINKS" == true ] && echo "-L" || echo "-P"`
+WATCH_PATH="${FIM_PATH:=/host-fs}"
+
+TMPDIR=$DATDIR/tmp
+
+FINGERPRINTS=$DATDIR/.base
+LOCKFILE=$DATDIR/fim.lock
+
 LOGFILE=$LOGDIR/scan.log
 ERRFILE=$LOGDIR/scan.err
-TMPMANIFEST=/tmp/.manifest.tmp
-MANIFEST=/root/.manifest
-FINGERPRINTS=/root/.base
-FINGERPRINTSTMP=/tmp/.base.tmp
-LOCKFILE=/tmp/fim.lock
-TMPFILE=/tmp/fim.tmp
-FAILEDFILES=/tmp/failed.tmp
+
+MANIFEST=$TMPDIR/basemanifest.tmp
+HASHQUEUE=$TMPDIR/fim.tmp
+FINGERPRINTSTMP=$TMPDIR/base.tmp
+TMPMANIFEST=$TMPDIR/manifest.tmp
+FAILEDFILES=$TMPDIR/failed.tmp
+
+# Prepare the workspace
+mkdir -p $DATDIR $TMPDIR $LOGDIR
 
 # Fail fast if already running
 if [ -f "$LOCKFILE" ];then
@@ -55,89 +83,99 @@ fi
 touch $LOCKFILE
 echo "" | tee -a $LOGFILE
 
+# Clean up any leftovers
+rm -f $TMPDIR/*.tmp
+
 # Construct the file finder command
-FIND="find -P /host-fs"
+FIND="find $FOLLOW_SYMLINKS $WATCH_PATH"
 for DIR in "${IGNORE[@]}"; do
-    FIND=$(echo $FIND -path /host-fs$DIR -prune -o)
+    FIND=$(echo $FIND -path $WATCH_PATH$DIR -prune -o)
 done
 FIND="$FIND -type f -print"
 
 if [ ! -f "$FINGERPRINTS" ];then
-  echo `date` Executing first run | tee -a $LOGFILE
+  echo $(date "$DATE_FORMAT") Executing first run | tee -a $LOGFILE
+  touch $MANIFEST
+else
+  # Collect a full map of files
+  echo $(date "$DATE_FORMAT") Gathering file manifest| tee -a $LOGFILE
+  # Rebuild the original manifest based on the keyfile
+  sed -E 's/^.*  (.*)$/\1/' $FINGERPRINTS | sort > $MANIFEST
 fi
 
-# Collect a full map of files
-echo `date` Gathering file manifest | tee -a $LOGFILE
-
-# Perform a manifest scan and create an archive copy
-$FIND > $TMPFILE
-#cp $TMPFILE $LOGDIR/manifest-`date +%s`.scan
-cp $TMPFILE $TMPMANIFEST # tmpfile and manifest can diverge after this point
+# Perform a manifest scan
+$FIND | sort > $HASHQUEUE
+cp $HASHQUEUE $TMPMANIFEST # HASHQUEUE and manifest can diverge after this point
 
 # Compare to previous scan
 if [ -f "$FINGERPRINTS" ];then
+  cp /dev/null $HASHQUEUE # Existing fingerprints file. Wipe the hash queue
 
   # Find changes in the file manifest
   NEWFILES=$(diff -U0 $MANIFEST $TMPMANIFEST | grep ^+/ |sed -E 's/^\+//g')
   MISSINGFILES=$(diff -U0 $MANIFEST $TMPMANIFEST | grep ^-/ |sed -E 's/^\-//g')
 
   if [ "$MISSINGFILES" != "" ]; then
-    echo `date` "Missing files:" | tee -a $LOGFILE
-    echo $MISSINGFILES | xargs -n1 | tee -a $LOGFILE
-    echo `date` "Removing missing files from manifest" | tee -a $LOGFILE
-    REMOVEMISSING=
-    for MISSINGFILE in `echo $MISSINGFILES | xargs -n1`; do
+    REMOVEMISSING=""
+    while IFS= read -r MISSINGFILE; do
+      echo "REMOVED: $MISSINGFILE" | tee -a $LOGFILE
+		MISSINGFILE=$(echo $MISSINGFILE | sed -E 's/(["!$'\''])/\\\1/g')
       REMOVEMISSING=$(echo "$REMOVEMISSING | grep -v \"$MISSINGFILE\"")
-      echo "$MISSINGFILE: REMOVED" | tee -a $LOGFILE
-    done
+    done <<< $"$MISSINGFILES"
     REMOVEMISSING="cat \$FINGERPRINTS $REMOVEMISSING"
-    eval $REMOVEMISSING > $FINGERPRINTSTMP
+    eval $REMOVEMISSING >> $FINGERPRINTSTMP
     cp $FINGERPRINTSTMP $FINGERPRINTS
   fi
-
-  echo `date` Starting fingerprint comparison | tee -a $LOGFILE
-    sha256sum -c $FINGERPRINTS 2>$ERRFILE \
-    | grep -vE ": OK$" \
-    | tee -a $LOGFILE $FAILEDFILES
-  echo `date` Comparison scan complete | tee -a $LOGFILE
 
   if [ "$NEWFILES" != "" ]; then
-    echo `date` "New files found:" | tee -a $LOGFILE
-    echo $NEWFILES | xargs -n1 | tee -a $LOGFILE
-    echo $NEWFILES | xargs -n1 > $TMPFILE # We only want to fingerprint the new files
-  else
-    cp /dev/null $TMPFILE
+    while IFS= read -r NEWFILE; do
+      echo "NEW: $NEWFILE" | tee -a $LOGFILE
+	   echo "$NEWFILE" >> $HASHQUEUE # Just fingerprint the new files
+    done <<< "$NEWFILES"
   fi
 
+  echo $(date "$DATE_FORMAT") Starting fingerprint comparison | tee -a $LOGFILE
+
+  sha256sum -c $FINGERPRINTS 2>>$ERRFILE \
+    | grep -vE ": OK$" \
+    | tee -a $LOGFILE $FAILEDFILES > /dev/null
+
+  echo $(date "$DATE_FORMAT") Comparison scan complete | tee -a $LOGFILE
   if [ -s "$FAILEDFILES" ]; then
-    #echo `date` "Failed files:" | tee -a $LOGFILE
-    #cat $FAILEDFILES | cut -d ":" -f 1 | tee -a $LOGFILE
-    echo `date` "Updating fingerprint on failed files" | tee -a $LOGFILE
-    UPDATEFAILED=
-    for FAILEDFILE in `cat $FAILEDFILES | cut -d ":" -f 1`; do
-      UPDATEFAILED=$(echo "$UPDATEFAILED | grep -v \"$FAILEDFILE\"")
-    done
+    UPDATEFAILED=""
+
+    while IFS= read -r CHANGEDFILE; do
+		CHANGEDFILE=$(echo $CHANGEDFILE | sed -E 's/(.*):[^:]+$/\1/')
+		echo "CHANGED: $CHANGEDFILE" | tee -a $LOGFILE
+      CHANGEDFILE=$(echo "$CHANGEDFILE" | sed -E 's/(["$])/\\\1/g')
+      UPDATEFAILED=$(echo "$UPDATEFAILED | grep -v \"$CHANGEDFILE\"")
+    done <<< $(cat $FAILEDFILES)
+
+    echo $(date "$DATE_FORMAT") "Fingerprinting changed files" | tee -a $LOGFILE
     UPDATEFAILED="cat \$FINGERPRINTS $UPDATEFAILED"
-    eval $UPDATEFAILED > $FINGERPRINTSTMP
-    cp $FINGERPRINTSTMP $FINGERPRINTS
-    chmod 600 $FINGERPRINTS 2> /dev/null
-    cat $FAILEDFILES \
+    eval $UPDATEFAILED >> $FINGERPRINTSTMP
+
+   cat $FAILEDFILES \
     | awk -F ":" '{ print $1 }' \
-    | xargs sha256sum 2>$ERRFILE \
-    | tee -a $FINGERPRINTS $LOGFILE
+    | xargs -I% -P$THREADS -d '\n' sha256sum "%" 2>>$ERRFILE \
+    | tee -a $FINGERPRINTSTMP $LOGFILE
     rm $FAILEDFILES
   fi
 fi
 
-if [ -s $TMPFILE ]; then
-  echo `date` "Fingerprinting new files" | tee -a $LOGFILE
-  chmod 600 $FINGERPRINTS 2> /dev/null
-  cat $TMPFILE \
-    | xargs sha256sum 2>$ERRFILE \
-    | tee -a $FINGERPRINTS
-  chmod 400 $FINGERPRINTS
+if [ -s $HASHQUEUE ]; then
+  echo $(date "$DATE_FORMAT") "Fingerprinting new files" | tee -a $LOGFILE
+  touch $FINGERPRINTSTMP
+  xargs -a $HASHQUEUE -I% -P$THREADS -d '\n' sha256sum "%" 2>>$ERRFILE | tee -a $FINGERPRINTSTMP
 fi
 
-mv $TMPMANIFEST $MANIFEST
-rm $LOCKFILE $TMPFILE
-echo `date` Scan complete | tee -a $LOGFILE
+if [ -s $FINGERPRINTSTMP ]; then
+  echo $(date "$DATE_FORMAT") "Finalizing scan" | tee -a $LOGFILE
+  sort -k2 $FINGERPRINTSTMP | uniq -f 1 > $FINGERPRINTS
+  chmod 600 $FINGERPRINTS
+  rm $FINGERPRINTSTMP
+fi
+
+rm $LOCKFILE
+rm -f $TMPDIR/*.tmp
+echo $(date "$DATE_FORMAT") Scan complete | tee -a $LOGFILE
