@@ -48,18 +48,22 @@ If you are creating a new project, use the name you intend to give it.
 
 ### Clone the repository
 
-The files we will be using in this tutorial are available in the [GoogleCloudPlatform/community](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/singularity-containers-with-cloud-build) repository. You can clone the repository as follows:
+The files that you use in this tutorial are available in the
+[`GoogleCloudPlatform/community` repository](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/singularity-containers-with-cloud-build)
+
+Clone the repository:
 
 ```bash
-$ git clone https://github.com/GoogleCloudPlatform/community
+git clone https://github.com/GoogleCloudPlatform/community
 ```
-and then change directory into the folder for the tutorial:
+
+Change directory into the folder for the tutorial:
 
 ```bash
-$ cd tutorials/singularity-containers-with-cloud-build
+cd tutorials/singularity-containers-with-cloud-build
 ```
 
-Keep in mind that commands in the tutorial might require some of these files, so if you choose to not clone the repository, you might see an error unless you create the example files yourself.
+Commands in the tutorial require some of these files. If you don't clone the repository, you might see an error unless you create the example files yourself.
 
 ### Source `env.sh` to define the environment variables in your current shell session
 
