@@ -148,7 +148,7 @@ The `reply` function does the following:
 
 1.  Run the following to deploy the function:
 
-        gcloud functions deploy reply --trigger-http
+        gcloud functions deploy reply --trigger-http --runtime nodejs10
 
 1.  Send an SMS message to your Twilio phone number and observe the response you
     receive from the Cloud Function.
