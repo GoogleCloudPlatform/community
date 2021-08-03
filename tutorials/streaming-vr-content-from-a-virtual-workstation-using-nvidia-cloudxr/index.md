@@ -12,7 +12,7 @@ Adrian Graham | Cloud Solutions Architect | Google
 
 # Streaming VR content from a Virtual Workstation using NVIDIA CloudXR
 
-This tutorial shows you how to stream Virtual Reality (VR) content from a virtual workstation on Google Cloud to a tetherless Head Mounted Display (HMD) such as the Oculus&nbspQuest&nbsp2.
+This tutorial shows you how to stream Virtual Reality (VR) content from a virtual workstation on Google Cloud to a tetherless Head Mounted Display (HMD) such as the Oculus&nbsp;Quest&nbsp;2.
 
 ## Objectives
 
