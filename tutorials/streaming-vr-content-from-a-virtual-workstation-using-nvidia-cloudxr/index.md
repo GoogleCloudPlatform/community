@@ -77,7 +77,7 @@ Create a firewall rule to allow access to this instance from your local workstat
 1.  Determine your public IP address by navigating to [ifconfig.me](https://ifconfig.me/) in a web browser.
 1.  In Cloud Shell create a firewall rule:  
 
-```
+```shell
 gcloud compute firewall-rules create allow-cloudxr \  
   --direction=INGRESS \  
   --priority=1000 \  
@@ -96,7 +96,7 @@ Where `[PUBLIC-IP]` is your local workstation's public IP address.
 
 Allow traffic to your workstation by adding a network tag to the instance:  
 
-```
+```shell
 gcloud compute instances add-tags [NAME] \  
   --tags=allow-cloudxr \  
   --zone=[ZONE]  
@@ -112,7 +112,7 @@ Where `[NAME]` is the name of your instance, and `[ZONE]` is your workstation's 
 
 1.  Create a Windows password for your user using either the [Google Cloud Console](https://cloud.google.com/compute/docs/instances/windows/creating-passwords-for-windows-instances#console), or the [gcloud](https://cloud.google.com/compute/docs/instances/windows/creating-passwords-for-windows-instances#gcloud) command line:  
   
-```
+```shell
 gcloud compute reset-windows-password [NAME] --zone=[ZONE]
 ```
   
@@ -127,13 +127,13 @@ Install Google Chrome on the VM instance.
 1.  In your RDP session, launch PowerShell.
 1.  At the prompt, enable HTTPS requests:  
 
-```
+```ps
 [Net.ServicePointManager]::SecurityProtocol = "tls12, tls11, tls"  
 ```
 
 3. Download the Chrome installer:  
   
-```
+```ps
 $Installer = $env:TEMP + "\chrome_installer.exe";  
     Invoke-WebRequest
     "http://dl.google.com/chrome/install/latest/chrome_installer.exe" -OutFile
@@ -142,7 +142,7 @@ $Installer = $env:TEMP + "\chrome_installer.exe";
 
 4. Run the Google Chrome installer:  
   
-```
+```ps
 Start-Process -FilePath $Installer -Args "/silent /install" -Verb RunAs -Wait  
 ```
 
@@ -150,7 +150,7 @@ When prompted, allow the installer to make changes.
 
 5. Finally, remove the installer:  
   
-```
+```ps
 Remove-Item $Installer
 ```
 
@@ -196,13 +196,13 @@ To load files onto your HMD, you use [Android Debug Bridge (ADB)](https://develo
 1.  If prompted, select **Allow USB Debugging** on the HMD.
 1.  Verify your HMD is connected. Using a terminal (Linux or Mac OS) or PowerShell (Windows) run the command:  
   
-```
+```shell
 adb devices -l
 ```
   
 You should see your HMD listed, along with the status of the device, for example:
 
-```
+```shell
 $ adb devices -l
 List of devices attached
 1WMHHXXXXDXXXX         device usb:1-4.3 product:hollywood model:Quest_2 device:hollywood transport_id:1
@@ -230,7 +230,7 @@ Install the sample application on your HMD. Sample apps for all supported HMDs a
 
 1.  On your local workstation, create a plain-text file named `CloudXRLaunchOptions.txt` containing the following:  
   
-```
+```shell
 -s [VM-EXTERNAL-IP]
 ```
   
@@ -238,14 +238,14 @@ Where `[VM-EXTERNAL-IP]` is the external IP address of your virtual workstation.
   
 For example, if your virtual workstation external IP address is **`1.2.3.4`**, you would enter:  
   
-```
+```shell
 -s 1.2.3.4
 ```
 
 1.  Save the file in an accessible location on your local workstation.
 1.  In a terminal on your local workstation, load the configuration file onto your Oculus Quest 2:  
 
-```
+```shell
 adb push CloudXRLaunchOptions.txt /sdcard/CloudXRLaunchOptions.txt
 ```
 
