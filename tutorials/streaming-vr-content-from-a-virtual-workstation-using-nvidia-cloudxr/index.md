@@ -22,7 +22,7 @@ This tutorial shows you how to stream Virtual Reality (VR) content from a virtua
 + Connect to the virtual workstation through the CloudXR client
 
 
-> **Note:** NVIDIA CloudXR is supported on a variety of [natively supported HMDs](https://developer.nvidia.com/nvidia-cloudxr-sdk#:~:text=NATIVELY%20SUPPORTED%20HMDs). This tutorial provides instructions only for the [Oculus Quest 2](https://www.oculus.com/quest-2/). Where indicated, refer to the CloudXR SDK [documentation](https://docs.nvidia.com/cloudxr-sdk/index.html) for instructions on other HMDs and devices.
+> **Note:** NVIDIA CloudXR is supported on a variety of [natively supported HMDs](https://developer.nvidia.com/nvidia-cloudxr-sdk#:~:text=NATIVELY%20SUPPORTED%20HMDs). This tutorial provides instructions only for the [Oculus&nbsp;Quest&nbsp;2](https://www.oculus.com/quest-2/). Where indicated, refer to the CloudXR SDK [documentation](https://docs.nvidia.com/cloudxr-sdk/index.html) for instructions on other HMDs and devices.
 
 ## Costs
 
