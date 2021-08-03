@@ -3,7 +3,7 @@ title: Streaming VR content from a Virtual Workstation using NVIDIA CloudXR
 description: This tutorial shows how to deploy, install, and test NVIDIA CloudXR on a virtual workstation on GCP.
 author: adrian-a-graham
 tags: vr, ar, cloudxr, nvidia, virtual workstation, gpu
-date_published: 2021-08-11
+date_published: 2021-08-03
 ---
 
 Adrian Graham | Cloud Solutions Architect | Google
@@ -12,7 +12,7 @@ Adrian Graham | Cloud Solutions Architect | Google
 
 # Streaming VR content from a Virtual Workstation using NVIDIA CloudXR
 
-This tutorial shows you how to stream Virtual Reality (VR) content from a virtual workstation on Google Cloud to a tetherless Head Mounted Display (HMD) such as the Oculus Quest 2.
+This tutorial shows you how to stream Virtual Reality (VR) content from a virtual workstation on Google Cloud to a tetherless Head Mounted Display (HMD) such as the Oculus&nbspQuest&nbsp2.
 
 ## Objectives
 
