@@ -58,60 +58,72 @@ In this section, you set up some basic resources that the tutorial depends on.
 1.  Make sure that you have access to the [NVIDIA CloudXR SDK](https://developer.nvidia.com/nvidia-cloudxr-sdk). You can register for a free account at 
     [developer.nvidia.com](https://developer.nvidia.com/).
 
-## Create the virtual workstation
+## Set up the virtual workstation
 
-In the Google Cloud Marketplace, create a virtual workstation using the solution [NVIDIA RTX Virtual Workstation - Windows Server 2019](https://console.cloud.google.com/marketplace/product/nvidia/nvidia-quadro-vws-win2019).  By default, this will create an instance with 8 vCPUs, 30 GB RAM, and a 50 GB boot disk. Prior to creation, change these values to better accommodate the CloudXR workload.
+In this section, you create and configure a virtual workstation, including setting up networking and installing utilities. 
 
-1.  In a browser, navigate to the Marketplace solution [NVIDIA RTX Virtual Workstation - Windows Server 2019](https://console.cloud.google.com/marketplace/product/nvidia/nvidia-quadro-vws-win2019).
-1.  Click **LAUNCH** to configure your virtual workstation.
+### Create the virtual workstation
 
-For this tutorial, change the default values:
+In this section, you create a virtual workstation by starting with a configuration from the Google Cloud Marketplace and modifying some of its default settings.
 
-1.  Choose a **zone** with the lowest latency to your location.
-    1.  Go to [gcping.com](gcping.com) to get the median latency to all GCP regions.
-    1.  GPU availability is limited to certain zones. Google Cloud Marketplace will only list zones where the NVIDIA T4 GPU is available.
-1.  Increase **Cores** to 12.
-1.  Increase **Memory** to 64 GB.
-1.  For faster disk performance, change the **Boot disk type** to **SSD Persistent Disk**.
-1.  Change the **Boot disk size in GB** to **200** to increase disk performance and allow for more downloaded content.
+1.  Go to the [NVIDIA RTX Virtual Workstation - Windows Server 2019](https://console.cloud.google.com/marketplace/product/nvidia/nvidia-quadro-vws-win2019)
+    page in the Google Cloud Marketplace.
 
-### Add a firewall rule
+1.  Click **Launch**.
 
-Create a firewall rule to allow access to this instance from your local workstation. CloudXR also requires a number of other ports for remote access. This firewall rule allows access only from your public IP address.
+    If prompted to enable additional APIs, click **Enable**.
 
-1.  Determine your public IP address by navigating to [ifconfig.me](https://ifconfig.me/) in a web browser.
-1.  In Cloud Shell create a firewall rule:  
+    By default, this virtual workstation configuration creates an instance with 8 vCPUs, 30 GB of RAM, and a 50 GB boot disk.
+    
+1.  Set the following values to better accommodate the CloudXR workload:
 
-```shell
-gcloud compute firewall-rules create allow-cloudxr \  
-  --direction=INGRESS \  
-  --priority=1000 \  
-  --network=default \  
-  --action=ALLOW \  
-  --rules=tcp:3389,tcp:5900,tcp:47998-48000,\  
-tcp:48002,tcp:48005,tcp:48010,udp:47998-48000,\  
-udp:48002,udp:48005,udp:48010 \  
-  --source-ranges=[PUBLIC-IP] \  
-  --target-tags=allow-cloudxr
-```
+    1.  For **Zone**, choose a zone with the lowest latency to your location.
+    
+        You can use [GCP ping](https://gcping.com/) to determine the median latency to Google Cloud regions.
+        
+        GPU availability is limited to certain zones. Google Cloud Marketplace only lists zones where the NVIDIA T4 GPU is available.
 
-Where `[PUBLIC-IP]` is your local workstation's public IP address.
+    1.  Set **Machine type** to **Custom**.
+    1.  Increase **Cores** to 12.
+    1.  Increase **Memory** to 64 GB.
+    1.  For faster disk performance, change the **Boot disk type** to **SSD Persistent Disk**.
+    1.  Change the **Boot disk size in GB** to **200** to increase disk performance and allow for more downloaded content.
 
-### Add network tags
+1.  Note the value in the **Deployment name** field; you use this in the next section, when setting up network access.
+1.  Click **Deploy**.
 
-Allow traffic to your workstation by adding a network tag to the instance:  
+### Add a firewall rule and network tags
 
-```shell
-gcloud compute instances add-tags [NAME] \  
-  --tags=allow-cloudxr \  
-  --zone=[ZONE]  
-```
+In this section, you create a firewall rule to allow access to the virtual workstation instance from your local workstation. CloudXR also requires
+other ports for remote access. This firewall rule allows access only from your public IP address.
+
+1.  Determine your local workstation's public IP address by going to [ifconfig.me](https://ifconfig.me/) in a web browser.
+1.  In Cloud Shell, run the following command to create a firewall rule, replacing `[PUBLIC-IP]` with your local workstation's public IP address:
+
+        gcloud compute firewall-rules create allow-cloudxr \  
+          --direction=INGRESS \  
+          --priority=1000 \  
+          --network=default \  
+          --action=ALLOW \  
+          --rules=tcp:3389,tcp:5900,tcp:47998-48000,tcp:48002,tcp:48005,tcp:48010,udp:47998-48000,udp:48002,udp:48005,udp:48010 \  
+          --source-ranges=[PUBLIC-IP] \  
+          --target-tags=allow-cloudxr
+
+1.  Allow traffic to your workstation by adding a network tag to the instance:  
+
+        gcloud compute instances add-tags [DEPLOYMENT_NAME] \  
+          --tags=allow-cloudxr \  
+          --zone=[ZONE]
  
-Where `[NAME]` is the name of your instance, and `[ZONE]` is your workstation's zone.
+    Replace `[DEPLOYMENT_NAME]` with the name of your virtual workstation instance, and replace `[ZONE]` with your virtual workstation's zone.
 
 ## Log in to your workstation
 
-> **Note on accessing your virtual workstation:** To perform the initial setup of your virtual workstation, access your instance using Microsoft Remote Desktop Protocol (RDP). Once connected, install an alternate remote desktop software, such as TightVNC. Once installed, disconnect from the RDP session and reconnect using the alternate remote desktop software. Due to a [limitation](https://steamcommunity.com/app/250820/discussions/0/3264459260617027967/) in SteamVR, CloudXR connections will show a solid green display, if connected via RDP.
+To perform the initial setup of your virtual workstation, access your instance using Microsoft Remote Desktop Protocol (RDP). After you make the initial
+connection, install an alternative remote desktop utility, such as TightVNC. When the alternative remote desktop has been installed, then disconnect from the RDP 
+session and reconnect using the alternative remote desktop software. Because of a
+[limitation](https://steamcommunity.com/app/250820/discussions/0/3264459260617027967/) in SteamVR, CloudXR connections show a solid green display if connected 
+through Microsoft RDP.
 
 ### Create a default Windows password
 
