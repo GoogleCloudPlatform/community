@@ -111,74 +111,71 @@ other ports for remote access. This firewall rule allows access only from your p
 
 1.  Allow traffic to your workstation by adding a network tag to the instance:  
 
-        gcloud compute instances add-tags [DEPLOYMENT_NAME] \  
+        gcloud compute instances add-tags [NAME] \  
           --tags=allow-cloudxr \  
           --zone=[ZONE]
  
-    Replace `[DEPLOYMENT_NAME]` with the name of your virtual workstation instance, and replace `[ZONE]` with your virtual workstation's zone.
+    Replace `[NAME]` with the name of your virtual workstation instance, and replace `[ZONE]` with your virtual workstation's zone.
 
-## Log in to your workstation
+## Set up the connection to your workstation
 
-To perform the initial setup of your virtual workstation, access your instance using Microsoft Remote Desktop Protocol (RDP). After you make the initial
-connection, install an alternative remote desktop utility, such as TightVNC. When the alternative remote desktop has been installed, then disconnect from the RDP 
-session and reconnect using the alternative remote desktop software. Because of a
+In this section, you connect to your instance using Microsoft Remote Desktop Protocol (RDP), install an alternative remote desktop utility, disconnect from
+RDP, and reconnect using the alternative remote desktop utility. Because of a
 [limitation](https://steamcommunity.com/app/250820/discussions/0/3264459260617027967/) in SteamVR, CloudXR connections show a solid green display if connected 
 through Microsoft RDP.
 
-### Create a default Windows password
+### Create a default Windows password and connect to your virtual workstation
 
-1.  Create a Windows password for your user using either the [Google Cloud Console](https://cloud.google.com/compute/docs/instances/windows/creating-passwords-for-windows-instances#console), or the [gcloud](https://cloud.google.com/compute/docs/instances/windows/creating-passwords-for-windows-instances#gcloud) command line:  
+1.  Create a Windows password for your user with the following
+    [`gcloud` command](https://cloud.google.com/compute/docs/instances/windows/creating-passwords-for-windows-instances#gcloud):  
   
-```shell
-gcloud compute reset-windows-password [NAME] --zone=[ZONE]
-```
-  
-Where `[NAME]` is the name of your workstation, and `[ZONE]` is your workstation's zone.
+        gcloud compute reset-windows-password [NAME] --zone=[ZONE]
 
-- Using an RDP client, log into your workstation using the credentials returned by the previous command.
+    Replace `[NAME]` with the name of your workstation, and replace `[ZONE]` with your workstation's zone.
+
+    You can also create a password with the
+    [Cloud Console](https://cloud.google.com/compute/docs/instances/windows/creating-passwords-for-windows-instances#console).
+  
+1.  Using an RDP client, log in to your workstation using the credentials returned by the previous command.
 
 ### Install Chrome
 
-Install Google Chrome on the VM instance.
+Install Google Chrome on the VM instance:
 
 1.  In your RDP session, launch PowerShell.
 1.  At the prompt, enable HTTPS requests:  
 
-```ps
-[Net.ServicePointManager]::SecurityProtocol = "tls12, tls11, tls"  
-```
+        [Net.ServicePointManager]::SecurityProtocol = "tls12, tls11, tls"
 
-3. Download the Chrome installer:  
+1.  Download the Chrome installer:  
+
+        $Installer = $env:TEMP + "\chrome_installer.exe";
+            Invoke-WebRequest
+            "http://dl.google.com/chrome/install/latest/chrome_installer.exe" -OutFile
+            $Installer
+
+1.  Run the Google Chrome installer:  
   
-```ps
-$Installer = $env:TEMP + "\chrome_installer.exe";  
-    Invoke-WebRequest
-    "http://dl.google.com/chrome/install/latest/chrome_installer.exe" -OutFile
-    $Installer  
-```
+        Start-Process -FilePath $Installer -Args "/silent /install" -Verb RunAs -Wait
 
-4. Run the Google Chrome installer:  
-  
-```ps
-Start-Process -FilePath $Installer -Args "/silent /install" -Verb RunAs -Wait  
-```
+    When you are prompted, allow the installer to make changes.
 
-When prompted, allow the installer to make changes.
+1.  Remove the installer:  
 
-5. Finally, remove the installer:  
-  
-```ps
-Remove-Item $Installer
-```
+        Remove-Item $Installer
 
-### Install VNC
+### Install TightVNC or other VNC utility
 
-CloudXR is incompatible with RDP, so you connect to your workstation using different remote desktop software such as Chrome Remote Desktop, Teradici PCoIP, or any variant of VNC.  For this tutorial, use [TightVNC](https://www.tightvnc.com/), which is freely available and open source.
+In this section, you install an alternative remote desktop utility, such as Chrome Remote Desktop, Teradici PCoIP, or any variant of VNC. This tutorial uses
+[TightVNC](https://www.tightvnc.com/), which is freely available and open source.
 
 1.  Launch Google Chrome on your virtual workstation.
 1.  Download and install [TightVNC](https://www.tightvnc.com/).
-1.  Select **Typical** setup type. Accept the default configuration settings.  1.  When prompted to set passwords, choose a strong password for **Remote Access**.
-1.  Do not change the **Administrative Password**.
+1.  Select **Typical** for the setup type.
+1.  Accept the default configuration settings.
+1.  When prompted to set passwords, choose a strong password for **Remote Access**.
+
+    Do not change the value for **Administrative Password**.
 
 ### Install Steam and SteamVR
 
