@@ -9,11 +9,13 @@
 # Set the env variable $FIM_THREADS to control how many parallel processes are used to calculate file hashes
 # Paths to ignore in $FIM_PATH
 # Env vars:
-#  FIM_PATH       [/host-fs]   Path to monitor
-#  FIM_THREADS    [4]          Number of threads to use when hashing
-#  FIM_SYMLINKS   [false]      Follow symlinks found in FIM_PATH
-#  FIM_DATDIR     [/root/.fim] Data file directory
-#  FIM_LOGDIR     [/logs]      Log file directory
+#  FIM_PATH         [/host-fs]   Path to monitor
+#  FIM_THREADS      [4]          Number of threads to use when hashing
+#  FIM_SYMLINKS     [false]      Follow symlinks found in FIM_PATH
+#  FIM_DATDIR       [/root/.fim] Data file directory
+#  FIM_LOGDIR       [/logs]      Log file directory
+#  FIM_IGNORE_FILE  []           Glob file ignore filter
+#  FIM_IGNORE_PATH  []           Glob path ignore filter
 
 IGNORE=(
   '/dev'
@@ -63,8 +65,8 @@ TMPDIR=$DATDIR/tmp
 FINGERPRINTS=$DATDIR/.base
 LOCKFILE=$DATDIR/fim.lock
 
-LOGFILE=$LOGDIR/scan.log
-ERRFILE=$LOGDIR/scan.err
+LOGFILE=$LOGDIR/fimscan.log
+ERRFILE=$LOGDIR/fimscan.err
 
 MANIFEST=$TMPDIR/basemanifest.tmp
 HASHQUEUE=$TMPDIR/fim.tmp
@@ -77,7 +79,7 @@ mkdir -p $DATDIR $TMPDIR $LOGDIR
 
 # Fail fast if already running
 if [ -f "$LOCKFILE" ];then
-  echo "A scan is already in progess."
+  echo "A scan is already in progess." | tee -a $LOGFILE
   exit
 fi
 touch $LOCKFILE
@@ -86,12 +88,20 @@ echo "" | tee -a $LOGFILE
 # Clean up any leftovers
 rm -f $TMPDIR/*.tmp
 
+if [ ! -z "$FIM_IGNORE_FILE" ]; then
+	IGNORE_FILE=" -name "$FIM_IGNORE_FILE" -prune -o "
+fi
+
+if [ ! -z "$FIM_IGNORE_PATH" ]; then
+	IGNORE_PATH=" -path "$FIM_IGNORE_PATH" -prune -o "
+fi
+
 # Construct the file finder command
-FIND="find $FOLLOW_SYMLINKS $WATCH_PATH"
+FIND="find $FOLLOW_SYMLINKS $WATCH_PATH $IGNORE_PATH"
 for DIR in "${IGNORE[@]}"; do
     FIND=$(echo $FIND -path $WATCH_PATH$DIR -prune -o)
 done
-FIND="$FIND -type f -print"
+FIND="$FIND $IGNORE_FILE -type f -print"
 
 if [ ! -f "$FINGERPRINTS" ];then
   echo $(date "$DATE_FORMAT") Executing first run | tee -a $LOGFILE
@@ -102,7 +112,7 @@ else
   # Rebuild the original manifest based on the keyfile
   sed -E 's/^.*  (.*)$/\1/' $FINGERPRINTS | sort > $MANIFEST
 fi
-
+echo $FIND
 # Perform a manifest scan
 $FIND | sort > $HASHQUEUE
 cp $HASHQUEUE $TMPMANIFEST # HASHQUEUE and manifest can diverge after this point
@@ -166,7 +176,7 @@ fi
 if [ -s $HASHQUEUE ]; then
   echo $(date "$DATE_FORMAT") "Fingerprinting new files" | tee -a $LOGFILE
   touch $FINGERPRINTSTMP
-  xargs -a $HASHQUEUE -I% -P$THREADS -d '\n' sha256sum "%" 2>>$ERRFILE | tee -a $FINGERPRINTSTMP
+  xargs -a $HASHQUEUE -I% -P$THREADS -d '\n' sha256sum "%" 2>>$ERRFILE | tee -a $FINGERPRINTSTMP $LOGFILE
 fi
 
 if [ -s $FINGERPRINTSTMP ]; then
