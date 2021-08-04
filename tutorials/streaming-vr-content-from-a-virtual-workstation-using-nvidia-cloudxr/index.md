@@ -1,18 +1,22 @@
 ---
-title: Streaming VR content from a Virtual Workstation using NVIDIA CloudXR
-description: This tutorial shows how to deploy, install, and test NVIDIA CloudXR on a virtual workstation on GCP.
+title: Streaming virtual reality content from a virtual workstation using NVIDIA CloudXR
+description: This tutorial shows how to deploy, install, and test NVIDIA CloudXR on a virtual workstation on Google Cloud.
 author: adrian-a-graham
 tags: vr, ar, cloudxr, nvidia, virtual workstation, gpu
-date_published: 2021-08-03
+date_published: 2021-08-05
 ---
 
 Adrian Graham | Cloud Solutions Architect | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-# Streaming VR content from a Virtual Workstation using NVIDIA CloudXR
+This tutorial shows you how to stream virtual reality (VR) content from a virtual workstation on Google Cloud to a tetherless head-mounted display (HMD) such as
+the Oculus&nbsp;Quest&nbsp;2.
 
-This tutorial shows you how to stream Virtual Reality (VR) content from a virtual workstation on Google Cloud to a tetherless Head Mounted Display (HMD) such as the Oculus&nbsp;Quest&nbsp;2.
+NVIDIA CloudXR is supported on a variety of [HMDs](https://developer.nvidia.com/nvidia-cloudxr-sdk#:~:text=NATIVELY%20SUPPORTED%20HMDs). This tutorial provides 
+instructions only for the [Oculus Quest 2](https://www.oculus.com/quest-2/). Where indicated, refer to the
+[CloudXR SDK documentation](https://docs.nvidia.com/cloudxr-sdk/index.html) for instructions for other HMDs and devices.
+
 
 ## Objectives
 
@@ -20,9 +24,6 @@ This tutorial shows you how to stream Virtual Reality (VR) content from a virtua
 + Install SteamVR and NVIDIA CloudXR on the workstation.
 + Load the CloudXR client on a virtual reality Head Mounted Display (HMD).
 + Connect to the virtual workstation through the CloudXR client
-
-
-> **Note:** NVIDIA CloudXR is supported on a variety of [natively supported HMDs](https://developer.nvidia.com/nvidia-cloudxr-sdk#:~:text=NATIVELY%20SUPPORTED%20HMDs). This tutorial provides instructions only for the [Oculus&nbsp;Quest&nbsp;2](https://www.oculus.com/quest-2/). Where indicated, refer to the CloudXR SDK [documentation](https://docs.nvidia.com/cloudxr-sdk/index.html) for instructions on other HMDs and devices.
 
 ## Costs
 
@@ -258,22 +259,22 @@ Connect to your virtual workstation using the CloudXR client on your HMD.
 1.  On your local workstation, connect to your virtual workstation using a VNC client.
 1.  Once logged in, launch SteamVR. You will see the message *Headset Not Detected*:  
 
-    ![image](images/headset-not-detected.png)
+    ![image](https://storage.googleapis.com/gcp-community/tutorials/streaming-vr-content-from-a-virtual-workstation-using-nvidia-cloudxr/headset-not-detected.png)
 
 1.  On your HMD, start the **CloudXR Client**.
 1.  The first time you launch the application, you will be prompted on your HMD to allow access permissions. Accept the permissions to continue.
 
 Once connected, the SteamVR app shows the connection status of your HMD and controllers:
 
-![image](images/headset-connected.png)
+![image](https://storage.googleapis.com/gcp-community/tutorials/streaming-vr-content-from-a-virtual-workstation-using-nvidia-cloudxr/headset-connected.png)
 
 The default CloudXR environment appears in your HMD display. You can preview this display on your virtual workstation by right-clicking on the SteamVR icon on the taskbar and selecting Display VR View:
 
-![image](images/display-vr-view.png)
+![image](https://storage.googleapis.com/gcp-community/tutorials/streaming-vr-content-from-a-virtual-workstation-using-nvidia-cloudxr/display-vr-view.png)
 
 A window will open showing a preview of the CloudXR environment:
 
-![image](images/cloudxr-env.png)
+![image](https://storage.googleapis.com/gcp-community/tutorials/streaming-vr-content-from-a-virtual-workstation-using-nvidia-cloudxr/cloudxr-env.png)
 
 You can now launch SteamVR games or experiences on your virtual workstation, where they will be streamed to your HMD.
 
