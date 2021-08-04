@@ -1,6 +1,6 @@
 ---
-title: Streaming virtual reality content from a virtual workstation using NVIDIA CloudXR
-description: This tutorial shows how to deploy, install, and test NVIDIA CloudXR on a virtual workstation on Google Cloud.
+title: Stream virtual reality content from a virtual workstation using NVIDIA CloudXR
+description: Learn how to deploy, install, and test NVIDIA CloudXR on a virtual workstation on Google Cloud.
 author: adrian-a-graham
 tags: vr, ar, cloudxr, nvidia, virtual workstation, gpu
 date_published: 2021-08-05
@@ -17,44 +17,48 @@ NVIDIA CloudXR is supported on a variety of [HMDs](https://developer.nvidia.com/
 instructions only for the [Oculus Quest 2](https://www.oculus.com/quest-2/). Where indicated, refer to the
 [CloudXR SDK documentation](https://docs.nvidia.com/cloudxr-sdk/index.html) for instructions for other HMDs and devices.
 
-
 ## Objectives
 
 + Create a virtual workstation running Windows Server 2019.
 + Install SteamVR and NVIDIA CloudXR on the workstation.
-+ Load the CloudXR client on a virtual reality Head Mounted Display (HMD).
++ Load the CloudXR client on a virtual reality head-mounted display (HMD).
 + Connect to the virtual workstation through the CloudXR client
 
 ## Costs
 
-This tutorial uses billable components of Google Cloud, including the
-following:
+This tutorial uses billable components of Google Cloud, including the following:
 
-+   [Compute Engine](https://cloud.google.com/compute), including vCPUs, memory, disk, and GPUs.
-+   [Internet Egress](https://cloud.google.com/vpc/network-pricing) for
-    streaming data to your HMD.
++   [Compute Engine](https://cloud.google.com/compute), including vCPUs, memory, disk, and GPUs
++   [Internet egress](https://cloud.google.com/vpc/network-pricing) for streaming data to your HMD
 
 Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage.
 
 ## Before you begin
 
-This tutorial depends on you having some basic resources set up in Google Cloud.
+In this section, you set up some basic resources that the tutorial depends on.
 
-+   [Select or create a Google Cloud project.](https://console.cloud.google.com/projectselector2/home/dashboard)
-+   [Enable billing for your project.](https://support.google.com/cloud/answer/6293499#enable-billing)
-+   [Enable Compute Engine API.](https://console.cloud.google.com/flows/enableapi?apiid=compute_component)
-+   Install the [Google Cloud SDK](https://cloud.google.com/sdk/docs) or use
-    [Cloud Shell](https://cloud.google.com/shell/docs/starting-cloud-shell).
+1.  Open [Cloud Shell](https://cloud.google.com/shell/docs/starting-cloud-shell).
 
-In addition, make sure you have the following:
+    Instructions in this tutorial assume that you run commands in Cloud Shell, which is a
+    command-line interface in the Cloud Console that has the Cloud SDK installed. If you prefer, you can install the
+    [Google Cloud SDK](https://cloud.google.com/sdk/docs) on your local computer and run commands there.
 
-+   A Google Cloud project with quota for [virtual workstation GPUs](https://cloud.google.com/compute/docs/gpus#gpu-virtual-workstations) in your selected [zone](https://cloud.google.com/compute/docs/gpus#gpus-list). You can get a list of GPU availability by using the `gcloud compute accelerator-types list` command.
-+   Access to the [NVIDIA CloudXR SDK](https://developer.nvidia.com/nvidia-cloudxr-sdk). Register for a free account at [developer.nvidia.com](https://developer.nvidia.com/) for access.
-+   Access to [Steam](https://store.steampowered.com/) and [SteamVR](https://store.steampowered.com/steamvr). Both are free to download and install.
+1.  [Select or create a Google Cloud project.](https://console.cloud.google.com/projectselector2/home/dashboard)
 
-> **Note:** This tutorial assumes that your project contains a [default network](https://cloud.google.com/vpc/docs/vpc#default-network). If you've [disabled the creation of default networks](https://cloud.google.com/resource-manager/docs/organization-policy/org-policy-constraints) in your organization, you must manually create an auto-mode VPC network named _default._
+1.  [Enable billing for your project.](https://support.google.com/cloud/answer/6293499#enable-billing)
+1.  [Enable the Compute Engine API.](https://console.cloud.google.com/flows/enableapi?apiid=compute_component)
+1.  Make sure that your project has quota for [virtual workstation GPUs](https://cloud.google.com/compute/docs/gpus#gpu-virtual-workstations) in your selected
+    [zone](https://cloud.google.com/compute/docs/gpus#gpus-list). You can check GPU availability with the following command:
+    
+        gcloud compute accelerator-types list
+1.  Confirm that your project contains a [default network](https://cloud.google.com/vpc/docs/vpc#default-network).
 
-## Creating the workstation
+    If you've [disabled the creation of default networks](https://cloud.google.com/resource-manager/docs/organization-policy/org-policy-constraints) in your 
+    organization, then you must manually create an auto-mode VPC network named `default`.
+1.  Make sure that you have access to the [NVIDIA CloudXR SDK](https://developer.nvidia.com/nvidia-cloudxr-sdk). You can register for a free account at 
+    [developer.nvidia.com](https://developer.nvidia.com/).
+
+## Create the virtual workstation
 
 In the Google Cloud Marketplace, create a virtual workstation using the solution [NVIDIA RTX Virtual Workstation - Windows Server 2019](https://console.cloud.google.com/marketplace/product/nvidia/nvidia-quadro-vws-win2019).  By default, this will create an instance with 8 vCPUs, 30 GB RAM, and a 50 GB boot disk. Prior to creation, change these values to better accommodate the CloudXR workload.
 
@@ -105,7 +109,7 @@ gcloud compute instances add-tags [NAME] \
  
 Where `[NAME]` is the name of your instance, and `[ZONE]` is your workstation's zone.
 
-## Logging into your workstation
+## Log in to your workstation
 
 > **Note on accessing your virtual workstation:** To perform the initial setup of your virtual workstation, access your instance using Microsoft Remote Desktop Protocol (RDP). Once connected, install an alternate remote desktop software, such as TightVNC. Once installed, disconnect from the RDP session and reconnect using the alternate remote desktop software. Due to a [limitation](https://steamcommunity.com/app/250820/discussions/0/3264459260617027967/) in SteamVR, CloudXR connections will show a solid green display, if connected via RDP.
 
@@ -166,12 +170,14 @@ CloudXR is incompatible with RDP, so you connect to your workstation using diffe
 
 ### Install Steam and SteamVR
 
+TODO:  Download and install [Steam](https://store.steampowered.com/) and [SteamVR](https://store.steampowered.com/steamvr). Both are free to download and install.
+
 1.  On your virtual workstation, download, install, and launch [Steam](https://store.steampowered.com/about/).
 1.  To install SteamVR, right-click on the Steam icon on the taskbar and select **SteamVR**. The application will download and install.
 1.  Once installed, launch SteamVR to initialize the software.
 1.  Quit both Steam and SteamVR.
 
-## Installing the CloudXR Server
+## Install the CloudXR Server
 
 On your virtual workstation, download and install [NVIDIA CloudXR SDK](https://developer.nvidia.com/nvidia-cloudxr-sdk). To install CloudXR, extract the downloaded archive and run `CloudXR-Setup.exe`, located under the subdirectory `Installer`.
 
@@ -183,11 +189,11 @@ When prompted, choose components for the server installation only:
 1.  Deselect **CloudXR Client Program**.
 1.  Ensure the **Redistributables** checkbox is checked (required only for first time installation).
 
-## Installing the Android Studio SDK
+## Install the Android Studio SDK
 
 To load files onto your HMD, you use [Android Debug Bridge (ADB)](https://developer.android.com/studio/command-line/adb), which is part of the [Android Studio SDK](https://developer.android.com/studio).  On your local workstation, download and install the [Android Studio SDK Platform Tools](https://developer.android.com/studio/releases/platform-tools) for your operating system.
 
-## Connecting your workstation to your HMD
+## Connect your workstation to your HMD
 
 1.  On your local workstation, download and extract _but do not install_ the [NVIDIA CloudXR SDK](https://developer.nvidia.com/nvidia-cloudxr-sdk).
 1.  If required, enable Developer Mode on your device (typically only required on the [Oculus Quest 2](https://developer.oculus.com/documentation/native/android/mobile-device-setup#enable-developer-mode)).
@@ -252,7 +258,7 @@ adb push CloudXRLaunchOptions.txt /sdcard/CloudXRLaunchOptions.txt
 
 3.  Disconnect the cable from the HMD.
 
-## Launching the CloudXR Client
+## Launch the CloudXR client
 
 Connect to your virtual workstation using the CloudXR client on your HMD.
 
@@ -278,16 +284,9 @@ A window will open showing a preview of the CloudXR environment:
 
 You can now launch SteamVR games or experiences on your virtual workstation, where they will be streamed to your HMD.
 
-## Cleaning up
+## Clean up
 
-To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project.
-
-Deleting a project has the following consequences:
-
-- If you used an existing project, you'll also delete any other work that you've done in the project.
-- You can't reuse the project ID of a deleted project. If you created a custom project ID that you plan to use in the future, delete the resources inside the project instead. This ensures that URLs that use the project ID, such as an `appspot.com` URL, remain available.
-
-To delete a project, do the following:
+To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project:
 
 1.  In the Cloud Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
 1.  In the project list, select the project you want to delete and click **Delete**.
@@ -299,4 +298,4 @@ To delete a project, do the following:
     + Any application that uses the [OpenVR SDK](https://en.wikipedia.org/wiki/OpenVR) will play over CloudXR, even ones not launched from SteamVR.
 +   Learn more about [NVIDIA CloudXR SDK](https://developer.nvidia.com/nvidia-cloudxr-sdk).
 +   Read the CloudXR [documentation](https://docs.nvidia.com/cloudxr-sdk/index.html).
-+   Learn more about [Creating a Virtual Workstation](https://cloud.google.com/architecture/creating-a-virtual-workstation).
++   Learn more about [creating a virtual workstation](https://cloud.google.com/architecture/creating-a-virtual-workstation).
