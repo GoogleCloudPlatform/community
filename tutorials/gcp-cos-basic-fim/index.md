@@ -16,6 +16,7 @@ This example is designed to be run on Google Container-Optimized OS, but will wo
 
 basic-fim is an open source file integrity monitoring application that monitors for files that are new, altered, or deleted.
 
+<<<<<<< HEAD
 ## Docker Usage
 1. Modify the following script to define your data directory and the path to monitor:
     ```
@@ -64,5 +65,25 @@ FIM_LOGDIR       [/logs]      Log file directory
 FIM_IGNORE_FILE  []           Glob file ignore filter
 FIM_IGNORE_PATH  []           Glob path ignore filter
 ```
+=======
+## Basic usage
+
+1. Configure the environment variables below as needed.
+1. Build your Docker image.
+1. Deploy that image to your Kubernetes cluster.
+1. Use Daemonsets to configure the new workload to run one scanner pod for each node.
+1. Ensure that scan-required paths within other pods are mounted as named volumes so they will be included in the scan of 
+   the node.
+
+## Environment variables
+
+| variable name   | value        | description |
+|-----------------|--------------|-------------|
+| `FIM_PATH`      | `/host-fs`   | Path to monitor |
+| `FIM_THREADS`   | `4`          | Number of threads to use when hashing |
+| `FIM_SYMLINKS`  | `false`      | Follow symlinks found in `FIM_PATH` |
+| `FIM_DATDIR`    | `/root/.fim` | Data file directory |
+| `FIM_LOGDIR`    | `/logs`      | Log file directory |
+>>>>>>> e96c8e7ada95c09da4f6e2ae147dca966c53c8f4
 
 For more information, see [Installing antivirus and file integrity monitoring on Container-Optimized OS](https://cloud.google.com/solutions/installing-antivirus-and-file-integrity-monitoring-on-container-optimized-os).
