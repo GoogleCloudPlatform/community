@@ -54,14 +54,6 @@ basic-fim is an open source file integrity monitoring application that monitors 
    the node.
 
 ## Env vars:
-```
-Var              Default      Desc
-FIM_PATH         [/host-fs]   Path to monitor
-FIM_THREADS      [4]          Number of threads to use when hashing
-FIM_SYMLINKS     [false]      Follow symlinks found in FIM_PATH
-FIM_DATDIR       [/root/.fim] Data file directory
-FIM_LOGDIR       [/logs]      Log file directory
-
 | variable name   | value        | description |
 |-----------------|--------------|-------------|
 | `FIM_PATH`      | `/host-fs`   | Path to monitor |
