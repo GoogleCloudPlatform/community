@@ -22,7 +22,7 @@ instructions only for the [Oculus Quest 2](https://www.oculus.com/quest-2/). Whe
 + Create a virtual workstation running Windows Server 2019.
 + Install SteamVR and NVIDIA CloudXR on the workstation.
 + Load the CloudXR client on a virtual reality head-mounted display (HMD).
-+ Connect to the virtual workstation through the CloudXR client
++ Connect to the virtual workstation through the CloudXR client.
 
 ## Costs
 
@@ -86,8 +86,8 @@ In this section, you create a virtual workstation by starting with a configurati
     1.  Set **Machine type** to **Custom**.
     1.  Increase **Cores** to 12.
     1.  Increase **Memory** to 64 GB.
-    1.  For faster disk performance, change the **Boot disk type** to **SSD Persistent Disk**.
-    1.  Change the **Boot disk size in GB** to **200** to increase disk performance and allow for more downloaded content.
+    1.  For faster disk performance, change **Boot disk type** to **SSD Persistent Disk**.
+    1.  Change the **Boot disk size in GB** value to **200** to increase disk performance and allow for more downloaded content.
 
 1.  Note the value in the **Deployment name** field; you use this in the next section, when setting up network access.
 1.  Click **Deploy**.
@@ -236,12 +236,12 @@ In this section, you install the sample application on your HMD. Sample apps for
 **Note:** This section covers client installation only for the Oculus Quest 2. For other HMDs, see the
 [NVIDIA CloudXR documentation](https://docs.nvidia.com/cloudxr-sdk/index.html).
 
-1.  In a terminal on your local workstation, go to where you extracted the NVIDIA CloudXR SDK, and then go to the subdirectory that contains the sample app for
-    the Oculus Quest 2: `Sample/Android/OculusVR`.
+1.  In a command shell on your local workstation, go to where you extracted the NVIDIA CloudXR SDK, and then go to the subdirectory that contains the sample app
+    for the Oculus Quest 2: `Sample/Android/OculusVR`.
 
 1.  Install the sample application on your Oculus Quest 2:  
   
-        adb install -r ovr-sample.apk`  
+        adb install -r ovr-sample.apk
   
     On the Oculus Quest 2, the CloudXR Client is located under **Apps > Unknown Sources**.
 
@@ -284,8 +284,8 @@ When the connection is established, the SteamVR app shows the connection status 
 
 ![image](https://storage.googleapis.com/gcp-community/tutorials/streaming-vr-content-from-a-virtual-workstation-using-nvidia-cloudxr/headset-connected.png)
 
-The default CloudXR environment appears in your HMD display. You can preview this display on your virtual workstation by right-clicking the SteamVR icon on   
-the taskbar and selecting Display VR View:
+The default CloudXR environment appears in your HMD display. You can preview this display on your virtual workstation by right-clicking the
+SteamVR icon on the taskbar and selecting **Display VR View**:
 
 ![image](https://storage.googleapis.com/gcp-community/tutorials/streaming-vr-content-from-a-virtual-workstation-using-nvidia-cloudxr/display-vr-view.png)
 
