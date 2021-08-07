@@ -75,7 +75,7 @@ If you use an existing project, you can skip this step.
 
     1.  Download Helm and extract the contents of the archive file:
 
-            wget https://get.helm.sh/kubernetes-helm/helm-v2.17.0-linux-amd64.tar.gz
+            wget https://get.helm.sh/helm-v2.17.0-linux-amd64.tar.gz
             tar xf helm-v2.17.0-linux-amd64.tar.gz
 
     1.  Add the `helm` binary to `/usr/local/bin`.
