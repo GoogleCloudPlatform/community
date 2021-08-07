@@ -161,7 +161,7 @@ Deploy the sample apps to demonstrate using and not using the annotation to trig
 
     - The request to `https://www.google.com` succeeds with status code 200.
     - The request to the Cloud Storage bucket succeeds with status code 200.
-    - The the ping to `www.google.com` succeeds.
+    - The ping to `www.google.com` succeeds.
 
 1.  Get the logs for the pod with the tproxy annotation:
 
@@ -178,7 +178,7 @@ Deploy the sample apps to demonstrate using and not using the annotation to trig
 
     - The proxy blocks the request to `https://www.google.com` with status code 418.
     - The proxy allows the request to the Cloud Storage bucket with status code 200.
-    - The the ping to `www.google.com` is rejected.
+    - The ping to `www.google.com` is rejected.
 
 1.  Inspect the logs from the mitmproxy DaemonSet pod to show the intercepted requests and responses:
 
