@@ -45,7 +45,7 @@ In this first section, we'll use a Google Compute Engine VM to start a [Vault se
 
         gcloud config set project $gcp_project
 
-1. Create a file named `startup-script.sh` with the instructions to download and run Vault in dev mode:
+1.  Create a file named `startup-script.sh` with the instructions to download and run Vault in dev mode:
 
         cat << EOF > startup-script.sh
         #!/bin/bash
@@ -99,7 +99,7 @@ In this first section, we'll use a Google Compute Engine VM to start a [Vault se
         vault secrets list
         # omitting output
 
-    Even after the machine is started, it may take a minute for the installation and initialization to complete.
+    It may take a minute for the installation and initialization to complete after the machine has started.
 
 ## Create the GKE cluster
 
@@ -157,177 +157,184 @@ to make sure that the service account is properly privileged with only the requi
 
 ## Configure the workload identity and respective Vault role
 
-1. To configure the workload identity we need a Google Service Account that will be impersonated by a Kubernetes Service Account to access Google Cloud APIs and to establish the trust relationship with Vault.
+To configure the workload identity, you need a Google service account that will be impersonated by a Kubernetes service account to access Google Cloud APIs
+and to establish the trust relationship with Vault.
 
-    ```shell
-    gcloud iam service-accounts create my-service-gsa --display-name="my-service-gsa"
+1.  Create the service account:
 
-    gcloud iam service-accounts add-iam-policy-binding \
-      --role roles/iam.workloadIdentityUser \
-      --member "serviceAccount:${gcp_project}.svc.id.goog[staging/my-service-ksa]" \
-      my-service-gsa@${gcp_project}.iam.gserviceaccount.com
+        gcloud iam service-accounts create my-service-gsa --display-name="my-service-gsa"
 
-    gcloud projects add-iam-policy-binding "$gcp_project" \
-      --member "serviceAccount:my-service-gsa@${gcp_project}.iam.gserviceaccount.com" \
-      --role roles/iam.serviceAccountTokenCreator
-    ```
+1.  Create the policy bindings:
+
+        gcloud iam service-accounts add-iam-policy-binding \
+          --role roles/iam.workloadIdentityUser \
+          --member "serviceAccount:${gcp_project}.svc.id.goog[staging/my-service-ksa]" \
+          my-service-gsa@${gcp_project}.iam.gserviceaccount.com
+
+        gcloud projects add-iam-policy-binding "$gcp_project" \
+          --member "serviceAccount:my-service-gsa@${gcp_project}.iam.gserviceaccount.com" \
+          --role roles/iam.serviceAccountTokenCreator
     
-    The first [policy binding](https://cloud.google.com/sdk/gcloud/reference/iam/service-accounts/add-iam-policy-binding) allows the Kubernetes service account `my-service-ksa` in the namespace `staging` to impersonate the Google service account `my-service-gsa`. The second policy binding allows the Google service account to sign JWTs to perform the Vault login. Worth noting that the only permission necessary for the Vault login is the `iam.serviceAccounts.signJwt` permission. You may consider creating a custom role with fewer privileges as we did for the service account used to configure the Vault server.
+    The first [policy binding](https://cloud.google.com/sdk/gcloud/reference/iam/service-accounts/add-iam-policy-binding) allows the Kubernetes service account 
+    `my-service-ksa` in the namespace `staging` to impersonate the Google service account `my-service-gsa`. The second policy binding allows the Google service
+    account to sign JWTs to perform the Vault login. The only permission necessary for the Vault login is the `iam.serviceAccounts.signJwt` permission. You may
+    consider creating a custom role with fewer privileges as we did for the service account used to configure the Vault server.
     
-1. Create a Kubernetes namespace and service account to match the workload identity configured in the previous step.
+1.  Create a Kubernetes namespace and service account to match the workload identity configured in the previous step:
 
-    ```shell
-    kubectl create namespace staging
+        kubectl create namespace staging
 
-    kubectl create serviceaccount my-service-ksa -n staging
+        kubectl create serviceaccount my-service-ksa -n staging
 
-    kubectl annotate serviceaccount my-service-ksa \
-      iam.gke.io/gcp-service-account=my-service-gsa@"$gcp_project".iam.gserviceaccount.com \
-      -n staging
-    ```
+        kubectl annotate serviceaccount my-service-ksa \
+          iam.gke.io/gcp-service-account=my-service-gsa@"$gcp_project".iam.gserviceaccount.com \
+          -n staging
     
-1. Check if the workload identity is working as expected.
+1.  Check whether the workload identity is working as expected:
 
-    ```shell
-    kubectl run gcloud -it --rm --restart=Never \
-        --serviceaccount my-service-ksa \
-        -n staging \
-        --image google/cloud-sdk:slim gcloud auth list
-    ```
+        kubectl run gcloud -it --rm --restart=Never \
+          --serviceaccount my-service-ksa \
+          -n staging \
+          --image google/cloud-sdk:slim gcloud auth list
 
-    This command will launch a Pod and check with the command `gcloud auth list` if the active (and only) identity corresponds to the Google service account email address previously configured. You should expect to see the Google service account `my-service-gsa@"$gcp_project".iam.gserviceaccount.com` as active.
+    This command launches a Pod and checks with the command `gcloud auth list` whether the active (and only) identity corresponds to the Google service account 
+    email address previously configured. You should see the Google service account `my-service-gsa@"$gcp_project".iam.gserviceaccount.com` as active.
     
-1. Finally, create the Vault role that binds the Google service account granting access to the secrets.
+1.  Create the Vault role that binds the Google service account granting access to the secrets:
 
-    ```shell
-    vault write auth/gcp/role/my-service-stg-role \
-        type="iam" \
-        policies="stg" \
-        max_jwt_exp="3600" \
-        bound_service_accounts="my-service-gsa@${gcp_project}.iam.gserviceaccount.com"
-    ```
+        vault write auth/gcp/role/my-service-stg-role \
+          type="iam" \
+          policies="stg" \
+          max_jwt_exp="3600" \
+          bound_service_accounts="my-service-gsa@${gcp_project}.iam.gserviceaccount.com"
     
-    Note that the policy `stg` doesn't exist yet. We will handle it when we get to the secrets step.
+    The policy `stg` doesn't exist yet. This is handled in the secrets step.
     
-1. Check if the Vault login is working as expected.
+1.  Check whether the Vault login is working as expected:
 
-    ```
-    kubectl run vault -it --rm --restart=Never \
-        --serviceaccount my-service-ksa \
-        -n staging \
-        --image vault \
-        -- vault login -address="$VAULT_ADDR" -method=gcp service_account="my-service-gsa@${gcp_project}.iam.gserviceaccount.com" role="my-service-stg-role"
-    ```
+        kubectl run vault -it --rm --restart=Never \
+          --serviceaccount my-service-ksa \
+          -n staging \
+          --image vault \
+          -- vault login -address="$VAULT_ADDR" -method=gcp service_account="my-service-gsa@${gcp_project}.iam.gserviceaccount.com" role="my-service-stg-role"
     
-    This command will launch a Pod and perform a `vault login` command from within the Pod pointing to our Vault server. You should expect to see a successful response containing a Vault token.
+    This command launches a Pod and performs a `vault login` command from within the Pod pointing to your Vault server. You should see a successful response 
+    containing a Vault token.
     
 ## Inject secrets in a Pod
 
-1. Let's start writing some secrets to Vault. For that, we will mount a `kv-v2` secrets engine and create a Vault policy that allows our Vault role to read from this secrets backend.
+In this section, you start writing some secrets to Vault. For that, you mount a `kv-v2` secrets engine and create a Vault policy that allows your Vault role to
+read from this secrets backend.
 
-    ```shell
-    vault secrets enable -path=my-service/secrets kv-v2
+1.  Set up the secrets engine:
 
-    vault kv put my-service/secrets/stg/database/config username="db-username" password="db-password"
+        vault secrets enable -path=my-service/secrets kv-v2
+
+        vault kv put my-service/secrets/stg/database/config username="db-username" password="db-password"
     
-    #check the data just written
-    vault kv get my-service/secrets/stg/database/config
-    # omitting output
+1.  Check the data just written:
 
-    vault policy write stg - <<EOF
-    path "my-service/secrets/data/stg/database/config" {
-      capabilities = ["read"]
-    }
-    EOF
-    ```
+        vault kv get my-service/secrets/stg/database/config
+
+1.  Create the `stg` policy:
+
+        vault policy write stg - <<EOF
+        path "my-service/secrets/data/stg/database/config" {
+          capabilities = ["read"]
+        }
+        EOF
     
-    Note how the `stg` policy allows reading only to the `my-service/secrets/stg` path preventing that our role (and application) would have access to secrets that are not necessary.
+    The `stg` policy allows reading only to the `my-service/secrets/stg` path, preventing that the role (and application) from having access to secrets that are 
+    not necessary.
     
-1. Install the Vault Agent Injector.
+1.  Install the Vault Agent Injector using Helm, as described in the
+    [Vault Agent Injector installation documentation](https://www.vaultproject.io/docs/platform/k8s/injector/installation):
 
-    We will follow the standard method to install the Agent Injector using Helm as described in the [installation docs](https://www.vaultproject.io/docs/platform/k8s/injector/installation). Check the [Vault Helm docs](https://www.vaultproject.io/docs/platform/k8s/helm/configuration) for more details about the available options.
+    1.  Add the HashiCorp Helm repository:
 
+            helm repo add hashicorp https://helm.releases.hashicorp.com
 
-    ```shell
-    helm version
-    version.BuildInfo{Version:"v3.3.1", GitCommit:"249e5215cde0c3fa72e27eb7a30e8d55c9696144", GitTreeState:"dirty", GoVersion:"go1.15"}
-
-    helm repo add hashicorp https://helm.releases.hashicorp.com
-
-    helm search repo hashicorp/vault
-    NAME           	CHART VERSION	APP VERSION	DESCRIPTION
-    hashicorp/vault	0.13.0       	1.7.3      	Official HashiCorp Vault Chart
-
-    kubectl create ns vault-agent-injector
-
-    helm install vault hashicorp/vault --namespace vault-agent-injector --set="server.enabled=false" --set="injector.externalVaultAddr=$VAULT_ADDR" --set "injector.authPath=auth/gcp"
-    ```
+    1.  Check whether you have access to the Helm chart:
     
-1. Create a Deployment resource with the Agent Injector annotations.
+            helm search repo hashicorp/vault
+            
+        You should see output similar to this:
+        
+            NAME            CHART VERSION    APP VERSION    DESCRIPTION
+            hashicorp/vault 0.13.0           1.7.3          Official HashiCorp Vault Chart
 
-    ```
-    kubectl apply -f - <<EOF
-    apiVersion: apps/v1
-    kind: Deployment
-    metadata:
-      name: my-service
-      namespace: staging
-      labels:
-        app: my-service
-    spec:
-      selector:
-        matchLabels:
-          app: my-service
-      replicas: 1
-      template:
+    1.  Create the namespace:
+
+            kubectl create ns vault-agent-injector
+
+    1.  Install the Vault Agent Injector:
+
+            helm install vault hashicorp/vault --namespace vault-agent-injector --set="server.enabled=false" --set="injector.externalVaultAddr=$VAULT_ADDR" --set "injector.authPath=auth/gcp"
+    
+     For more information about configuration options, see the [Vault Helm documentation](https://www.vaultproject.io/docs/platform/k8s/helm/configuration).
+    
+1.  Create a Deployment resource with the Agent Injector annotations:
+
+        kubectl apply -f - <<EOF
+        apiVersion: apps/v1
+        kind: Deployment
         metadata:
-          annotations:
-            vault.hashicorp.com/agent-inject: "true"
-            vault.hashicorp.com/agent-inject-status: "update"
-            vault.hashicorp.com/auth-type: "gcp"
-            vault.hashicorp.com/auth-config-type: "iam"
-            vault.hashicorp.com/auth-config-service-account: "my-service-gsa@${gcp_project}.iam.gserviceaccount.com"
-            vault.hashicorp.com/role: "my-service-stg-role"
-            vault.hashicorp.com/agent-inject-secret-database-config.txt: "my-service/secrets/data/stg/database/config"
-            vault.hashicorp.com/agent-inject-template-database-config.txt: |
-              {{- with secret "my-service/secrets/data/stg/database/config" -}}
-              postgresql://{{ .Data.data.username }}:{{ .Data.data.password }}@postgres:5432/wizard
-              {{- end -}}
+          name: my-service
+          namespace: staging
           labels:
             app: my-service
         spec:
-          serviceAccountName: my-service-ksa
-          containers:
-            - name: my-service
-              image: nginx
-    EOF
-    ```
+          selector:
+            matchLabels:
+              app: my-service
+          replicas: 1
+          template:
+            metadata:
+              annotations:
+                vault.hashicorp.com/agent-inject: "true"
+                vault.hashicorp.com/agent-inject-status: "update"
+                vault.hashicorp.com/auth-type: "gcp"
+                vault.hashicorp.com/auth-config-type: "iam"
+                vault.hashicorp.com/auth-config-service-account: "my-service-gsa@${gcp_project}.iam.gserviceaccount.com"
+                vault.hashicorp.com/role: "my-service-stg-role"
+                vault.hashicorp.com/agent-inject-secret-database-config.txt: "my-service/secrets/data/stg/database/config"
+                vault.hashicorp.com/agent-inject-template-database-config.txt: |
+                  {{- with secret "my-service/secrets/data/stg/database/config" -}}
+                  postgresql://{{ .Data.data.username }}:{{ .Data.data.password }}@postgres:5432/wizard
+                  {{- end -}}
+              labels:
+                app: my-service
+            spec:
+              serviceAccountName: my-service-ksa
+              containers:
+                - name: my-service
+                  image: nginx
+        EOF
 
-1. Check that the Pod is running 
+1.  Check whether the Pod is running:
 
-    ```shell
-    kubectl get po -n staging
-    NAME                         READY   STATUS    RESTARTS   AGE
-    my-service-d5dcfb55f-w8g89   2/2     Running   0          22s
-    ```
+        kubectl get po -n staging
+        
+    The output should be similar to the following:
+    
+        NAME                         READY   STATUS    RESTARTS   AGE
+        my-service-d5dcfb55f-w8g89   2/2     Running   0          22s
 
-    If the Pod is stuck in the `Init` status, check the `vault-agent-init` container logs to identify the problem.
-    ```shell
-    # run this only if you need to debug
-    kubectl logs my-service-d5dcfb55f-w8g89 vault-agent-init -n staging
-    ```
+    If the Pod is stuck in the `Init` status, check the `vault-agent-init` container logs to identify the problem:
+    
+        # run this only if you need to debug
+        kubectl logs my-service-d5dcfb55f-w8g89 vault-agent-init -n staging
 
-1. Check the `my-service` container and verify that the secrets have been injected
+1.  Check the `my-service` container and verify that the secrets have been injected:
 
-    ```shell
-    kubectl exec \
-        $(kubectl get pod -l app=my-service -n staging -o jsonpath="{.items[0].metadata.name}") \
-        -c my-service -n staging -- cat /vault/secrets/database-config.txt
+        kubectl exec \
+          $(kubectl get pod -l app=my-service -n staging -o jsonpath="{.items[0].metadata.name}") \
+          -c my-service -n staging -- cat /vault/secrets/database-config.txt
 
-    postgresql://db-username:db-password@postgres:5432/wizard%
-    ```
+        postgresql://db-username:db-password@postgres:5432/wizard%
 
-    Check the [Agent Injector documentation](https://www.vaultproject.io/docs/platform/k8s/injector/annotations) for a complete view of the available annotations, configuration options and features.
+    For more information about the available annotations, configuration options, and features, see the
+    [Agent Injector documentation](https://www.vaultproject.io/docs/platform/k8s/injector/annotations).
     
 ## Cleaning up
 
