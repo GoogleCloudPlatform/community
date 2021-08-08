@@ -307,9 +307,9 @@ read from this secrets backend.
                 vault.hashicorp.com/role: "my-service-stg-role"
                 vault.hashicorp.com/agent-inject-secret-database-config.txt: "my-service/secrets/data/stg/database/config"
                 vault.hashicorp.com/agent-inject-template-database-config.txt: |
-                  {{- with secret "my-service/secrets/data/stg/database/config" -}}
+                  {% verbatim %}{{- with secret "my-service/secrets/data/stg/database/config" -}}
                   postgresql://{{ .Data.data.username }}:{{ .Data.data.password }}@postgres:5432/wizard
-                  {{- end -}}
+                  {{- end -}}{% endverbatim %}
               labels:
                 app: my-service
             spec:
