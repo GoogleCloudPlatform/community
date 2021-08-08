@@ -1,5 +1,5 @@
 ---
-title: Injecting secrets into Google Kubernetes Engine Pods using HashiCorp Vault and Google Cloud Auth method
+title: Injecting secrets into Google Kubernetes Engine Pods using HashiCorp Vault and Google Cloud Auth
 description: Learn how to inject secrets in applications running in Google Kubernetes Engine (GKE) with the HashCorp Vault Agent Injector.
 author: soeirosantos
 tags: gcp, gke, google kubernetes engine, workload identity, cloud-native security, devsecops, secrets management, hashicorp vault, vault agent injector
@@ -10,19 +10,25 @@ Romulo Santos
 
 <p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
-In this tutorial, you use the [Agent Sidecar Injector](https://www.vaultproject.io/docs/platform/k8s/injector) to read secrets from [HashiCorp Vault](https://www.vaultproject.io/) and inject into Pods running in Google Kubernetes Engine. For this, we are going to use the [Google Cloud Auth method](https://www.vaultproject.io/docs/auth/gcp) with a trust relationship configured based on the [Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity) to authenticate with Vault.
+In this tutorial, you use the [Agent Sidecar Injector](https://www.vaultproject.io/docs/platform/k8s/injector) to read secrets from
+[HashiCorp Vault](https://www.vaultproject.io/) and inject secrets into Pods running in Google Kubernetes Engine. This tutorial uses the
+[Google Cloud Auth method](https://www.vaultproject.io/docs/auth/gcp) with a trust relationship configured based on
+[Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity) to authenticate with Vault.
 
-This tutorial emulates a common use case where we have an external Vault server providing secrets management as a service to multiple clients and applications running in different platforms and environments. And, in this case, we want to connect our workloads running in GKE to this Vault server to read secrets.
+This tutorial emulates a common use case in which you have an external Vault server providing secrets management as a service to multiple clients and 
+applications running in different platforms and environments. In this case, you connect your workloads running in GKE to this Vault server to read secrets.
 
 ## Before you begin
 
-For this tutorial, you need a [Google Cloud project](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#projects). You can create a new one, or select a project that you have already created.
+For this tutorial, you need a [Google Cloud project](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#projects). You can create a
+new one, or select a project that you have already created.
 
 1.  Create a [Google Cloud project](https://console.cloud.google.com/cloud-resource-manager).
 1.  [Enable billing](https://support.google.com/cloud/answer/6293499#enable-billing) for your project.
 1.  For the commands in this tutorial, you use the `gcloud` command-line interface. To install the Cloud SDK, which includes the `gcloud` tool, follow
     [these instructions](https://cloud.google.com/sdk/gcloud/#downloading_the_gcloud_command-line_tool).
-1.  To install the Vault Agent Injector we'll use the Helm CLI. Check [this doc](https://helm.sh/docs/intro/install/) to install Helm.
+1.  To install the Vault Agent Injector, you use the Helm command-line interface. Follow the
+    [instructions to install Helm](https://helm.sh/docs/intro/install/).
 
 ## Costs
 
@@ -33,9 +39,11 @@ This tutorial uses billable components of Google Cloud, including the following:
 
 Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage.
 
-## Spin up a Vault server in dev mode
+## Start a Vault server in dev mode
 
-In this first section, we'll use a Google Compute Engine VM to start a [Vault server in dev mode](https://www.vaultproject.io/docs/concepts/dev-server) for experimentation. There is nothing really special with this choice, we just wanted to simulate a situation where the Vault server is external to our Kubernetes cluster and a VM is quick and convenient. Keep in mind to never run a "dev" mode server in production.
+In this section, you use a Compute Engine VM instance to start a [Vault server in dev mode](https://www.vaultproject.io/docs/concepts/dev-server) for
+experimentation. There is nothing special about this choice; a VM instance is a quick and convenient way to simulate a situation in which the Vault server is 
+external to your Kubernetes cluster. Never run a server in dev mode in production.
 
 1.  Define some variables that you use during the tutorial:
 
@@ -60,13 +68,13 @@ In this first section, we'll use a Google Compute Engine VM to start a [Vault se
             -dev-listen-address="0.0.0.0:8200"  &
         EOF
 
-     This file is going to run during the [VM startup](https://cloud.google.com/compute/docs/instances/startup-scripts).
+     This file runs during the [VM instance startup](https://cloud.google.com/compute/docs/instances/startup-scripts).
 
-1.  Change permissions for the file:
+1.  Change permissions for the file to make it executable:
 
         chmod +x startup-script.sh
 
-1.  [Create a VM instance](https://cloud.google.com/sdk/gcloud/reference/compute/instances/create) using the startup script to spin up a Vault server:
+1.  [Create a VM instance](https://cloud.google.com/sdk/gcloud/reference/compute/instances/create) using the startup script to start a Vault server:
 
         gcloud compute instances create vault-dev \
           --tags vault-dev \
@@ -115,7 +123,7 @@ In this first section, we'll use a Google Compute Engine VM to start a [Vault se
 
         kubectl config current-context
 
-1.  If your current context doesn't match the cluster you just created, or if you need to connect to it again after changing your kubeconfig, use the
+1.  If your current context doesn't match the cluster that you just created, or if you need to connect to it again after changing your kubeconfig, use the
     `get-credentials` command to configure your local access to the cluster:
 
         gcloud container clusters get-credentials "$cluster_name" --region "$cluster_region"
@@ -155,9 +163,9 @@ to make sure that the service account is properly privileged with only the requi
         vault auth enable gcp
         vault write auth/gcp/config credentials=@key.json
 
-## Configure the workload identity and respective Vault role
+## Configure Workload Identity and respective Vault role
 
-To configure the workload identity, you need a Google service account that will be impersonated by a Kubernetes service account to access Google Cloud APIs
+To configure Workload Identity, you need a Google service account that will be impersonated by a Kubernetes service account to access Google Cloud APIs
 and to establish the trust relationship with Vault.
 
 1.  Create the service account:
@@ -178,7 +186,7 @@ and to establish the trust relationship with Vault.
     The first [policy binding](https://cloud.google.com/sdk/gcloud/reference/iam/service-accounts/add-iam-policy-binding) allows the Kubernetes service account 
     `my-service-ksa` in the namespace `staging` to impersonate the Google service account `my-service-gsa`. The second policy binding allows the Google service
     account to sign JWTs to perform the Vault login. The only permission necessary for the Vault login is the `iam.serviceAccounts.signJwt` permission. You may
-    consider creating a custom role with fewer privileges as we did for the service account used to configure the Vault server.
+    consider creating a custom role with fewer privileges as you did for the service account used to configure the Vault server.
     
 1.  Create a Kubernetes namespace and service account to match the workload identity configured in the previous step:
 
