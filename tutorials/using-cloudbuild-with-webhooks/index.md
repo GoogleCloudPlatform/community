@@ -2,7 +2,7 @@
 title: Using webhooks to trigger a central Cloud Build pipeline from multiple Git repositories
 description: Learn how to trigger centrally managed Cloud Build pipeline with a webhook.
 author: gmogr,MrTrustor
-tags: cloudbuild, ci/cd, webhooks
+tags: cloudbuild, cicd, webhooks
 date_published: 2021-07-07
 ---
 
