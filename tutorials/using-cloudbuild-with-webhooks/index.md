@@ -1,6 +1,6 @@
 ---
 title: Using webhooks to trigger a central Cloud Build pipeline from multiple Git repositories
-description: Learn how to trigger centrally managed Cloud Build pipeline with a webhooks
+description: Learn how to trigger centrally managed Cloud Build pipeline with a webhook.
 author: gmogr, MrTrustor
 tags: cloudbuild, ci/cd, webhooks
 date_published: 2021-07-07
@@ -57,7 +57,7 @@ If not already done, [Sign in GitLab.com](https://gitlab.com/users/sign_in).
 
 ### Create a webhook cloud build trigger
 1. In the Google Cloud console, go to the [Triggers](https://console.cloud.google.com/cloud-build/triggers) page.
-2. Click **Create Trigger.**
+2. Click **Create Trigger**.
 3. Enter “webhook-trigger” in the **Name** field.
 4. Choose “Webhook event” for the **Event** field.
 5. Choose “Create new” in the **Secret** field and click **Create Secret**.
@@ -203,7 +203,7 @@ Up until now, you did not execute any code contained in the Git repository. In t
       - name: hashicorp/terraform
         args:
           - init
-          - '-backend-config=bucket=${_TF_BACKEND_BAUCKET}'
+          - '-backend-config=bucket=${_TF_BACKEND_BUCKET}'
           - '-backend-config=prefix=${_TF_BACKEND_PREFIX}'
         dir: repo
       - name: hashicorp/terraform
@@ -221,7 +221,7 @@ Up until now, you did not execute any code contained in the Git repository. In t
     substitutions:
       _GIT_REPO: $(body.project.git_http_url)
       _REPO_URL: '${_GIT_REPO##https://}'
-      _TF_BACKEND_BAUCKET: 'tf-state-${PROJECT_ID}'
+      _TF_BACKEND_BUCKET: 'tf-state-${PROJECT_ID}'
       _TF_BACKEND_PREFIX: tf-state-prefix
     availableSecrets:
       secretManager:
