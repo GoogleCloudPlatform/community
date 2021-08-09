@@ -10,15 +10,23 @@ Dan Isla | Solution Architect | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-There are many application environments and scenarios where you may want to filter and intercept all HTTP/S traffic out of a pod. Example use cases include isolating external access to specific HTTP or HTTPS paths, methods and in-flight altering of requests.
+There are many application environments and scenarios where you may want to filter and intercept all HTTP and HTTPS traffic out of a pod. Example use cases 
+include isolating external access to specific HTTP or HTTPS paths and methods and in-flight altering of requests.
 
-An example of HTTPS interception would be filtering access to Cloud Storage buckets. Most proxy solutions do not support HTTPS inspection so the filtering that can be done is limited at the IP/DNS level. For the case of a Cloud Storage bucket, the bucket name is embedded under the https://storage.googleapis.com/BUCKET_NAME/object URL so filtering is limited to all buckets under the storage.googleapis.com domain, not any specific bucket.
+An example of HTTPS interception is filtering access to Cloud Storage buckets. Most proxy solutions do not support HTTPS inspection, so the filtering that can be
+done is limited at the IP/DNS level. For the case of a Cloud Storage bucket, the bucket name is embedded under the 
+`https://storage.googleapis.com/BUCKET_NAME/object` URL, so filtering is limited to all buckets under the `storage.googleapis.com` domain, not any specific 
+bucket.
 
-If you wanted to transparently add request/response headers to requests between services for tracing purposes, you can do that without the services having to explicitly set them.
+You can transparently add request and response headers to requests between services for tracing purposes without the services having to explicitly set them.
 
-[Mitmproxy](https://mitmproxy.org/) is an open source tool that you can use to intercept and modify HTTP and HTTPS requests transparently using the Python scripting language.
+[Mitmproxy](https://mitmproxy.org/) is an open-source tool that you can use to intercept and modify HTTP and HTTPS requests transparently using the Python 
+scripting language.
 
-This tutorial uses the [tproxy-sidecar](https://github.com/danisla/kubernetes-tproxy/tree/master/sidecar) init container to create firewall rules in the pod network to block egress traffic out of selected pods. The [tproxy-podwatch](https://github.com/danisla/kubernetes-tproxy/tree/master/cmd/tproxy-podwatch) controller watches for pod changes containing the `"initializer.kubernetes.io/tproxy": "true"` annotation and automatically add/removes the local firewall REDIRECT rules to apply the transparent proxy to the pod.
+This tutorial uses the [tproxy-sidecar](https://github.com/danisla/kubernetes-tproxy/tree/master/sidecar) container to create firewall rules in the pod network
+to block egress traffic out of selected pods. The [tproxy-podwatch](https://github.com/danisla/kubernetes-tproxy/tree/master/cmd/tproxy-podwatch) controller 
+watches for pod changes containing the `"initializer.kubernetes.io/tproxy": "true"` annotation and automatically add and removes the local firewall redirect
+rules to apply the transparent proxy to the pod.
 
 ![architecture diagram](https://storage.googleapis.com/gcp-community/tutorials/transparent-proxy-and-filtering-on-k8s/tproxy_diagram.png)
 
@@ -32,97 +40,94 @@ This tutorial uses the [tproxy-sidecar](https://github.com/danisla/kubernetes-tp
 
 ## Before you begin
 
-This tutorial assumes you already have a Google Cloud account and are familiar with the high level concepts of Kubernetes Pods and Deployments.
+This tutorial assumes you already have a Google Cloud account and are familiar with the high-level concepts of Kubernetes Pods and Deployments.
 
 ## Costs
 
-This tutorial uses billable components of Google Cloud, including:
+This tutorial uses billable components of Google Cloud, including [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/pricing).
 
-- [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/pricing)
+Use the [pricing calculator](https://cloud.google.com/products/calculator/#id=f52c2651-4b02-4da3-b8cd-fdbca6ad89a9) to estimate the costs for your environment.
 
-Use the [Pricing Calculator](https://cloud.google.com/products/calculator/#id=f52c2651-4b02-4da3-b8cd-fdbca6ad89a9) to estimate the costs for your environment.
+## Clone the source repository
 
-## Checkout the source repository
+1.  Open [Cloud Shell](https://console.cloud.google.com/cloudshell).
 
-1. Open [Cloud Shell](https://console.cloud.google.com/cloudshell)
-
-2. Clone the repository containing the code for this tutorial:
+1.  Clone the repository containing the code for this tutorial:
 
         git clone https://github.com/danisla/kubernetes-tproxy
         cd kubernetes-tproxy
 
-    The remainder of this tutorial will be run from the root of the cloned repository directory.
+    The remainder of this tutorial is run from the root of the cloned repository directory.
 
 ## Create Kubernetes Engine cluster and install Helm
 
-1. Create the Kubernetes Engine cluster:
+1.  Create the Kubernetes Engine cluster:
 
         gcloud container clusters create tproxy-example --zone us-central1-f
 
-    This command also automatically configures the kubectl command to use the cluster.
+    This command also automatically configures the `kubectl` command to use the cluster.
 
-2. Install [Helm](https://github.com/kubernetes/helm) locally in your Cloud Shell instance:
+1.  Install [Helm](https://helm.sh/docs/intro/install/) in your Cloud Shell instance:
 
-        curl -sL https://storage.googleapis.com/kubernetes-helm/helm-v2.5.1-linux-amd64.tar.gz | tar -xzvf - && sudo mv linux-amd64/helm /usr/local/bin/ && rm -Rf linux-amd64
+        curl -sL https://get.helm.sh/helm-v2.17.0-linux-amd64.tar.gz | tar -xvf - && sudo mv linux-amd64/helm /usr/local/bin/ && rm -Rf linux-amd64
 
-3. Initialize Helm:
+1.  Initialize Helm:
 
         helm init
 
-    This installs the server side component of Helm, Tiller, in the Kubernetes cluster. The Tiller pod may take a minute to start, run the command below to verify it has been deployed:
+    This installs Tiller—which is the server-side component of Helm—in the Kubernetes cluster. The Tiller pod may take a minute to start.
+
+1.  Verify that the client and server components have been deployed:
 
         helm version
 
-    You should see the Client and Server versions in the output:
-
-        Client: &version.Version{SemVer:"v2.5.1", GitCommit:"7cf31e8d9a026287041bae077b09165be247ae66", GitTreeState:"clean"}
-        Server: &version.Version{SemVer:"v2.5.1", GitCommit:"7cf31e8d9a026287041bae077b09165be247ae66", GitTreeState:"clean"}
+    You should see the Client and Server versions in the output.
 
 ## Install the Helm chart
 
-Before installing the chart, you must first extract the certificates generated by mitmproxy. The generated CA cert is used in the example pods to trust the proxy when making HTTPS requests.
+Before installing the chart, you must first extract the certificates generated by mitmproxy. The generated CA certificate is used in the example pods to trust 
+the proxy when making HTTPS requests.
 
-1. Extract the generated certs using Docker:
+1.  Extract the generated certificates using Docker:
 
         cd charts/tproxy
         docker run --rm -v ${PWD}/certs/:/home/mitmproxy/.mitmproxy mitmproxy/mitmproxy >/dev/null 2>&1
 
-2. Install the chart:
+1.  Install the chart:
 
         helm install -n tproxy .
 
-    The output of this command shows you how to augment your deployments to use the init container and trusted certificate configmap volume. Example output below:
+    The output of this command shows you how to augment your deployments to use the init container and trusted certificate configmap volume. Example output
+    below:
 
         Add the init container spec below to your deployments:
 
-    ```yaml
-    initContainers:
-    - name: tproxy
-        image: docker.io/danisla/tproxy-sidecar:0.1.0
-        imagePullPolicy: IfNotPresent
-        securityContext:
-        privileged: true
-        env:
-        resources:
-        limits:
-            cpu: 500m
-            memory: 128Mi
-        requests:
-            cpu: 100m
-            memory: 64Mi
+            initContainers:
+            - name: tproxy
+                image: docker.io/danisla/tproxy-sidecar:0.1.0
+                imagePullPolicy: IfNotPresent
+                securityContext:
+                privileged: true
+                env:
+                resources:
+                limits:
+                    cpu: 500m
+                    memory: 128Mi
+                requests:
+                    cpu: 100m
+                    memory: 64Mi
 
-    Add the volumes below to your deployments to use the trusted https tproxy:
+        Add the volumes below to your deployments to use the trusted https tproxy:
 
-    volumes:
-    - name: ca-certs-debian
-        configMap:
-        name: tproxy-tproxy-root-certs
-        items:
-        - key: root-certs.crt
-            path: ca-certificates.crt
-    ```
+            volumes:
+            - name: ca-certs-debian
+                configMap:
+                name: tproxy-tproxy-root-certs
+                items:
+                - key: root-certs.crt
+                    path: ca-certificates.crt
 
-3. Get the status of the DaemonSet pods:
+1.  Get the status of the DaemonSet pods:
 
         kubectl get pods -o wide
 
@@ -139,17 +144,16 @@ The tproxy chart is now installed and ready to be used by pods with the init con
 
 Deploy the sample apps to demonstrate using and not using the init container to lock down external access from the pod.
 
-1. Change directories back to the repository root  and deploy the example apps:
+1.  Change directories back to the repository root and deploy the example apps:
 
-    ```sh
-    cd ../../
-    kubectl create -f examples/debian-app.yaml
-    kubectl create -f examples/debian-app-locked-manual.yaml
-    ```
+        cd ../../
+        kubectl create -f examples/debian-app.yaml
+        kubectl create -f examples/debian-app-locked-manual.yaml
 
-    Note that the second deployment is the one that contains the init container and trusted certificate volume mount described in the chart post-install notes.
+    Note that the second deployment is the one that contains the init container and trusted certificate volume mount described in the chart post-installation
+    notes.
 
-2. Get the logs for the pod without the tproxy annotation:
+1.  Get the logs for the pod without the tproxy annotation:
 
         kubectl logs --selector=app=debian-app,variant=unlocked --tail=10
 
@@ -163,11 +167,12 @@ Deploy the sample apps to demonstrate using and not using the init container to 
     The output from the example app shows the status codes for the requests and the output of a ping command.
 
     Notice the following:
-    - The request to https://www.google.com succeeds with status code 200.
-    - The request to the Cloud Storage  bucket succeeds with status code 200.
-    - The the ping to www.google.com succeeds.
 
-3. Get the logs for the pod with the tproxy annotation:
+    - The request to `https://www.google.com` succeeds with status code 200.
+    - The request to the Cloud Storage  bucket succeeds with status code 200.
+    - The ping to `www.google.com` succeeds.
+
+1.  Get the logs for the pod with the tproxy annotation:
 
         kubectl logs --selector=app=debian-app,variant=locked --tail=4
 
@@ -179,14 +184,17 @@ Deploy the sample apps to demonstrate using and not using the init container to 
         ping: sending packet: Operation not permitted
 
     Notice the following:
-    - The proxy blocks the request to https://www.google.com with status code 418.
-    - The proxy allows the request to the Cloud Storage bucket with status code 200.
-    - The the ping to www.google.com is rejected.
 
-4. Inspect the logs from the mitmproxy DaemonSet pod to show the intercepted requests and responses. Note that the logs have to be retrieved from the tproxy pod that is running on the same node as the example app.
+    - The proxy blocks the request to `https://www.google.com` with status code 418.
+    - The proxy allows the request to the Cloud Storage bucket with status code 200.
+    - The ping to `www.google.com` is rejected.
+
+1.  Inspect the logs from the mitmproxy DaemonSet pod to show the intercepted requests and responses:
 
         kubectl logs $(kubectl get pods -o wide | awk '/tproxy.*'$(kubectl get pods --selector=app=debian-app,variant=locked -o=jsonpath={.items..spec.nodeName})'/ {print $1}') -c tproxy-tproxy-mode --tail=10
 
+    Note that the logs have to be retrieved from the tproxy pod that is running on the same node as the example app.
+    
     Example output:
 
         10.12.1.41:37380: clientconnect
@@ -199,24 +207,25 @@ Deploy the sample apps to demonstrate using and not using the init container to 
                     << 200  (content missing)
         10.12.1.41:36496: clientdisconnect
 
-    Notice that the proxy blocks the request to https://www.google.com with status code 418.
+    Notice that the proxy blocks the request to `https://www.google.com` with status code 418.
 
 ## Customizing the mitmproxy Python script
 
-This tutorial uses a Python script to filter traffic to a specific Cloud Storage bucket. The Python script is installed as a [ConfigMap](https://kubernetes.io/docs/concepts/configuration/configmap/) resource, and mitmproxy can live-reload the script when it changes without restarting.
+This tutorial uses a Python script to filter traffic to a specific Cloud Storage bucket. The Python script is installed as a
+[ConfigMap](https://kubernetes.io/docs/concepts/configuration/configmap/) resource, and mitmproxy can live-reload the script when it changes without restarting.
 
-1. Modify the script to change the "access denied" status code:
+1.  Modify the script to change the "access denied" status code:
 
         cd charts/tproxy/
         sed -e 's/418/500/g' config/mitm-script.py
 
-2. Upgrade the Helm chart with the change:
+1.  Upgrade the Helm chart with the change:
 
         helm upgrade tproxy .
 
-    After about 30 seconds, the new script will be live-updated and in use by mitmproxy.
+    After about 30 seconds, the new script will be updated and in use by mitmproxy.
 
-3. Verify the output of the locked pod:
+1.  Verify the output of the locked pod:
 
         kubectl logs --selector=app=debian-app,variant=locked --tail=4
 
@@ -227,27 +236,28 @@ This tutorial uses a Python script to filter traffic to a specific Cloud Storage
         PING www.google.com (209.85.200.147): 56 data bytes
         ping: sending packet: Operation not permitted
 
-    Notice that the proxy now blocks the request to https://www.google.com with status code 500.
+    Notice that the proxy now blocks the request to `https://www.google.com` with status code 500.
 
 ## Cleanup
 
-1. Delete the sample apps:
+1.  Delete the sample apps:
 
         cd ../../
         kubectl delete -f examples/debian-app.yaml
         kubectl delete -f examples/debian-app-locked-manual.yaml
 
-2. Delete the tproxy helm release:
+1.  Delete the tproxy helm release:
 
         helm delete --purge tproxy
 
-3. Delete the Kubernetes Engine cluster:
+1.  Delete the Kubernetes Engine cluster:
 
         gcloud container clusters delete tproxy-example --zone=us-central1-f
 
 ## What's next?
 
-- [Transparent Proxy and Filtering on Kubernetes with Initializers tutorial](https://cloud.google.com/community/tutorials/transparent-proxy-and-filtering-on-k8s-with-initializers) - Same approach but simplified using a deployment initializer to inject the InitContainer and ConfigMap.
-- [tproxy helm chart](https://github.com/danisla/kubernetes-tproxy/blob/master/charts/tproxy/README.md) - See all configuration options and deployment methods.
-- [Istio](https://istio.io/) - A more broad approach to traffic filtering and network policy.
-- [Calico Egress NetworkPolicy](https://docs.projectcalico.org/v2.0/getting-started/kubernetes/tutorials/advanced-policy) - Another way to filter egress traffic at the pod level.
+- [Transparent Proxy and Filtering on Kubernetes with Initializers tutorial](https://cloud.google.com/community/tutorials/transparent-proxy-and-filtering-on-k8s-with-initializers): Same approach but simplified using a deployment initializer to inject the InitContainer and ConfigMap.
+- [tproxy helm chart](https://github.com/danisla/kubernetes-tproxy/blob/master/charts/tproxy/README.md): See all configuration options and deployment methods.
+- [Istio](https://istio.io/): A more broad approach to traffic filtering and network policy.
+- [Calico Egress NetworkPolicy](https://docs.projectcalico.org/v2.0/getting-started/kubernetes/tutorials/advanced-policy): Another way to filter egress traffic 
+  at the pod level.
