@@ -10,7 +10,7 @@ Edzo Blaauw | Cloud & Data Engineer | talabat
 
 <p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
-This tutorial will show you how you can create a Load Balancer connected to Cloud Run using a custom domain in Cloudflare. It will also show you how to setup Cloudflare. You need some experience on how to set up a Cloud Run application. In this tutorial I will not show you how to depkoy a Cloud Run application.
+This tutorial will show you how you can create a Load Balancer connected to Cloud Run using a custom domain in Cloudflare. It will also show you how to setup Cloudflare. You need some experience on how to set up a Cloud Run application. In this tutorial I will not show you how to depkoy a Cloud Run application. The advantage of using this method is that you can setup Cloud Run behind a Cloudflare Access authentication. 
 
 We will use the Google Cloud Platform UI. We will not use the command line in this tutorial.
 
