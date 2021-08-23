@@ -46,6 +46,25 @@ gcloud compute zones list
 
 If you are creating a new project, use the name you intend to give it.
 
+### Clone the repository
+
+The files that you use in this tutorial are available in the
+[`GoogleCloudPlatform/community` repository](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/singularity-containers-with-cloud-build)
+
+Clone the repository:
+
+```bash
+git clone https://github.com/GoogleCloudPlatform/community
+```
+
+Change directory into the folder for the tutorial:
+
+```bash
+cd tutorials/singularity-containers-with-cloud-build
+```
+
+Commands in the tutorial require some of these files. If you don't clone the repository, you might see an error unless you create the example files yourself.
+
 ### Source `env.sh` to define the environment variables in your current shell session
 
 ```bash
