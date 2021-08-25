@@ -10,7 +10,7 @@ Ameer Abbas | Solutions Architect | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-This guides explains how to deploy the
+This guide explains how to deploy the
 [NGINX Ingress Controller](https://github.com/kubernetes/ingress-nginx) on Google Kubernetes Engine.
 
 In Kubernetes,
