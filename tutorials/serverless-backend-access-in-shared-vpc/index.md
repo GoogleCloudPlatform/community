@@ -1,14 +1,12 @@
-Allowing third party services to access specific backend resources in a Shared VPC
-
 ---
-title: Tutorial template
+title: Allowing third party services to access specific backend resources in a Shared VPC
 description: Replace with a description of your tutorial, focusing on what the reader will learn.
-author: github-username-for-author,github-username-for-other-author
+author: skalolazka,github-username-for-other-author
 tags: replace, with, tags, not, in, title, or, description
-date_published: 2020-04-28
+date_published: 2021-09-01
 ---
 
-Todd Kopriva | Community Editor | Google
+Norman Planner | Community Editor | Google
 
 <p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
