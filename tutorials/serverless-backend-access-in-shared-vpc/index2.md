@@ -99,7 +99,7 @@ This guide assumes that you are familiar with [Terraform](https://cloud.google.c
 
             gcloud services enable compute.googleapis.com 
 
-## **Folder structure**
+## **Folder structure
 
 * The main module for the solution components is in the <strong> <code>modules/serverless_endpoint/</code></strong> folder. It creates the necessary serverless components and organizes access between them.
 * In<strong> <code>variables.tf</code> </strong>and<strong> <code>main.tf</code> </strong>the<strong> </strong>variables, locals and data are defined.
@@ -108,7 +108,7 @@ This guide assumes that you are familiar with [Terraform](https://cloud.google.c
 
 **Note** The IP of the webserver is hard coded in server/index.js and is used in Terraform variables.
 
-## **Quickstart: **
+## Quickstart:
 
 1. Open [Cloud Shell](https://console.cloud.google.com/cloudshell)
 
