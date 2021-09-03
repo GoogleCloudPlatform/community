@@ -1,7 +1,7 @@
 ---
 title: Allowing third party services to access specific backend resources in a Shared VPC
 description: Learn how to provision a serverless function to access a backend ressource in a Shared VPC using Terraform scripts.
-author: skalolazka,github-username-for-other-author
+author: skalolazka,nplanner
 tags: shared VPC, Cloud Run, Serverless Connector
 date_published: 2021-09-01
 ---
@@ -11,7 +11,7 @@ Natalia Strelkova | Community Editor | Google
 
 # Allowing third party services to access specific backend resources in a Shared VPC
 
-This tutorial describes how to configure Cloud Run and a Serverless Connector to allow third party services access to specific backend resources in a Shared VPC via Terraform. This approach allows you to give third party services outside of your network access to specific backend resources instead of allowing them to access the whole VPC. This solution shows an example use case where the cloud run service is proxying access to some private backend. The Cloud Run Service can be used to add context specific information to the third party services. 
+This tutorial describes how to configure Cloud Run and a Serverless Connector to allow third party services access to specific backend resources in a Shared VPC via Terraform. This approach allows you to give third party services outside of your network access to specific backend resources instead of allowing them to access the whole VPC. This solution shows an example use case where a Cloud Run service is proxying access to some private backend. The Cloud Run service can be used to add context-specific information to the third party services. 
 
 This document is for network administrators, security architects, app developers and cloud operations professionals.
 
@@ -31,20 +31,16 @@ The following diagram summarizes the architecture that you create in this tutori
 
 ![Architecture](./image1.png)
 
+**Note**: This tutorial uses a second Google Cloud project to simulate your private (or on-premises) network with which the shared VPC will be shared. 
 
-# Notes:
-
-This tutorial uses a second Google Cloud project to simulate your private (or on-premises) network with which the shared VPC will be shared. 
-
-
-## Objectives:
+## Objectives
 
 * Create a Serverless Connector in the shared VPC host project
 * Provision an example Cloud Run service
 * Create and configure a security policy for Cloud Armor
 * Provision an HTTP load balancer
 
-## Costs:
+## Costs
 
 This tutorial uses the following billable components of Google Cloud:
 
@@ -55,7 +51,7 @@ This tutorial uses the following billable components of Google Cloud:
 
 To generate a cost estimate based on your projected usage, use the [pricing calculator](https://cloud.google.com/products/calculator).
 
-## Before you begin:
+## Before you begin
 
 Because this tutorial requires two Google Cloud projects, complete these steps to create and enable billing and APIs for _two_ projects. The tutorial refers to these projects as <strong><code><em>your-gcp-host-project </em></code></strong> and <strong><code><em>your-gcp-service-project</em></code></strong>.
 
@@ -63,11 +59,10 @@ Because this tutorial requires two Google Cloud projects, complete these steps t
 **Note**: If you don't plan to keep the resources that you create in this procedure, create a project instead of selecting an existing project. After you finish these steps, you can delete the project, removing all resources associated with the project.
 2. [Go to project selector](https://console.cloud.google.com/projectselector2/home/dashboard)
 3. Make sure that billing is enabled for your Cloud project. [Learn how to confirm that billing is enabled for your project](https://cloud.google.com/billing/docs/how-to/modify-project).
-4. In the Cloud Console, activate Cloud Shell. \
-[Activate Cloud Shell \
-](https://console.cloud.google.com/?cloudshell=true)At the bottom of the Cloud Console, a [Cloud Shell](https://cloud.google.com/shell/docs/features) session starts and displays a command-line prompt. Cloud Shell is a shell environment with the Cloud SDK already installed, including the [gcloud](https://cloud.google.com/sdk/gcloud) command-line tool, and with values already set for your current project. It can take a few seconds for the session to initialize.
+4. In the Cloud Console, [activate Cloud Shell](https://console.cloud.google.com/?cloudshell=true). \
+At the bottom of the Cloud Console, a [Cloud Shell](https://cloud.google.com/shell/docs/features) session starts and displays a command-line prompt. Cloud Shell is a shell environment with the Cloud SDK already installed, including the [gcloud](https://cloud.google.com/sdk/gcloud) command-line tool, and with values already set for your current project. It can take a few seconds for the session to initialize.
 
-This guide assumes that you are familiar with [Terraform](https://cloud.google.com/docs/terraform). 
+This guide assumes that you are familiar with [Terraform](https://cloud.google.com/docs/terraform). The code here has been tested using Terraform version 1.0.2.
 
 * See [Getting started with Terraform on Google Cloud](https://cloud.google.com/community/tutorials/getting-started-on-gcp-with-terraform) to set up your Terraform environment for Google Cloud.
 * Ensure that you have a [service account](https://cloud.google.com/iam/docs/creating-managing-service-accounts) with sufficient permissions to deploy the resources used in this tutorial.
@@ -99,70 +94,58 @@ This guide assumes that you are familiar with [Terraform](https://cloud.google.c
 
             gcloud services enable compute.googleapis.com 
 
-## Folder structure
+## "code" folder structure
 
-* The main module for the solution components is in the <strong> <code>modules/serverless_endpoint/</code></strong> folder. It creates the necessary serverless components and organizes access between them.
-* In<strong> <code>variables.tf</code> </strong>and<strong> <code>main.tf</code> </strong>the<strong> </strong>variables, locals and data are defined.
-* Other files are to create an example to be able to test the setup - the file <strong><code>networking.tf</code></strong> sets up a Shared VPC,<strong> <code>example_server.tf</code> </strong>runs an example webserver.
+* The main module for the solution components is in the <strong><code>code/modules/serverless_endpoint/</code></strong> folder. It creates the necessary serverless components and organizes access between them.
+* In <strong><code>code/variables.tf</code></strong> and <strong><code>code/main.tf</code></strong> the variables, locals and data are defined.
+* Other files are to create an example to be able to test the setup - the file <strong><code>code/networking.tf</code></strong> sets up a Shared VPC, <strong><code>example_server.tf</code></strong> runs an example webserver.
 
+**Note** The IP of the webserver is hardcoded in server/index.js and is used in Terraform variables.
 
-**Note** The IP of the webserver is hard coded in server/index.js and is used in Terraform variables.
-
-## Quickstart:
+## Quickstart
 
 1. Open [Cloud Shell](https://console.cloud.google.com/cloudshell)
 
-2. Clone the `terraform-google-examples` repository:
-
+2. Clone this repository
 ```
 git clone https://github.com/GoogleCloudPlatform/community.git
-
 ```
-3. Go to the `terraform-google-examples` directory:
-
+3. Go to the tutorial code directory:
 ```
-cd community/tutorials/serverless-backend-access-in-shared-vpc/
+cd community/tutorials/serverless-backend-access-in-shared-vpc/code
 ```
- 4. If you aren't using Cloud Shell, this tutorial uses the default application credentials for Terraform authentication to Google Cloud. Run the following command first to obtain the default credentials for your project.
-
+ 4. <i>If you aren't using Cloud Shell</i>, this tutorial uses the default application credentials for Terraform authentication to Google Cloud. Run the following command first to obtain the default credentials for your project:
 ```
 gcloud auth application-default login
 ```
-5. (optional) Change variable values in variables.tf for your environment.
-6. Run Terraform to deploy architecture:
+5. (optional) Create a "terraform.tfvars" file with the variable values for your environment. Example content:
+```
+cloud_run_project = "your-gcp-host-project"
+shared_vpc_host_project = "your-gcp-service-project"
+source_ip_range_for_security_policy = ["0.0.0.0/0"]
+```
+<i>Main variables used</i>:
+- "cloud_run_project" - your-gcp-service-project where GCLB + Cloud Run are deployed
+- "shared_vpc_host_project" - your-gcp-host-project to host the shared VPC and to deploy the serverless connector and an example server
+- "source_ip_range_for_security_policy" - array of Cloud Armor security policy allowed IP ranges (put your IP as an array here e.g. ["10.0.0.0"])
+See the variables.tf file for others having default values.
+7. Run Terraform to deploy architecture:
 ```
 terraform init
 terraform plan
 terraform apply
 ```
 The resources are ready after a few minutes.
+7. Check the output of ```terraform apply``` and get the IP address of the web server which you can then test.
 
-Before the terraform code will be applied you need to plug in variables specific to your environment. 
-
-```
-variable "cloud_run_project"
-#your-gcp-service-project where GCLB + Cloud Run are deployed
-```
-
-```
-variable "shared_vpc_host_project"
-# your-gcp-host-project to host the shared VPC and to deploy the serverless connector and an example server
-```
-
-```
-variable "source_ip_range_for_security_policy"
-#Array of Cloud Armor security policy allowed IP ranges (put your IP as an array here e.g. ["10.0.0.0"])
-```
-7. Check the output of terraform apply to test if the web server is responding 
-
-**Note** it will need some time that the IP address will be propagated and you can access the web server
+**Note**: it will take some time for the IP address to be propagated and the web server to be ready to be accessed.
 
 8. Delete the Cloud resources provisioned by Terraform:
-
 ```
 terraform destroy
 ```
 
+## Additional reading
 * [Additional examples in the terraform-google-examples repository](https://github.com/GoogleCloudPlatform/terraform-google-examples).
 * [Learn more about load balancing on Google Cloud](https://cloud.google.com/compute/docs/load-balancing).
 * [How to setup SSL certificates on GCLB](https://cloud.google.com/load-balancing/docs/ssl-certificates).
