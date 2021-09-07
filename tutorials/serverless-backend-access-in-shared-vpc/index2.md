@@ -51,7 +51,7 @@ This tutorial uses the following billable components of Google Cloud:
 
 To generate a cost estimate based on your projected usage, use the [pricing calculator](https://cloud.google.com/products/calculator).
 
-## Before you begin
+## Prerequisites
 
 Because this tutorial requires two Google Cloud projects, complete these steps to create and enable billing and APIs for _two_ projects. The tutorial refers to these projects as <strong><code><em>your-gcp-host-project </em></code></strong> and <strong><code><em>your-gcp-service-project</em></code></strong>.
 
@@ -62,9 +62,10 @@ Because this tutorial requires two Google Cloud projects, complete these steps t
 4. In the Cloud Console, [activate Cloud Shell](https://console.cloud.google.com/?cloudshell=true). \
 At the bottom of the Cloud Console, a [Cloud Shell](https://cloud.google.com/shell/docs/features) session starts and displays a command-line prompt. Cloud Shell is a shell environment with the Cloud SDK already installed, including the [gcloud](https://cloud.google.com/sdk/gcloud) command-line tool, and with values already set for your current project. It can take a few seconds for the session to initialize.
 
-This guide assumes that you are familiar with [Terraform](https://cloud.google.com/docs/terraform). The code here has been tested using Terraform version 1.0.2.
+This guide assumes that you are familiar with [Terraform](https://cloud.google.com/docs/terraform).
 
 * See [Getting started with Terraform on Google Cloud](https://cloud.google.com/community/tutorials/getting-started-on-gcp-with-terraform) to set up your Terraform environment for Google Cloud.
+* The code here has been tested using Terraform version 1.0.2.
 * Ensure that you have a [service account](https://cloud.google.com/iam/docs/creating-managing-service-accounts) with sufficient permissions to deploy the resources used in this tutorial.
 
 1. Enable the following APIs on <strong><code><em>your-gcp-service-project</em></code></strong>
@@ -114,7 +115,7 @@ git clone https://github.com/GoogleCloudPlatform/community.git
 ```
 cd community/tutorials/serverless-backend-access-in-shared-vpc/code
 ```
- 4. <i>If you aren't using Cloud Shell</i>, this tutorial uses the default application credentials for Terraform authentication to Google Cloud. Run the following command first to obtain the default credentials for your project:
+4. <i>If you aren't using Cloud Shell</i>, this tutorial uses the default application credentials for Terraform authentication to Google Cloud. Run the following command first to obtain the default credentials for your project:
 ```
 gcloud auth application-default login
 ```
@@ -128,22 +129,29 @@ source_ip_range_for_security_policy = ["0.0.0.0/0"]
 - "cloud_run_project" - your-gcp-service-project where GCLB + Cloud Run are deployed
 - "shared_vpc_host_project" - your-gcp-host-project to host the shared VPC and to deploy the serverless connector and an example server
 - "source_ip_range_for_security_policy" - array of Cloud Armor security policy allowed IP ranges (put your IP as an array here e.g. ["10.0.0.0"])
-See the variables.tf file for others having default values.
-7. Run Terraform to deploy architecture:
+See the variables.tf and modules/serverless_endpoint/variables.tf files for others that have default values.
+
+6. Run Terraform to deploy architecture:
 ```
 terraform init
 terraform plan
 terraform apply
 ```
 The resources are ready after a few minutes.
+
 7. Check the output of ```terraform apply``` and get the IP address of the web server which you can then test.
 
-**Note**: it will take some time for the IP address to be propagated and the web server to be ready to be accessed.
+Give the resources some time to get running and access the IP address:
+http://IP/ or https://IP/ping
 
-8. Delete the Cloud resources provisioned by Terraform:
+If you have supplied the variable "cloud_run_invoker" (in the modules/serverless_endpoint variables) with your user, you can try with authentication:
+> curl -H "Authorization: Bearer $(gcloud auth print-identity-token)" http://IP/ping
+
+## Destroying created resources
 ```
-terraform destroy
+>> terraform destroy
 ```
+Be aware that the destroying of all resources created here might need to be done in two steps, since the destroy process does not figure out the dependencies right, specifically for the `google_compute_shared_vpc_host_project` resource, so if you get an error, please just run ```terraform destroy``` again. If it still goes wrong, you might need to detach the shared VPC project manually.
 
 ## Additional reading
 * [Additional examples in the terraform-google-examples repository](https://github.com/GoogleCloudPlatform/terraform-google-examples).
