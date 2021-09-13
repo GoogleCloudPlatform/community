@@ -93,7 +93,7 @@ the [Cloud Console Logs Viewer](https://console.cloud.google.com/logs/viewer).
 
 1.  Open the [Cloud Console Logs Viewer](https://console.cloud.google.com/logs/viewer).
 
-1.  In the **GCE VM instance** menu for your instance, select the `gcplogs-docker-driver` label to limit to just the logs from your
+1.  In the **GCE VM instance** menu, choose your instance, and then select the `gcplogs-docker-driver` label to limit to just the logs from your
     Docker containers.
 
 1.  Enter a search filter to narrow the logs further. Enter
