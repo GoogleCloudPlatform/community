@@ -171,15 +171,15 @@ After the installation, additional configuration is need as follows:
 
 1. Uncomment the below line by removing ';' in your server's php.ini
 
-      ;extension=mysqli
+        ;extension=mysqli
 
 2. Include phpmyadmin's configuration in your apache2.conf file by adding the following line.
 
-      Include /etc/phpmyadmin/apache.conf
+        Include /etc/phpmyadmin/apache.conf
 
 3. Restart apache  
 
-      sudo systemctl restart apache2
+        sudo systemctl restart apache2
 
 #### Test phpMyAdmin
 
