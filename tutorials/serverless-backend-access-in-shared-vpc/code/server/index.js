@@ -20,7 +20,7 @@ const fetch = require('node-fetch');
 
 // the prefix of this IP address is used in main.tf in the ip_prefix variable and then in networking.tf
 // so if you want to change it, please change it there accordingly
-const REMOTE_SERVER = "http://192.168.1.6:8000";
+const REMOTE_SERVER = 'http://192.168.1.6:8000';
 
 const getExternalIp = async () => {
   try {
@@ -43,7 +43,6 @@ app.get('/ping', async (req, res) => {
 
   res.send(`Ping ${txt}!`);
 });
-
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
