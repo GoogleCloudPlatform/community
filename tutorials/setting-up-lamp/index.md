@@ -167,17 +167,17 @@ During the installation, configure phpMyAdmin as follows:
   + Select **Yes** to use `dbconfig-common` for database setup.
   + Enter a password for the phpMyAdmin application, and make a note of the password.
 
-After the installation, additional configuration is need as follows:
+After installation, complete the configuration:
 
-1. Uncomment the below line by removing ';' in your server's php.ini
+1.  Uncomment the following line in your server's `php.ini` file by removing the leading `;` character: 
 
         ;extension=mysqli
 
-2. Include phpmyadmin's configuration in your apache2.conf file by adding the following line.
+1.  Include the phpMyAdmin configuration in your `apache2.conf` file by adding the following line:
 
         Include /etc/phpmyadmin/apache.conf
 
-3. Restart apache  
+1.  Restart Apache:
 
         sudo systemctl restart apache2
 
