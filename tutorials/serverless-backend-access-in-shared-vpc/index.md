@@ -1,133 +1,160 @@
-Allowing third party services to access specific backend resources in a Shared VPC
-
 ---
-title: Tutorial template
-description: Replace with a description of your tutorial, focusing on what the reader will learn.
-author: github-username-for-author,github-username-for-other-author
-tags: replace, with, tags, not, in, title, or, description
-date_published: 2020-04-28
+title: Allowing third party services to access specific backend resources in a Shared VPC
+description: Learn how to provision a serverless function to access a backend ressource in a Shared VPC using Terraform scripts.
+author: skalolazka,nplanner
+tags: shared VPC, Cloud Run, Serverless Connector
+date_published: 2021-09-01
 ---
 
-Todd Kopriva | Community Editor | Google
-
-<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+Natalia Strelkova | Community Editor | Google
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-To begin creating a tutorial, copy the Markdown source for this tutorial template into your blank Markdown file. Replace the explanatory text and examples with 
-your own tutorial content. Not all documents will use all of the sections described in this template. For example, a conceptual document or code walkthrough
-might not include the "Costs" or "Cleaning up" sections. For more information, see the 
-[style guide](https://cloud.google.com/community/tutorials/styleguide) and [contribution guide](https://cloud.google.com/community/tutorials/write).
+# Allowing third party services to access specific backend resources in a Shared VPC
 
-Replace the placeholders in the metadata at the top of the Markdown file with your own values. Follow the guidance provided by the placeholder values for spacing
-and punctuation.
+This tutorial describes how to configure Cloud Run and a Serverless Connector to allow third party services access to specific backend resources in a Shared VPC via Terraform. This approach allows you to give third party services outside of your network access to specific backend resources instead of allowing them to access the whole VPC. This solution shows an example use case where a Cloud Run service is proxying access to some private backend. The Cloud Run service can be used to add context-specific information to the third party services. 
 
-The first line after the metadata should be your name and an optional job description and organization affiliation.
+This document is for network administrators, security architects, app developers and cloud operations professionals.
 
-After that is one of two banners that indicates whether the document was contributed by a Google employee. Just leave one banner and delete the other one.
+Typical uses cases are: 
 
-The first paragraph or two of the tutorial should tell the reader the following:
+* Webhooks 
+* Seldom access from third party services 
 
-  * Who the tutorial is for
-  * What they will learn from the tutorial
-  * What prerequisite knowledge they need for the tutorial
+In this example we are using Cloud Run, but you can take similar steps to configure other serverless services like App Engine or Cloud Functions.
 
-Don't use a heading like **Overview** or **Introduction**. Just get right to it.
+This tutorial assumes that you have basic familiarity using Google Cloud Console, Terraform, Cloud Run and setting up networking on Google Cloud. 
+
+
+## Architecture using Cloud Run 
+
+The following diagram summarizes the architecture that you create in this tutorial.
+
+![Architecture](./image1.png)
+
+**Note**: This tutorial uses a second Google Cloud project to simulate your private (or on-premises) network with which the shared VPC will be shared. 
 
 ## Objectives
 
-Give the reader a high-level summary of what steps they take during the tutorial. This information is often most effective as a short bulleted list.
-
-### Example: Objectives
-
-*   Create a service account with limited access.
-*   Create a Cloud Function that triggers on HTTP.
-*   Create a Cloud Scheduler job that targets an HTTP endpoint.
-*   Run the Cloud Scheduler job. 
-*   Verify success of the job.
+* Create a Serverless Connector in the shared VPC host project
+* Provision an example Cloud Run service
+* Create and configure a security policy for Cloud Armor
+* Provision an HTTP load balancer
 
 ## Costs
 
-Tell the reader which technologies the tutorial uses and what it costs to use them.
+This tutorial uses the following billable components of Google Cloud:
 
-For Google Cloud services, link to the preconfigured [pricing calculator](https://cloud.google.com/products/calculator/) if possible.
+* [Compute Engine](https://cloud.google.com/compute/pricing)
+* [Cloud Run](https://cloud.google.com/run/pricing)
+* [HTTP(S) Load Balancer with Serverless NEGs](https://cloud.google.com/vpc/network-pricing)
+* [Serverless VPC Access Connector](https://cloud.google.com/vpc/pricing)
 
-If there are no costs to be incurred, state that.
+To generate a cost estimate based on your projected usage, use the [pricing calculator](https://cloud.google.com/products/calculator).
 
-### Example: Costs 
+## Prerequisites
 
-This tutorial uses billable components of Google Cloud, including the following:
+Because this tutorial requires two Google Cloud projects, complete these steps to create and enable billing and APIs for _two_ projects. The tutorial refers to these projects as <strong><code><em>your-gcp-host-project </em></code></strong> and <strong><code><em>your-gcp-service-project</em></code></strong>.
 
-*   [Cloud Functions](https://cloud.google.com/functions)
-*   [Cloud Scheduler](https://cloud.google.com/scheduler)
-*   [App Engine](https://cloud.google.com/appengine/docs/flexible/python)
+1. In the Google Cloud Console, on the project selector page, select or create a Google Cloud project. \
+**Note**: If you don't plan to keep the resources that you create in this procedure, create a project instead of selecting an existing project. After you finish these steps, you can delete the project, removing all resources associated with the project.
+2. [Go to project selector](https://console.cloud.google.com/projectselector2/home/dashboard)
+3. Make sure that billing is enabled for your Cloud project. [Learn how to confirm that billing is enabled for your project](https://cloud.google.com/billing/docs/how-to/modify-project).
+4. In the Cloud Console, [activate Cloud Shell](https://console.cloud.google.com/?cloudshell=true). \
+At the bottom of the Cloud Console, a [Cloud Shell](https://cloud.google.com/shell/docs/features) session starts and displays a command-line prompt. Cloud Shell is a shell environment with the Cloud SDK already installed, including the [gcloud](https://cloud.google.com/sdk/gcloud) command-line tool, and with values already set for your current project. It can take a few seconds for the session to initialize.
 
-Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage.
+This guide assumes that you are familiar with [Terraform](https://cloud.google.com/docs/terraform).
 
-## Before you begin
+* See [Getting started with Terraform on Google Cloud](https://cloud.google.com/community/tutorials/getting-started-on-gcp-with-terraform) to set up your Terraform environment for Google Cloud.
+* The code here has been tested using Terraform version 1.0.2.
+* Ensure that you have a [service account](https://cloud.google.com/iam/docs/creating-managing-service-accounts) with sufficient permissions to deploy the resources used in this tutorial.
 
-Give a numbered sequence of procedural steps that the reader must take to set up their environment before getting into the main tutorial.
+1. Enable the following APIs on <strong><code><em>your-gcp-service-project</em></code></strong>
 
-Don't assume anything about the reader's environment. You can include simple installation instructions of only a few steps, but provide links to installation
-instructions for anything more complex.
+    * Compute Engine API
+    * Serverless VPC Access API
+    * Cloud Build API
+    * API Gateway API
+    * Service Control API
+    * Service Management API
+    * Cloud Deployment Manager V2 API
+    * Cloud Run API
 
-### Example: Before you begin
+            gcloud services enable \
+            compute.googleapis.com  \
+            vpcaccess.googleapis.com \
+            cloudbuild.googleapis.com \
+            apigateway.googleapis.com  \
+            servicecontrol.googleapis.com \
+            servicemanagement.googleapis.com \
+            deploymentmanager.googleapis.com \
+            run.googleapis.com
 
-This tutorial assumes that you're using the Microsoft Windows operating system.
+2. Enable the following APIs on <strong><code><em>your-gcp-host-project</em></code></strong>
 
-1.  Create an account with the BigQuery free tier. See
-    [this video from Google](https://www.youtube.com/watch?v=w4mzE--sprY&list=PLIivdWyY5sqI6Jd0SbqviEgoA853EvDsq&index=2) for detailed instructions.
-1.  Create a Google Cloud project in the [Cloud Console](https://console.cloud.google.com/).
-1.  Install [DBeaver Community for Windows](https://dbeaver.io/download/).
+    * Compute Engine API
 
-## Tutorial body
+            gcloud services enable compute.googleapis.com 
 
-Break the tutorial body into as many sections and subsections as needed, with concise headings.
+## "code" folder structure
 
-### Use short numbered lists for procedures
+* The main module for the solution components is in the <strong><code>code/modules/serverless_endpoint/</code></strong> folder. It creates the necessary serverless components and organizes access between them.
+* In <strong><code>code/variables.tf</code></strong> and <strong><code>code/main.tf</code></strong> the variables, locals and data are defined.
+* Other files are to create an example to be able to test the setup - the file <strong><code>code/networking.tf</code></strong> sets up a Shared VPC, <strong><code>example_server.tf</code></strong> runs an example webserver.
 
-Use numbered lists of steps for procedures. Each action that the reader must take should be its own step. Start each step with the action, such as *Click*, 
-*Run*, or *Enter*.
+**Note** The IP of the webserver is hardcoded in server/index.js and is used in Terraform variables.
 
-Keep procedures to 7 steps or less, if possible. If a procedure is longer than 7 steps, consider how it might be separated into sub-procedures, each in its
-own subsection.
+## Quickstart
 
-### Provide context, but don't overdo the screenshots
+1. Open [Cloud Shell](https://console.cloud.google.com/cloudshell)
 
-Provide context and explain what's going on.
+2. Clone this repository
+```
+git clone https://github.com/GoogleCloudPlatform/community.git
+```
+3. Go to the tutorial code directory:
+```
+cd community/tutorials/serverless-backend-access-in-shared-vpc/code
+```
+4. <i>If you aren't using Cloud Shell</i>, this tutorial uses the default application credentials for Terraform authentication to Google Cloud. Run the following command first to obtain the default credentials for your project:
+```
+gcloud auth application-default login
+```
+5. (optional) Create a "terraform.tfvars" file with the variable values for your environment. Example content:
+```
+cloud_run_project = "your-gcp-host-project"
+shared_vpc_host_project = "your-gcp-service-project"
+source_ip_range_for_security_policy = ["0.0.0.0/0"]
+```
+<i>Main variables used</i>:
+- "cloud_run_project" - your-gcp-service-project where GCLB + Cloud Run are deployed
+- "shared_vpc_host_project" - your-gcp-host-project to host the shared VPC and to deploy the serverless connector and an example server
+- "source_ip_range_for_security_policy" - array of Cloud Armor security policy allowed IP ranges (put your IP as an array here e.g. ["10.0.0.0"])
+See the variables.tf and modules/serverless_endpoint/variables.tf files for others that have default values.
 
-Use screenshots only when they help the reader. Don't provide a screenshot for every step.
+6. Run Terraform to deploy architecture:
+```
+terraform init
+terraform plan
+terraform apply
+```
+The resources are ready after a few minutes.
 
-Help the reader to recognize what success looks like along the way. For example, describing the result of a step helps the reader to feel like they're doing
-it right and helps them know things are working so far.
+7. Check the output of ```terraform apply``` and get the IP address of the web server which you can then test.
 
-## Cleaning up
+Give the resources some time to get running and access the IP address:
+http://IP/ or https://IP/ping
 
-Tell the reader how to shut down what they built to avoid incurring further costs.
+If you have supplied the variable "cloud_run_invoker" (in the modules/serverless_endpoint variables) with your user, you can try with authentication:
+> curl -H "Authorization: Bearer $(gcloud auth print-identity-token)" http://IP/ping
 
-### Example: Cleaning up
+## Destroying created resources
+```
+>> terraform destroy
+```
+Be aware that the destroying of all resources created here might need to be done in two steps, since the destroy process does not figure out the dependencies right, specifically for the `google_compute_shared_vpc_host_project` resource, so if you get an error, please just run ```terraform destroy``` again. If it still goes wrong, you might need to detach the shared VPC project manually.
 
-To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project.
-
-Deleting a project has the following consequences:
-
-- If you used an existing project, you'll also delete any other work that you've done in the project.
-- You can't reuse the project ID of a deleted project. If you created a custom project ID that you plan to use in the
-  future, delete the resources inside the project instead. This ensures that URLs that use the project ID, such as
-  an `appspot.com` URL, remain available.
-
-To delete a project, do the following:
-
-1.  In the Cloud Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
-1.  In the project list, select the project you want to delete and click **Delete**.
-1.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
-
-## What's next
-
-Tell the reader what they should read or watch next if they're interested in learning more.
-
-### Example: What's next
-
-- Watch this tutorial's [Google Cloud Level Up episode on YouTube](https://youtu.be/uBzp5xGSZ6o).
-- Learn more about [AI on Google Cloud](https://cloud.google.com/solutions/ai/).
-- Learn more about [Cloud developer tools](https://cloud.google.com/products/tools).
-- Try out other Google Cloud features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
+## Additional reading
+* [Additional examples in the terraform-google-examples repository](https://github.com/GoogleCloudPlatform/terraform-google-examples).
+* [Learn more about load balancing on Google Cloud](https://cloud.google.com/compute/docs/load-balancing).
+* [How to setup SSL certificates on GCLB](https://cloud.google.com/load-balancing/docs/ssl-certificates).
+* Try out other Google Cloud features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
