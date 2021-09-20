@@ -229,6 +229,7 @@ status field in confusing ways. For more information, see
             kubernetes.io/ingress.class: "nginx"
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
         spec:
+          rules:
           - host: "34.122.88.204.nip.io"
             http:
               paths:
