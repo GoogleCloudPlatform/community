@@ -257,8 +257,8 @@ status field in confusing ways. For more information, see
 
     The output should look like the following:
 
-        NAME               HOSTS                ADDRESS       PORTS   AGE
-        ingress-resource   34.70.255.61.nip.io  34.70.255.61  80      111m
+        NAME               CLASS    HOSTS                  ADDRESS   PORTS   AGE
+        ingress-resource   <none>   34.122.88.204.nip.io             80      10s
 
     Note the `HOSTS` value in the output is set to a FQDN using nip.io domain. This host resolves the hostname with the form of `[IP_ADDRESS].nip.io` to
     `[IP_ADDRESS]`. NGINX Ingress Controller requires you to use a DNS name in the `host` specification in the `Ingress` resource. For the purpose of this
