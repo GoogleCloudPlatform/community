@@ -221,7 +221,7 @@ status field in confusing ways. For more information, see
 1.  Create a simple Ingress Resource YAML file that uses the NGINX Ingress Controller and has one path rule defined:
 
         cat <<EOF > ingress-resource.yaml
-        apiVersion: networking.k8s.io/v1beta1
+        apiVersion: networking.k8s.io/v1
         kind: Ingress
         metadata:
           name: ingress-resource
