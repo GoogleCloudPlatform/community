@@ -162,34 +162,34 @@ Here is a basic flow of the NGINX ingress solution on Google Kubernetes Engine.
 
 1.  Verify that the `nginx-ingress-controller` Deployment and Service are deployed to the GKE cluster:
 
-        kubectl get deployment nginx-ingress-nginx-ingress
-        kubectl get service nginx-ingress-nginx-ingress
+        kubectl get deployment nginx-ingress-ingress-nginx-controller
+        kubectl get service nginx-ingress-ingress-nginx-controller
 
     The output should look like this:
 
         # Deployment
-        NAME                          READY   UP-TO-DATE   AVAILABLE   AGE
-        nginx-ingress-nginx-ingress   1/1     1            1           131m
+        NAME                                     READY   UP-TO-DATE   AVAILABLE   AGE
+        nginx-ingress-ingress-nginx-controller   1/1     1            1           13m
 
         # Service
-        NAME                          TYPE           CLUSTER-IP    EXTERNAL-IP   PORT(S)                      AGE
-        nginx-ingress-nginx-ingress   LoadBalancer   10.7.250.75   <pending>     80:31875/TCP,443:30172/TCP   132m
+        NAME                                     TYPE           CLUSTER-IP    EXTERNAL-IP     PORT(S)                      AGE
+        nginx-ingress-ingress-nginx-controller   LoadBalancer   10.7.255.93   <pending>       80:30381/TCP,443:32105/TCP   13m
 
 1.  Wait a few moments while the Google Cloud L4 load balancer gets deployed, and then confirm that the `nginx-ingress-nginx-ingress` Service has been deployed
     and that you have an external IP address associated with the service:
 
-        kubectl get service nginx-ingress-nginx-ingress
+        kubectl get service nginx-ingress-ingress-nginx-controller
 
     You may need to run this command a few times until an `EXTERNAL-IP` value is present.
 
     You should see the following:
 
-        NAME                          TYPE           CLUSTER-IP    EXTERNAL-IP   PORT(S)                      AGE
-        nginx-ingress-nginx-ingress   LoadBalancer   10.7.250.75   34.70.255.61  80:31875/TCP,443:30172/TCP   132m
+        NAME                                     TYPE           CLUSTER-IP    EXTERNAL-IP     PORT(S)                      AGE
+        nginx-ingress-ingress-nginx-controller   LoadBalancer   10.7.255.93   34.122.88.204   80:30381/TCP,443:32105/TCP   13m
 
 1.  Export the `EXTERNAL-IP` of the NGINX ingress controller in a variable to be used later:
 
-        export NGINX_INGRESS_IP=$(kubectl get service nginx-ingress-nginx-ingress -ojson | jq -r '.status.loadBalancer.ingress[].ip')
+        export NGINX_INGRESS_IP=$(kubectl get service nginx-ingress-ingress-nginx-controller -ojson | jq -r '.status.loadBalancer.ingress[].ip')
 
 1.  Ensure that you have the correct IP address value stored in the `$NGINX_INGRESS_IP` variable:
 
@@ -229,14 +229,16 @@ status field in confusing ways. For more information, see
             kubernetes.io/ingress.class: "nginx"
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
         spec:
-          rules:
-          - host: ${NGINX_INGRESS_IP}.nip.io
+          - host: "34.122.88.204.nip.io"
             http:
               paths:
-              - backend:
-                  serviceName: hello-app
-                  servicePort: 8080
-                path: /hello
+              - pathType: Prefix
+                path: "/hello"
+                backend:
+                  service:
+                    name: hello-app
+                    port:
+                      number: 8080
         EOF
 
     The `kind: Ingress` line dictates that this is an Ingress Resource object. This Ingress Resource defines an inbound L7 rule for path `/hello` to service
