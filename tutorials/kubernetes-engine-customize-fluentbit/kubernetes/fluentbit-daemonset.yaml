@@ -26,7 +26,7 @@ spec:
       terminationGracePeriodSeconds: 10
       containers:
       - name: fluent-bit
-        image: gcr.io/cloud-solutions-images/fluent-bit:1.8
+        image: fluent/fluent-bit:1.8
         imagePullPolicy: Always
         ports:
           - containerPort: 2020
