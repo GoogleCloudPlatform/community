@@ -2,7 +2,7 @@
 title: Migrate from Cloud Functions to Cloud Run with Cloud Buildpacks
 description: Learn how to migrate from Cloud Functions to Cloud Run with no code changes.
 author: tth
-tags:
+tags: Functions Framework
 date_published: 2021-09-30
 ---
 
