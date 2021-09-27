@@ -1,9 +1,9 @@
 ---
 title: Migrate from Cloud Functions to Cloud Run with Cloud Buildpacks
-description: Learn how to migrate from Cloud Functions to Cloud Run with no code changes
+description: Learn how to migrate from Cloud Functions to Cloud Run with no code changes.
 author: tth
 tags:
-date_published: 2021-07-30
+date_published: 2021-09-30
 ---
 
 Tan Tze Hon | Solutions Architect | Google
