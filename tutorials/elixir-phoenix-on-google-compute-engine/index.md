@@ -16,7 +16,7 @@ This tutorial helps you get started deploying your
 [Compute Engine](https://cloud.google.com/compute/), taking
 advantage of Google's deep expertise with scalable infrastructure.
 
-In this tutorial, you will:
+In this tutorial, you do the following:
 
 *   Create a new Phoenix application
 *   Connect your app to a database running in
@@ -49,13 +49,13 @@ To create a new project:
 
 1.  Use the [Cloud Console](https://console.cloud.google.com/)
     to create a new Google Cloud project. Remember the project ID; you will
-    need it later. Later commands in this tutorial will use `${PROJECT_ID}` as
-    a substitution, so you might consider setting the `PROJECT_ID` environment
+    need it later. Commands in this tutorial use `${PROJECT_ID}` as
+    a substitution, so you consider setting the `PROJECT_ID` environment
     variable in your shell.
 
 2.  Enable billing for your project.
 
-3.  In the Cloud Console, enable the following APIs:
+1.  In the Cloud Console, enable the following APIs:
     *   [Compute Engine API](http://console.cloud.google.com/apis/library/compute.googleapis.com)
     *   [Cloud SQL Admin API](http://console.cloud.google.com/apis/library/sqladmin.googleapis.com)
 
@@ -64,51 +64,53 @@ To create a new project:
 After you have set up a Google Cloud project, perform the following
 tasks on your workstation:
 
-1.  Install **Docker** if you do not already have it. Find instructions on the
+1.  Install Docker if you do not already have it. Find instructions on the
     [Docker website](https://www.docker.com/).
 
-2.  Install the **[Cloud SDK](https://cloud.google.com/sdk/)** if you do
-    not already have it. Make sure you
+1.  Install the [Cloud SDK](https://cloud.google.com/sdk/) if you do
+    not already have it. Make sure that you
     [initialize](https://cloud.google.com/sdk/docs/initializing) the SDK
-    and set the default project to the new project you created.
+    and set the default project to the new project that you created.
 
     Version 227.0.0 or later of the SDK is required. If you have an earlier
-    version installed, you may upgrade it by running:
+    version installed, upgrade it:
 
         gcloud components update
 
-3.  Install **Elixir 1.8 or later** if you do not already have it. If you are
-    on macOS and have [Homebrew](https://brew.sh), you can run:
+1.  Install Elixir 1.8 or later if you do not already have it.
+
+    If you are on macOS and have [Homebrew](https://brew.sh), you can run the following command to install Elixir:
 
         brew install elixir
 
-    Otherwise consult the [Elixir install](https://elixir-lang.org/install.html)
+    Otherwise, consult the [Elixir installation](https://elixir-lang.org/install.html)
     guide for your operating system.
 
-4.  Install the **hex**, **rebar**, and **phx_new** archives:
+1.  Install the `hex`, `rebar`, and `phx_new` archives:
 
         mix local.hex
         mix local.rebar
         mix archive.install hex phx_new 1.4.9
 
-5.  Install **Node.js** if you do not already have it. If you are on macOS and
-    have Homebrew, you can run:
+1.  Install Node.js if you do not already have it.
+
+    If you are on macOS and have Homebrew, you can run the following command to install Node.js:
 
         brew install node
 
-    Otherwise consult the [Node download](https://nodejs.org/en/download/)
+    Otherwise, consult the [Node.js download](https://nodejs.org/en/download/)
     guide for your operating system.
 
-6.  Install PostgreSQL if you do not already have it. Consult the
-    [PostgreSQL downloads page](https://www.postgresql.org/download/) for
-    information on downloading and installing PostgreSQL for your operating
-    system.
+1.  Install PostgreSQL if you do not already have it.
+
+    Consult the [PostgreSQL downloads page](https://www.postgresql.org/download/) for
+    information on downloading and installing PostgreSQL for your operating system.
 
 ## Creating a new app and running it locally
 
-In this section, you will create a new Phoenix app with a database, and make
-sure it runs locally in development. If you already have an app to deploy, you
-may use it instead.
+In this section, you create a new Phoenix app with a database and make
+sure that it runs locally in development. If you already have an app to deploy, you
+can use it instead.
 
 ### Create a new Phoenix app
 
@@ -119,11 +121,11 @@ may use it instead.
     Answer `Y` when the tool asks you if you want to fetch and install
     dependencies.
 
-2.  Go into the directory with the new application:
+1.  Go into the directory with the new application:
 
         cd hello
 
-3.  Update the development database settings in `config/dev.exs` to specify a
+1.  Update the development database settings in `config/dev.exs` to specify a
     valid database user and credentials. You may also update the database name.
     The resulting configuration may look something like this:
 
@@ -135,17 +137,17 @@ may use it instead.
             hostname: "localhost",
             pool_size: 10
 
-4.  Create the development database with the following command:
+1.  Create the development database with the following command:
 
         mix ecto.create
 
-5.  Run the app with the following command:
+1.  Run the app with the following command:
 
         mix phx.server
 
     This compiles your server and runs it on port 4000.
 
-6.  Visit [http://localhost:4000](http://localhost:4000) to see the Phoenix
+1.  Visit [http://localhost:4000](http://localhost:4000) to see the Phoenix
     welcome screen running locally on your workstation.
 
 ### Create and test a development database
@@ -157,11 +159,11 @@ Phoenix app can access it.
 
         mix phx.gen.schema User users name:string email:string
 
-2.  Migrate your development database:
+1.  Migrate your development database:
 
         mix ecto.migrate
 
-3.  Add some very simple code to show that the application can access the
+1.  Add some very simple code to show that the application can access the
     database, by querying for the number of user records.
     Open `lib/hello_web/controllers/page_controller.ex` and rewrite
     the `index` function as follows:
@@ -176,11 +178,11 @@ Phoenix app can access it.
     You can also display the value of `@count` by adding it to the template
     `lib/hello_web/templates/page/index.html.eex`.
 
-4.  Recompile and run the app:
+1.  Recompile and run the app:
 
         mix phx.server
 
-5.  Visit [http://localhost:4000](http://localhost:4000) to verify that your
+1.  Visit [http://localhost:4000](http://localhost:4000) to verify that your
     new code is running. You can log into your database and add new rows, and
     reload the page to verify that the count has changed.
 
@@ -205,8 +207,7 @@ your gcloud SDK if you have not already done so:
 
 First you will create a new database in the cloud.
 
-1.  Create a Cloud SQL instance named `hellodb` with a Postgres database
-    by running the following command:
+1.  Create a Cloud SQL instance named `hellodb` with a PostgreSQL database:
 
         gcloud sql instances create hellodb --region=us-central1 \
             --database-version=POSTGRES_9_6 --tier=db-g1-small
@@ -214,17 +215,15 @@ First you will create a new database in the cloud.
     You may choose a region other than `us-central1` if there is one closer to
     your location.
 
-2.  Get the _connection name_ for your Cloud SQL instance by running the
-    following command:
+1.  Get the _connection name_ for your Cloud SQL instance:
 
         gcloud sql instances describe hellodb
 
     In the output, look for the connection name in the `connectionName` field.
     The connection name has this format: `[PROJECT-ID]:[COMPUTE-ZONE]:hellodb`
-    We will refer to the connection name as `[CONNECTION-NAME]` throughout this
-    tutorial.
+    This tutorial refers to the connection name as `[CONNECTION-NAME]`.
 
-3.  Secure your new database instance by setting a password on the default
+1.  Secure your new database instance by setting a password on the default
     postgres user:
 
         gcloud sql users set-password postgres \
@@ -234,7 +233,7 @@ First you will create a new database in the cloud.
 
 ### Connect to your Cloud SQL instance
 
-In this section you will learn how to connect to your Cloud SQL instance from
+In this section you learn how to connect to your Cloud SQL instance from
 your local workstation. Generally, you will not need to do this often, but it
 is useful for the initial creation and migration of your database, as well as
 for creating _ad hoc_ database connections for maintenance.
@@ -254,14 +253,14 @@ To set up Cloud SQL Proxy, perform the following steps:
     Make sure that `cloud_sql_proxy` is executable and is available in your
     environment's `PATH`.
 
-2.  Create a directory `/tmp/cloudsql`. This is where the Cloud SQL Proxy will
+1.  Create a directory `/tmp/cloudsql`. This is where the Cloud SQL Proxy will
     create database connection sockets. You may put this in a different
     location, but if you do, you will need to update some of the commands below
     accordingly.
 
         mkdir -p /tmp/cloudsql
 
-3.  Start the proxy, telling it to open sockets in the directory you created:
+1.  Start the proxy, telling it to open sockets in the directory you created:
 
         cloud_sql_proxy -dir=/tmp/cloudsql
 
@@ -269,7 +268,7 @@ To set up Cloud SQL Proxy, perform the following steps:
     need to be run in a separate shell. If you prefer, feel free to
     background the process instead.
 
-4.  The proxy will open a socket in the directory
+1.  The proxy will open a socket in the directory
     `/tmp/cloudsql/[CONNECTION-NAME]/`. You can point `psql` to that socket to
     connect to the database instance. Test this now:
 
@@ -288,7 +287,7 @@ instance, and tell Ecto to create and migrate the database.
 
         cloud_sql_proxy -dir=/tmp/cloudsql
 
-2.  Configure your production database configuration to communicate with the
+1.  Configure your production database configuration to communicate with the
     sockets opened by the running Cloud SQL Proxy. Edit the
     `config/prod.secret.exs` file to include something like this:
 
@@ -303,17 +302,16 @@ instance, and tell Ecto to create and migrate the database.
     Remember to replace `[CONNECTION-NAME]` with your database's connection
     name, and include the password you set for the "postgres" user.
 
-3.  Hard-code `secret_key_base` in `config/prod.secret.exs`. (If you're doing a
+1.  Hard-code `secret_key_base` in `config/prod.secret.exs`. (If you're doing a
     real application, you might want to create a different mechanism to inject
-    the database password and the secret key base into this file, but we will
-    keep things simple for this tutorial.)
+    the database password and the secret key base into this file, but this tutorial keeps things simple.)
 
-4.  Now you can use Phoenix to create and migrate your production database:
+1.  Now you can use Phoenix to create and migrate your production database:
 
         MIX_ENV=prod mix ecto.create
         MIX_ENV=prod mix ecto.migrate
 
-5.  Stop the Cloud SQL Proxy when you are finished.
+1.  Stop the Cloud SQL Proxy when you are finished.
 
 ## Enabling releases with Distillery
 
@@ -333,18 +331,18 @@ release configuration. This tutorial assumes ERTS is included in releases.
 ### Set up Distillery
 
 1.  Add distillery to your application's dependencies. In the `mix.exs` file,
-    add `{:distillery, "~> 2.1"}` to the `deps`. Then install it by running:
+    add `{:distillery, "~> 2.1"}` to the `deps`. Then install it:
 
         mix deps.get
 
-2.  Create a default release configuration by running:
+1.  Create a default release configuration:
 
         mix distillery.init
 
     This will create a file `rel/config.exs`. You can examine and edit it if
     you wish, but the defaults should be sufficient for this tutorial.
 
-3.  Prepare the Phoenix configuration for deployment by editing the prod
+1.  Prepare the Phoenix configuration for deployment by editing the prod
     config file `config/prod.exs`. In particular, set `server: true` to ensure
     the web server starts when the supervision tree is initialized, and set the
     port to honor the `PORT` environment variable. We recommend the following
@@ -377,26 +375,26 @@ Now you can create a release to test out your configuration.
     Remember that if your app is an umbrella app, the assets directory might be
     located in one of the apps subdirectories.
 
-2.  Build the release:
+1.  Build the release:
 
         MIX_ENV=prod mix distillery.release --env=prod --executable
 
-3.  Start the Cloud SQL Proxy so that Phoenix can connect to your database.
+1.  Start the Cloud SQL Proxy so that Phoenix can connect to your database.
     Remember that this runs in the foreground by default.
 
         cloud_sql_proxy -dir=/tmp/cloudsql
 
-4.  Run the application from the release with:
+1.  Run the application from the release with:
 
         PORT=8080 _build/prod/rel/hello/bin/hello.run foreground
 
     If your application is named something other than `hello`, the release
     executable might be in a different path.
 
-5.  Visit [http://localhost:8080](http://localhost:8080) to see the Phoenix
+1.  Visit [http://localhost:8080](http://localhost:8080) to see the Phoenix
     welcome screen running locally from your release.
 
-6.  After you stop the application, delete the `tmp` directory (which is where
+1.  After you stop the application, delete the `tmp` directory (which is where
     `hello.run` extracts to). Otherwise, if you make changes and try running
     again, `hello.run` may use the existing extraction rather than the new
     code. Additionally, make sure you stop `cloud_sql_proxy` when you are done
@@ -419,24 +417,22 @@ Created a Cloud Storage bucket for your releases:
 
         export BUCKET_NAME="${PROJECT_ID}-releases"
 
-2.  Create the bucket by running:
+1.  Create the bucket:
 
         gsutil mb gs://${BUCKET_NAME}
 
 ### Prepare a build script
 
-Now we'll create a Dockerfile script to build your app.
+In this section, you create a Dockerfile script to build your app.
 
-This is *not* an image that can be deployed or run directly. We are
-simply using Docker to cross-compile your application for Debian. If you are
+This is *not* an image that can be deployed or run directly. This tutorial simply uses
+Docker to cross-compile your application for Debian. If you are
 interested in building a Docker image that can be deployed to a container-based
-environment such as Kubernetes, see the sister tutorial on
-[Deploying Phoenix to Kubernetes Engine](https://cloud.google.com/community/tutorials/elixir-phoenix-on-kubernetes-google-container-engine).
+environment such as Kubernetes, see the companion tutorial on
+[deploying Phoenix to Kubernetes Engine](https://cloud.google.com/community/tutorials/elixir-phoenix-on-kubernetes-google-container-engine).
 
 1.  Create a file called `Dockerfile` in your `hello` directory, and copy the
-    following content into it. Alternately, you can
-    [download](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/elixir-phoenix-on-google-compute-engine/Dockerfile)
-    a sample annotated Dockerfile to study and customize.
+    following content into it:
 
         FROM elixir:latest
         ARG app_name=hello
@@ -459,10 +455,8 @@ environment such as Kubernetes, see the sister tutorial on
         RUN mix distillery.release --env=${build_env} --executable --verbose \
             && mv _build/${build_env}/rel/${app_name}/bin/${app_name}.run start_release
 
-2.  Create a file called `.dockerignore` in your `hello` directory. Copy the
-    following content into it. Alternately, you can
-    [download](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/elixir-phoenix-on-google-compute-engine/.dockerignore)
-    a sample annotated file to study and customize.
+1.  Create a file called `.dockerignore` in your `hello` directory, and copy the
+    following content into it:
 
         /_build/
         /assets/node_modules/
@@ -479,7 +473,7 @@ environment such as Kubernetes, see the sister tutorial on
 
 ### Build and upload to Cloud Storage
 
-We'll now build the application image, extract the executable release file, and
+In this section, you build the application image, extract the executable release file, and
 upload it to Cloud Storage.
 
 1.  Build the application image.
@@ -489,8 +483,8 @@ upload it to Cloud Storage.
     This tutorial assumes you have named your image `hello-image`, though you
     can give it a different name.
 
-2.  Copy the executable out of the image. Docker doesn't currently provide a
-    command to do this directly, so we will create a temporary container from
+1.  Copy the executable out of the image. Docker doesn't provide a
+    command to do this directly, so you create a temporary container from
     the image and copy the executable from there.
 
         container_id=$(docker create hello-image)
@@ -502,7 +496,7 @@ upload it to Cloud Storage.
     release directly from your workstation, because it has been cross-compiled
     for Debian.)
 
-2.  Push the release to Cloud Storage:
+1.  Push the release to Cloud Storage:
 
         gsutil cp start_release gs://${BUCKET_NAME}/hello-release
 
@@ -543,10 +537,6 @@ Copy the following content into it:
     ./cloud_sql_proxy -projects=${PROJECT_ID} -dir=/tmp/cloudsql &
     PORT=8080 ./hello-release start
 
-Alternatively, you can
-[download](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/elixir-phoenix-on-google-compute-engine/instance-startup.sh)
-a sample annotated script to study and customize.
-
 The startup script downloads the Cloud SQL Proxy from Google Cloud, and the
 release you built from Cloud Storage, and executes both. It reads the Cloud
 Storage URL from an *instance attribute*, which is key-value metadata that can
@@ -558,7 +548,7 @@ attribute that is set automatically by Compute Engine.
 
 Now you will start a Compute Engine instance.
 
-1.  Create an instance by running:
+1.  Create an instance:
 
         gcloud compute instances create hello-instance \
             --image-family debian-9 \
@@ -574,7 +564,7 @@ Now you will start a Compute Engine instance.
     access to Google Cloud services, and provides your startup script. It
     also sets an instance attribute with the Cloud Storage URL of your release.
 
-2.  Check the progress of instance creation:
+1.  Check the progress of instance creation:
 
         gcloud compute instances get-serial-port-output hello-instance \
             --zone us-central1-f
@@ -583,7 +573,7 @@ Now you will start a Compute Engine instance.
     continue when you see Cloud SQL Proxy report that it is receiving database
     connections from your app.
 
-3.  Create a firewall rule to allow traffic to your instance:
+1.  Create a firewall rule to allow traffic to your instance:
 
         gcloud compute firewall-rules create default-allow-http-8080 \
             --allow tcp:8080 \
@@ -591,11 +581,11 @@ Now you will start a Compute Engine instance.
             --target-tags http-server \
             --description "Allow port 8080 access to http-server"
 
-4.  Get the external IP address of your instance:
+1.  Get the external IP address of your instance:
 
         gcloud compute instances list
 
-5.  To see your application running, go to `http://${IP_ADDRESS}:8080` where
+1.  To see your application running, go to `http://${IP_ADDRESS}:8080` where
     `${IP_ADDRESS}` is the external address you obtained above.
 
 ## Horizontal scaling with multiple instances
@@ -626,7 +616,7 @@ Phoenix app.
     Notice that the template provides most of the information needed to create
     instances.
 
-2.  Now create an instance group using that template:
+1.  Now create an instance group using that template:
 
         gcloud compute instance-groups managed create hello-group \
             --base-instance-name hello-group \
@@ -637,7 +627,7 @@ Phoenix app.
     The `size` parameter specifies the number of instances in the group. You
     can set it to a different value as needed.
 
-3.  If you did not create the firewall rule while configuring a single instance
+1.  If you did not create the firewall rule while configuring a single instance
     above, do so now:
 
         gcloud compute firewall-rules create default-allow-http-8080 \
@@ -646,7 +636,7 @@ Phoenix app.
             --target-tags http-server \
             --description "Allow port 8080 access to http-server"
 
-4.  Get the names and external IP addresses of the instances that were created:
+1.  Get the names and external IP addresses of the instances that were created:
 
         gcloud compute instances list
 
@@ -671,7 +661,7 @@ available instances in the group. Follow these steps.
             --request-path / \
             --port 8080
 
-2.  Create a named port. The HTTP load balancer directs traffic to a port
+1.  Create a named port. The HTTP load balancer directs traffic to a port
     named `http`, so we map that name to port 8080 to indicate that the
     instances listen on that port.
 
@@ -679,7 +669,7 @@ available instances in the group. Follow these steps.
             --named-ports http:8080 \
             --zone us-central1-f
 
-3.  Create a backend service. The backend service is the "target" for
+1.  Create a backend service. The backend service is the "target" for
     load-balanced traffic. It defines which instance group the traffic should
     be directed to and which health check to use.
 
@@ -687,14 +677,14 @@ available instances in the group. Follow these steps.
             --http-health-checks hello-health-check \
             --global
 
-4.  Add your instance group to the backend service:
+1.  Add your instance group to the backend service:
 
         gcloud compute backend-services add-backend hello-service \
             --instance-group hello-group \
             --global \
             --instance-group-zone us-central1-f
 
-5.  Create a URL map. This defines which URLs should be directed to which
+1.  Create a URL map. This defines which URLs should be directed to which
     backend services. In this sample, all traffic is served by one backend
     service. If you want to load balance requests between multiple regions or
     groups, you can create multiple backend services.
@@ -702,13 +692,13 @@ available instances in the group. Follow these steps.
         gcloud compute url-maps create hello-service-map \
             --default-service hello-service
 
-6.  Create a proxy that receives traffic and forwards it to backend services
+1.  Create a proxy that receives traffic and forwards it to backend services
     using the URL map:
 
         gcloud compute target-http-proxies create hello-service-proxy \
             --url-map hello-service-map
 
-7.  Create a global forwarding rule. This ties a public IP address and port to
+1.  Create a global forwarding rule. This ties a public IP address and port to
     a proxy.
 
         gcloud compute forwarding-rules create hello-http-rule \
@@ -716,16 +706,16 @@ available instances in the group. Follow these steps.
             --ports 80 \
             --global
 
-8.  You are now done configuring the load balancer. It will take a few minutes
+1.  You are now done configuring the load balancer. It will take a few minutes
     for it to initialize and get ready to receive traffic. You can check on its
-    progress by running:
+    progress:
 
         gcloud compute backend-services get-health hello-service \
             --global
 
     Continue checking until it lists at least one instance in state `HEALTHY`.
 
-9.  Get the forwarding IP address for the load balancer:
+1.  Get the forwarding IP address for the load balancer:
 
         gcloud compute forwarding-rules list --global
 
@@ -798,19 +788,9 @@ running:
 
 ### Delete the project
 
-Alternately, you can delete the project in its entirety. To do so using
-the gcloud command line tool, run:
+Alternatively, you can delete the entire project:
 
     gcloud projects delete ${PROJECT_ID}
-
-where `${PROJECT_ID}` is your Google Cloud project ID.
-
-**Warning**: Deleting a project has the following consequences:
-
-If you used an existing project, you'll also delete any other work you've done
-in the project. You can't reuse the project ID of a deleted project. If you
-created a custom project ID that you plan to use in the future, you should
-delete the resources inside the project instead.
 
 ## Next steps
 
