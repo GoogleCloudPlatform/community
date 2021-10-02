@@ -26,8 +26,6 @@ This document is for network administrators, security architects, app developers
 familiar with setting up networking on Google Cloud and are familiar with using the Cloud Console, [Terraform](https://cloud.google.com/docs/terraform), and 
 Cloud Run.
 
-The code that accompanies this tutorial has been tested using Terraform version 1.0.2.
-
 ## Architecture 
 
 The following diagram summarizes the architecture that you create in this tutorial:
@@ -54,7 +52,7 @@ This tutorial uses the following billable components of Google Cloud:
 
 To generate a cost estimate based on your projected usage, use the [pricing calculator](https://cloud.google.com/products/calculator).
 
-## Prerequisites
+## Before you begin
 
 Because this tutorial requires two Google Cloud projects, complete these steps to create and enable billing and APIs for _two_ projects. The tutorial refers to 
 these projects as `your-gcp-host-project` and `your-gcp-service-project`.
@@ -74,6 +72,9 @@ these projects as `your-gcp-host-project` and `your-gcp-service-project`.
 
 1.  Set up your Terraform environment for Google Cloud. For details, see
     [Getting started with Terraform on Google Cloud](https://cloud.google.com/community/tutorials/getting-started-on-gcp-with-terraform).
+    
+    The code that accompanies this tutorial has been tested using Terraform version 1.0.2.
+
 1.  Ensure that you have a [service account](https://cloud.google.com/iam/docs/creating-managing-service-accounts) with sufficient permissions to deploy the 
     resources used in this tutorial.
 
@@ -104,6 +105,14 @@ these projects as `your-gcp-host-project` and `your-gcp-service-project`.
 
             gcloud services enable compute.googleapis.com 
 
+1.  Clone the repository that contains the tutorial's code:
+
+        git clone https://github.com/GoogleCloudPlatform/community.git
+
+1.  Go to the tutorial code directory:
+
+        cd community/tutorials/serverless-backend-access-in-shared-vpc/code
+
 ## Summary of the tutorial code
 
 This section gives an overview of
@@ -116,17 +125,7 @@ This section gives an overview of
 * The `example_server.tf` file sets up an example webserver.
 * The IP address of the webserver is hardcoded in `server/index.js` and is used in Terraform variables.
 
-## Procedure
-
-1.  Open [Cloud Shell](https://console.cloud.google.com/cloudshell).
-
-1.  Clone the repository that contains the tutorial's code:
-
-        git clone https://github.com/GoogleCloudPlatform/community.git
-
-1.  Go to the tutorial code directory:
-
-        cd community/tutorials/serverless-backend-access-in-shared-vpc/code
+## Set up, deploy, and test the architecture
 
 1.  Run the following command to obtain the default credentials for your project:
 
@@ -168,7 +167,7 @@ This section gives an overview of
 
         curl -H "Authorization: Bearer $(gcloud auth print-identity-token)" http://IP/ping
 
-## Destroy created resources
+## Clean up by destroying the resources that you created
 
 To destroy all of the resources that you created, run the following command:
 
