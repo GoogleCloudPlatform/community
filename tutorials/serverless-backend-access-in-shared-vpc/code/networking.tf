@@ -20,7 +20,7 @@ resource "google_compute_network" "shared-vpc-host" {
   auto_create_subnetworks = false
 }
 
-# Reserve the /28 subnet for the VPC Serverless Connector
+# Reserve the /28 subnet for the Serverless VPC Access connector
 resource "google_compute_subnetwork" "shared-vpc-host-connector" {
   project       = var.shared_vpc_host_project
   name          = "shared-vpc-connector"
