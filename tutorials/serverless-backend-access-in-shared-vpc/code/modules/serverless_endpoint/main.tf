@@ -65,7 +65,7 @@ resource "google_cloud_run_service" "default" {
     metadata {
       annotations = {
         "autoscaling.knative.dev/maxScale" = "101"
-        # Allow using the VPC Serverless connector
+        # Allow using the Serverless VPC Access connector
         # Documented here: https://cloud.google.com/run/docs/configuring/connecting-vpc#yaml_1
         "run.googleapis.com/vpc-access-connector" = google_vpc_access_connector.connector.id
         "run.googleapis.com/vpc-access-egress"    = "private-ranges-only"
@@ -171,14 +171,14 @@ resource "google_compute_security_policy" "ip-limit" {
 
 }
 
-# Allow the Cloud Run service to use the VPC Serverless connector
+# Allow the Cloud Run service to use the Serverless VPC Access connector
 resource "google_project_iam_member" "cloudrun-use-vpc-connector" {
   project = var.cloud_run_project
   role    = "roles/vpcaccess.user"
   member  = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-vpcaccess.iam.gserviceaccount.com"
 }
 
-# Give access to the VPC Serverless Connector to use the shared VPC
+# Give access to the Serverless VPC Access connector to use the shared VPC network
 resource "google_project_iam_member" "connector-allow-shared-vpc-access-1" {
   project = var.shared_vpc_host_project
   role    = "roles/compute.networkUser"
@@ -191,7 +191,7 @@ resource "google_project_iam_member" "connector-allow-shared-vpc-access-2" {
   member  = "serviceAccount:${data.google_project.project.number}@cloudservices.gserviceaccount.com"
 }
 
-# Create the VPC Serverless Connector instance
+# Create the Serverless VPC Access connector instance
 resource "google_vpc_access_connector" "connector" {
   provider = google-beta
   # Beware that the name can only be not more than 25 characters long
@@ -277,7 +277,7 @@ resource "google_compute_firewall" "vpc-connector-health-checks" {
   source_ranges = local.firewall_healthcheck_ip_ranges
 }
 
-# Restrict the traffic between the serverless VPC connector and the example server
+# Restrict the traffic between the Serverless VPC Access connector and the example server
 resource "google_compute_firewall" "connector-access-to-vpc" {
   project = var.shared_vpc_host_project
   name    = "${var.name}-fw-connector-to-vpc"
