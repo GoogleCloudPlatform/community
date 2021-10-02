@@ -29,7 +29,7 @@ familiar with setting up networking on Google Cloud and are familiar with using 
 
 The following diagram summarizes the architecture that you create in this document:
 
-![Architecture](./image1.png)
+![Architecture](https://storage.googleapis.com/gcp-community/tutorials/serverless-backend-access-in-shared-vpc/image1.png)
 
 **Note**: This document uses a second Google Cloud project to simulate your private (or on-premises) network with which the shared VPC network will be shared. 
 
