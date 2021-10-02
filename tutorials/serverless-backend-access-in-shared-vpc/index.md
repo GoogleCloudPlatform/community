@@ -23,15 +23,18 @@ Typical uses cases for this solution:
 This example uses Cloud Run, but you can take similar steps to configure other serverless services, such as App Engine or Cloud Functions.
 
 This document is for network administrators, security architects, app developers, and cloud operations professionals. This document assumes that you are
-familiar with setting up networking on Google Cloud and are familiar with using the Cloud Console, Terraform, and Cloud Run. 
+familiar with setting up networking on Google Cloud and are familiar with using the Cloud Console, [Terraform](https://cloud.google.com/docs/terraform), and 
+Cloud Run.
+
+The code that accompanies this tutorial has been tested using Terraform version 1.0.2.
 
 ## Architecture 
 
-The following diagram summarizes the architecture that you create in this document:
+The following diagram summarizes the architecture that you create in this tutorial:
 
 ![Architecture](https://storage.googleapis.com/gcp-community/tutorials/serverless-backend-access-in-shared-vpc/image1.png)
 
-**Note**: This document uses a second Google Cloud project to simulate your private (or on-premises) network with which the shared VPC network will be shared. 
+This tutorial uses a second Google Cloud project to simulate your private (or on-premises) network with which the shared VPC network is shared. 
 
 ## Objectives
 
@@ -53,20 +56,26 @@ To generate a cost estimate based on your projected usage, use the [pricing calc
 
 ## Prerequisites
 
-Because this tutorial requires two Google Cloud projects, complete these steps to create and enable billing and APIs for _two_ projects. The tutorial refers to these projects as `your-gcp-host-project` and `your-gcp-service-project`.
+Because this tutorial requires two Google Cloud projects, complete these steps to create and enable billing and APIs for _two_ projects. The tutorial refers to 
+these projects as `your-gcp-host-project` and `your-gcp-service-project`.
 
-1. In the Google Cloud Console, on the project selector page, select or create a Google Cloud project. \
-**Note**: If you don't plan to keep the resources that you create in this procedure, create a project instead of selecting an existing project. After you finish these steps, you can delete the project, removing all resources associated with the project.
-2. [Go to project selector](https://console.cloud.google.com/projectselector2/home/dashboard)
-3. Make sure that billing is enabled for your Cloud project. [Learn how to confirm that billing is enabled for your project](https://cloud.google.com/billing/docs/how-to/modify-project).
-4. In the Cloud Console, [activate Cloud Shell](https://console.cloud.google.com/?cloudshell=true). \
-At the bottom of the Cloud Console, a [Cloud Shell](https://cloud.google.com/shell/docs/features) session starts and displays a command-line prompt. Cloud Shell is a shell environment with the Cloud SDK already installed, including the [gcloud](https://cloud.google.com/sdk/gcloud) command-line tool, and with values already set for your current project. It can take a few seconds for the session to initialize.
+1.  In the [Cloud Console](https://console.cloud.google.com/), on the project selector page, select or create a Google Cloud project.
 
-This guide assumes that you are familiar with [Terraform](https://cloud.google.com/docs/terraform).
+    If you don't plan to keep the resources that you create in this procedure, create a project instead of selecting an existing project. After you finish these
+    steps, you can delete the project, removing all resources associated with the project.
 
-* See [Getting started with Terraform on Google Cloud](https://cloud.google.com/community/tutorials/getting-started-on-gcp-with-terraform) to set up your Terraform environment for Google Cloud.
-* The code here has been tested using Terraform version 1.0.2.
-* Ensure that you have a [service account](https://cloud.google.com/iam/docs/creating-managing-service-accounts) with sufficient permissions to deploy the resources used in this tutorial.
+1.  [Go to project selector](https://console.cloud.google.com/projectselector2/home/dashboard).
+1.  Make sure that [billing is enabled for your project](https://cloud.google.com/billing/docs/how-to/modify-project).
+1.  In the Cloud Console, [activate Cloud Shell](https://console.cloud.google.com/?cloudshell=true).
+
+    At the bottom of the Cloud Console, a [Cloud Shell](https://cloud.google.com/shell/docs/features) session starts and displays a command-line prompt. Cloud 
+    Shell is a shell environment with the Cloud SDK already installed, including the [gcloud](https://cloud.google.com/sdk/gcloud) command-line tool, and with 
+    values already set for your current project. It can take a few seconds for the session to initialize.
+
+1.  Set up your Terraform environment for Google Cloud. For details, see
+    [Getting started with Terraform on Google Cloud](https://cloud.google.com/community/tutorials/getting-started-on-gcp-with-terraform).
+1.  Ensure that you have a [service account](https://cloud.google.com/iam/docs/creating-managing-service-accounts) with sufficient permissions to deploy the 
+    resources used in this tutorial.
 
 1.  Enable the following APIs in the `your-gcp-service-project` project:
 
@@ -95,17 +104,19 @@ This guide assumes that you are familiar with [Terraform](https://cloud.google.c
 
             gcloud services enable compute.googleapis.com 
 
-## Folder structure
+## Summary of the tutorial code
+
+This section gives an overview of
+[the code that accompanies the tutorial](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/serverless-backend-access-in-shared-vpc/code).
 
 * The main module for the solution components is in the `code/modules/serverless_endpoint/` folder. It creates the necessary serverless components and organizes
   access between them.
-* In `code/variables.tf` and `code/main.tf` the variables, locals, and data are defined.
-* Other files are to create an example to be able to test the setup - the file `code/networking.tf` sets up a Shared VPC network, `example_server.tf` runs an
-  example webserver.
+* Variables and data are defined in the `code/variables.tf` and `code/main.tf` files.
+* The `code/networking.tf` file sets up a Shared VPC network.
+* The `example_server.tf` file sets up an example webserver.
+* The IP address of the webserver is hardcoded in `server/index.js` and is used in Terraform variables.
 
-**Note** The IP address of the webserver is hardcoded in `server/index.js` and is used in Terraform variables.
-
-## Quickstart
+## Procedure
 
 1.  Open [Cloud Shell](https://console.cloud.google.com/cloudshell).
 
