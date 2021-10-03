@@ -165,7 +165,7 @@ This section gives an overview of
 1.  If you supplied the variable `cloud_run_invoker` in the `modules/serverless_endpoint/variables.tf` file with your user, the you can try to access
     the IP address with authentication:
 
-        curl -H "Authorization: Bearer $(gcloud auth print-identity-token)" http://[IP_address]/ping
+        curl -H "Authorization: Bearer $(gcloud auth print-identity-token)" http://[IP_ADDRESS]/ping
 
 ## Clean up by destroying the resources that you created
 
