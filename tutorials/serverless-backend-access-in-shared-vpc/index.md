@@ -1,7 +1,7 @@
 ---
 title: Allow third-party services to access specific backend resources in a Shared VPC network
 description: Learn how to provision a serverless function to access a backend resource in a Shared VPC network using Terraform scripts.
-author: skalolazka,gasparch, nplanner
+author: skalolazka,gasparch,nplanner
 tags: shared VPC, Cloud Run, Serverless VPC Access connector
 date_published: 2021-10-04
 ---
