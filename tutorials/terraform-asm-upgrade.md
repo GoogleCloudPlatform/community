@@ -36,7 +36,7 @@ upgrade in which new control plane components replace the previous version.
 
 This tutorial uses the following Google Cloud products:
 
-*   [Kubernetes Engine](https://cloud.google.com/kubernetes_engine)
+*   [Kubernetes Engine](https://cloud.google.com/kubernetes-engine)
 *   [Anthos Service Mesh](https://cloud.google.com/service-mesh)
 *   [Cloud Storage](https://cloud.google.com/storage)
 
