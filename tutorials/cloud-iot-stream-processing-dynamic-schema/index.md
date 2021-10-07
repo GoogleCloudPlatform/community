@@ -3,7 +3,7 @@ title: Dynamic Schema Mapping for IoT streaming ingestion
 description: Reference implementation of an IoT event message pipeline that parses various message formats based on configuration from Cloud IoT Core.
 author: kingman
 tags: iot, dataflow, bigquery, stream-processing
-date_published: 2021-10-28
+date_published: 2021-10-15
 ---
 
 Charlie Wang | Cloud Solutions Architect | Google
