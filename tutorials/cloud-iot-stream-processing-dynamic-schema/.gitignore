@@ -1,0 +1,10 @@
+.vscode
+.project
+.classpath
+.idea
+.settings/
+.terraform
+/target
+**/Test.java
+backend.tf
+terraform.tfvars
