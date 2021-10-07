@@ -246,6 +246,7 @@ Before you can provision the necessary infrastructure, you need to initialize an
     * sets the Terraform variables
     * build the apache beam pipeline artifact used by the dataflow using Maven
 
+          cd $HOME/cloud-iot-stream-processing-dynamic-schema
           . scripts/auto-prepare.sh
 ### Creating the resources
 The Terraform template file `terraform/main.tf` defines the resources that are created for the processor. By running Terraform with that descriptor, you create the following Google Cloud resources:
@@ -325,6 +326,7 @@ The data contains the coordinates for the bounding box for the person detected b
 To add the configurations for this person detection data format.
 1. Generate an additional terraform variable file containing the configuration details.
 
+        cd $HOME/cloud-iot-stream-processing-dynamic-schema
         . scripts/generate_tfvars_with_additional_data_format.sh
 1. Run terraform apply command to update the configurations store in IoT Core device metadata.
 
