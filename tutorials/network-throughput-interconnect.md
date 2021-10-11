@@ -1,8 +1,44 @@
-# Calculating network throughput over Cloud Interconnect
+---
+title: Calculate network throughput over Cloud Interconnect
+description: Learn how to calculate network throughput over Cloud Interconnect
+author: ctenneti
+tags:
+date_published: 2021-10-11
+---
+
+Amit Khare | Chakravarthy Tenneti | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
+This document describes how to calculate network throughput, both within Google Cloud and to your on-premises or third-party cloud locations, connected using Cloud Interconnect. This document includes information on how to analyze results, explanations of variables that can affect network performance, and troubleshooting tips.
 
 ## Objectives
 
-This document describes how to calculate network throughput, both within Google Cloud and to your on-premises or third-party cloud locations, connected using Cloud Interconnect. This document includes information on how to analyze results, explanations of variables that can affect network performance, and troubleshooting tips.
+* Install the required tools
+* Run the prerequisite tests before calculating network throughput
+* Measure throughput with iPerf3
+
+## Costs
+
+This tutorial uses billable components of Google Cloud, including the following:
+
+*   [Cloud Interconnect](https://cloud.google.com/network-connectivity/docs/interconnect)
+
+Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage.
+
+## Before you begin
+
+For this tutorial, you need a Google Cloud [project](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#projects). You can create a
+new project or select a project that you have already created. When you finish this tutorial, you can avoid continued billing by deleting the resources that you
+created. To make cleanup easier, you may want to create a new project for this tutorial, so that you can delete the project when you're done. For details, see
+the "Cleaning up" section at the end of the tutorial.
+
+1.  [Select or create a Google Cloud project.](https://cloud.console.google.com/projectselector2/home/dashboard)
+
+1.  [Enable billing for your project.](https://cloud.google.com/billing/docs/how-to/modify-project#enable-billing)
+
+1.  Make sure that you have either a project [owner or editor role](https://cloud.google.com/iam/docs/understanding-roles#primitive_roles), or sufficient
+    permissions to use the services listed above.
 
 ## Limitations
 
@@ -306,4 +342,13 @@ onPrem-send-5219.txt:<strong>Total</strong> out-of-order packets: 0, missing pac
 1. If there are errors on the PF interface, inform the Cloud Interconnect team.
 1. If Netstat output shows read/write errors, TCP/UDP bulk flow tuning may be required.
 1. If there are out of order packets, the packet captures should be performed in the VPN Gateways with the help of TSE for further analysis.  
-1. If the iperf3 UDP test achieves the desired throughput, the issue must be elsewhere and TCP tuning may be required. See go/tcp-bulk-flow-testing for further considerations. 
+1. If the iperf3 UDP test achieves the desired throughput, the issue must be elsewhere and TCP tuning may be required. See go/tcp-bulk-flow-testing for further considerations.
+
+## Cleaning up
+
+To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project.
+
+## What's next
+
+-  Learn more about
+   [Cloud Interconnect](https://cloud.google.com/network-connectivity/docs/interconnect).
