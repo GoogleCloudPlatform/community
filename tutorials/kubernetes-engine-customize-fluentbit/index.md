@@ -16,6 +16,8 @@ option when creating the Google Kubernetes Engine (GKE) cluster, which does not 
 
 This tutorial assumes that you're familiar with [Kubernetes](https://kubernetes.io/docs/home/).
 
+This tutorial applies to Linux nodes only.
+
 Unless otherwise noted, you enter all commands for this tutorial in Cloud Shell.
 
 ## Objectives 
@@ -79,9 +81,9 @@ In this section, you define variables that control where elements of the infrast
 
 1.  Create the GKE cluster with system-only logging turned on:
 
-        gcloud beta container clusters create custom-fluentbit \
-        --zone us-east1-b \
-        --enable-logging-monitoring-system-only \
+        gcloud container clusters create custom-fluentbit \
+        --zone $zone \
+        --logging=SYSTEM \
         --tags=gke-cluster-with-customized-fluentbit \
         --scopes=logging-write,storage-rw
 

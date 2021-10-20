@@ -52,7 +52,7 @@ it includes PostgreSQL 12.5, which has some helpful tools that aren't
 available in earlier versions.
 
 1. In the Cloud Console, go to the [**VM instances**](https://console.cloud.google.com/compute/instances) page.
-1. Click **Create**.
+1. Click **Create instance**.
 1. Set **Name** to `postgres-tutorial`.
 1. In the **Public images** tab, choose **Ubuntu** for **Operating system**.
 1. In the **Version** dropdown list, choose **Ubuntu 20.04 LTS**.
