@@ -197,7 +197,7 @@ Here is a basic flow of the NGINX ingress solution on Google Kubernetes Engine.
 
     The output should look like this, though the IP address may differ:
 
-        34.70.255.61
+        34.122.88.204
 
 ## Configure Ingress Resource to use NGINX Ingress Controller
 
@@ -245,6 +245,8 @@ status field in confusing ways. For more information, see
     The `kind: Ingress` line dictates that this is an Ingress Resource object. This Ingress Resource defines an inbound L7 rule for path `/hello` to service
     `hello-app` on port 8080.
 
+    The `host` specification of the `Ingress` resource should match the FQDN of the Service. The NGINX Ingress Controller requires the use of a Fully Qualified Domain Name (FQDN) in that line, so you can't use the contents of the $NGINX_INGRESS_IP here directly. Services such as nip.io will return an IP address for a hostname with an embedded IP address (i.e. querying `[IP_ADDRESS].nip.io` returns `[IP_ADDRESS]`), so you can use that here instead. In production, you can replace the `host` specification in the `Ingress` resource with your real FQDN for the Service.
+
 1.  Apply the configuration:
 
         kubectl apply -f ingress-resource.yaml
@@ -253,16 +255,14 @@ status field in confusing ways. For more information, see
 
         kubectl get ingress ingress-resource
 
-    The IP address for the Ingress Resource will not be defined right away, so you may need to wait a few moments for the `ADDRESS` field to get populated.
+    The IP address for the Ingress Resource will not be defined right away, so you may need to wait a few moments for the `ADDRESS` field to get populated. The IP address should match the contents of the $NGINX_INGRESS_IP variable.
 
     The output should look like the following:
 
         NAME               CLASS    HOSTS                  ADDRESS   PORTS   AGE
         ingress-resource   <none>   34.122.88.204.nip.io             80      10s
 
-    Note the `HOSTS` value in the output is set to a FQDN using nip.io domain. This host resolves the hostname with the form of `[IP_ADDRESS].nip.io` to
-    `[IP_ADDRESS]`. NGINX Ingress Controller requires you to use a DNS name in the `host` specification in the `Ingress` resource. For the purpose of this
-    tutorial, you use the nip.io service. In production, you can replace the `host` specification in the `Ingress` resource with you real FQDN for the Service.
+    Note that the `HOSTS` value in the output is set to the FQDN specified in the `host` entry of the yaml file.
 
 ### Test Ingress
 
