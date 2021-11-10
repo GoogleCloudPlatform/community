@@ -143,23 +143,23 @@ Go to the external IP address of your load balancer (in the above example, 104.1
 ### Switching to local development
 
 What if you want to try out some changes to your code, without having to redeploy it each time?
-
-We're now going to use [Telepresence](http://www.telepresence.io) to create a virtual network between your local machine and the remote Kubernetes cluster. This way, a PHP application running locally will be able to talk to remote cloud resources, and vice versa.
-
-In addition, Telepresence will temporarily replace the pods running the PHP code in Kubernetes with a proxy talking to your local machine:
-
+ 
+We're now going to use [Telepresence](http://www.telepresence.io) to create a virtual network between your local machine and the remote Kubernetes cluster by running this command:
+ 
 ```
-% telepresence --swap-deployment frontend --expose 8080:80 --run-shell
+% telepresence intercept frontend --port 8080:80
 ```
-
-In this special shell, change to the `examples/guestbook` directory, and start the frontend application as follows. We'll need to know the directory where PHP can load its dependencies, e.g., Predis. You can figure this out by typing:
-
+ 
+This tells Telepresence to send remote traffic to your local service instead of the service in the remote Kubernetes cluster.
+ 
+Now, change to the `examples/guestbook` directory, and start the frontend application as follows. We'll need to know the directory where PHP can load its dependencies, e.g., Predis. You can figure this out by typing:
+ 
 ```
 % pear config-get php_dir
 ```
-
+ 
 Now, in the `examples/guestbook` directory, start PHP, and pass in the pear shared directory:
-
+ 
 ```
 % php -d include_path="PATH_TO_PEAR_DIR" -S 0.0.0.0:8080
 ```
