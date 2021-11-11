@@ -103,7 +103,7 @@ create the VM instance.
         or 
         https://[vm-external-ip]/admin
         
-3.  Log in to OpenVPN client:
+4.  Log in to OpenVPN client:
 
         https://[vm-external-ip]?src=connect        
         
