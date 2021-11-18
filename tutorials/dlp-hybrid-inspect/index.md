@@ -102,7 +102,7 @@ Reminder: If you want to see detailed findings or run analysis on findings, we r
 
 ## Build
 
-1.  Ensure Git and Maven are installed:
+1.  Ensure that Git and Maven are installed:
 
         sudo apt-get install git maven
         
