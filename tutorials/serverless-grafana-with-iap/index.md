@@ -66,7 +66,7 @@ You should have a Google Cloud Platform account and project setup, billing confi
   6. *Run* `gcloud auth login` to authenticate against Google Cloud Platform. Ideally, you should be using a service account for this, as described [here](https://cloud.google.com/sdk/gcloud/reference/auth/activate-service-account).
 
 
-## Configure the OAuth consent screen
+### Configure the OAuth consent screen
 
 Configure an OAuth consent screen for Identity-Aware Proxy. 
   1. Go to GCP Console > Security > Identity-Aware Proxy. 
