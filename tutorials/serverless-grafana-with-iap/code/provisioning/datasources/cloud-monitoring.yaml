@@ -1,0 +1,10 @@
+apiVersion: 1
+deleteDatasources:
+  - name: Google Cloud Monitoring
+
+datasources:
+  - name: Google Cloud Monitoring
+    type: stackdriver
+    access: proxy
+    jsonData:
+      authenticationType: gce

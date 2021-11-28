@@ -1,0 +1,6 @@
+apiVersion: 1
+
+providers:
+  - name: 'HTTP/S Load Balancer Monitoring'
+    options:
+      path: /var/lib/grafana/dashboards/gcp
