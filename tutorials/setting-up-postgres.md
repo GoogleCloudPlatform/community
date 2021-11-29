@@ -56,9 +56,9 @@ available in earlier versions.
 1. In the **Name** field, enter `postgres-tutorial`.
 1. In the **Book disk** section, click **Change**.
 1. In the Boot disk window, perform the following steps in the **Public images** tab:
-    1. In the **Operating system** dropdown list, select **Ubuntu**.
-    1. In the **Version** dropdown list, select **Ubuntu 20.04 LTS**.
-    1. In the **Boot disk type** dropdown list, select **Standard persistent disk**.
+    1. In the **Operating system** menu, select **Ubuntu**.
+    1. In the **Version** menu, select **Ubuntu 20.04 LTS**.
+    1. In the **Boot disk type** menu, select **Standard persistent disk**.
     1. Click **Select**.
 1. In the **Firewall** section, expand **Management, security, disks, networking, sole tenancy**, and then expand **Networking**.
 1. In the **Network tags** field, enter `postgres-tutorial`.
@@ -201,7 +201,7 @@ a firewall rule that enables traffic on this port.
 
 1.  In the **Action on match** field, select **Allow**.
 
-1.  In the **Targets** dropdown list, select **Specified Target tags**.
+1.  In the **Targets** menu, select **Specified Target tags**.
 
 1.  In the **Targets tags** field, enter the network tag (`postgres-tutorial`) that you used for the instance.
 
