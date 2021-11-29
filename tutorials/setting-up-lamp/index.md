@@ -236,7 +236,7 @@ create a `CNAME` record for `www` to point it to the `example.com` domain. The `
 to an IP address. The `CNAME` record creates an alias for the `A` record. This lesson assumes you want
 `example.com` and `www.example.com` to map to the same IP address.
 
-1.  Get your **External IP** address for your instance. You can look up the IP address on the
+1.  Get your external IP address for your instance. You can look up the IP address on the
     [**VM instances** page](https://console.cloud.google.com/compute/instances) in the Cloud Console.
 1.  Sign in to your provider's DNS management interface and find the domain that you want to manage.
     Refer to your DNS provider's documentation for specific steps.
