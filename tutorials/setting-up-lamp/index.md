@@ -9,7 +9,8 @@ date_published: 2017-02-15
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This page shows you how to set up a LAMP (Linux, Apache, MySQL, PHP) stack on a Compute Engine
-virtual machine instance. The instructions in this tutorial are for Debian 10 or Ubuntu 20.04 LTS, but much of the information is also applicable to other Linux distributions.
+virtual machine instance. The instructions in this tutorial are for Debian 10 or Ubuntu 20.04 LTS, 
+but much of the information is also applicable to other Linux distributions.
 
 Alternatively, you can use options from the
 [Cloud Marketplace](http://console.cloud.google.com/marketplace/browse?q=lamp) to deploy a LAMP stack automatically.
