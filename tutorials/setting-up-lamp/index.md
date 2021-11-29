@@ -45,13 +45,13 @@ to generate a cost estimate based on your projected usage.
 1.  In the **Machine configuration** section, select **e2-micro** for **Machine type**.
 1.  In the **Boot disk** section, click **Change**.
 1.  In the Boot disk window, perform the following steps in the **Public images** tab:
-    1.  In the **Operating system** dropdown list, ensure that **Debian** is selected.
-    1.  In the **Version** dropdown list, ensure that **Debian GNU/Linux 10 (buster)** is selected.
+    1.  In the **Operating system** menu, ensure that **Debian** is selected.
+    1.  In the **Version** menu, ensure that **Debian GNU/Linux 10 (buster)** is selected.
     1.  Click **Select**.
 1.  In the **Firewall** section, select **Allow HTTP traffic** and **Allow HTTPS traffic**.
 1.  Click **Create**.
 
-If you want to use a different operating system, click the **Change button** for the **Boot disk**, and select the operating system and version that you want.
+If you want to use a different operating system, click the **Change** button for the **Boot disk**, and select the operating system and version that you want.
 
 Give the instance a few seconds to start up.
 
