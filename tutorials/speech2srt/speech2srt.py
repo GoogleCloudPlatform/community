@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import srt
-import time
 from google.cloud import speech
 
 
@@ -31,21 +30,17 @@ def long_running_recognize(args):
     client = speech.SpeechClient()
 
     # Encoding of audio data sent.
-    encoding = speech.RecognitionConfig.AudioEncoding.LINEAR16
-    config = {
-        "enable_word_time_offsets": True,
-        "enable_automatic_punctuation": True,
-        "sample_rate_hertz": args.sample_rate_hertz,
-        "language_code": args.language_code,
-        "encoding": encoding,
-    }
-    audio = {"uri": args.storage_uri}
-
     operation = client.long_running_recognize(
-        request={
-            "config": config,
-            "audio": audio,
-            }
+        config=
+        {
+            "enable_word_time_offsets": True,
+            "enable_automatic_punctuation": True,
+            "sample_rate_hertz": args.sample_rate_hertz,
+            "language_code": args.language_code,
+            "audio_channel_count": args.audio_channel_count,
+            "encoding": args.encoding,
+        },
+        audio={"uri": args.storage_uri},
     )
     response = operation.result()
 
@@ -68,10 +63,7 @@ def break_sentences(args, subs, alternative):
     for w in alternative.words:
         if firstword:
             # first word in sentence, record start time
-            start_hhmmss = time.strftime('%H:%M:%S', time.gmtime(
-                w.start_time.seconds))
-            start_ms = int(w.start_time.microseconds / 1000)
-            start = start_hhmmss + "," + str(start_ms)
+            start = w.start_time.ToTimedelta()
 
         charcount += len(w.word)
         content += " " + w.word.strip()
@@ -81,14 +73,10 @@ def break_sentences(args, subs, alternative):
                 ("," in w.word and not firstword)):
             # break sentence at: . ! ? or line length exceeded
             # also break if , and not first word
-            end_hhmmss = time.strftime('%H:%M:%S', time.gmtime(
-                w.end_time.seconds))
-            end_ms = int(w.end_time.microseconds / 1000)
-            end = end_hhmmss + "," + str(end_ms)
             subs.append(srt.Subtitle(index=idx,
-                        start=srt.srt_timestamp_to_timedelta(start),
-                        end=srt.srt_timestamp_to_timedelta(end),
-                        content=srt.make_legal_content(content)))
+                                     start=start,
+                                     end=w.end_time.ToTimedelta(),
+                                     content=srt.make_legal_content(content)))
             firstword = True
             idx += 1
             content = ""
@@ -139,12 +127,22 @@ def main():
     parser.add_argument(
         "--out_file",
         type=str,
-        default="en",
+        default="subtitle",
     )
     parser.add_argument(
         "--max_chars",
         type=int,
         default=40,
+    )
+    parser.add_argument(
+        "--encoding",
+        type=str,
+        default='LINEAR16'
+    )
+    parser.add_argument(
+        "--audio_channel_count",
+        type=int,
+        default=1
     )
     args = parser.parse_args()
 
