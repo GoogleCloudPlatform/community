@@ -98,9 +98,9 @@ Next, you’re going to set up the typical configuration for Terraform in order 
 
 
 ### Access your Grafana Dashboard
-  1. Open an Incognito browser window. Go to admin.google.com and sign in with your GCP account owner. Create a new user (only users who are part of your domain can access the dashboard).
+  1. Go to admin.google.com and sign in with your GCP account owner. Create a new user (only users who are part of your domain can access the dashboard).
   2. Open the GCP Console and go to IAM > Add > enter your user’s email (e.g., user@your-domain.com) and select role IAP-secured Web App User.
-  3. Open an incognito window, go to your-domain.com (the domain you used in step 6) and sign in using the newly created user (you will be prompted to change your password the first time you login).
+  3. Go to your-domain.com (the domain you used in step 6) and sign in using the newly created user (you will be prompted to change your password the first time you login).
 
 
 ## Conclusion
@@ -120,6 +120,7 @@ Deleting a project has the following consequences:
 - You can't reuse the project ID of a deleted project. If you created a custom project ID that you plan to use in the
   future, delete the resources inside the project instead. This ensures that URLs that use the project ID, such as
   an `appspot.com` URL, remain available.
+- If you want to avoid further cost, it's a good idea to delete the resources in the project before deleting the project
 
 To delete a project, do the following:
 
