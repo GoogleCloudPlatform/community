@@ -9,8 +9,7 @@ date_published: 2017-02-15
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This page shows you how to set up a LAMP (Linux, Apache, MySQL, PHP) stack on a Compute Engine
-virtual machine instance. The instructions in this tutorial are for Debian 10 or Ubuntu 20.04 LTS, but
-much of the information is also applicable to other Linux distributions.
+virtual machine instance. The instructions in this tutorial are for Debian 10 or Ubuntu 20.04 LTS, but much of the information is also applicable to other Linux distributions.
 
 Alternatively, you can use options from the
 [Cloud Marketplace](http://console.cloud.google.com/marketplace/browse?q=lamp) to deploy a LAMP stack automatically.
@@ -40,16 +39,18 @@ to generate a cost estimate based on your projected usage.
 ## Creating a virtual machine instance
 
 1.  In the Cloud Console, go to the [**VM Instances** page](https://console.cloud.google.com/compute/instances).
-1.  Click **Create**.
+1.  Click **Create instance**.
 1.  In the **Name** field, enter `lamp-tutorial`.
-1.  Set **Machine type** to **e2-micro**.
-1.  Set **Boot disk** to **Debian GNU/Linux 10 (buster)**.
+1.  In the **Machine configuration** section, select **e2-micro** for **Machine type**.
+1.  In the **Boot disk** section, click **Change**.
+1.  In the Boot disk window, perform the following steps in the **Public images** tab:
+    1.  In the **Operating system** dropdown list, ensure that **Debian** is selected.
+    1.  In the **Version** dropdown list, ensure that **Debian GNU/Linux 10 (buster)** is selected.
+    1.  Click **Select**.
 1.  In the **Firewall** section, select **Allow HTTP traffic** and **Allow HTTPS traffic**.
 1.  Click **Create**.
 
-If you want to use a different operating system, click the **Change** button for the **Boot disk**,
-and select the operating system and version that you want. This tutorial assumes that you're using Debian 10
-or Ubuntu 20.04 LTS. Instructions for other Linux distributions may be different.
+If you want to use a different operating system, click the **Change button** for the **Boot disk**, and select the operating system and version that you want.
 
 Give the instance a few seconds to start up.
 
@@ -64,8 +65,7 @@ Cloud Console or using the `gcloud compute ssh` command, which is
 part of the [Cloud SDK](https://cloud.google.com/sdk).
 This tutorial demonstrates the steps in the Cloud Console.
 
-1.  In the [Cloud Console](https://console.cloud.google.com/compute/instances),
-    go to the **VM instances** page.
+1.  In the Cloud Console, go to the [**VM instances**](https://console.cloud.google.com/compute/instances) page.
     
 1.  In the list of virtual machine instances, click the **SSH** button in the row of the instance
     to which you want to connect.
@@ -85,7 +85,7 @@ By creating an instance, you already have the *Linux* part of
 ### Test Apache and PHP
 
 1.  Get the external IP address of your instance from the
-    **VM instances** page in the Cloud Console.
+    [**VM instances**](https://console.cloud.google.com/compute/instances) page in the Cloud Console.
 
 1.  In a browser, enter your external IP address to verify that Apache is running:
 
@@ -93,10 +93,8 @@ By creating an instance, you already have the *Linux* part of
 
     You should see the Apache test page. Make sure that you don't use the `https` protocol specifier, because HTTPS is not configured.
 
-1.  Create a test file in the default web server root at `/var/www/html/`.
-
-    You can follow the instructions in the [PHP documentation](http://php.net/manual/en/tutorial.firstpage.php).
-    Example number 2 is the simplest example.
+1.  To create a test file in the default web server root at `/var/www/html/`,
+    follow the instructions in the [PHP documentation](http://php.net/manual/en/tutorial.firstpage.php). Example number 2 is the simplest example.
 
     You can write the code to the file from the command line by using a statement like the following:
     
@@ -237,7 +235,7 @@ create a `CNAME` record for `www` to point it to the `example.com` domain. The `
 to an IP address. The `CNAME` record creates an alias for the `A` record. This lesson assumes you want
 `example.com` and `www.example.com` to map to the same IP address.
 
-1.  Get your external IP address for your instance. You can look up the IP address on the
+1.  Get your **External IP** address for your instance. You can look up the IP address on the
     [**VM instances** page](https://console.cloud.google.com/compute/instances) in the Cloud Console.
 1.  Sign in to your provider's DNS management interface and find the domain that you want to manage.
     Refer to your DNS provider's documentation for specific steps.
@@ -288,8 +286,9 @@ them prevents you from exceeding project quota limits.
 
 To delete the project:
 
-1. In the Cloud Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
-1. In the project list, select the project you want to delete and click **Delete**.
+1. In the Cloud Console, go to the [**Projects** page](https://console.cloud.google.com/iam-admin/projects).
+1. Click the checkbox next to the project you want to delete.
+1. Click the **Delete** button at the top of the page.
 1. In the dialog, type the project ID, and then click **Shut down** to delete the project.
 
 ### Deleting instances
@@ -297,8 +296,8 @@ To delete the project:
 To delete a Compute Engine instance:
 
 1. In the Cloud Console, go to the [**VM Instances** page](https://console.cloud.google.com/compute/instances).
-1. Click the checkbox next to your `lamp-tutorial` instance.
-1. Click the **Delete** button at the top of the page to delete the instance.
+1. Click the checkbox next to the instance you want to delete.
+1. Click the **Delete** button at the top of the page.
 
 ## What's next
 
