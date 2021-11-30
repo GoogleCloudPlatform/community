@@ -25,7 +25,7 @@ resource "google_secret_manager_secret_iam_member" "secret-access" {
   project = data.google_project.project.project_id
   secret_id = google_secret_manager_secret.secret.id
   role      = "roles/secretmanager.secretAccessor"
-  member    = "serviceAccount:${data.google_compute_default_service_account.default.email}"
+  member    = "serviceAccount:${google_service_account.grafana_sa.email}"
   depends_on = [google_secret_manager_secret.secret]
 }
 
@@ -39,7 +39,7 @@ resource "google_sql_database_instance" "instance" {
     tier = "db-f1-micro"
   }
 
-  deletion_protection  = "true"
+  deletion_protection  = "false"
 }
 
 resource "google_sql_database" "database" {

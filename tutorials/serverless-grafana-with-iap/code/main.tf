@@ -13,9 +13,17 @@ resource "google_project_service" "project" {
   disable_on_destroy = false
 }
 
-data "google_compute_default_service_account" "default" {
+resource "google_service_account" "grafana_sa" {
+  account_id   = "grafana"
+  display_name = "Service Account for Grafana"
   project = data.google_project.project.project_id
 }
+
+resource "google_project_iam_member" "grafana_monitoring_viewer_role_assignment" {
+  project = data.google_project.project.project_id
+  role    = "roles/monitoring.viewer"
+  member  = "serviceAccount:${google_service_account.grafana_sa.email}"
+
 
 resource "google_cloud_run_service" "default" {
   provider = google-beta
@@ -31,7 +39,7 @@ resource "google_cloud_run_service" "default" {
   
   template {
     spec {
-      service_account_name = data.google_compute_default_service_account.default.email
+      service_account_name = google_service_account.grafana_sa.email
       containers {
         image ="mirror.gcr.io/grafana/grafana:${var.grafana_version}"
         ports {
@@ -225,7 +233,7 @@ resource "google_secret_manager_secret_iam_member" "datasource-access" {
   project = data.google_project.project.project_id
   secret_id = google_secret_manager_secret.datasource.id
   role      = "roles/secretmanager.secretAccessor"
-  member    = "serviceAccount:${data.google_compute_default_service_account.default.email}"
+  member    = "serviceAccount:${google_service_account.grafana_sa.email}"
   depends_on = [google_secret_manager_secret.datasource, google_secret_manager_secret_version.datasource-version-data]
 }
 
@@ -251,7 +259,7 @@ resource "google_secret_manager_secret_iam_member" "dashboard-yaml-access" {
   project = data.google_project.project.project_id
   secret_id = google_secret_manager_secret.dashboard-yaml.id
   role      = "roles/secretmanager.secretAccessor"
-  member    = "serviceAccount:${data.google_compute_default_service_account.default.email}"
+  member    = "serviceAccount:${google_service_account.grafana_sa.email}"
   depends_on = [google_secret_manager_secret.dashboard-yaml, google_secret_manager_secret_version.dashboard-yaml-version-data]
 }
 
@@ -277,6 +285,6 @@ resource "google_secret_manager_secret_iam_member" "dashboard-json-access" {
   project = data.google_project.project.project_id
   secret_id = google_secret_manager_secret.dashboard-json.id
   role      = "roles/secretmanager.secretAccessor"
-  member    = "serviceAccount:${data.google_compute_default_service_account.default.email}"
+  member    = "serviceAccount:${google_service_account.grafana_sa.email}"
   depends_on = [google_secret_manager_secret.dashboard-json, google_secret_manager_secret_version.dashboard-json-version-data]
 }
