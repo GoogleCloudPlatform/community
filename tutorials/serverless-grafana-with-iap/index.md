@@ -16,7 +16,7 @@ In this tutorial, we'll be demonstrating how to deploy Grafana serverless and re
 
 You should have basic knowledge of Google Cloud Platform, Grafana and Terraform, own a domain, and can modify its A record.
 
-![Serverless Grafana architecture](https://storage.googleapis.com/gcp-community/tutorials/serverless-grafana-with-iap/grafana-iap-architecture.png)
+![Serverless Grafana architecture](./grafana-iap-architecture.png)
 
 
 ## Objectives
@@ -71,9 +71,9 @@ You should have a Google Cloud Platform account and project setup, billing confi
 Configure an OAuth consent screen for Identity-Aware Proxy. 
   1. Go to GCP Console > Security > Identity-Aware Proxy. 
   2. If you didn’t configure a consent screen before, there will be a red warning message prompting you to configure one. 
-  ![Consent missing error message](https://storage.googleapis.com/gcp-community/tutorials/serverless-grafana-with-iap/iap-consent-not-confgured.png)
+  ![Consent missing error message](./iap-consent-not-confgured.png)
   1. Click Configure Consent Screen, choose User Type Internal and click Create. Internal allows only users that are part of your organization to access your application. You can add additional users by logging into admin.google.com.
-  ![Configure consent](https://storage.googleapis.com/gcp-community/tutorials/serverless-grafana-with-iap/iap-configure-oauth.png)
+  ![Configure consent](./iap-configure-oauth.png)
   4. Enter the app name and user support email, then click Save and continue until the process is complete.
 
 
@@ -100,13 +100,13 @@ Next, you’re going to set up the typical configuration for Terraform in order 
 ### Access your Grafana Dashboard
   1. Go to admin.google.com and sign in with your GCP account owner. Create a new user (only users who are part of your domain can access the dashboard).
   2. Open the GCP Console and go to IAM > Add > enter your user’s email (e.g., user@your-domain.com) and select role IAP-secured Web App User.
-  3. Go to your-domain.com (the domain you used in step 6) and sign in using the newly created user (you will be prompted to change your password the first time you login).
+  3. Go to your-domain.com (the domain you used in step 6) and sign in using the newly created user (you might be prompted to change your password the first time you login).
 
 
 ## Conclusion
 Congratulations, you now have a serverless deployment of Grafana up and running, connected with Google Cloud Monitoring and secured using Google's Identity-Aware Proxy. You can now access and login to Grafana using your browser and accessing your domain. There should already be a dashboard available monitoring GCLB for you. This provides you with reduced worries around properly hosting your Grafana dashboards, while also providing a very low cost solution to hosting Grafana. Please keep in mind that should you want to use the alerts feature from Grafana you should consider keeping some [CPU allocated](https://cloud.google.com/run/docs/configuring/cpu-allocation), otherwise alerts might not be triggered. 
 
-![Grafana dashboard screenshot](https://storage.googleapis.com/gcp-community/tutorials/serverless-grafana-with-iap/grafana-dashboard-screenshot.png)
+![Grafana dashboard screenshot](./grafana-dashboard-screenshot.png)
 
 ## Cleaning up
 
