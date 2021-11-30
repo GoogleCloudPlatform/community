@@ -77,7 +77,7 @@ Configure an OAuth consent screen for Identity-Aware Proxy.
   4. Enter the app name and user support email, then click Save and continue until the process is complete.
 
 
-### Set up Terraform and Docker
+### Set up Terraform
 
 Next, you’re going to set up the typical configuration for Terraform in order for the project to deploy.
 
