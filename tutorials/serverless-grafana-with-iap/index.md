@@ -52,14 +52,12 @@ To make sure your Grafana dashboard is useful, a datasource for Google Cloud Mon
 
 To access your Grafana dashboard, Cloud Load Balancer is configured to service HTTPS traffic from CloudRun using a Serverless Network Endpoint Group (NEG) as backend service. Identity-Aware Proxy (IAP) is integrated with the Load Balancer backend service. Client ID and secret are passed to the Load Balancer configuration. IAP provides headers containing the authorization information to applications secured with it ([link to documentation](https://cloud.google.com/iap/docs/signed-headers-howto)). Grafana provides the [functionality](https://grafana.com/docs/grafana/latest/auth/auth-proxy/) to receive exactly such header information for authentication. 
 
-With other words: IAP and Grafana? A match made in heaven.
-
 
 ### Before you begin
 
 You should have a Google Cloud Platform account and project setup, billing configured for your project, and Terraform installed and enabled.
   1. [Download the code](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/serverless-grafana-with-iap/code) from the tutorial resources.
-  2. Open the working directory with your preferred terminal. The working directory is: Examples > Serverless > Grafana.
+  2. Open the working directory (*code* folder) with your preferred terminal.
   3. Know your GCP project ID. If you don’t know how to find the project ID, you can learn about it [here](https://support.google.com/googleapi/answer/7014113?hl=en).
   4. Choose a region to host your project in, ideally one that’s close to you. You can find an overview of available regions [here](https://cloud.google.com/compute/docs/regions-zones).
   5. Make sure you know the domain name where you want to host your Grafana dashboard and are able to edit the A record for this domain.
