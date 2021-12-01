@@ -56,12 +56,10 @@ To access your Grafana dashboard, Cloud Load Balancer is configured to service H
 ### Before you begin
 
 You should have a Google Cloud Platform account and project setup, billing configured for your project, and Terraform installed and enabled.
-  1. [Download the code](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/serverless-grafana-with-iap/code) from the tutorial resources.
-  2. Open the working directory (*code* folder) with your preferred terminal.
-  3. Know your GCP project ID. If you don’t know how to find the project ID, you can learn about it [here](https://support.google.com/googleapi/answer/7014113?hl=en).
-  4. Choose a region to host your project in, ideally one that’s close to you. You can find an overview of available regions [here](https://cloud.google.com/compute/docs/regions-zones).
-  5. Make sure you know the domain name where you want to host your Grafana dashboard and are able to edit the A record for this domain.
-  6. *Run* `gcloud auth login` to authenticate against Google Cloud Platform. Ideally, you should be using a service account for this, as described [here](https://cloud.google.com/sdk/gcloud/reference/auth/activate-service-account).
+  1. [Create or select a Google Cloud project.](https://console.cloud.google.com/project)
+  1. [Enable billing for your project.](https://support.google.com/cloud/answer/6293499#enable-billing)
+  1. Choose a region to host your project in, ideally one that’s close to you. You can find an overview of available regions [here](https://cloud.google.com/compute/docs/regions-zones).
+  1. Make sure you know the domain name where you want to host your Grafana dashboard and are able to edit the A record for this domain.
 
 
 ### Configure the OAuth consent screen
@@ -77,15 +75,18 @@ Configure an OAuth consent screen for Identity-Aware Proxy.
   ![Add test users](./iap-consent-test-users.png)
   5. Enter the app name and user support email, then click Save and continue until the process is complete.
 
-### Set up Terraform
+### Set up your Environment
 
-Next, you’re going to set up the typical configuration for Terraform in order for the project to deploy.
-
-  1. *Open* the Working Directory Examples > Serverless > Grafana in your favorite shell.
-  2. *Run* `terraform init`
-  3. *Set* required terraform variables, e.g., Linux:
-  `export TF_VAR_project_id=[YOUR_GCP_PROJECT_ID]`
-  `export TF_VAR_domain=[YOUR_DOMAIN] This is the domain to host your Grafana dashboard.`
+Next, you’re going to set up the environment in order for the project to deploy.
+  1. [Open a new Cloud Shell session.](https://console.cloud.google.com/?cloudshell=true)
+  1. *Run* `git clone https://github.com/GoogleCloudPlatform/community.git` to download the sources to your cloud shell.
+  1. `cd ./community/tutorials/serverless-grafana-with-iap/code` change directory to the *code* folder.
+  1. *Set* required environment variables. Replace [YOUR_DOMAIN] with the domain on which you want to host your Grafana dashboard.
+  ```
+  export TF_VAR_project_id=$GOOGLE_CLOUD_PROJECT
+  export TF_VAR_domain=[YOUR_DOMAIN]
+  ```
+  1. *Run* `terraform init`
 
 
 ### Execute the Terraform script to create your Grafana Dashboard
