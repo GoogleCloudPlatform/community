@@ -70,10 +70,12 @@ Configure an OAuth consent screen for Identity-Aware Proxy.
   1. Go to GCP Console > Security > Identity-Aware Proxy. 
   2. If you didn’t configure a consent screen before, there will be a red warning message prompting you to configure one. 
   ![Consent missing error message](./iap-consent-not-confgured.png)
-  1. Click Configure Consent Screen, choose User Type Internal and click Create. Internal allows only users that are part of your organization to access your application. You can add additional users by logging into admin.google.com.
+  Depending on your setup you can either enable the consent screen for internal or external users. Internal allows only users that are part of your Cloud Identity organisation to use Grafana, but requires you to have a Cloud Identity organisation. You can alternativley select external, which allows you to also add users that are outside your organisation. As long as your app wasn't publish, you will need to whitelist "testers" that can access your application (see optional step 4).
+  3. Click Configure Consent Screen, choose User Type Internal or External depending on your needs. Add a name and support email addresses and click Create.
   ![Configure consent](./iap-configure-oauth.png)
-  4. Enter the app name and user support email, then click Save and continue until the process is complete.
-
+  4. (Optional, only applies if your selected external before) In this step you can add users as test users to your application. You will need to also grant those users the role "IAP-Secured Web App User " which we will do at a later stage.
+  ![Add test users](./iap-consent-test-users.png)
+  5. Enter the app name and user support email, then click Save and continue until the process is complete.
 
 ### Set up Terraform
 
@@ -96,10 +98,15 @@ Next, you’re going to set up the typical configuration for Terraform in order 
 
 
 ### Access your Grafana Dashboard
-  1. Go to admin.google.com and sign in with your GCP account owner. Create a new user (only users who are part of your domain can access the dashboard).
-  2. Open the GCP Console and go to IAM > Add > enter your user’s email (e.g., user@your-domain.com) and select role IAP-secured Web App User.
-  3. Go to your-domain.com (the domain you used in step 6) and sign in using the newly created user (you might be prompted to change your password the first time you login).
-
+In order to grant users access to your Grafana instance, you need to grant them the role "IAP-Secured Web App User" for the resource. You can do this with the following gcloud command. You should do this for your user account.
+```
+gcloud iap web add-iam-policy-binding \
+            --resource-type=backend-services \
+            --member='user:<your_user_email>' \
+            --service='tf-cr-lb-backend-default' \
+            --role='roles/iap.httpsResourceAccessor'
+```
+Afterwards you can open Grafana by visiting your-domain.com from the browser. Since the database is automatically provisioned your user will only have Viewer permissions in Grafana. If you want to elevate your user to an Admin, you will need to access the MySQL instance and modify the user table entry for your user.
 
 ## Conclusion
 Congratulations, you now have a serverless deployment of Grafana up and running, connected with Google Cloud Monitoring and secured using Google's Identity-Aware Proxy. You can now access and login to Grafana using your browser and accessing your domain. There should already be a dashboard available monitoring GCLB for you. This provides you with reduced worries around properly hosting your Grafana dashboards, while also providing a very low cost solution to hosting Grafana. Please keep in mind that should you want to use the alerts feature from Grafana you should consider keeping some [CPU allocated](https://cloud.google.com/run/docs/configuring/cpu-allocation), otherwise alerts might not be triggered. 
