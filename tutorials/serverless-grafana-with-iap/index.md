@@ -42,7 +42,7 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
 
 You can easily deploy the setup with minimal effort; most of it is done through a Terraform script. Here is what happens in the background:
 
-First, all required APIs are enabled, e.g., IAM, Cloud Run, Compute, IAP, SQL by the Terraform script. Hence you don't need to worry about this step.
+First, all required APIs are enabled by the Terraform script, e.g. IAM, Cloud Run, Compute, IAP, SQL. Hence you don't need to worry about this step.
 
 Grafana requires a database for storing data. Therefore, a CloudSQL instance is created. The password for the database user is placed in Secret Manager, for secured access.
 
@@ -73,7 +73,7 @@ Configure an OAuth consent screen for Identity-Aware Proxy.
   ![Configure consent](./iap-configure-oauth.png)
   4. (Optional, only applies if your selected external before) In this step you can add users as test users to your application. You will need to also grant those users the role "IAP-Secured Web App User " which we will do at a later stage.
   ![Add test users](./iap-consent-test-users.png)
-  5. Enter the app name and user support email, then click Save and continue until the process is complete.
+  5. Enter the app name and user support email, then click **Save** and continue until the process is complete.
 
 ### Set up your Environment
 
