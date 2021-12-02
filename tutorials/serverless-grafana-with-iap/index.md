@@ -67,7 +67,7 @@ You should have a Google Cloud Platform account and project setup, billing confi
 Configure an OAuth consent screen for Identity-Aware Proxy. 
   1. Go to GCP Console > Security > Identity-Aware Proxy. 
   2. If you didn’t configure a consent screen before, there will be a red warning message prompting you to configure one. 
-  ![Consent missing error message](./iap-consent-not-confgured.png)
+  ![Consent missing error message](./iap-consent-not-configured.png)
   Depending on your setup you can either enable the consent screen for internal or external users. Internal allows only users that are part of your Cloud Identity organisation to use Grafana, but requires you to have a Cloud Identity organisation. You can alternativley select external, which allows you to also add users that are outside your organisation. As long as your app wasn't publish, you will need to whitelist "testers" that can access your application (see optional step 4).
   3. Click Configure Consent Screen, choose User Type Internal or External depending on your needs. Add a name and support email addresses and click Create.
   ![Configure consent](./iap-configure-oauth.png)
