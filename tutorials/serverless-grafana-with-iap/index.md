@@ -23,7 +23,7 @@ You should have basic knowledge of Google Cloud Platform, Grafana and Terraform,
 
 By the end of this tutorial, you'll have information to:
 
-  * Run the Terraform script to deploy Grafana on Cloud Run with CloudSQL as database. and Identity Aware Proxy setup.
+  * Run the Terraform script to deploy Grafana on Cloud Run with CloudSQL as database and Identity Aware Proxy setup.
   * Create a new user for accessing the dashboard.
   * Explore and test the capabilities of Identity Aware Proxy (IAP) to restrict access to your Grafana dashboard.
 
@@ -44,7 +44,7 @@ You can easily deploy the setup with minimal effort; most of it is done through 
 
 First, all required APIs are enabled by the Terraform script, e.g. IAM, Cloud Run, Compute, IAP, SQL. Hence you don't need to worry about this step.
 
-Grafana requires a database for storing users,roles, datasources and dashboards. Therefore, a CloudSQL instance is created. The password for the database user is placed in Secret Manager, for secured access. We decided to use a MySQL micro instance, since only a small amount of data stored in MySQL.
+Grafana requires a database for storing users, roles, datasources and dashboards. Therefore, a CloudSQL instance is created. The password for the database user is placed in Secret Manager, for secured access. We decided to use a MySQL micro instance, since only a small amount of data stored in MySQL.
 
 Then, the Cloud Run container is deployed using the GCR mirror of the Grafana container image and started. The script also passes required environment variables to the container, such as information about the database connection, and auth proxy. 
 
