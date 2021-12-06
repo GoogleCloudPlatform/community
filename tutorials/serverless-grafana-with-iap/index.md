@@ -68,13 +68,14 @@ Configure an OAuth consent screen for Identity-Aware Proxy.
   1. Go to GCP Console > Security > Identity-Aware Proxy. If necessary, enable the Identity-Aware proxy when the console requests it.
   2. If you didn’t configure a consent screen before, there will be a red warning message prompting you to configure one. 
   ![Consent missing error message](./iap-consent-not-configured.png)
-  Depending on your setup you can either enable the consent screen for internal or external users. Internal allows only users that are part of your Cloud Identity organisation to use Grafana, but requires you to have a Cloud Identity organisation. You can alternativley select external, which allows you to also add users that are outside your organisation. As long as your app wasn't publish, you will need to whitelist "testers" that can access your application (see optional step 4).
-  3. Click Configure Consent Screen, choose User Type Internal or External depending on your needs. Add a name and support email addresses and click Create.
+  Select internal users, this allows only users that are part of your Cloud Identity organisation to use Grafana, but requires you to have a Cloud Identity organisation. If you want to enable IAP with external identities, you will have to use [GCP Identity Platform](https://cloud.google.com/identity-platform) which we don't cover in this tutorial. 
+  3. Click Configure Consent Screen, choose User Type Internal. Add a name and support email addresses and click Create.
   ![Configure consent](./iap-configure-oauth.png)
   4. Click Save and Continue within the Scopes step
   5. (Optional, only applies if your selected external before) In this step you can add users as test users to your application. You will need to also grant those users the role "IAP-Secured Web App User " which we will do at a later stage.
   ![Add test users](./iap-consent-test-users.png)
   6. Enter the app name and user support email, then click **Save** and continue until the process is complete.
+
 
 ### Set up your Environment
 
