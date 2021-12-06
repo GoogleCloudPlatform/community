@@ -40,8 +40,6 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
 
 ## What happens behind the scenes
 
-You can easily deploy the setup with minimal effort; most of it is done through a Terraform script. Here is what happens in the background:
-
 First, all [required APIs are enabled by the Terraform script](./code/main.tf#L10), e.g. IAM, Cloud Run, Compute, IAP, SQL. This is necessary to allow the usage of those API during the deployment in your project.
 
 Grafana requires a database for storing users, roles, datasources and dashboards. Therefore, [a CloudSQL instance is created](./code/cloudsql.tf#L48). The password for the database user is placed in Secret Manager, for secured access. We decided to use a MySQL micro instance, since only a small amount of data stored in MySQL.
@@ -72,9 +70,7 @@ Configure an OAuth consent screen for Identity-Aware Proxy.
   3. Click Configure Consent Screen, choose User Type Internal. Add a name and support email addresses and click Create.
   ![Configure consent](./iap-configure-oauth.png)
   4. Click Save and Continue within the Scopes step
-  5. (Optional, only applies if your selected external before) In this step you can add users as test users to your application. You will need to also grant those users the role "IAP-Secured Web App User " which we will do at a later stage.
-  ![Add test users](./iap-consent-test-users.png)
-  6. Enter the app name and user support email, then click **Save** and continue until the process is complete.
+  5. Enter the app name and user support email, then click **Save** and continue until the process is complete.
 
 
 ### Set up your Environment
@@ -95,9 +91,19 @@ Next, you’re going to set up the environment in order for the project to deplo
 
   1. *Run* `terraform plan` and confirm that all steps are correct.
   2. *Run* `terraform apply`.
-  3. Confirm the command has been executed successfully. (This may take up to 15 min)
-  4. *Copy* the external_ip from the console Outputs. *Add* an A record redirect from your domain to this IP address.
-  5. Wait around 5 - 10 minutes for GCP Load Balancer to perform certificate checks.
+  3. Confirm the command has been executed successfully. You should see the IP address of your Load Balancer printed in the console as in the example output below. This may take up to 15 min. 
+  ```
+  module.lb-http.google_compute_global_forwarding_rule.https[0]: Creation complete after 11s [id=projects/[YOUR_PROJECT_ID]/global/forwardingRules/tf-cr-lb-https]
+
+  Apply complete! Resources: 8 added, 0 changed, 0 destroyed.
+
+  Outputs:
+
+  external_ip = "[YOUR_EXTERNAL_IP]"
+  ```
+  4. *Copy* the external_ip from the console outputs. 
+  5. *Add* an A record from your domain to this IP address. If you are managing your domain through GCP, you can do this step in Cloud DNS. If not, an A record can be set through your domain registrar.
+  6. Wait around 5 - 10 minutes for GCP Load Balancer to perform certificate checks.
 
 ### Access your Grafana Dashboard
 In order to grant users access to your Grafana instance, you need to grant them the role "IAP-Secured Web App User" for the resource. You can do this with the following gcloud command. You should do this for your user account.
@@ -141,8 +147,7 @@ To delete a project, do the following:
 
 To delete resources only, do the following:
 
-1. *Manually delete* your CloudSQL instance, as deletion protection is activated. Go to Google Cloud console, then open the [SQL page](https://console.cloud.google.com/sql/instances), click on the [**grafana** instance](https://console.cloud.google.com/sql/instances/grafana/overview) and click **Delete**
-2. *Execute* `terraform destroy` to delete the remaining resources. 
+1. *Execute* `terraform destroy` to delete the remaining resources. 
 
 
 
