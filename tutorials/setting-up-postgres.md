@@ -205,7 +205,9 @@ a firewall rule that enables traffic on this port.
 
 1.  In the **Targets tags** field, enter the network tag (`postgres-tutorial`) that you used for the instance.
 
-1.  In **Source IP Ranges**, enter the same IP address that you used in `hba.conf`.
+1.  In the **Source filter** list, select **IPv4 ranges**.
+
+1.  In the **Source IPv4 ranges** field, enter the same IP address that you used in `hba.conf`.
 
     This is the IP address of your local computer. Remember to include the `/32`
     suffix, for example: `1.2.3.4/32`.
