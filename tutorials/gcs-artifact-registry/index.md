@@ -1,6 +1,6 @@
 ---
 title: Mirroring Python Repositories to Artifact Registry
-description: Using Storage Event Trigger in Eventarc to invoke Cloud Run to copy Python Packages from a GCS bucket to Artifact Registry
+description: Using Storage Event Trigger in Eventarc to invoke Cloud Run to copy Python Packages from a GCS bucket to Artifact Registry.
 author: zhenyangbai
 tags: Aritfact Registry, Google Cloud Storage, Cloud Run, Eventarc
 date_published: 2021-12-08
