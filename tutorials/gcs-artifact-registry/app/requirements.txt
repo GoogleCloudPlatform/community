@@ -1,0 +1,8 @@
+pandas
+twine
+google-auth
+google-cloud-storage
+flask
+gunicorn
+keyrings.google-artifactregistry-auth
+cloudevents
