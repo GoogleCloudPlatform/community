@@ -12,7 +12,9 @@ Zhenyang Bai | Customer Engineer | Google
 
 In this tutorial, you set up [Eventarc](https://cloud.google.com/eventarc/) to sync Python Packages from [Google Cloud Storage](https://cloud.google.com/artifact-registry/) to [Artifact Registry](https://cloud.google.com/artifact-registry) using [Cloud Run](https://cloud.google.com/run/).
 
-This allows a quick way to mirror the contents of another PyPI server whether on-prem or in the cloud and get started with Artifact Registry quickly.
+This provides a mechanism to use a GCS bucket to proxy the contents of existing PyPI servers to Artifact Registry quickly.
+
+You can also use the GCS bucket to update the contents of multiple Artifact Registry Repos across different regions concurrently.
 
 ## Architecture overview
 
@@ -83,7 +85,9 @@ gcloud services enable \
   cloudbuild.googleapis.com \
   eventarc.googleapis.com \
   logging.googleapis.com \
-  cloudresourcemanager.googleapis.com
+  cloudresourcemanager.googleapis.com \
+  binaryauthorization.googleapis.com \
+  iam.googleapis.com
 ```
 
 ## Setup Up Env Variables
@@ -196,6 +200,7 @@ gcloud run deploy ar-migrate \
 ```
 gcloud run services add-iam-policy-binding ${SERVICE_NAME} \
     --member="serviceAccount:${TRIGGER_SERVICE_ACCOUNT}@${PROJECT_ID}.iam.gserviceaccount.com" \
+    --region=${REGION} \
     --role=${TRIGGER_ROLE_NAME}
 ```
 
