@@ -1,0 +1,6 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: [ 'build', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/edge-deployment-demo/edge-ai:001', '.' ]
+timeout: 1200s
+images:
+- 'us-central1-docker.pkg.dev/$PROJECT_ID/edge-deployment-demo/edge-ai:001'

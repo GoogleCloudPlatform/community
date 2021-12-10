@@ -30,19 +30,20 @@ This turtrial uses a popular [YOLOv5 sample](https://github.com/mikel-brostrom/Y
 ## Costs
 
 This tutorial uses billable components of Google Cloud, including the following:
-```
-*   [Cloud Functions](https://cloud.google.com/functions)
-*   [Cloud Scheduler](https://cloud.google.com/scheduler)
-*   [App Engine](https://cloud.google.com/appengine/docs/flexible/python)
-```
+
+*   [Anthos]()
+*   [Compute Engine]()
+*   []()
 Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage.
 
 
 ## Before you begin
 
-This tutorial assumes that you have a billing enabled GCP account
+This tutorial has below prerequisites 
 
--  Create an account with the free tier. See [document from Google](https://cloud.google.com/billing/docs/how-to/modify-project) for detailed instructions.
+- A billing enabled Google Cloud account, see this [document](https://cloud.google.com/billing/docs/how-to/modify-project) for detailed instructions.
+- gcloud command line tool must be [installed]((https://cloud.google.com/anthos/multicluster-management/connect/prerequisites#install-cloud-sdk)) in your environment if not using Cloud shell.
+- Docker must be install in your working environment or cloud shell, see this [instruction](https://docs.docker.com/engine/install/ubuntu/) for details
 
 
 ## Setup edge server
@@ -136,12 +137,12 @@ Now we want to grant required IAM roles to users so they can interact with conne
     --member $MEMBER \
     --role roles/container.viewer
 
-Update required RBAC policies
+To authenticate requests to the cluster's Kubernetes API server initiated by specific Google Identity users coming from the gateway, SSH to K3s machine and update required RBAC policies in K3s cluster.
 
 - The impersonation policy that authorizes the Connect agent to send requests to the Kubernetes API server on behalf of a user.
 Replace `your-user-name@your-domain.com` and `your-service-account@example-project.iam.gserviceaccount.com` with desired user accout and service account
 
-
+```bash
 cat <<EOF > /tmp/impersonate.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -172,11 +173,11 @@ subjects:
   namespace: gke-connect
 EOF
 kubectl apply -f /tmp/impersonate.yaml
-
+```
 
 - The permissions policy that specifies which permissions the user has on the cluster.
 
-
+```bash
 cat <<EOF > /tmp/admin-permission.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -192,64 +193,83 @@ roleRef:
   name: cluster-admin
   apiGroup: rbac.authorization.k8s.io
 EOF
-# Apply permission policy to the cluster.
 kubectl apply -f /tmp/admin-permission.yaml
+```
+
+Noq go to Anthos Cluster console, select the `edge-server-k3s` cluster then click `Login` button, when popup prompts, choose `Use your Google identity to log-in`
 
 
-Go to Anthos Cluster console, select the `edge-server-k3s` cluster then click `Login` button, when popup prompts, choose `Use your Google identity to log-in`
+### Verify connection to K3s
+
+Go to cloud shell, now we should be able to connect to remote K3s cluster from GCP by running below command
+
+      gcloud container hub memberships get-credentials edge-server-k3s
+
+This generates kubeconfig entry for K3s cluster and set as default context, you can verify this by:
+
+      kubectl get nodes
+
+The node name should be `edge-server-k3s` as we specified
+
+      NAME              STATUS   ROLES                  AGE    VERSION
+      edge-server-k3s   Ready    control-plane,master   112m   v1.21.7+k3s1
+
+
+
+## Setup Source Repository
+
+If you have prefered source repository such as `github` or `gitlab` you can skip this step. If you don't have prefered repo, we'll setup GCP Source Repository for this turtorial.
+
+### Enable API and create new repo
+
+Go to cloud shell, run `gcloud` command to enable Source Repository API and create a repo named `edge-demo`
+
+      gcloud services enable sourcerepo.googleapis.com
+      gcloud source repos create edge-demo
+
+
+## Setup Cloud Build
+
+### Enable Cloud Build and Artifacts Repository API
+
+In this toturial we use Cloud Build to automatically build container image and push to edge server. To start using Cloud Build, first go to cloud shell and enable Cloud Build API. We also need Artifacts Repository as our container repository.
+
+
+
+    gcloud services enable cloudbuild.googleapis.com
+    gcloud services enable artifactregistry.googleapis.com
+    gcloud artifacts repositories create edge-deployment-demo --repository-format=docker \
+          --location=us-central1 
+
+
+## Working with applicaations
+
+At this point we have required infrastructure ready, now we want to get our applications ready to deploy
+
+### Clone sample application and setup Source Repository
+
+In cloud shell or your working environment of choice, clone the sample application from github
+
+      git clone --recurse-submodules https://github.com/mikel-brostrom/Yolov5_DeepSort_Pytorch.git
+      cd Yolov5_DeepSort_Pytorch
+      git remote add google ssh://you-user-name@source.developers.google.com:2022/p/$GOOGLE_CLOUD_PROJECT/r/edge-demo
+
+To pudh codes to Source Repo, generate a SSH key and [add the SSH key to the repository](https://source.cloud.google.com/user/ssh_keys?register=true) then do a `git push --all google` to push codes for the first time.
+
+
+### Create Dockerfile and build container image
+
+The codes should work just fine in container environment, to make our workload more flexible for differnet requirements, we add a [go.sh](./yolov5-python/go.sh) which takes environment variables as arguments to run the python codes. Also we add a [Dockerfile](./yolov5-python/Dockerfile) to create container image.
+
+### Submit to Cloud Build
+
+Create a [cloudbuild.yaml](./cloudbuild/cloudbuild.yaml) and submit the job to Cloud Build
+
+    gcloud builds submit --config cloudbuild.yaml
+
 
 
 ---
-To begin creating a tutorial, copy the Markdown source for this tutorial template into your blank Markdown file. Replace the explanatory text and examples with 
-your own tutorial content. Not all documents will use all of the sections described in this template. For example, a conceptual document or code walkthrough
-might not include the "Costs" or "Cleaning up" sections. For more information, see the 
-[style guide](https://cloud.google.com/community/tutorials/styleguide) and [contribution guide](https://cloud.google.com/community/tutorials/write).
-
-Replace the placeholders in the metadata at the top of the Markdown file with your own values. Follow the guidance provided by the placeholder values for spacing
-and punctuation.
-
-The first line after the metadata should be your name and an optional job description and organization affiliation.
-
-After that is one of two banners that indicates whether the document was contributed by a Google employee. Just leave one banner and delete the other one.
-
-The first paragraph or two of the tutorial should tell the reader the following:
-
-  * Who the tutorial is for
-  * What they will learn from the tutorial
-  * What prerequisite knowledge they need for the tutorial
-
-Don't use a heading like **Overview** or **Introduction**. Just get right to it.
-
-## Objectives
-
-Give the reader a high-level summary of what steps they take during the tutorial. This information is often most effective as a short bulleted list.
-
-### Example: Objectives
-
-*   Create a service account with limited access.
-*   Create a Cloud Function that triggers on HTTP.
-*   Create a Cloud Scheduler job that targets an HTTP endpoint.
-*   Run the Cloud Scheduler job. 
-*   Verify success of the job.
-
-## Costs
-
-Tell the reader which technologies the tutorial uses and what it costs to use them.
-
-For Google Cloud services, link to the preconfigured [pricing calculator](https://cloud.google.com/products/calculator/) if possible.
-
-If there are no costs to be incurred, state that.
-
-### Example: Costs 
-
-This tutorial uses billable components of Google Cloud, including the following:
-
-*   [Cloud Functions](https://cloud.google.com/functions)
-*   [Cloud Scheduler](https://cloud.google.com/scheduler)
-*   [App Engine](https://cloud.google.com/appengine/docs/flexible/python)
-
-Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage.
-
 ## Before you begin
 
 Give a numbered sequence of procedural steps that the reader must take to set up their environment before getting into the main tutorial.
