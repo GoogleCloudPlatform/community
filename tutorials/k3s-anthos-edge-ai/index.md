@@ -49,25 +49,24 @@ This tutorial assumes that you have a billing enabled GCP account
 
 ### Create GCE Instance
 
-    # Run below command in Cloud Shell to create a GCE virtual machine in `us-central1-a` zone:
+Run below command in Cloud Shell to create a GCE virtual machine in `us-central1-a` zone:
     
-    
-    export ZONE=us-central1-a
 
-    gcloud compute instances create edge-server-k3s --project=$GOOGLE_CLOUD_PROJECT --zone=$ZONE \
-        --machine-type=e2-medium --network-interface=network-tier=PREMIUM,subnet=default \
-        --scopes=https://www.googleapis.com/auth/cloud-platform \
-        --create-disk=auto-delete=no,boot=yes,device-name=k3s,image=projects/debian-cloud/global/images/debian-10-buster-v20211105,size=100
+        export ZONE=us-central1-a
 
+        gcloud compute instances create edge-server-k3s --project=$GOOGLE_CLOUD_PROJECT --zone=$ZONE \
+            --machine-type=e2-medium --network-interface=network-tier=PREMIUM,subnet=default \
+            --scopes=https://www.googleapis.com/auth/cloud-platform \
+            --create-disk=auto-delete=no,boot=yes,device-name=k3s,image=projects/debian-cloud/global/images/debian-10-buster-v20211105,size=100
 
 Wait for the compute engine instance to be created and ssh to it.
+
+
 ### Install K3s
 
 SSH to the newly creeated machine and follow the Rancher [instruction](https://rancher.com/docs/k3s/latest/en/installation/install-options/#options-for-installation-with-script) to install K3s on the newly created machine
 
-```shell
-curl -sfL https://get.k3s.io | sh -
-```
+        curl -sfL https://get.k3s.io | sh -
 
 If everything goes well, you should see outputs stating K3s is starting.
 
@@ -84,27 +83,22 @@ If not already, [install gcloud command-line tool](https://cloud.google.com/anth
 
 To enable Anthos API if not already, run below in cloud shell
 
-```shell
-gcloud services enable anthos.googleapis.com
-gcloud services enable anthosconfigmanagement.googleapis.com
-```
+    gcloud services enable anthos.googleapis.com
+    gcloud services enable anthosconfigmanagement.googleapis.com
 
 ### Register attached K3s cluster to Anthos
 
 Follow the [instruction](https://cloud.google.com/anthos/docs/setup/attached-clusters#register_your_cluster) to register K3s cluster to Anthos.
 
-```shell
+    export MEMBERSHIP_NAME=edge-server-k3s
+    export KUBECONFIG_CONTEXT=$(sudo kubectl config current-context)
+    export KUBECONFIG_PATH=/etc/rancher/k3s/k3s.yaml #Kubectl config file in K3s defaults to `/etc/rancher/k3s`
 
-export MEMBERSHIP_NAME=edge-server-k3s
-export KUBECONFIG_CONTEXT=$(sudo kubectl config current-context)
-export KUBECONFIG_PATH=/etc/rancher/k3s/k3s.yaml #Kubectl config file in K3s defaults to `/etc/rancher/k3s`
-
-sudo gcloud container hub memberships register $MEMBERSHIP_NAME \
-   --context=$KUBECONFIG_CONTEXT \
-   --kubeconfig=$KUBECONFIG_PATH \
-   --enable-workload-identity \
-   --has-private-issuer
-```
+    sudo gcloud container hub memberships register $MEMBERSHIP_NAME \
+    --context=$KUBECONFIG_CONTEXT \
+    --kubeconfig=$KUBECONFIG_PATH \
+    --enable-workload-identity \
+    --has-private-issuer
 
 Once registered, it appears in Anthos clusters console, however, to access to the registered cluster, you'll need to [log in and authenticate to the cluster](https://cloud.google.com/anthos/multicluster-management/console/logging-in). As the document recommended, we'll use Google Cloud Identity to login to the cluster.
 
@@ -116,41 +110,38 @@ Below operations requires `roles/owner` in your GCP project.
 
 If you haven't done so, go to Cloud shell and enable API
 
-```bash
-gcloud services enable --project=$GOOGLE_CLOUD_PROJECT  \
-connectgateway.googleapis.com \
-anthos.googleapis.com \
-gkeconnect.googleapis.com \
-gkehub.googleapis.com \
-cloudresourcemanager.googleapis.com
-```
+
+    gcloud services enable --project=$GOOGLE_CLOUD_PROJECT  \
+    connectgateway.googleapis.com \
+    anthos.googleapis.com \
+    gkeconnect.googleapis.com \
+    gkehub.googleapis.com \
+    cloudresourcemanager.googleapis.com
+
 
 Now we want to grant required IAM roles to users so they can interact with connected cluster through the gateway.
 
-```bash
-export MEMBER=user:your-user-name@your-domain.com
-export GATEWAY_ROLE=roles/gkehub.gatewayAdmin   # or `roles/gkehub.gatewayReader`
+    export MEMBER=user:your-user-name@your-domain.com
+    export GATEWAY_ROLE=roles/gkehub.gatewayAdmin   # or `roles/gkehub.gatewayReader`
 
-gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
---member $MEMBER \
---role $GATEWAY_ROLE
+    gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
+    --member $MEMBER \
+    --role $GATEWAY_ROLE
 
-gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
---member $MEMBER \
---role roles/gkehub.viewer
+    gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
+    --member $MEMBER \
+    --role roles/gkehub.viewer
 
-gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
---member $MEMBER \
---role roles/container.viewer
-```
+    gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
+    --member $MEMBER \
+    --role roles/container.viewer
 
 Update required RBAC policies
 
 - The impersonation policy that authorizes the Connect agent to send requests to the Kubernetes API server on behalf of a user.
+Replace `your-user-name@your-domain.com` and `your-service-account@example-project.iam.gserviceaccount.com` with desired user accout and service account
 
-    Replace `your-user-name@your-domain.com` and `your-service-account@example-project.iam.gserviceaccount.com` with desired user accout and service account
 
-```bash
 cat <<EOF > /tmp/impersonate.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -181,11 +172,11 @@ subjects:
   namespace: gke-connect
 EOF
 kubectl apply -f /tmp/impersonate.yaml
-```
+
 
 - The permissions policy that specifies which permissions the user has on the cluster.
 
-```bash
+
 cat <<EOF > /tmp/admin-permission.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -203,7 +194,7 @@ roleRef:
 EOF
 # Apply permission policy to the cluster.
 kubectl apply -f /tmp/admin-permission.yaml
-```
+
 
 Go to Anthos Cluster console, select the `edge-server-k3s` cluster then click `Login` button, when popup prompts, choose `Use your Google identity to log-in`
 
