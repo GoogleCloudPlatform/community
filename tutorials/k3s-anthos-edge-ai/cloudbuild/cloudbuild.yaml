@@ -1,6 +1,25 @@
 steps:
-- name: 'gcr.io/cloud-builders/docker'
-  args: [ 'build', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/edge-deployment-demo/edge-ai:001', '.' ]
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - '-t'
+      - >-
+        us-central1-docker.pkg.dev/$PROJECT_ID/edge-deployment-demo/edge-ai:$BUILD_ID
+      - .
+    id: build.image
+  - name: gcr.io/cloud-builders/gcloud
+    args:
+      - '-c'
+      - |
+        set -x
+        gcloud container hub memberships get-credentials edge-server-k3s
+        sed -i 's/#BUILD#/$BUILD_ID/g' Deployment-k3s.yaml
+        sed -i 's/#PROJECT_ID#/$PROJECT_ID/g' Deployment-k3s.yaml
+        kubectl apply -f Deployment-k3s.yaml
+    entrypoint: /bin/sh
 timeout: 1200s
 images:
-- 'us-central1-docker.pkg.dev/$PROJECT_ID/edge-deployment-demo/edge-ai:001'
+  - >-
+    us-central1-docker.pkg.dev/$PROJECT_ID/edge-deployment-demo/edge-ai:$BUILD_ID
+options:
+  logging: CLOUD_LOGGING_ONLY

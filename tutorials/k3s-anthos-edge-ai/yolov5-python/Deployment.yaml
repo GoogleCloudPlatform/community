@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: appname-deployment
+spec:
+  selector:
+    matchLabels:
+      app: appname
+  template:
+    metadata:
+      labels:
+        app: appname
+    spec:
+      volumes:
+      - name: output
+        hostPath:
+          path: /tmp
+      containers:
+      - name: appname
+        image: us-central1-docker.pkg.dev/#PROJECT_ID#/edge-deployment-demo/edge-ai:#BUILD#
+        env:
+        - name: SOURCE
+          value: "rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov"
+        - name: WEIGHT
+          value: "/app/weights/best.pt"
+        - name: OUTPUT
+          value: "/app/output/"          
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: output
+          mountPath: /app/output

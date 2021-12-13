@@ -31,11 +31,13 @@ This turtrial uses a popular [YOLOv5 sample](https://github.com/mikel-brostrom/Y
 
 This tutorial uses billable components of Google Cloud, including the following:
 
-*   [Anthos]()
-*   [Compute Engine]()
-*   []()
-Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage.
+*   [Anthos](https://cloud.google.com/anthos/pricing)
+*   [Compute Engine](https://cloud.google.com/compute/all-pricing)
+*   [Source Repository](https://cloud.google.com/source-repositories/pricing)
+*   [Cloud Build](https://cloud.google.com/build/pricing)
+*   [Artifact Registry](https://cloud.google.com/artifact-registry/pricing)
 
+Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage.
 
 ## Before you begin
 
@@ -45,6 +47,81 @@ This tutorial has below prerequisites
 - gcloud command line tool must be [installed]((https://cloud.google.com/anthos/multicluster-management/connect/prerequisites#install-cloud-sdk)) in your environment if not using Cloud shell.
 - Docker must be install in your working environment or cloud shell, see this [instruction](https://docs.docker.com/engine/install/ubuntu/) for details
 
+## Enable required ervices
+
+Run below commands in cloud shell
+
+      gcloud services enable --project=$GOOGLE_CLOUD_PROJECT  \
+                    connectgateway.googleapis.com \
+                    anthos.googleapis.com \
+                    gkeconnect.googleapis.com \
+                    gkehub.googleapis.com \
+                    cloudresourcemanager.googleapis.com
+      gcloud services enable anthosconfigmanagement.googleapis.com
+      gcloud services enable sourcerepo.googleapis.com
+      gcloud services enable cloudbuild.googleapis.com
+      gcloud services enable artifactregistry.googleapis.com
+
+      gcloud source repos create edge-demo
+      gcloud artifacts repositories create edge-deployment-demo --repository-format=docker \
+            --location=us-central1 
+
+      gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
+            --member=serviceAccount:$SERVICE_ACCT_NAME@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com \
+            --role=roles/source.reader
+
+      gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
+            --member=serviceAccount:$SERVICE_ACCT_NAME@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com \
+            --role=roles/source.writer
+
+      gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
+            --member=serviceAccount:$SERVICE_ACCT_NAME@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com \
+            --role=roles/artifactregistry.reader
+
+      gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
+            --member=serviceAccount:$SERVICE_ACCT_NAME@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com \
+            --role=roles/artifactregistry.writer
+
+            
+
+## Create Servive Account
+
+In this tutorial we use a specifc service account for building images and deploying to edge servers.
+
+    export SERVICE_ACCT_NAME=edge-demo
+    gcloud iam service-accounts create $SERVICE_ACCT_NAME
+
+We need grant user permission to impersonate the service account, first dump current configuration
+
+    gcloud iam service-accounts get-iam-policy $SERVICE_ACCT_NAME@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com \
+        --format=json > policy.json
+
+Then, update the `policy.json` file to grant permission to principles 
+
+
+            {
+              "bindings": [
+                {
+                  "role": "roles/iam.serviceAccountUser",
+                  "members": [
+                    "user:your-account-name@your-domain-name.com"
+                  ]
+                },
+              ],
+              "etag": "BwUqLaVeua8=",
+              "version": 1
+            }
+
+Save the file and set IAM policy
+
+    gcloud iam service-accounts set-iam-policy $SERVICE_ACCT_NAME@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com ./policy.yaml
+
+
+To use a service account to run Cloud Build, we also need to specify where to store build logs, in this tutorial we will be using Cloud Logging. To allow storing logs to Cloud Logging, Logs Writer (`roles/logging.logWriter`) role must be granted to the service account
+
+    gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
+          --member=serviceAccount:$SERVICE_ACCT_NAME@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com \
+          --role=roles/logging.logWriter
 
 ## Setup edge server
 
@@ -76,16 +153,44 @@ If everything goes well, you should see outputs stating K3s is starting.
 [INFO]  systemd: Starting k3s
 ```
 
-## Enable Anthos and register K3s cluster
+### Authenticate to Artifacts Registry
 
-### Enable Anthos and Anthos Config Management API
+Use Service Account Key to allow our edge server to pull images from Artifacts Registry. 
 
-If not already, [install gcloud command-line tool](https://cloud.google.com/anthos/multicluster-management/connect/prerequisites#install-cloud-sdk) in the machine.
+In K3S, run below commands
 
-To enable Anthos API if not already, run below in cloud shell
+      export SECRETNAME=ar-json-key
+      export GOOGLE_CLOUD_PROJECT=<your-gcp-project-id>
+      export SERVICE_ACCOUNT=edge-demo
 
-    gcloud services enable anthos.googleapis.com
-    gcloud services enable anthosconfigmanagement.googleapis.com
+      gcloud iam service-accounts keys create ar-key.json --iam-account $SERVICE_ACCOUNT@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com
+
+      kubectl create secret docker-registry $SECRETNAME --docker-server=us-central1-docker.pkg.dev --docker-username=_json_key \
+            --docker-email=$SERVICE_ACCOUNT@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com --docker-password="$(cat ar-key.json)"
+
+Configure `imagePullSecret` to default service account, run
+
+      sudo kubectl edit serviceaccount default --namespace default
+
+
+Then edit the configuration file, add `imagePullSecret`
+
+      apiVersion: v1
+      kind: ServiceAccount
+      metadata:
+        name: default
+        namespace: default
+        ...
+      secrets:
+      - name: default-token-zd84v
+      # The secret you created:
+      imagePullSecrets:
+      - name: ar-json-key
+
+Press `:` then `wq`
+
+
+## Register K3s cluster to Anthos
 
 ### Register attached K3s cluster to Anthos
 
@@ -107,19 +212,6 @@ Once registered, it appears in Anthos clusters console, however, to access to th
 
 Your platform admin must perform the necessary [setup](https://cloud.google.com/anthos/multicluster-management/gateway/setup) to let you use your Google Cloud identity to log in, including granting you all the necessary roles and RBAC permissions to view and authenticate to registered clusters.
 
-Below operations requires `roles/owner` in your GCP project.
-
-If you haven't done so, go to Cloud shell and enable API
-
-
-    gcloud services enable --project=$GOOGLE_CLOUD_PROJECT  \
-    connectgateway.googleapis.com \
-    anthos.googleapis.com \
-    gkeconnect.googleapis.com \
-    gkehub.googleapis.com \
-    cloudresourcemanager.googleapis.com
-
-
 Now we want to grant required IAM roles to users so they can interact with connected cluster through the gateway.
 
     export MEMBER=user:your-user-name@your-domain.com
@@ -137,10 +229,28 @@ Now we want to grant required IAM roles to users so they can interact with conne
     --member $MEMBER \
     --role roles/container.viewer
 
+    export MEMBER=serviceAccount:$SERVICE_ACCT_NAME@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com
+    export GATEWAY_ROLE=roles/gkehub.gatewayAdmin   # or `roles/gkehub.gatewayReader`
+
+    gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
+    --member $MEMBER \
+    --role $GATEWAY_ROLE
+
+    gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
+    --member $MEMBER \
+    --role roles/gkehub.viewer
+
+    gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
+    --member $MEMBER \
+    --role roles/container.viewer
+
+
 To authenticate requests to the cluster's Kubernetes API server initiated by specific Google Identity users coming from the gateway, SSH to K3s machine and update required RBAC policies in K3s cluster.
 
-- The impersonation policy that authorizes the Connect agent to send requests to the Kubernetes API server on behalf of a user.
-Replace `your-user-name@your-domain.com` and `your-service-account@example-project.iam.gserviceaccount.com` with desired user accout and service account
+- The impersonation policy that authorizes the Connect agent to send requests to the Kubernetes API server on behalf of a user. 
+    - Replace `your-user-name@your-domain.com` with your user account.
+    - Replace `your-service-account@example-project.iam.gserviceaccount.com` with the service account created earlier. 
+    - Cloud build uses GCP managed Service Account `project-number@@cloudbuild.gserviceaccount.com`. replace `project-number` with your project number
 
 ```bash
 cat <<EOF > /tmp/impersonate.yaml
@@ -154,6 +264,7 @@ rules:
   resourceNames:
   - your-user-name@your-domain.com
   - your-service-account@example-project.iam.gserviceaccount.com
+  - project-number@@cloudbuild.gserviceaccount.com
   resources:
   - users
   verbs:
@@ -175,7 +286,10 @@ EOF
 kubectl apply -f /tmp/impersonate.yaml
 ```
 
-- The permissions policy that specifies which permissions the user has on the cluster.
+- The policy that specifies which permissions the user has on the cluster. 
+  - Replace `your-user-name@your-domain.com` with your user account
+  - Replace `your-service-account@example-project.iam.gserviceaccount.com` with the service account created earlier. 
+  - Cloud build uses GCP managed Service Account `project-number@@cloudbuild.gserviceaccount.com`. replace `project-number` with your project number
 
 ```bash
 cat <<EOF > /tmp/admin-permission.yaml
@@ -188,6 +302,8 @@ subjects:
   name: your-user-name@your-domain.com
 - kind: User
   name: your-service-account@example-project.iam.gserviceaccount.com
+- kind: User
+  name: project-number@@cloudbuild.gserviceaccount.com
 roleRef:
   kind: ClusterRole
   name: cluster-admin
@@ -197,6 +313,7 @@ kubectl apply -f /tmp/admin-permission.yaml
 ```
 
 Noq go to Anthos Cluster console, select the `edge-server-k3s` cluster then click `Login` button, when popup prompts, choose `Use your Google identity to log-in`
+
 
 
 ### Verify connection to K3s
@@ -216,33 +333,7 @@ The node name should be `edge-server-k3s` as we specified
 
 
 
-## Setup Source Repository
-
-If you have prefered source repository such as `github` or `gitlab` you can skip this step. If you don't have prefered repo, we'll setup GCP Source Repository for this turtorial.
-
-### Enable API and create new repo
-
-Go to cloud shell, run `gcloud` command to enable Source Repository API and create a repo named `edge-demo`
-
-      gcloud services enable sourcerepo.googleapis.com
-      gcloud source repos create edge-demo
-
-
-## Setup Cloud Build
-
-### Enable Cloud Build and Artifacts Repository API
-
-In this toturial we use Cloud Build to automatically build container image and push to edge server. To start using Cloud Build, first go to cloud shell and enable Cloud Build API. We also need Artifacts Repository as our container repository.
-
-
-
-    gcloud services enable cloudbuild.googleapis.com
-    gcloud services enable artifactregistry.googleapis.com
-    gcloud artifacts repositories create edge-deployment-demo --repository-format=docker \
-          --location=us-central1 
-
-
-## Working with applicaations
+## Setup Cloud Build pipeline and trigger
 
 At this point we have required infrastructure ready, now we want to get our applications ready to deploy
 
@@ -256,56 +347,64 @@ In cloud shell or your working environment of choice, clone the sample applicati
 
 To pudh codes to Source Repo, generate a SSH key and [add the SSH key to the repository](https://source.cloud.google.com/user/ssh_keys?register=true) then do a `git push --all google` to push codes for the first time.
 
-
-### Create Dockerfile and build container image
-
 The codes should work just fine in container environment, to make our workload more flexible for differnet requirements, we add a [go.sh](./yolov5-python/go.sh) which takes environment variables as arguments to run the python codes. Also we add a [Dockerfile](./yolov5-python/Dockerfile) to create container image.
-
-### Submit to Cloud Build
 
 Create a [cloudbuild.yaml](./cloudbuild/cloudbuild.yaml) and submit the job to Cloud Build
 
     gcloud builds submit --config cloudbuild.yaml
 
 
+Note that since we will be running Cloud Build trigger under a service account, in the `cloudbuild.yaml`, we specify logging location to `CLOUD_LOGGING_ONLY`.
 
----
-## Before you begin
+Also, you can change build timeout by specifying `timeout` in the yaml file.
 
-Give a numbered sequence of procedural steps that the reader must take to set up their environment before getting into the main tutorial.
+      steps:
+      - name: 'gcr.io/cloud-builders/docker'
+        args: [ 'build', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/edge-deployment-demo/edge-ai:001', '.' ]
+      timeout: 1200s
+      optios:
+        logging: CLOUD_LOGGING_ONLY
+      images:
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/edge-deployment-demo/edge-ai:001'
 
-Don't assume anything about the reader's environment. You can include simple installation instructions of only a few steps, but provide links to installation
-instructions for anything more complex.
+### Create a Source Repo trigger
 
-### Example: Before you begin
+Our pipeline monitors Source Repository pushes, when new codes are pushed to the repo, Cloud Build automatically fetch latest codes and start CI/CD flow.
 
-This tutorial assumes that you're using the Microsoft Windows operating system.
 
-1.  Create an account with the BigQuery free tier. See
-    [this video from Google](https://www.youtube.com/watch?v=w4mzE--sprY&list=PLIivdWyY5sqI6Jd0SbqviEgoA853EvDsq&index=2) for detailed instructions.
-1.  Create a Google Cloud project in the [Cloud Console](https://console.cloud.google.com/).
-1.  Install [DBeaver Community for Windows](https://dbeaver.io/download/).
+    gcloud beta builds triggers create cloud-source-repositories --name="edge-deployment-trigger" \
+        --service-account="projects/$GOOGLE_CLOUD_PROJECT/serviceAccounts/$SERVICE_ACCT_NAME@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com" \
+        --repo=edge-demo --branch-pattern=".*" --inline-config="cloudbuild.yaml"
 
-## Tutorial body
 
-Break the tutorial body into as many sections and subsections as needed, with concise headings.
 
-### Use short numbered lists for procedures
+cloudbuild.yaml contains required steps to build docker image and push to edge server
 
-Use numbered lists of steps for procedures. Each action that the reader must take should be its own step. Start each step with the action, such as *Click*, 
-*Run*, or *Enter*.
-
-Keep procedures to 7 steps or less, if possible. If a procedure is longer than 7 steps, consider how it might be separated into sub-procedures, each in its
-own subsection.
-
-### Provide context, but don't overdo the screenshots
-
-Provide context and explain what's going on.
-
-Use screenshots only when they help the reader. Don't provide a screenshot for every step.
-
-Help the reader to recognize what success looks like along the way. For example, describing the result of a step helps the reader to feel like they're doing
-it right and helps them know things are working so far.
+      steps:
+        - name: gcr.io/cloud-builders/docker
+          args:
+            - build
+            - '-t'
+            - >-
+              us-central1-docker.pkg.dev/$PROJECT_ID/edge-deployment-demo/edge-ai:$BUILD_ID
+            - .
+          id: build.image
+        - name: gcr.io/cloud-builders/gcloud
+          args:
+            - '-c'
+            - |
+              set -x
+              gcloud container hub memberships get-credentials edge-server-k3s
+              sed -i 's/#BUILD#/$BUILD_ID/g' Deployment-k3s.yaml
+              sed -i 's/#PROJECT_ID#/$PROJECT_ID/g' Deployment-k3s.yaml
+              kubectl apply -f Deployment-k3s.yaml
+          entrypoint: /bin/sh
+      timeout: 1200s
+      images:
+        - >-
+          us-central1-docker.pkg.dev/$PROJECT_ID/edge-deployment-demo/edge-ai:$BUILD_ID
+      options:
+        logging: CLOUD_LOGGING_ONLY
 
 ## Cleaning up
 
