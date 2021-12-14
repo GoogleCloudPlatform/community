@@ -406,11 +406,11 @@ cloudbuild.yaml contains required steps to build docker image and push to edge s
       options:
         logging: CLOUD_LOGGING_ONLY
 
+## Verify setup
+
+Once completed, go to Cloud build console and manually run the trigger, it takes around 5-10 minutes to build and deploy to edge server.
+
 ## Cleaning up
-
-Tell the reader how to shut down what they built to avoid incurring further costs.
-
-### Example: Cleaning up
 
 To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project.
 
@@ -429,11 +429,3 @@ To delete a project, do the following:
 
 ## What's next
 
-Tell the reader what they should read or watch next if they're interested in learning more.
-
-### Example: What's next
-
-- Watch this tutorial's [Google Cloud Level Up episode on YouTube](https://youtu.be/uBzp5xGSZ6o).
-- Learn more about [AI on Google Cloud](https://cloud.google.com/solutions/ai/).
-- Learn more about [Cloud developer tools](https://cloud.google.com/products/tools).
-- Try out other Google Cloud features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).

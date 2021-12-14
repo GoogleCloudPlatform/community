@@ -21,8 +21,6 @@ spec:
         env:
         - name: SOURCE
           value: "rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov"
-        # - name: WEIGHT
-        #   value: "/app/weights/best.pt"
         - name: OUTPUT
           value: "/app/output/"          
         volumeMounts:
