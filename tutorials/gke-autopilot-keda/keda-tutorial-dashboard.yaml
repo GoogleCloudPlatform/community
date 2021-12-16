@@ -1,0 +1,54 @@
+displayName: Keda Example Dashboard
+mosaicLayout:
+  columns: 12
+  tiles:
+  - height: 4
+    widget:
+      title: Kubernetes Container - CPU usage time for test-cluster, default [MEAN]
+      xyChart:
+        chartOptions:
+          mode: COLOR
+        dataSets:
+        - minAlignmentPeriod: 60s
+          plotType: LINE
+          targetAxis: Y1
+          timeSeriesQuery:
+            timeSeriesFilter:
+              aggregation:
+                alignmentPeriod: 60s
+                perSeriesAligner: ALIGN_RATE
+              filter: metric.type="kubernetes.io/container/cpu/core_usage_time" resource.type="k8s_container"
+                resource.label."cluster_name"="test-cluster" resource.label."namespace_name"="default"
+              secondaryAggregation:
+                alignmentPeriod: 60s
+                perSeriesAligner: ALIGN_MEAN
+        timeshiftDuration: 0s
+        yAxis:
+          label: y1Axis
+          scale: LINEAR
+    width: 6
+    xPos: 6
+  - height: 4
+    widget:
+      title: Unacked messages for test-subscription [MEAN]
+      xyChart:
+        chartOptions:
+          mode: COLOR
+        dataSets:
+        - minAlignmentPeriod: 60s
+          plotType: LINE
+          targetAxis: Y1
+          timeSeriesQuery:
+            timeSeriesFilter:
+              aggregation:
+                alignmentPeriod: 60s
+                perSeriesAligner: ALIGN_MEAN
+              filter: metric.type="pubsub.googleapis.com/subscription/num_undelivered_messages"
+                resource.type="pubsub_subscription" resource.label."subscription_id"="test-subscription"
+              secondaryAggregation:
+                alignmentPeriod: 60s
+        timeshiftDuration: 0s
+        yAxis:
+          label: y1Axis
+          scale: LINEAR
+    width: 6

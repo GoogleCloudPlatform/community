@@ -4,12 +4,15 @@ GKE Autopilot is a great technology for running your workloads in the cloud. Goo
 
 Keda is a great tool for that. It's similar to HPA but with more options towards how you want to scale up and down. In this tutorial we are going to setup a simple application that consumes messages from Pub/Sub and scale the amount of pods using Keda.
 
-Ideally you run the following commands from your [![Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.svg)](https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=http://path-to-repo/sample.git)
-
-Start with setting up the following variables:
-```
-export $REGION=<region from which you want to run, e.g. europe-west1>
-```
+### Set up your Environment
+Next, you’re going to set up the environment in order for the project to deploy.
+  1. [Open a new Cloud Shell session.](https://console.cloud.google.com/?cloudshell=true)
+  1. *Run* `git clone https://github.com/GoogleCloudPlatform/community.git` to download the sources to your cloud shell.
+  1. `cd ./community/tutorials/gke-autopilot-keda` change directory to the *tutorial* folder.
+  1. *Set* required environment variables. Replace [REGION] with the region in which you want to run the resources, e.g. europe-west1
+  ```
+  export REGION=[REGION]
+  ```
 
 You will need to enable the following APIs, in order to follow this tutorial.
 * Google Cloud APIs
@@ -109,7 +112,7 @@ kubectl annotate serviceaccount testapp \
 As part of this
 
 ### Build application container
-docker build -t $REGION-docker.pkg.dev/$GOOGLE_CLOUD_PROJECT/test-repo/app:latest .
+docker build -t $REGION-docker.pkg.dev/$GOOGLE_CLOUD_PROJECT/test-repo/app:latest ./app
 docker push $REGION-docker.pkg.dev/$GOOGLE_CLOUD_PROJECT/test-repo/app:latest
 
 deploy application
@@ -123,3 +126,6 @@ gcloud pubsub topics publish test-topic --message="Hello World" --project $GOOGL
 Or to generate a 100 messages:
 ./generate-message.sh
 
+gcloud monitoring dashboards create --config-from-file keda-tutorial-dashboard.yaml --project $GOOGLE_CLOUD_PROJECT --project $GOOGLE_CLOUD_PROJECT
+
+![Example Dashboard](./keda_dashboard.png)
