@@ -46,43 +46,7 @@ This tutorial has below prerequisites
 - A billing enabled Google Cloud account, see this [document](https://cloud.google.com/billing/docs/how-to/modify-project) for detailed instructions.
 - gcloud command line tool must be [installed]((https://cloud.google.com/anthos/multicluster-management/connect/prerequisites#install-cloud-sdk)) in your environment if not using Cloud shell.
 - Docker must be install in your working environment or cloud shell, see this [instruction](https://docs.docker.com/engine/install/ubuntu/) for details
-
-## Enable required ervices
-
-Run below commands in cloud shell
-
-      gcloud services enable --project=$GOOGLE_CLOUD_PROJECT  \
-                    connectgateway.googleapis.com \
-                    anthos.googleapis.com \
-                    gkeconnect.googleapis.com \
-                    gkehub.googleapis.com \
-                    cloudresourcemanager.googleapis.com
-      gcloud services enable anthosconfigmanagement.googleapis.com
-      gcloud services enable sourcerepo.googleapis.com
-      gcloud services enable cloudbuild.googleapis.com
-      gcloud services enable artifactregistry.googleapis.com
-
-      gcloud source repos create edge-demo
-      gcloud artifacts repositories create edge-deployment-demo --repository-format=docker \
-            --location=us-central1 
-
-      gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
-            --member=serviceAccount:$SERVICE_ACCT_NAME@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com \
-            --role=roles/source.reader
-
-      gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
-            --member=serviceAccount:$SERVICE_ACCT_NAME@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com \
-            --role=roles/source.writer
-
-      gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
-            --member=serviceAccount:$SERVICE_ACCT_NAME@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com \
-            --role=roles/artifactregistry.reader
-
-      gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
-            --member=serviceAccount:$SERVICE_ACCT_NAME@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com \
-            --role=roles/artifactregistry.writer
-
-            
+ 
 
 ## Create Servive Account
 
@@ -123,6 +87,45 @@ To use a service account to run Cloud Build, we also need to specify where to st
           --member=serviceAccount:$SERVICE_ACCT_NAME@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com \
           --role=roles/logging.logWriter
 
+
+
+
+## Enable required ervices
+
+Run below commands in cloud shell
+
+      gcloud services enable --project=$GOOGLE_CLOUD_PROJECT  \
+                    connectgateway.googleapis.com \
+                    anthos.googleapis.com \
+                    gkeconnect.googleapis.com \
+                    gkehub.googleapis.com \
+                    cloudresourcemanager.googleapis.com
+      gcloud services enable anthosconfigmanagement.googleapis.com
+      gcloud services enable sourcerepo.googleapis.com
+      gcloud services enable cloudbuild.googleapis.com
+      gcloud services enable artifactregistry.googleapis.com
+
+      gcloud source repos create edge-demo
+      gcloud artifacts repositories create edge-deployment-demo --repository-format=docker \
+            --location=us-central1 
+
+      gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
+            --member=serviceAccount:$SERVICE_ACCT_NAME@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com \
+            --role=roles/source.reader
+
+      gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
+            --member=serviceAccount:$SERVICE_ACCT_NAME@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com \
+            --role=roles/source.writer
+
+      gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
+            --member=serviceAccount:$SERVICE_ACCT_NAME@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com \
+            --role=roles/artifactregistry.reader
+
+      gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
+            --member=serviceAccount:$SERVICE_ACCT_NAME@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com \
+            --role=roles/artifactregistry.writer
+
+           
 ## Setup edge server
 
 ### Create GCE Instance
