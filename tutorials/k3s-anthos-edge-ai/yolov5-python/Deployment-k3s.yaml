@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: appname-deployment
+  name: yolo-deployment
 spec:
   selector:
     matchLabels:
-      app: appname
+      app: yolo
   template:
     metadata:
       labels:
-        app: appname
+        app: yolo
     spec:
       volumes:
       - name: output
         hostPath:
           path: /tmp
       containers:
-      - name: appname
+      - name: yolo
         image: us-central1-docker.pkg.dev/#PROJECT_ID#/edge-deployment-demo/edge-ai:#BUILD#
         env:
         - name: SOURCE
