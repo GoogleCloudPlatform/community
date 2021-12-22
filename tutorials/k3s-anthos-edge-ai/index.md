@@ -49,7 +49,7 @@ This tutorial has below prerequisites
  
 ## Architecture
 
-![Architecture](./architecture.svg)
+![Architecture](./architecture.png)
 
 ## Create Servive Account
 
