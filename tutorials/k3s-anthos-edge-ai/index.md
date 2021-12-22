@@ -47,6 +47,9 @@ This tutorial has below prerequisites
 - gcloud command line tool must be [installed]((https://cloud.google.com/anthos/multicluster-management/connect/prerequisites#install-cloud-sdk)) in your environment if not using Cloud shell.
 - Docker must be install in your working environment or cloud shell, see this [instruction](https://docs.docker.com/engine/install/ubuntu/) for details
  
+## Architecture
+
+![Architecture](./architecture.svg)
 
 ## Create Servive Account
 
