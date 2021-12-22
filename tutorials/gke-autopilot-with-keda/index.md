@@ -1,6 +1,6 @@
 ---
 title: Scaling to Zero with Keda and GKE Autopilot
-description: Learn how to combine GKE Autopilot and KEDA to have resource efficient, event-driven auto scaling, that can scale to zero
+description: Learn how to combine GKE Autopilot and KEDA to have resource efficient, event-driven auto-scaling that can scale to zero.
 author: cgrotz
 tags: serverless, GKE Autopilot
 date_published: 2021-12-17
