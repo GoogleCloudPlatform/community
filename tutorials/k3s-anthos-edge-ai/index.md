@@ -343,35 +343,31 @@ The node name should be `edge-server-k3s` as we specified
 
 At this point we have required infrastructure ready, now we want to get our applications ready to deploy
 
-### Clone sample application and setup Source Repository
+### Create Dockerfile
 
-In cloud shell or your working environment of choice, clone the sample application from github
+In cloud shell or your working environment of choice, create a [Dockerfile](./yolov5-python/Dockerfile) and [go.sh](./yolov5-python/go.sh).
 
-      git clone --recurse-submodules https://github.com/mikel-brostrom/Yolov5_DeepSort_Pytorch.git
-      cd Yolov5_DeepSort_Pytorch
-      git remote add google ssh://you-user-name@source.developers.google.com:2022/p/$GOOGLE_CLOUD_PROJECT/r/edge-demo
+The Dockerfile clones git repo, install required dependencies and runs a shell script to start up the application.
 
-To pudh codes to Source Repo, generate a SSH key and [add the SSH key to the repository](https://source.cloud.google.com/user/ssh_keys?register=true) then do a `git push --all google` to push codes for the first time.
+### Create Deployment
 
-The codes should work just fine in container environment, to make our workload more flexible for differnet requirements, we add a [go.sh](./yolov5-python/go.sh) which takes environment variables as arguments to run the python codes. Also we add a [Dockerfile](./yolov5-python/Dockerfile) to create container image.
+Create [Deployment-k3s.yaml](./yolov5-python/Deployment-k3s.yaml), create a volume claim for the model to store inferencing results.
 
-Create a [cloudbuild.yaml](./cloudbuild/cloudbuild.yaml) and submit the job to Cloud Build
+    spec:
+      volumes:
+      - name: output
+        hostPath:
+          path: /tmp
+      containers:
+        ...      
+        volumeMounts:
+        - name: output
+          mountPath: /app/output
 
-    gcloud builds submit --config cloudbuild.yaml
 
 
-Note that since we will be running Cloud Build trigger under a service account, in the `cloudbuild.yaml`, we specify logging location to `CLOUD_LOGGING_ONLY`.
+## Setup Source Repo and Cloud Build Trigger
 
-Also, you can change build timeout by specifying `timeout` in the yaml file.
-
-      steps:
-      - name: 'gcr.io/cloud-builders/docker'
-        args: [ 'build', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/edge-deployment-demo/edge-ai:001', '.' ]
-      timeout: 1200s
-      optios:
-        logging: CLOUD_LOGGING_ONLY
-      images:
-      - 'us-central1-docker.pkg.dev/$PROJECT_ID/edge-deployment-demo/edge-ai:001'
 
 ### Create a Source Repo trigger
 
@@ -383,38 +379,49 @@ Our pipeline monitors Source Repository pushes, when new codes are pushed to the
         --repo=edge-demo --branch-pattern=".*" --inline-config="cloudbuild.yaml"
 
 
+Create a [cloudbuild.yaml](./cloudbuild/cloudbuild.yaml) and submit the job to Cloud Build
 
-cloudbuild.yaml contains required steps to build docker image and push to edge server
+    gcloud builds submit --config cloudbuild.yaml
 
-      steps:
-        - name: gcr.io/cloud-builders/docker
-          args:
-            - build
-            - '-t'
-            - >-
-              us-central1-docker.pkg.dev/$PROJECT_ID/edge-deployment-demo/edge-ai:$BUILD_ID
-            - .
-          id: build.image
-        - name: gcr.io/cloud-builders/gcloud
-          args:
-            - '-c'
-            - |
-              set -x
-              gcloud container hub memberships get-credentials edge-server-k3s
-              sed -i 's/#BUILD#/$BUILD_ID/g' Deployment-k3s.yaml
-              sed -i 's/#PROJECT_ID#/$PROJECT_ID/g' Deployment-k3s.yaml
-              kubectl apply -f Deployment-k3s.yaml
-          entrypoint: /bin/sh
-      timeout: 1200s
-      images:
-        - >-
-          us-central1-docker.pkg.dev/$PROJECT_ID/edge-deployment-demo/edge-ai:$BUILD_ID
-      options:
-        logging: CLOUD_LOGGING_ONLY
 
-## Verify setup
+[cloudbuild.yaml](./cloudbuild/cloudbuild.yaml) contains required steps to build docker image and push to edge server.
 
-Once completed, go to Cloud build console and manually run the trigger, it takes around 5-10 minutes to build and deploy to edge server.
+Note that since we will be running Cloud Build trigger under a service account, in the `cloudbuild.yaml`, we specify logging location to `CLOUD_LOGGING_ONLY`.
+        steps:
+          - name: gcr.io/cloud-builders/docker
+            args:
+              - build
+              - '-t'
+              - >-
+                us-central1-docker.pkg.dev/$PROJECT_ID/edge-deployment-demo/edge-ai:$BUILD_ID
+              - .
+            id: build.image
+          - name: gcr.io/cloud-builders/gcloud
+            args:
+              - '-c'
+              - |
+                set -x
+                gcloud container hub memberships get-credentials edge-server-k3s
+                sed -i 's/#BUILD#/$BUILD_ID/g' Deployment-k3s.yaml
+                sed -i 's/#PROJECT_ID#/$PROJECT_ID/g' Deployment-k3s.yaml
+                kubectl apply -f Deployment-k3s.yaml
+            entrypoint: /bin/sh
+        timeout: 1200s
+        images:
+          - >-
+            us-central1-docker.pkg.dev/$PROJECT_ID/edge-deployment-demo/edge-ai:$BUILD_ID
+        options:
+          logging: CLOUD_LOGGING_ONLY
+
+
+## Triggers deployment
+
+To push codes to Source Repo, generate a SSH key and [add the SSH key to the repository](https://source.cloud.google.com/user/ssh_keys?register=true) then do a `git push --all google` to push codes for the first time.
+
+
+This should triggers Cloud Build to buld the container image and deploy application to edge server we created earlier.
+
+
 
 ## Cleaning up
 
@@ -433,5 +440,9 @@ To delete a project, do the following:
 1.  In the project list, select the project you want to delete and click **Delete**.
 1.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
 
+
 ## What's next
 
+* [Introduction to Anthos Config Management](https://cloud.google.com/anthos/config-management)
+* [Introduction to Cloud Build](https://cloud.google.com/build)
+* [Cloud Build configuration file schema](https://cloud.google.com/build/docs/build-config-file-schema)
