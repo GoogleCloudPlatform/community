@@ -179,7 +179,7 @@ Configure `imagePullSecret` to default service account, run
       sudo kubectl edit serviceaccount default --namespace default
 
 
-Then edit the configuration file, add `imagePullSecret`
+Then edit the configuration file, add `imagePullSecret` then save
 
       apiVersion: v1
       kind: ServiceAccount
@@ -193,7 +193,7 @@ Then edit the configuration file, add `imagePullSecret`
       imagePullSecrets:
       - name: ar-json-key
 
-Press `:` then `wq`
+
 
 
 ## Register K3s cluster to Anthos
