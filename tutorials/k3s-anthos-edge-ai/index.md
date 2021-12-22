@@ -2,7 +2,7 @@
 title: Edge AI with Anthos and K3S
 description: Learn how to deploy cloud trained AI models to edge servers
 author: kalschi
-tags: AI, artificial intelligence, Edge AI, K3
+tags: AI, artificial intelligence, Edge AI, K3s
 date_published: 
 ---
 
@@ -13,7 +13,7 @@ Michael Chi | Cloud Solution Architect | Google
 
 This tutorial demonstrates using Cloud Build to deploy inferencing models from Google Cloud Platform to edge servers running K3s.
 
-In this turtorial, you learn how to trigger Cloud Build pipeline to build contianer images and leverage Anthos Configuration Management service to deploy it to an edge server running K3s. To simulate edge server, you create a GCE VM in GCP project.
+In this turtorial, you learn how to trigger Cloud Build pipeline to build contianer images and leverage Anthos Configuration Management and Cloud Build to deploy it to an edge server running K3s. To simulate edge server, you create a GCE VM in GCP project.
 
 This turtrial uses a popular [YOLOv5 sample](https://github.com/mikel-brostrom/Yolov5_DeepSort_Pytorch) created by [mikel-brostrom](https://github.com/mikel-brostrom) as the workload to be deployed. 
 
