@@ -1,8 +1,18 @@
-# Scaling to Zero with Keda and GKE Autopilot
+---
+title: Scaling to Zero with Keda and GKE Autopilot
+description: Learn how to combine GKE Autopilot and KEDA to have resource efficient, event-driven auto scaling, that can scale to zero
+author: cgrotz
+tags: serverless, GKE Autopilot
+date_published: 2021-12-17
+---
+
+Christoph Grotz | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 GKE Autopilot is a great technology for running your workloads in the cloud. Google SREs take care of operating your Kubernetes cluster, while you can focus on your application. When building event driven applications on GKE Autopilot you might experience that you are running a lot of pods that are not fully utilized. For apps providing an HTTP API or connect to Pub/Sub you could consider using CloudRun. But if you have some other messaging system it can become tougher to scale dynamically. One approach in such a scenario, if your are sufficiently happy to scale from 1 to infinity would be Horizontal Pod Autoscaler. But what if you want to scale to zero, since your workload might just process a few messages a day?
 
-Keda is a great tool for that. It's similar to HPA but with more options towards how you want to scale up and down. In this tutorial we are going to setup a simple application that consumes messages from Pub/Sub and scale the amount of pods using Keda.
+KEDA is a great tool for that. It's similar to HPA but with more options towards how you want to scale up and down. In this tutorial we are going to setup a simple application that consumes messages from Pub/Sub and scale the amount of pods using KEDA.
 
 ### Set up your Environment
 Next, you’re going to set up the environment in order for the project to deploy.
@@ -33,7 +43,7 @@ gcloud services enable iamcredentials.googleapis.com
 gcloud services enable pubsub.googleapis.com  
 ```
 
-### Setup GKE Autopilot with Keda
+### Setup GKE Autopilot with KEDA
 
 Let's create a GKE Autopilot cluster next and retrieve the credentials for access. This might take some time so trigger the creation and fetch some coffee:
 ```
@@ -45,12 +55,12 @@ gcloud container clusters get-credentials test-cluster \
     --project $GOOGLE_CLOUD_PROJECT
 ```
 
-When the GKE Autopilot cluster is created, we are going to deploy Keda to the cluster.
+When the GKE Autopilot cluster is created, we are going to deploy KEDA to the cluster.
 ```
 kubectl apply -f https://github.com/kedacore/keda/releases/download/v2.5.0/keda-2.5.0.yaml
 ```
 
-In order for Keda to track the pending messages in the Pub/Sub queue, we need to link the Kubernetes Service Account (KSA) of Keda (keda-operator) to a Google Service Account (GSA) with the permissions to access Google Cloud Monitoring.
+In order for KEDA to track the pending messages in the Pub/Sub queue, we need to link the Kubernetes Service Account (KSA) of KEDA (keda-operator) to a Google Service Account (GSA) with the permissions to access Google Cloud Monitoring.
 ```
 gcloud iam service-accounts create keda-operator --project $GOOGLE_CLOUD_PROJECT
 ```
@@ -73,7 +83,7 @@ kubectl annotate serviceaccount keda-operator \
 
 ### Deploy the demo application
 
-In order to take Keda for a test drive we are going to deploy a simple application, that consums messages from Pub/Sub and logs them to console. The first step will be to create an Artifact Registry repository for the container image:
+In order to take KEDA for a test drive we are going to deploy a simple application, that consums messages from Pub/Sub and logs them to console. The first step will be to create an Artifact Registry repository for the container image:
 ```
 gcloud artifacts repositories create test-repo \
     --repository-format=docker \
@@ -126,7 +136,7 @@ envsubst < deployment.yaml | kubectl apply -f -
 For the tutorial we configured the scaled object for fast scaling up and down.
 ![The scaling of the deployment](./app_deployment_descriptor.png)
 
-When you check the number of replicas via you can see that Keda automatically scaled the number of replicas down to zero, since there are currently no messages in the subscription waiting to be processed:
+When you check the number of replicas via you can see that KEDA automatically scaled the number of replicas down to zero, since there are currently no messages in the subscription waiting to be processed:
 
 ```
 kubectl get deployments
@@ -144,7 +154,7 @@ Or generate a 100 messages at once using this script:
 ./generate-message.sh
 ```
 
-If you check the deployment again, you should see that Keda increased the amount of desired replicas to process the messages. You can also deploy this nice Google Cloud Monitoring dashboard which shows you both the CPU usage by application pod and pending messages in the Pub/Sub subscription.
+If you check the deployment again, you should see that KEDA increased the amount of desired replicas to process the messages. You can also deploy this nice Google Cloud Monitoring dashboard which shows you both the CPU usage by application pod and pending messages in the Pub/Sub subscription.
 
 ```
 gcloud monitoring dashboards create --config-from-file keda-tutorial-dashboard.yaml --project $GOOGLE_CLOUD_PROJECT --project $GOOGLE_CLOUD_PROJECT
