@@ -13,19 +13,19 @@ Michael Chi | Cloud Solution Architect | Google
 
 This tutorial demonstrates using Cloud Build to deploy inferencing models from Google Cloud Platform to edge servers running K3s.
 
-In this turtorial, you learn how to trigger Cloud Build pipeline to build contianer images and leverage Anthos Configuration Management and Cloud Build to deploy it to an edge server running K3s. To simulate edge server, you create a GCE VM in GCP project.
+In this tutorial, you learn how to trigger Cloud Build pipeline to build container images and leverages Anthos Configuration Management and Cloud Build to deploy it to an edge server running K3s. To simulate edge server, you create a GCE VM in GCP project.
 
-This turtrial uses a popular [YOLOv5 sample](https://github.com/mikel-brostrom/Yolov5_DeepSort_Pytorch) created by [mikel-brostrom](https://github.com/mikel-brostrom) as the workload to be deployed. 
+This tutorial uses a [YOLOv5 sample](https://github.com/mikel-brostrom/Yolov5_DeepSort_Pytorch) created by [mikel-brostrom](https://github.com/mikel-brostrom) as the application to be deployed. 
 
 
 ## Objectives
 
-- Create a GCE VM and setup K3s
-- Enable and register newly created K3s to Anthos
-- Setup Source Repo and push sample codes
-- Setup Cloud Build Pipeline
-- Setup Anthos ACM
-- Update codes and trigger automated deployment
+- Create a GCE VM and set up K3s
+- Enable and register K3s to Anthos
+- Set up Source Repo and push codes
+- Set up Cloud Build Pipeline
+- Set up Anthos ACM
+- Trigger automated deployment
 
 ## Costs
 
@@ -45,7 +45,7 @@ This tutorial has below prerequisites
 
 - A billing enabled Google Cloud account, see this [document](https://cloud.google.com/billing/docs/how-to/modify-project) for detailed instructions.
 - gcloud command line tool must be [installed]((https://cloud.google.com/anthos/multicluster-management/connect/prerequisites#install-cloud-sdk)) in your environment if not using Cloud shell.
-- Docker must be install in your working environment or cloud shell, see this [instruction](https://docs.docker.com/engine/install/ubuntu/) for details
+- Docker must be install in your environment or cloud shell, see this [instruction](https://docs.docker.com/engine/install/ubuntu/) for details
  
 ## Architecture
 
@@ -58,12 +58,12 @@ In this tutorial we use a specifc service account for building images and deploy
     export SERVICE_ACCT_NAME=edge-demo
     gcloud iam service-accounts create $SERVICE_ACCT_NAME
 
-We need grant user permission to impersonate the service account, first dump current configuration
+We need grant user permission to impersonate the service account, to do this first we dump current configuration
 
     gcloud iam service-accounts get-iam-policy $SERVICE_ACCT_NAME@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com \
         --format=json > policy.json
 
-Then, update the `policy.json` file to grant permission to principles 
+Then, update the `policy.json` file to grant permission to principles.
 
 
             {
@@ -79,12 +79,12 @@ Then, update the `policy.json` file to grant permission to principles
               "version": 1
             }
 
-Save the file and set IAM policy
+Save the file and update IAM policy by running below command.
 
     gcloud iam service-accounts set-iam-policy $SERVICE_ACCT_NAME@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com ./policy.yaml
 
 
-To use a service account to run Cloud Build, we also need to specify where to store build logs, in this tutorial we will be using Cloud Logging. To allow storing logs to Cloud Logging, Logs Writer (`roles/logging.logWriter`) role must be granted to the service account
+To use a specific service account for Cloud Build, we also need to specify where to store build logs, in this tutorial we will be using Cloud Logging. To allow sending logs to Cloud Logging, Logs Writer (`roles/logging.logWriter`) role must be granted to the service account
 
     gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
           --member=serviceAccount:$SERVICE_ACCT_NAME@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com \
@@ -129,22 +129,20 @@ Run below commands in cloud shell
             --role=roles/artifactregistry.writer
 
            
-## Setup edge server
+## Set up edge server
 
 ### Create GCE Instance
 
 Run below command in Cloud Shell to create a GCE virtual machine in `us-central1-a` zone:
-    
 
         export ZONE=us-central1-a
 
         gcloud compute instances create edge-server-k3s --project=$GOOGLE_CLOUD_PROJECT --zone=$ZONE \
             --machine-type=e2-medium --network-interface=network-tier=PREMIUM,subnet=default \
             --scopes=https://www.googleapis.com/auth/cloud-platform \
-            --create-disk=auto-delete=no,boot=yes,device-name=k3s,image=projects/debian-cloud/global/images/debian-10-buster-v20211105,size=100
+            --create-disk=auto-delete=no,boot=yes,device-name=k3s,image=projects/ubuntu-os-cloud/global/images/ubuntu-1804-bionic-v20211214,size=100
 
-Wait for the compute engine instance to be created and ssh to it.
-
+SSH to the compute engine instance once it's up and running.
 
 ### Install K3s
 
@@ -174,13 +172,15 @@ In K3S, run below commands
       kubectl create secret docker-registry $SECRETNAME --docker-server=us-central1-docker.pkg.dev --docker-username=_json_key \
             --docker-email=$SERVICE_ACCOUNT@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com --docker-password="$(cat ar-key.json)"
 
-Configure `imagePullSecret` to default service account, run
+Configure `imagePullSecret` to default service account, run below command, this will bring up an editor for you to update its contents.
 
       sudo kubectl edit serviceaccount default --namespace default
 
 
-Then edit the configuration file, add `imagePullSecret` then save
+Add `imagePullSecret` then save
 
+
+```yaml
       apiVersion: v1
       kind: ServiceAccount
       metadata:
@@ -192,15 +192,15 @@ Then edit the configuration file, add `imagePullSecret` then save
       # The secret you created:
       imagePullSecrets:
       - name: ar-json-key
+```
 
 
 
-
-## Register K3s cluster to Anthos
+## Register K3s to Anthos
 
 ### Register attached K3s cluster to Anthos
 
-Follow the [instruction](https://cloud.google.com/anthos/docs/setup/attached-clusters#register_your_cluster) to register K3s cluster to Anthos.
+Follow the [instruction](https://cloud.google.com/anthos/docs/setup/attached-clusters#register_your_cluster) to register K3s to Anthos.
 
     export MEMBERSHIP_NAME=edge-server-k3s
     export KUBECONFIG_CONTEXT=$(sudo kubectl config current-context)
@@ -212,13 +212,13 @@ Follow the [instruction](https://cloud.google.com/anthos/docs/setup/attached-clu
     --enable-workload-identity \
     --has-private-issuer
 
-Once registered, it appears in Anthos clusters console, however, to access to the registered cluster, you'll need to [log in and authenticate to the cluster](https://cloud.google.com/anthos/multicluster-management/console/logging-in). As the document recommended, we'll use Google Cloud Identity to login to the cluster.
+Once registered, you'll see a new entry shown in Anthos console, however, to access to the registered cluster, you'll need to [log in and authenticate to the cluster](https://cloud.google.com/anthos/multicluster-management/console/logging-in). As the document recommended, we'll use Google Cloud Identity to login to the cluster.
 
-### Setup Connect Gateway
+### Set up Connect Gateway
 
-Your platform admin must perform the necessary [setup](https://cloud.google.com/anthos/multicluster-management/gateway/setup) to let you use your Google Cloud identity to log in, including granting you all the necessary roles and RBAC permissions to view and authenticate to registered clusters.
+Your platform admin must perform the necessary [set up](https://cloud.google.com/anthos/multicluster-management/gateway/setup) to let you use your Google Cloud identity to log in, including grant you all the necessary roles and RBAC permissions to view and authenticate to registered clusters.
 
-Now we want to grant required IAM roles to users so they can interact with connected cluster through the gateway.
+Then we'll grant required IAM roles to users so they can interact with connected cluster through the gateway.
 
     export MEMBER=user:your-user-name@your-domain.com
     export GATEWAY_ROLE=roles/gkehub.gatewayAdmin   # or `roles/gkehub.gatewayReader`
@@ -253,7 +253,8 @@ Now we want to grant required IAM roles to users so they can interact with conne
 
 To authenticate requests to the cluster's Kubernetes API server initiated by specific Google Identity users coming from the gateway, SSH to K3s machine and update required RBAC policies in K3s cluster.
 
-- The impersonation policy that authorizes the Connect agent to send requests to the Kubernetes API server on behalf of a user. 
+- The impersonation policy authorizes the Connect agent to send requests to the Kubernetes API server on behalf of a user. 
+
     - Replace `your-user-name@your-domain.com` with your user account.
     - Replace `your-service-account@example-project.iam.gserviceaccount.com` with the service account created earlier. 
     - Cloud build uses GCP managed Service Account `project-number@@cloudbuild.gserviceaccount.com`. replace `project-number` with your project number
@@ -318,7 +319,7 @@ EOF
 kubectl apply -f /tmp/admin-permission.yaml
 ```
 
-Noq go to Anthos Cluster console, select the `edge-server-k3s` cluster then click `Login` button, when popup prompts, choose `Use your Google identity to log-in`
+Now go to Anthos Cluster console, select the `edge-server-k3s` and click `Login` button then choose `Use your Google identity to log-in`
 
 
 
@@ -332,23 +333,22 @@ This generates kubeconfig entry for K3s cluster and set as default context, you 
 
       kubectl get nodes
 
-The node name should be `edge-server-k3s` as we specified
+The node name should be `edge-server-k3s` as we specified earlier
 
       NAME              STATUS   ROLES                  AGE    VERSION
       edge-server-k3s   Ready    control-plane,master   112m   v1.21.7+k3s1
 
 
 
-## Setup Cloud Build pipeline and trigger
+## Set up Cloud Build pipeline and trigger
 
-At this point we have required infrastructure ready, now we want to get our applications ready to deploy
+At this point we have required infrastructure ready, now we will get our applications ready to deploy
 
 ### Create Dockerfile
 
-In cloud shell or your working environment of choice, create a [Dockerfile](./yolov5-python/Dockerfile) and [go.sh](./yolov5-python/go.sh).
+In cloud shell or your environment of choice, create a [Dockerfile](./yolov5-python/Dockerfile) and [go.sh](./yolov5-python/go.sh).
 
-The Dockerfile clones git repo, install required dependencies and runs a shell script to start up the application.
-
+The Dockerfile clones git repo, install required dependencies and runs [go.sh](./yolov5-python/go.sh) to launch the application.
 
 
 ```yaml
@@ -380,27 +380,29 @@ CMD ["bash", "/app/Yolov5_DeepSort_Pytorch/go.sh"]
 
 ### Create Deployment
 
-Create [Deployment-k3s.yaml](./yolov5-python/Deployment-k3s.yaml), create a volume claim for the model to store inferencing results.
+Create [Deployment-k3s.yaml](./yolov5-python/Deployment-k3s.yaml), the application writes outputs to a local folder, here we create a volume claim to store results.
 
+
+```yaml
     spec:
       volumes:
       - name: output
         hostPath:
-          path: /tmp
+          path: /tmp                # points to host's /tmp folder
       containers:
         ...      
         volumeMounts:
         - name: output
           mountPath: /app/output
+```
 
 
-
-## Setup Source Repo and Cloud Build Trigger
+## Set up Source Repo and Cloud Build Trigger
 
 
 ### Create a Source Repo trigger
 
-Our pipeline monitors Source Repository pushes, when new codes are pushed to the repo, Cloud Build automatically fetch latest codes and start CI/CD flow.
+Our pipeline monitors updates, when new codes are pushed to the repo, Cloud Build automatically fetch latest codes and start CI/CD flow.
 
 
     gcloud beta builds triggers create cloud-source-repositories --name="edge-deployment-trigger" \
@@ -416,7 +418,9 @@ Create a [cloudbuild.yaml](./cloudbuild/cloudbuild.yaml) and submit the job to C
 [cloudbuild.yaml](./cloudbuild/cloudbuild.yaml) contains required steps to build docker image and push to edge server.
 
 Note that since we will be running Cloud Build trigger under a service account, in the `cloudbuild.yaml`, we specify logging location to `CLOUD_LOGGING_ONLY`.
-        steps:
+       
+  ```yaml     
+       steps:
           - name: gcr.io/cloud-builders/docker
             args:
               - build
@@ -441,7 +445,7 @@ Note that since we will be running Cloud Build trigger under a service account, 
             us-central1-docker.pkg.dev/$PROJECT_ID/edge-deployment-demo/edge-ai:$BUILD_ID
         options:
           logging: CLOUD_LOGGING_ONLY
-
+```
 
 ## Triggers deployment
 
