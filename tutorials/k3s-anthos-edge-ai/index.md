@@ -349,6 +349,35 @@ In cloud shell or your working environment of choice, create a [Dockerfile](./yo
 
 The Dockerfile clones git repo, install required dependencies and runs a shell script to start up the application.
 
+
+
+```yaml
+FROM python:3.9
+
+WORKDIR /app
+
+ENV PATH="/root/.local/bin:$PATH"
+# Install required packages
+RUN apt-get update
+RUN apt-get install ffmpeg libsm6 libxext6 libxcb-xinerama0 git -y
+# Clone git repo
+RUN git clone --recurse-submodules https://github.com/mikel-brostrom/Yolov5_DeepSort_Pytorch.git
+COPY ./go.sh /app/Yolov5_DeepSort_Pytorch/
+
+WORKDIR /app/Yolov5_DeepSort_Pytorch
+# Install python packages
+RUN python -m pip install --upgrade pip
+RUN pip3 install --user wheel
+RUN pip3 install --user pymavlink
+RUN pip3 install --user easydict
+RUN pip3 install -r ./requirements.txt --user
+# Enable QT debug log for troubleshooting
+ENV QT_DEBUG_PLUGINS=1 
+# Start up application
+CMD ["bash", "/app/Yolov5_DeepSort_Pytorch/go.sh"]
+
+```
+
 ### Create Deployment
 
 Create [Deployment-k3s.yaml](./yolov5-python/Deployment-k3s.yaml), create a volume claim for the model to store inferencing results.
