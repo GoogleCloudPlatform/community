@@ -1,5 +1,5 @@
 ---
-title: Edge AI with Anthos and K3S
+title: Deploy Yolo model to K3 with Cloud Build and ACM
 description: Learn how to deploy cloud trained AI models to edge servers
 author: kalschi
 tags: AI, artificial intelligence, Edge AI, K3s
