@@ -11,12 +11,6 @@ Michael Chi | Cloud Solution Architect | Google
 <p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-Michael Chi | Cloud Solution Architect | Google
-
-_Contributed by the Google Cloud community. Not official Google documentation._
-
-_Contributed by Google employees._
-
 This tutorial demonstrates using Cloud Build to deploy inferencing models from Google Cloud Platform to edge servers running K3s. It is intended for developers and IT administrators who require cloud computing for training and evaluating machine learning models and need to run predictions on-premises.
 
 In this tutorial, you learn how to trigger [Cloud Build](https://cloud.google.com/build) pipeline to build container images and leverage [Anthos Configuration Management](https://cloud.google.com/anthos/config-management) and Cloud Build to deploy the container image to an edge server running the lightweight open-source Kubernetes distribution [K3s](https://k3s.io/). To simulate an edge server, you create a GCE VM in GCP project.
@@ -67,9 +61,7 @@ This tutorial has the prerequisites below.
 **Architecture**
 
 
-
 ![Architecture](./architecture.png)
-
 
 
 ### 
@@ -489,7 +481,12 @@ The required infrastructure is now ready and you can start to deploy application
 
 Clone git repository.
 
-	`git clone <URL>`
+
+```
+	git clone https://github.com/GoogleCloudPlatform/community.git
+	cd <FOLDER>
+```
+
 
 In Cloud Shell, create the [Dockerfile](./yolov5-python/Dockerfile) and [go.sh](./yolov5-python/go.sh).
 
