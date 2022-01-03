@@ -8,6 +8,8 @@ steps:
       - .
     id: build.image
   - name: gcr.io/cloud-builders/gcloud
+    waitFor:
+    - build.image
     args:
       - '-c'
       - |
