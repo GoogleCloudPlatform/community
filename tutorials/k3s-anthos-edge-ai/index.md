@@ -15,7 +15,7 @@ This tutorial demonstrates using Cloud Build to deploy inferencing models from G
 
 In this tutorial, you learn how to trigger [Cloud Build](https://cloud.google.com/build) pipeline to build container images and leverage [Anthos Configuration Management](https://cloud.google.com/anthos/config-management) and Cloud Build to deploy the container image to an edge server running the lightweight open-source Kubernetes distribution [K3s](https://k3s.io/). To simulate an edge server, you create a GCE VM in GCP project.
 
-This tutorial uses a [YOLOv5 sample](https://github.com/mikel-brostrom/Yolov5_DeepSort_Pytorch) created by [mikel-brostrom](https://github.com/mikel-brostrom), and [Deep Source Pytorch](https://github.com/ZQPei/deep_sort_pytorch.git) created by [ZQPei](https://github.com/ZQPei) as the application to be deployed. To make it runs in environments without displays such as container environment, a new [track\_container.py](./yolov5-python/track_container.pt) is created based on the original [track.py](https://github.com/mikel-brostrom/Yolov5_DeepSort_Pytorch/blob/master/track.py)
+This tutorial uses a [YOLOv5 sample](https://github.com/mikel-brostrom/Yolov5_DeepSort_Pytorch) created by [mikel-brostrom](https://github.com/mikel-brostrom), and [Deep Source Pytorch](https://github.com/ZQPei/deep_sort_pytorch.git) created by [ZQPei](https://github.com/ZQPei) as the application to be deployed. To make it runs in environments without displays such as container environment, a new [track\_container.py](./yolov5-python/track_container.py) is created based on the original [track.py](https://github.com/mikel-brostrom/Yolov5_DeepSort_Pytorch/blob/master/track.py)
 
 
 ### 
@@ -61,7 +61,10 @@ This tutorial has the prerequisites below.
 **Architecture**
 
 
-![Architecture](./architecture.png)
+
+
+![Architecture](architecture-diagram.png "Architecture")
+
 
 
 ### 
@@ -84,7 +87,7 @@ gcloud config set project $PROJECT_ID
 ### 
 Create Service Account
 
-Create a service account for K3s to interact with Google Cloud Platformbuilding images and deploying to edge servers.
+Create a service account for K3s to interact with Google Cloud Platform
 
 
 ```
@@ -484,7 +487,7 @@ Clone git repository.
 
 ```
 	git clone https://github.com/GoogleCloudPlatform/community.git
-	cd <FOLDER>
+	cd ./community/k3s-anthos-edge-ai/yolov5-python
 ```
 
 
@@ -631,66 +634,29 @@ gcloud beta builds triggers create cloud-source-repositories --name="edge-deploy
 ```
 
 
-Push codes to Source Repository to triggers Cloud Build pipeline
 
+### 
+**Trigger deployment**
 
-```
-git init
-git remote add google ssh://$USER@source.developers.google.com:2022/p/$PROJECT_ID/r/$REPO_NAME
-git add .
-git commit -m "init"
-git push --all google
-```
-
-
-Or you can submit the job to Cloud Build
+To trigger automatic deployment, you can submit the job to Cloud Build
 
 
 ```
 gcloud builds submit --config cloudbuild.yaml
-
-Job failed with:
-Info
-2021-12-29 15:44:28.199 SGTStep #1: Starting to build Gateway kubeconfig...
-Info
-2021-12-29 15:44:28.200 SGTStep #1: Current project_id: jani-yolo-k3-test
-Info
-2021-12-29 15:44:28.637 SGTStep #1: ERROR: (gcloud.container.hub.memberships.get-credentials) Caller doesn't have sufficient permissions.
-Info
-2021-12-29 15:44:28.791 SGTStep #1: + sed -i s/#BUILD#/a023a6a0-86eb-4277-bc04-25c72f71d486/g Deployment-k3s.yaml
-Info
-2021-12-29 15:44:28.817 SGTStep #1: + sed -i s/#PROJECT_ID#/jani-yolo-k3-test/g Deployment-k3s.yaml
-Info
-2021-12-29 15:44:28.819 SGTStep #1: + kubectl apply -f Deployment-k3s.yaml
-Info
-2021-12-29 15:44:29.095 SGTStep #1: The connection to the server localhost:8080 was refused - did you specify the right host or port?
-
-From Cloud Shell this works, so presume there's some issue with the edge-demo@jani-yolo-k3-test.iam.gserviceaccount.com SA Cloud Build is using?
-$ gcloud container hub memberships get-credentials edge-server-k3s
-Starting to build Gateway kubeconfig...
-Current project_id: jani-yolo-k3-test
-A new kubeconfig entry "connectgateway_jani-yolo-k3-test_edge-server-k3s" has been generated and set as the current context.
-
-The access looks pretty good to me though:
-
-Artifact Registry Reader
-Artifact Registry Writer
-Connect Gateway Admin
-GKE Hub Viewer
-Kubernetes Engine Viewer
-Logs Writer
-Source Repository Reader
-Source Repository Writer
 ```
 
 
+Or push codes to Source Repository, to access to Source Repository, first generate a SSH key and [add the SSH key to the repository](https://source.cloud.google.com/user/ssh_keys?register=true), then commit and push codes
 
-### 
-**Triggers deployment**
 
-To push codes to Source Repo, generate a SSH key and [add the SSH key to the repository](https://source.cloud.google.com/user/ssh_keys?register=true) then do a `git push --all google` to push codes for the first time.
+```
+    git init
+    git remote add google ssh://$USER@source.developers.google.com:2022/p/$PROJECT_ID/r/$REPO_NAME
+    git add .
+    git commit -m "init"
+    git push --all google
+```
 
-This triggers Cloud Build to build the container image and deploys the application to the edge server created earlier.
 
 
 ### 
