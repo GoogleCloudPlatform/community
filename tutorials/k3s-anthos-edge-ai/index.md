@@ -15,7 +15,7 @@ This tutorial demonstrates using Cloud Build to deploy inferencing models from G
 
 In this tutorial, you learn how to trigger [Cloud Build](https://cloud.google.com/build) pipeline to build container images and leverage [Anthos Configuration Management](https://cloud.google.com/anthos/config-management) and Cloud Build to deploy the container image to an edge server running the lightweight open-source Kubernetes distribution [K3s](https://k3s.io/). To simulate an edge server, you create a GCE VM in GCP project.
 
-This tutorial uses a [YOLOv5 sample](https://github.com/mikel-brostrom/Yolov5_DeepSort_Pytorch) created by [mikel-brostrom](https://github.com/mikel-brostrom), and [Deep Source Pytorch](https://github.com/ZQPei/deep_sort_pytorch.git) created by [ZQPei](https://github.com/ZQPei) as the application to be deployed. To make it runs in environments without displays such as container environment, a new [track\_container.py](./yolov5-python/track_container.py) is created based on the original [track.py](https://github.com/mikel-brostrom/Yolov5_DeepSort_Pytorch/blob/master/track.py)
+This tutorial is based on the [YOLOv5 sample](https://github.com/mikel-brostrom/Yolov5_DeepSort_Pytorch) created by [mikel-brostrom](https://github.com/mikel-brostrom), and [Deep Source Pytorch](https://github.com/ZQPei/deep_sort_pytorch.git) created by [ZQPei](https://github.com/ZQPei) as the application to be deployed. To permit running in containerized environments without displays, a new [track\_container.py](./yolov5-python/track_container.py) was created based on the original [track.py](https://github.com/mikel-brostrom/Yolov5_DeepSort_Pytorch/blob/master/track.py).
 
 
 ### 
@@ -61,8 +61,6 @@ This tutorial has the prerequisites below.
 **Architecture**
 
 
-
-
 ![Architecture](architecture-diagram.png "Architecture")
 
 
@@ -71,7 +69,7 @@ This tutorial has the prerequisites below.
 **Tutorial**
 
 
-### 
+#### 
 Logging into Cloud Shell and create a new GCP project 
 
 
@@ -84,7 +82,7 @@ gcloud config set project $PROJECT_ID
 
 
 
-### 
+#### 
 Create Service Account
 
 Create a service account for K3s to interact with Google Cloud Platform
@@ -96,11 +94,12 @@ gcloud iam service-accounts create $SERVICE_ACCT_NAME
 ```
 
 
-Grant yourself permission to impersonate the service account.
+
+#### Grant yourself permission to impersonate the service account.
 
 
 ```
-    export USER=<YOUR GCP CREDENTIAL>
+    export USER=<YOUR GOOGLE ACCOUNT>
 
     gcloud iam service-accounts add-iam-policy-binding $SERVICE_ACCT_NAME@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com \
     --member=user:$USER --role=roles/iam.serviceAccountUser
@@ -112,7 +111,7 @@ To use a specific service account for Cloud Build, you need to specify where to 
 
 ```
     gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
-      --member=serviceAccount:$SERVICE_ACCT_NAME@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com \
+--member=serviceAccount:$SERVICE_ACCT_NAME@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com \
           --role=roles/logging.logWriter
 ```
 
@@ -121,12 +120,12 @@ To use a specific service account for Cloud Build, you need to specify where to 
 #### 
 Enable required services
 
-List available billing account and enable billing for the project
+List available billing accounts and enable billing for the project.
 
 
 ```
-gcloud alpha billing accounts list
-gcloud alpha billing projects link $GOOGLE_CLOUD_PROJECT --billing-account <BILLING ACCOUNT ID>
+gcloud beta billing accounts list
+gcloud beta billing projects link $GOOGLE_CLOUD_PROJECT --billing-account <BILLING ACCOUNT ID>
 ```
 
 
@@ -284,10 +283,6 @@ In the GCE instance hosting k3s, run the commands below
 
 
 
-### 
-**Register K3s to Anthos**
-
-
 #### 
 **Register attached K3s cluster to Anthos**
 
@@ -297,7 +292,7 @@ In GCE VM, run the commands below to register K3s to Anthos.
 ```
     export MEMBERSHIP_NAME=edge-server-k3s
     export KUBECONFIG_CONTEXT=$(sudo kubectl config current-context)
-    export KUBECONFIG_PATH=/etc/rancher/k3s/k3s.yaml #Kubectl config file in K3s defaults to `/etc/rancher/k3s`
+    export KUBECONFIG_PATH=/etc/rancher/k3s/k3s.yaml
 
     sudo gcloud container hub memberships register $MEMBERSHIP_NAME \
     --context=$KUBECONFIG_CONTEXT \
@@ -310,8 +305,6 @@ In GCE VM, run the commands below to register K3s to Anthos.
 Note that there is a known bug that you get an error message at first time, the error goes away on retry. Please re-run the command when you see below error message.
 
 ERROR: (gcloud.container.hub.memberships.register) Membership CRD creation failed to complete: error: unable to recognize "STDIN": no matches for kind "CustomResourceDefinition" in version "apiextensions.k8s.io/v1beta1”
-
-Once registered, you'll see a new entry shown in Anthos console, however, to access the registered cluster, you'll need to [log in and authenticate to the cluster](https://cloud.google.com/anthos/multicluster-management/console/logging-in). Per best practice, you will use Google Cloud Identity to login to the cluster.
 
 
 #### 
@@ -365,7 +358,7 @@ To authenticate requests to the cluster's Kubernetes API server initiated by spe
 *   The impersonation policy authorizes the Connect agent to send requests to the Kubernetes API server on behalf of a user.
     *   Replace `$USER` with your user account.
     *   Replace `your-service-account@example-project.iam.gserviceaccount.com` with the service account created earlier.
-    *   Cloud build uses GCP managed Service Account `project-number@@cloudbuild.gserviceaccount.com`.
+    *   Cloud build uses GCP managed Service Account `project-number@cloudbuild.gserviceaccount.com`.
 
 
 ```
@@ -406,12 +399,10 @@ subjects:
   namespace: gke-connect
 EOF
 kubectl apply -f /tmp/impersonate.yaml
-
 ```
 
 
-
-*   The policy that specifies which permissions the user has on the cluster.
+The policy that specifies which permissions the user has on the cluster.
 
 
 ```
@@ -447,6 +438,8 @@ Now browse to the Anthos Cluster console at https://console.cloud.google.com/ant
 #### 
 **Verify connection to K3s**
 
+Once registered, you'll see a new entry shown in Anthos console, however, to access the registered cluster, you'll need to [log in and authenticate to the cluster](https://cloud.google.com/anthos/multicluster-management/console/logging-in). Per best practice, you will use Google Cloud Identity to login to the cluster.
+
 Exit the VM and return to Cloud Shell.  Connect to remote K3s cluster from GCP by running the command below:
 
 
@@ -472,10 +465,6 @@ The node name should be `edge-server-k3s` as specified earlier
 ```
 
 
-
-### 
-**Set up Cloud Build pipeline and trigger**
-
 The required infrastructure is now ready and you can start to deploy applications.
 
 
@@ -487,76 +476,22 @@ Clone git repository.
 
 ```
 	git clone https://github.com/GoogleCloudPlatform/community.git
-	cd ./community/k3s-anthos-edge-ai/yolov5-python
+	cd ./community/tutorials/k3s-anthos-edge-ai/yolov5-python
 ```
 
 
-In Cloud Shell, create the [Dockerfile](./yolov5-python/Dockerfile) and [go.sh](./yolov5-python/go.sh).
+The repo contains [Dockerfile](yolov5-python/Dockerfile) ,[go.sh](yolov5-python/go.sh), [cloudbuild.yaml](yolov5-python/cloudbuild.yaml), [track\_container.py](yolov5-python/track_container.py) and [Dockerfile.](yolov5-python/Dockerfile)
 
 The Dockerfile clones the Yolo git repository, installs required dependencies and runs [go.sh](./yolov5-python/go.sh) to launch the application.
 
+The application takes a RTSPrtsp video stream as inputs and writes the results to a local folder. You create a volume claim to store these results in [Deployment-k3s.yaml](http://./yolov5-python/Deployment-k3s.yaml)
 
-```
-cat <<EOF > go.sh
-source ~/.bashrc
-python3 track_container.py --source \$SOURCE --save-vid --save-txt --output \$OUTPUT --evaluate
-EOF
-cat <<EOF > Dockerfile
-FROM python:3.9
-
-WORKDIR /app
-
-ENV PATH="/root/.local/bin:\$PATH"
-
-# Install required packages
-RUN apt-get update
-RUN apt-get install ffmpeg libsm6 libxext6 libxcb-xinerama0 git -y
-# Clone git repo
-RUN git clone --recurse-submodules https://github.com/mikel-brostrom/Yolov5_DeepSort_Pytorch.git
-RUN git clone https://github.com/ZQPei/deep_sort_pytorch.git
-RUN mv /app/deep_sort_pytorch /app/Yolov5_DeepSort_Pytorch/
-
-COPY ./go.sh /app/Yolov5_DeepSort_Pytorch/
-COPY ./track_container.py /app/Yolov5_DeepSort_Pytorch/
-
-WORKDIR /app/Yolov5_DeepSort_Pytorch
-# Install python packages
-RUN python -m pip install --upgrade pip
-RUN pip3 install --user wheel
-RUN pip3 install --user pymavlink
-RUN pip3 install --user easydict
-RUN pip3 install -r ./requirements.txt --user
-# Enable QT debug log for troubleshooting
-ENV QT_DEBUG_PLUGINS=1
-# Start up application
-CMD ["bash", "/app/Yolov5_DeepSort_Pytorch/go.sh"]
-EOF
-```
-
-
-
-#### 
-**Create Deployment**
-
-Create [Deployment-k3s.yaml](./yolov5-python/Deployment-k3s.yaml), the application writes outputs to a local folder, here we create a volume claim to store results.
-
-The Deployment-k3s.yaml has #PROJECT\_ID# and #BUILD# as placeholders for actual project id and build id, they are filled in Cloud Build pipelines.
+The Deployment-k3s.yaml has #PROJECT\_ID# and #BUILD# as placeholders for actual project IDid and build IDid, whichthey are filled in by the Cloud Build pipelines.
 
 
 ```
-cat <<EOF > Deployment-k3s.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: yolo-deployment
-spec:
-  selector:
-    matchLabels:
-      app: yolo
-  template:
-    metadata:
-      labels:
-        app: yolo
+…
+
     spec:
       volumes:
       - name: output
@@ -567,7 +502,7 @@ spec:
         image: us-central1-docker.pkg.dev/#PROJECT_ID#/edge-deployment-demo/edge-ai:#BUILD#
         env:
         - name: SOURCE
-          value: "rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov"
+          value: rtsp://<YOUR RTSP SOURCE>
         - name: OUTPUT
           value: "/app/output/"          
         volumeMounts:
@@ -575,54 +510,10 @@ spec:
           mountPath: /app/output
       imagePullSecrets:
       - name: ar-json-key
-EOF
 ```
 
 
-
-### Set up Source Repo and Cloud Build Trigger
-
-
-#### Create a Source Repo trigger
-
-Next, create a pipeline to monitor for updates. When new code is pushed to the repo, Cloud Build automatically fetches the latest version and starts the CI/CD flow.
-
-Note that in the cloudbuild.yaml, we replace placeholders #BUILD# and #PROJECT\_ID# with actual project id and build id.
-
-
-```
-cat <<EOF> cloudbuild.yaml
-steps:
-  - name: gcr.io/cloud-builders/docker
-    args:
-      - build
-      - '-t'
-      - >-
-        us-central1-docker.pkg.dev/\$PROJECT_ID/edge-deployment-demo/edge-ai:\$BUILD_ID
-
-      - .
-    id: build.image
-  - name: gcr.io/cloud-builders/gcloud
-    waitFor:
-    - build.image
-    args:
-      - '-c'
-      - |
-        set -x
-        gcloud container hub memberships get-credentials edge-server-k3s
-        sed -i 's/#BUILD#/\$BUILD_ID/g' Deployment-k3s.yaml
-        sed -i 's/#PROJECT_ID#/\$PROJECT_ID/g' Deployment-k3s.yaml
-        kubectl apply -f Deployment-k3s.yaml
-    entrypoint: /bin/sh
-timeout: 1200s
-images:
-  - >-
-    us-central1-docker.pkg.dev/\$PROJECT_ID/edge-deployment-demo/edge-ai:\$BUILD_ID
-options:
-  logging: CLOUD_LOGGING_ONLY
-EOF
-```
-
+`I`n the cloudbuild.yaml, we replace placeholders #BUILD# and #PROJECT\_ID# with actual project id and build id.
 
 Run the commands below to create a Cloud Build trigger
 
@@ -635,7 +526,7 @@ gcloud beta builds triggers create cloud-source-repositories --name="edge-deploy
 
 
 
-### 
+#### 
 **Trigger deployment**
 
 To trigger automatic deployment, you can submit the job to Cloud Build
@@ -643,10 +534,23 @@ To trigger automatic deployment, you can submit the job to Cloud Build
 
 ```
 gcloud builds submit --config cloudbuild.yaml
+Wait till the build succeeds, go to Cloud Shell and run commands below to verify if the container is up and running.
+gcloud container hub memberships get-credentials edge-server-k3s
+kubectl get pods
+
+You may see errors saying Pull Image failed, wait several minutes for the container to retry then check logs.
+kubectl logs <POD ID>
+
+You should see something similar.
+    No detections
+    0: 448x640 1 sheep, 1 orange, Done. YOLO:(80.475s), DeepSort:(0.039s)
+    0: 448x640 1 sheep, 1 orange, Done. YOLO:(81.111s), DeepSort:(0.039s)
 ```
 
 
-Or push codes to Source Repository, to access to Source Repository, first generate a SSH key and [add the SSH key to the repository](https://source.cloud.google.com/user/ssh_keys?register=true), then commit and push codes
+Wait till the build is completed successfully, now you can push codes to Source Repository.
+
+To access to Source Repository, first generate a SSH key and [add the SSH key to the repository](https://source.cloud.google.com/user/ssh_keys?register=true), then commit and push codes
 
 
 ```
@@ -655,6 +559,33 @@ Or push codes to Source Repository, to access to Source Repository, first genera
     git add .
     git commit -m "init"
     git push --all google
+```
+
+
+Wait till the build succeeds, go to Cloud Shell and run commands below to verify if the container is up and running.
+
+
+```
+gcloud container hub memberships get-credentials edge-server-k3s
+kubectl get pods
+```
+
+
+You may see errors saying Pull Image failed, wait several minutes for the container to retry then check logs.
+
+
+```
+kubectl logs <POD ID>
+```
+
+
+You should see something similar.
+
+
+```
+    No detections
+    0: 448x640 1 sheep, 1 orange, Done. YOLO:(80.475s), DeepSort:(0.039s)
+    0: 448x640 1 sheep, 1 orange, Done. YOLO:(81.111s), DeepSort:(0.039s)
 ```
 
 
