@@ -5,9 +5,12 @@ steps:
       - '-t'
       - >-
         us-central1-docker.pkg.dev/$PROJECT_ID/edge-deployment-demo/edge-ai:$BUILD_ID
+
       - .
     id: build.image
   - name: gcr.io/cloud-builders/gcloud
+    waitFor:
+    - build.image
     args:
       - '-c'
       - |

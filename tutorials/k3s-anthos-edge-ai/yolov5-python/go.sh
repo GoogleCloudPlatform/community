@@ -1,2 +1,2 @@
 source ~/.bashrc
-python3 track.py --source $SOURCE --yolo_weights $WEIGHT --save-vid --save-txt --no-display --output $OUTPUT --evaluate
+python3 track_container.py --source $SOURCE --save-vid --save-txt --output $OUTPUT --evaluate
