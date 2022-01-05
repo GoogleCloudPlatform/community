@@ -20,9 +20,9 @@ spec:
         image: us-central1-docker.pkg.dev/#PROJECT_ID#/edge-deployment-demo/edge-ai:#BUILD#
         env:
         - name: SOURCE
-          value: rtsp://<YOUR RTSP SOURCE>
+          value: "rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov"
         - name: OUTPUT
-          value: "/app/output/"          
+          value: "/app/output/"
         volumeMounts:
         - name: output
           mountPath: /app/output
