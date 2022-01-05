@@ -3,7 +3,7 @@ title: Deploy Yolo model to K3 with Cloud Build and ACM
 description: Learn how to deploy cloud trained AI models to edge servers.
 author: kalschi
 tags: AI, artificial intelligence, Edge AI, K3s
-date_published: 2021-1-3
+date_published: 2021-01-03
 ---
 
 Michael Chi | Cloud Solution Architect | Google
