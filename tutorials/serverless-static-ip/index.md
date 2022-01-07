@@ -1,6 +1,6 @@
 ---
 title: Routing Cloud Run and Cloud Functions egress traffic through a static external IP address
-description: This tutorial walks you through the steps to route all egress traffic from Cloud Run and Cloud Function to a static IP address.
+description: Route all egress traffic from Cloud Run and Cloud Functions to a static IP address.
 author: jphalip
 tags: serverless, cloud-run, cloud-functions, networking
 date_published: 2022-01-10
@@ -31,7 +31,7 @@ This tutorial uses billable components of Google Cloud, including the following:
 
 +   [Cloud Run](https://cloud.google.com/run)
 +   [Cloud Functions](https://cloud.google.com/functions)
-+   [Serverless VPC Access Connector](https://cloud.google.com/vpc/docs/configure-serverless-vpc-access)
++   [Serverless VPC Access connector](https://cloud.google.com/vpc/docs/configure-serverless-vpc-access)
 +   [Cloud NAT](https://cloud.google.com/nat)
 
 Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your
@@ -48,9 +48,10 @@ projected usage.
 
 ### Enable billing
 
-Make sure that billing is enabled for your Cloud project. [Learn how to confirm that billing is enabled for your project](https://cloud.google.com/billing/docs/how-to/modify-project).
+Make sure that billing is enabled for your Google Cloud project.
+[Learn how to confirm that billing is enabled for your project](https://cloud.google.com/billing/docs/how-to/modify-project).
 
-### Initialize the environment
+### Set up the environment
 
 1.  Start a [Cloud Shell instance](https://console.cloud.google.com/home/dashboard?cloudshell=true).
 
@@ -62,16 +63,16 @@ Make sure that billing is enabled for your Cloud project. [Learn how to confirm 
 
         cd community/tutorials/serverless-static-ip
 
-1.  Enable some Google Cloud APIs:
+1.  Enable the Google Cloud APIs that this tutorial uses:
 
         gcloud services enable \
           compute.googleapis.com \
           cloudfunctions.googleapis.com \
-          run.googleapis.com vpcaccess.googleapis.com \
+          run.googleapis.com \
           cloudbuild.googleapis.com \
           vpcaccess.googleapis.com
 
-1.  Set some environment variables:
+1.  Set environment variables:
 
         export PROJECT=$(gcloud info --format='value(config.project)')
         export REGION=us-central1
@@ -82,14 +83,12 @@ Make sure that billing is enabled for your Cloud project. [Learn how to confirm 
         export CONNECTOR_IP_RANGE="10.8.0.0/28"
         export NAT_ROUTER="nat-router"  
         export NAT_CONFIG="nat-config"
-
-    Notes:
     
-    +   This tutorial uses the `us-central1` region. You may change it to suit your needs, but make sure it is one of the
-        [available locations for Cloud Run](https://cloud.google.com/run/docs/locations) and [for Cloud Functions](https://cloud.google.com/functions/docs/locations).
-    +   The value for `CONNECTOR_IP_RANGE` value corresponds to the CIDR range of internal addresses that are reserved for
-        the Serverless VPC Connector. You may change it to suit your requirements. The range must be unique and
-        non-overlapping with existing ranges in your VPC network.
+    This tutorial uses the `us-central1` region. You can use a different region, but make sure that it's one of the available locations for
+    [Cloud Run](https://cloud.google.com/run/docs/locations) and [Cloud Functions](https://cloud.google.com/functions/docs/locations).
+    
+    The value for `CONNECTOR_IP_RANGE` corresponds to the CIDR range of internal addresses that are reserved for the Serverless VPC Access connector.
+    You can change this value; the range must be unique and it must not overlap with existing ranges in your VPC network.
 
 ## Configure the network
 
