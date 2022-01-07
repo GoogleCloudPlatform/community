@@ -8,7 +8,7 @@ google-cloud-media-translation==0.2.0
 googleapis-common-protos==1.52.0
 grpcio==1.30.0
 idna==2.10
-numpy==1.19.0
+numpy==1.21.0
 pkg-resources==0.0.0
 proto-plus==1.0.0
 protobuf==3.12.2
