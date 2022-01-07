@@ -92,7 +92,7 @@ Make sure that billing is enabled for your Google Cloud project.
 
 ## Configure the network
 
-In this section, you configure all the network components of the solution.
+In this section, you configure the network components of the solution.
 
 1.  Create a new network:
 
@@ -135,7 +135,7 @@ In this section, you configure all the network components of the solution.
 
 ## Deploy a Cloud Run app
 
-In this section, your deploy a sample Cloud Run app to demonstrate how the external egress routing works:
+In this section, you deploy a sample Cloud Run app to demonstrate how the external egress routing works.
 
 1.  Build the container image as defined by the `Dockerfile` located in the `cloud-run` directory:
 
@@ -152,7 +152,7 @@ In this section, your deploy a sample Cloud Run app to demonstrate how the exter
           --vpc-connector ${VPC_CONNECTOR} \
           --vpc-egress all-traffic
 
-    Note: The `--vpc-egress all-traffic `option is what causes to route all outbound traffic from the Cloud Run app
+    The `--vpc-egress all-traffic `option is what causes all outbound traffic from the Cloud Run app to be routed
     through the VPC connector.
 
 1.  Retrieve the Cloud Run app's URL:
@@ -171,11 +171,12 @@ In this section, your deploy a sample Cloud Run app to demonstrate how the exter
         The Cloud Run app's external IP address is: [X.X.X.X]
 
     The app makes a call to [http://checkip.dyndns.org](http://checkip.dyndns.org) to check the origin IP address,
-    as you can see in the app's code. The value of `[X.X.X.X]` should match the value of the external static IP that you created earlier in the "Configure the network" section.
+    as you can see in the app's code. The value of `[X.X.X.X]` should match the value of the external static IP
+    address that you created in the "Configure the network" section.
 
 ## Deploy a Cloud Function
 
-In this section, your deploy a sample Cloud Function to demonstrate how the external egress routing works:
+In this section, you deploy a sample Cloud Function to demonstrate how the external egress routing works.
 
 1.  Deploy the Cloud Function located in the `cloud-functions` directory:
 
@@ -188,7 +189,7 @@ In this section, your deploy a sample Cloud Function to demonstrate how the exte
           --egress-settings all \
           --vpc-connector ${VPC_CONNECTOR}
 
-    Note: The `--egress-settings all` option is what routes  all outbound traffic from the Cloud Function through the
+    The `--egress-settings all` option is what causes all outbound traffic from the Cloud Function to be routed through the
     VPC connector.
 
 1.  Call the Cloud Function:
@@ -199,30 +200,30 @@ In this section, your deploy a sample Cloud Function to demonstrate how the exte
 
         The Cloud Function's external IP address is: [X.X.X.X]
 
-    The function makes a call to [http://checkip.dyndns.org](http://checkip.dyndns.org) to check the origin IP address, as you can see in the function's code. The value of `[X.X.X.X]` should match the value of the external static IP that you created earlier in the "Configure the network" section.
+    The function makes a call to [http://checkip.dyndns.org](http://checkip.dyndns.org) to check the origin IP address, as you can see in the function's code. 
+    The value of `[X.X.X.X]` should match the value of the external static IP address that you created in the "Configure the network" section.
 
 ## Cleaning up
 
-After you've finished the tutorial, clean up the GCP resources so you won't
-continue to be billed for them. The easiest way to eliminate billing is to
-delete the project you created for the tutorial.
+After you've finished the tutorial, clean up the Google Cloud resources so that you won't continue to be billed for them.
 
-To delete the project:
+The easiest way to eliminate billing is to delete the project that you created for the tutorial:
 
-1.  In the Cloud Platform Console, go to the
+1.  In the Cloud Console, go to the
     [Projects](https://console.cloud.google.com/iam-admin/projects) page.
 1.  Click the trash can icon to the right of the project name.
 
-Warning: If you used an existing project, deleting the project also deletes
-any other work you've done in the project.
+**Warning:** If you used an existing project, deleting the project also deletes any other work that you've done in the project.
 
 ## What's next
 
-+   Learn more about using a VPC Access Connector:
++   Learn more about using a Serverless VPC Access connector:
 
-    +   [for Cloud Run](https://cloud.google.com/run/docs/configuring/connecting-vpc)
-    +   [for Cloud Function](https://cloud.google.com/functions/docs/networking/connecting-vpc)
-    +   [for App Engine](https://cloud.google.com/appengine/docs/standard/python3/connecting-vpc)
+    +   [Cloud Run](https://cloud.google.com/run/docs/configuring/connecting-vpc)
+    +   [Cloud Function](https://cloud.google.com/functions/docs/networking/connecting-vpc)
+    +   [App Engine](https://cloud.google.com/appengine/docs/standard/python3/connecting-vpc)
 
-+   See a [similar deployment of this solution using Terraform](https://medium.com/google-cloud/provisioning-cloud-run-with-cloud-nat-using-terraform-e6b8d678eb85)
-+   Check out the documentation on [setting up static outbound IP address for Cloud Run](https://cloud.google.com/run/docs/configuring/static-outbound-ip)
++   See a
+    [similar deployment of this solution using Terraform](https://medium.com/google-cloud/provisioning-cloud-run-with-cloud-nat-using-terraform-e6b8d678eb85).
++   Check out the documentation on
+    [setting up a static outbound IP address for Cloud Run](https://cloud.google.com/run/docs/configuring/static-outbound-ip).
