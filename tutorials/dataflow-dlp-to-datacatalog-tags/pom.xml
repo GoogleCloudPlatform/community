@@ -59,7 +59,7 @@
     <generated-grpc-beta.version>0.19.0</generated-grpc-beta.version>
     <gax.version>2.7.1</gax.version>
     <protobuf-util.version>3.6.1</protobuf-util.version>
-    <protobuf.version>3.11.4</protobuf.version>
+    <protobuf.version>3.16.1</protobuf.version>
     <findbugs.version>3.0.1</findbugs.version>
     <guava.version>28.0-jre</guava.version>
     <json.version>20160810</json.version>
