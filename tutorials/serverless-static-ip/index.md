@@ -1,6 +1,6 @@
 ---
 title: Routing Cloud Run and Cloud Functions egress traffic through a static external IP address
-description: Route all egress traffic from Cloud Run and Cloud Functions to a static IP address.
+description: Route all egress traffic from Cloud Run and Cloud Functions through a static IP address.
 author: jphalip
 tags: serverless, cloud-run, cloud-functions, networking
 date_published: 2022-01-10
@@ -10,7 +10,7 @@ Julien Phalip | Solutions Architect | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-It is common for third-party services to allow access over the internet only from known IP address or IP address ranges. If your application runs on
+It is common for third-party services to allow access over the internet only from known IP addresses or IP address ranges. If your application runs on
 Google Cloud serverless computing solutions like [Cloud Run](https://cloud.google.com/run) or [Cloud Functions](https://cloud.google.com/functions), by default 
 the application gets a dynamic IP address when accessing the internet, which prevents it from consistently accessing such third-party services. To guarantee the 
 use of a static external IP address, you must use a [Serverless VPC Access connector](https://cloud.google.com/vpc/docs/configure-serverless-vpc-access) combined
@@ -152,7 +152,7 @@ In this section, you deploy a sample Cloud Run app to demonstrate how the extern
           --vpc-connector ${VPC_CONNECTOR} \
           --vpc-egress all-traffic
 
-    The `--vpc-egress all-traffic `option is what causes all outbound traffic from the Cloud Run app to be routed
+    The `--vpc-egress all-traffic` option is what causes all outbound traffic from the Cloud Run app to be routed
     through the VPC connector.
 
 1.  Retrieve the Cloud Run app's URL:
@@ -166,7 +166,7 @@ In this section, you deploy a sample Cloud Run app to demonstrate how the extern
 
         curl ${SERVICE_URL}/run-ip
 
-    The output looks like the following:`
+    The output looks like the following:
 
         The Cloud Run app's external IP address is: [X.X.X.X]
 
@@ -220,7 +220,7 @@ The easiest way to eliminate billing is to delete the project that you created f
 +   Learn more about using a Serverless VPC Access connector:
 
     +   [Cloud Run](https://cloud.google.com/run/docs/configuring/connecting-vpc)
-    +   [Cloud Function](https://cloud.google.com/functions/docs/networking/connecting-vpc)
+    +   [Cloud Functions](https://cloud.google.com/functions/docs/networking/connecting-vpc)
     +   [App Engine](https://cloud.google.com/appengine/docs/standard/python3/connecting-vpc)
 
 +   See a
