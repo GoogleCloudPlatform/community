@@ -1,9 +1,9 @@
 ---
-title: Routing Cloud Run and Cloud Functions egress traffic through a static external IP
+title: Routing Cloud Run and Cloud Functions egress traffic through a static external IP address
 description: This tutorial walks you through the steps to route all egress traffic from Cloud Run and Cloud Function to a static IP address.
 author: jphalip
 tags: serverless, cloud-run, cloud-functions, networking
-date_published: 2021-07-05
+date_published: 2022-01-10
 ---
 
 Julien Phalip | Solutions Architect | Google
@@ -14,7 +14,7 @@ It is common for third-party services to allow access over the Internet only fro
 If your application runs on Google Cloud serverless computing solutions like [Cloud Run](https://cloud.google.com/run)
 or [Cloud Functions](https://cloud.google.com/functions), by default the application gets a dynamic IP address when accessing the Internet, which prevents it from consistently accessing such third-party services. To guarantee the use of a static external IP address, you must use a [Serverless VPC Access Connector](https://cloud.google.com/vpc/docs/configure-serverless-vpc-access) combined with a [Cloud NAT](https://cloud.google.com/nat/) instance. This tutorial walks you through the steps to deploy this solution for Cloud Run and Cloud Functions.
 
-![Architecture diagram](serverless-static-ip.png)
+![Architecture diagram](https://storage.googleapis.com/gcp-community/tutorials/serverless-static-ip/serverless-static-ip.png)
 
 ## Objectives
 
