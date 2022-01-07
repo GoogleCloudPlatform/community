@@ -8,20 +8,22 @@ date_published: 2022-01-10
 
 Julien Phalip | Solutions Architect | Google
 
-_Contributed by a Google employee_
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-It is common for third-party services to allow access over the Internet only from known IP address or IP ranges.
-If your application runs on Google Cloud serverless computing solutions like [Cloud Run](https://cloud.google.com/run)
-or [Cloud Functions](https://cloud.google.com/functions), by default the application gets a dynamic IP address when accessing the Internet, which prevents it from consistently accessing such third-party services. To guarantee the use of a static external IP address, you must use a [Serverless VPC Access Connector](https://cloud.google.com/vpc/docs/configure-serverless-vpc-access) combined with a [Cloud NAT](https://cloud.google.com/nat/) instance. This tutorial walks you through the steps to deploy this solution for Cloud Run and Cloud Functions.
+It is common for third-party services to allow access over the internet only from known IP address or IP address ranges. If your application runs on
+Google Cloud serverless computing solutions like [Cloud Run](https://cloud.google.com/run) or [Cloud Functions](https://cloud.google.com/functions), by default 
+the application gets a dynamic IP address when accessing the internet, which prevents it from consistently accessing such third-party services. To guarantee the 
+use of a static external IP address, you must use a [Serverless VPC Access connector](https://cloud.google.com/vpc/docs/configure-serverless-vpc-access) combined
+with a [Cloud NAT](https://cloud.google.com/nat/) instance. This tutorial shows you how to deploy this solution for Cloud Run and Cloud Functions.
 
 ![Architecture diagram](https://storage.googleapis.com/gcp-community/tutorials/serverless-static-ip/serverless-static-ip.png)
 
 ## Objectives
 
-+   Deploy sample Cloud Run and Cloud Functions applications
-+   Create and configure a VPC Access Connector
-+   Create a public IP
-+   Deploy a Cloud NAT instance to channel Internet traffic through the public IP
++   Deploy sample Cloud Run and Cloud Functions applications.
++   Create and configure a Serverless VPC Access connector.
++   Create a public IP address.
++   Deploy a Cloud NAT instance to channel internet traffic through the public IP address.
 
 ## Costs
 
