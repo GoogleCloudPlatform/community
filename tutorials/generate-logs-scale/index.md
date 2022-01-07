@@ -29,7 +29,7 @@ environment. To install the Cloud SDK, see [Installing the Cloud SDK](https://cl
 
 - Create a GKE cluster and a Pub/Sub topic.
 - Create Docker containers for the application logic and for the Locust master and workers.
-- Create Service Accounts with permissions to deploy Docker containers from Cloud Build on GKE and to publish to Pub/Sub.
+- Create service accounts with permissions to deploy Docker containers from Cloud Build on GKE and to publish to Pub/Sub.
 - Deploy the containers to GKE.
 - Monitor GKE cluster and Pub/Sub topic utilization.
 
@@ -97,17 +97,17 @@ Run the following comands in the Cloud Console to set environment variables. Rep
     gcloud config set compute/zone $ZONE
     gcloud config set project $PROJECT_ID
 	
-## Create a Service Account with permissions to access Container Registry
+## Create a service account with permissions to access Container Registry
 
-Run the following commands to create a Service Account with permissions to read from Cloud Storage buckets, where Container 
+Run the following commands to create a service account with permissions to read from Cloud Storage buckets, where Container 
 Registry stores container images.
 
-    # Create Service Account.
+    # Create service account.
     SA_NAME=gke-node-service-account
     gcloud iam service-accounts create $SA_NAME \
         --display-name "user generated service account for GKE nodes"
         
-    # Add to the Service Account permissions to read from Cloud Storage.
+    # Add to the service account permissions to read from Cloud Storage.
     SA_FULL_NAME=$SA_NAME@$PROJECT_ID.iam.gserviceaccount.com
     gcloud projects add-iam-policy-binding $PROJECT_ID \
         --member serviceAccount:$SA_FULL_NAME \
@@ -116,7 +116,7 @@ Registry stores container images.
 ## Create a GKE cluster
 
 Run the following command to create a GKE cluster with 5 nodes of the machine type `n1-standard-4` with binding to the
-Service Account. The command enables autoscaling up to 10 nodes and Horizontal Pod Autoscaling.
+service account. The command enables autoscaling up to 10 nodes and Horizontal Pod Autoscaling.
 
     gcloud beta container clusters create \
         --project=$PROJECT_ID \
@@ -163,28 +163,28 @@ Run the commands below to set `PROJECT_ID` in the Kubernetes deployment files:
     sed -i -e "s/YOUR_PROJECT_ID/$PROJECT_ID/" kubernetes-config/locust-worker-controller.yaml 
     sed -i -e "s/YOUR_PROJECT_ID/$PROJECT_ID/" kubernetes-config/webapp-controller.yaml
 
-## Create a Service Account to be deployed in the Docker containers
+## Create a service account to be deployed in the Docker containers
 
-Run the commands below to create a Service Account and upload the Service Account key as a Kubernetes secret.
+Run the commands below to create a service account and upload the service account key as a Kubernetes secret.
 
-    # Create Service Account.
+    # Create service account.
     SA_NAME=publisher-service-account
     gcloud iam service-accounts create $SA_NAME \
         --display-name "service account for publishing to Pub/Sub"
         
-    # Add to the Service Account permissions to publish to Pub/Sub. 
+    # Add to the service account permissions to publish to Pub/Sub. 
     SA_FULL_NAME=$SA_NAME@$PROJECT_ID.iam.gserviceaccount.com
     gcloud projects add-iam-policy-binding $PROJECT_ID \
         --member serviceAccount:$SA_FULL_NAME \
         --role "roles/pubsub.publisher" 
     
-    # Create a Service Account key and a Kubernetes Secret.
+    # Create a service account key and a Kubernetes Secret.
     CRED_FILE=/tmp/creds/$SA_FULL_NAME
     gcloud iam service-accounts keys create $CRED_FILE \
         --iam-account=$SA_FULL_NAME --project=$PROJECT_ID
     kubectl create secret generic pubsub-key --from-file=key.json=$CRED_FILE
     
-    # Delete the Service Account key.
+    # Delete the service account key.
     rm $CRED_FILE
 
 ## Create deployments and sevices

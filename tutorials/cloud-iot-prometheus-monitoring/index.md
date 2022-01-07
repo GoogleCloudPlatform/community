@@ -155,12 +155,12 @@ grafana.ini:
         root_url: https://[project-id].appspot.com
 ```
 
-Install [Helm](https://github.com/kubernetes/helm) in your Cloud Shell. The instructions below assume that you are starting
+Install [Helm](https://helm.sh/docs/intro/install/) in your Cloud Shell instance. The instructions below assume that you are starting
 from this tutorial's root level: `$HOME/community/tutorials/cloud-iot-prometheus-monitoring`
 
 ```
-wget https://storage.googleapis.com/kubernetes-helm/helm-v2.12.0-linux-amd64.tar.gz
-tar -xzvf helm-v2.12.0-linux-amd64.tar.gz
+wget https://get.helm.sh/helm-v2.17.0-linux-amd64.tar.gz
+tar -xzvf helm-v2.17.0-linux-amd64.tar.gz
 mv linux-amd64/helm $HOME/bin/
 
 # Be sure you have the current cluster credentials
