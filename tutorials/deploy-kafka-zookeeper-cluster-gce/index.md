@@ -1,6 +1,6 @@
 ---
 title: Deploy Kafka Cluster With Zookeeper On Google Compute Engine
-description: Deploy a highly available Kafka cluster with Zookeeper Ensemble on Compute Engine using gcloud 
+description: Deploy a highly available Kafka cluster with Zookeeper Ensemble on Compute Engine using gcloud. 
 author: rk-cloudside
 tags: gcp, stream processing, self managed kafka, gce, zookeeper ensemble 
 date_published: 2022-01-07
