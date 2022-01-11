@@ -187,7 +187,7 @@ After successfully connecting to the cloud, you need to subscribe to the configu
 
 To publish telemetry to IoT Core, you use `iotc_publish`, which must include the topic name, message, and QoS in order to send the message.
 
-The code below sets up the topic from the device ID and event topic and then publishes the message. You can find this code in the `mqtt-example.c` file on
+The code below sets up the topic from the device ID and event topic and then publishes the message. You can find this code in the `getting-started.c` file inside the example folder on
 line 35.
 
 ```c
