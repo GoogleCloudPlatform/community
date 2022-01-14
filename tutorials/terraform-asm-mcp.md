@@ -52,9 +52,7 @@ Follow these steps to set up your environment.
         cd asm-terraform-tutorial
         export WORKDIR=$(pwd)
 
-1.  Define variables used in this tutorial. Replace the value of `PROJECT_ID` with your project ID. You can use the `ASM_CHANNEL` variable to set up Anthos
-    Service Mesh with Regular, Rapid, or Stable release channels. For more information, see
-    [Anthos Service Mesh control plane revisions](https://cloud.google.com/service-mesh/docs/revisions-overview).
+1.  Define variables used in this tutorial:
 
         export PROJECT_ID=PROJECT ID
         export REPO_URL="https://gitlab.com/asm7/asm-terraform"
@@ -73,6 +71,11 @@ Follow these steps to set up your environment.
         export CNI_ENABLED="true"
         export ASM_GATEWAYS_NAMESPACE="asm-gateways"
         
+    Replace the value of `PROJECT_ID` with your project ID.
+    
+    You can use the `ASM_CHANNEL` variable to set up Anthos Service Mesh with Regular, Rapid, or Stable release channels. For more information, see
+    [Anthos Service Mesh control plane revisions](https://cloud.google.com/service-mesh/docs/revisions-overview).
+    
     To support GKE Autopilot clusters, `CNI_ENABLED` must be `true`.
 
 1.  Configure your Google Cloud project:
@@ -105,11 +108,13 @@ Follow these steps to set up the VPC network and GKE clusters with Terraform.
         git checkout aa/tutorial
         cd tutorial
 
-1.  Prepare the VPC and GKE terraform modules. This step populates the variables and provider files with the variables defined at the beginning of the tutorial.
+1.  Prepare the VPC and GKE terraform modules:
 
         cd vpc-gke
         envsubst < variables.tf.tmpl > variables.tf
         envsubst < provider.tf.tmpl > provider.tf
+        
+    This step populates the variables and provider files with the variables defined at the beginning of the tutorial.
 
 1.  Deploy the VPC and GKE Terraform module:
 
@@ -167,7 +172,7 @@ Follow these steps to set up the VPC network and GKE clusters with Terraform.
 
 1.  Verify that the cluster endpoint in each of the generated kubeconfig files matches the value in the previous step:
 
-    *   GKE1
+    *   GKE1:
 
             cat ${WORKDIR}/gke1_kubeconfig
 
@@ -181,7 +186,7 @@ Follow these steps to set up the VPC network and GKE clusters with Terraform.
                 user: gke1
               name: gke1
 
-    *   GKE2
+    *   GKE2:
 
             cat ${WORKDIR}/gke2_kubeconfig
 
@@ -209,10 +214,11 @@ Follow these steps to set up Anthos Service Mesh.
         terraform plan && \
         terraform apply --auto-approve
 
+    This step may take a few minutes to complete.
+     
+    For more information, see [Fleets](https://cloud.google.com/anthos/multicluster-management/fleets).
 
-    See [Fleets](https://cloud.google.com/anthos/multicluster-management/fleets) for more information. This step may take a few minutes to complete.
-
-1.  Inspect the deployed resources using gcloud commands. 
+1.  Inspect the deployed resources using `gcloud` commands: 
 
         gcloud container hub memberships list
 
@@ -224,7 +230,8 @@ Follow these steps to set up Anthos Service Mesh.
         NAME: gke2
         EXTERNAL_ID: 84724e99-9acf-45cc-954c-a4db53c7ecf3
 
-    For more details on cluster registration see [Registering a cluster](https://cloud.google.com/anthos/multicluster-management/connect/registering-a-cluster#terraform).
+    For more details on cluster registration see
+    [Registering a cluster](https://cloud.google.com/anthos/multicluster-management/connect/registering-a-cluster#terraform).
 
 1.  Verify that Anthos Service Mesh is enabled:
 
@@ -252,14 +259,15 @@ Follow these steps to set up Anthos Service Mesh.
         spec: {}
         updateTime: '2021-11-17T05:27:02.350986468Z'
 
-1.  Verify that you have the ControlPlaneRevision CRD in both GKE clusters. The `ControlPlaneRevision` custom resource is used to deploy managed Anthos Service Mesh.
+1.  Verify that you have the `ControlPlaneRevision` custom resource definition (CRD) in both GKE clusters. The `ControlPlaneRevision` custom resource is used to
+    deploy managed Anthos Service Mesh.
 
-    * Verify GKE 1:
+    *   Verify GKE1:
 
             gcloud --project=${PROJECT_ID} container clusters get-credentials ${GKE1} --zone ${GKE1_LOCATION}
             kubectl  wait --for=condition=established crd controlplanerevisions.mesh.cloud.google.com --timeout=5m
 
-    * Verify GKE2:
+    *   Verify GKE2:
 
             gcloud --project=${PROJECT_ID} container clusters get-credentials ${GKE2} --zone ${GKE2_LOCATION}
             kubectl  wait --for=condition=established crd controlplanerevisions.mesh.cloud.google.com --timeout=5m
@@ -268,7 +276,7 @@ Follow these steps to set up Anthos Service Mesh.
 
         customresourcedefinition.apiextensions.k8s.io/controlplanerevisions.mesh.cloud.google.com condition met
 
-1.  Install Anthos Service Mesh on the GKE clusters. This module also configures multi-cluster mesh by configuring cross-cluster kubeconfig secrets.
+1.  Install Anthos Service Mesh on the GKE clusters:
 
         cd ${WORKDIR}/asm-terraform/tutorial/asm
         envsubst < variables.tf.tmpl > variables.tf
@@ -279,17 +287,21 @@ Follow these steps to set up Anthos Service Mesh.
         terraform apply --auto-approve
 
         export ASM_LABEL=$(terraform output asm_label | tr -d '"')
+        
+     This module also configures multi-cluster mesh by configuring cross-cluster kubeconfig secrets.
 
-1.  Ensure Anthos Service Mesh provisioning finishes successfully. This step can take a few minutes to complete.
-2.  
+1.  Ensure that Anthos Service Mesh provisioning finishes successfully:
+  
         kubectl --context=${GKE1_CTX} wait --for=condition=ProvisioningFinished controlplanerevision ${ASM_LABEL} -n istio-system --timeout=10m
         kubectl --context=${GKE2_CTX} wait --for=condition=ProvisioningFinished controlplanerevision ${ASM_LABEL} -n istio-system --timeout=10m
 
+    This step can take a few minutes to complete.
+     
     The output is similar to the following:
 
         controlplanerevision.mesh.cloud.google.com/asm-managed condition met
 
-1.  Inspect the deployed resources. The istio-system namespace should be present on both clusters.
+1.  Inspect the deployed resources:
 
         kubectl get ns --context=${GKE1_CTX}
         kubectl get ns --context=${GKE2_CTX}
@@ -303,7 +315,9 @@ Follow these steps to set up Anthos Service Mesh.
         kube-public       Active   23m
         kube-system       Active   23m
 
-1.  Inspect the status of the ControlPlaneRevision custom resource:
+    The `istio-system` namespace should be present on both clusters.
+
+1.  Inspect the status of the `ControlPlaneRevision` custom resource:
 
         kubectl describe controlplanerevision ${ASM_LABEL} -n istio-system --context=${GKE1_CTX}
         kubectl describe controlplanerevision ${ASM_LABEL} -n istio-system --context=${GKE2_CTX}
@@ -333,9 +347,11 @@ Follow these steps to set up Anthos Service Mesh.
             Status:                False
             Type:                  Stalled
 
-    This is a useful resource to observe when installing or upgrading Anthos Service Mesh. For more information, see [What is a revision](https://cloud.google.com/service-mesh/docs/revisions-overview#what_is_a_revision).
+    This is a useful resource to observe when installing or upgrading Anthos Service Mesh. For more information, see
+    [What is a revision](https://cloud.google.com/service-mesh/docs/revisions-overview#what_is_a_revision).
 
-1.  Inspect the cluster credentials for each cluster stored as opaque secrets in the istio-system namespace present in the other cluster. These are required for cross cluster service discovery.
+1.  Inspect the cluster credentials for each cluster stored as opaque secrets in the `istio-system` namespace present in the other cluster. These are required 
+    for cross-cluster service discovery:
 
         kubectl describe secret gke2-secret-kubeconfig -n istio-system --context=${GKE1_CTX}
         kubectl describe secret gke1-secret-kubeconfig -n istio-system --context=${GKE2_CTX}
@@ -367,7 +383,7 @@ Follow these steps to configure multi-cluster Anthos Service Mesh.
         terraform plan && \
         terraform apply --auto-approve
 
-1.  Confirm both Anthos Service Mesh ingress gateways are Running
+1.  Confirm that both Anthos Service Mesh ingress gateways are running:
 
         kubectl --context=${GKE1_CTX} -n ${ASM_GATEWAYS_NAMESPACE} wait --for=condition=available --timeout=5m deployment asm-ingressgateway
         kubectl --context=${GKE2_CTX} -n ${ASM_GATEWAYS_NAMESPACE} wait --for=condition=available --timeout=5m deployment asm-ingressgateway
@@ -376,22 +392,21 @@ Follow these steps to configure multi-cluster Anthos Service Mesh.
 
         deployment.apps/asm-ingressgateway condition met
 
-1. Inspect the deployment and service for Anthos Service Mesh ingress gateways on each cluster:
+1.  Inspect the deployment and service for Anthos Service Mesh ingress gateways on each cluster:
 
-    * Inspect GKE1:
+    *   Inspect GKE1:
 
             kubectl --context=${GKE1_CTX} -n ${ASM_GATEWAYS_NAMESPACE} get deploy
             kubectl --context=${GKE2_CTX} -n ${ASM_GATEWAYS_NAMESPACE} get deploy
 
         The output is similar to the following:
 
-
             NAME                 READY   UP-TO-DATE   AVAILABLE   AGE
             asm-ingressgateway   1/1     1            1           4m19s
 
-    * Inspect GKE2:
+    *   Inspect GKE2:
 
-- [ ] kubectl --context=${GKE1_CTX} -n ${ASM_GATEWAYS_NAMESPACE} get service
+            kubectl --context=${GKE1_CTX} -n ${ASM_GATEWAYS_NAMESPACE} get service
             kubectl --context=${GKE2_CTX} -n ${ASM_GATEWAYS_NAMESPACE} get service
 
         The output is similar to the following:
@@ -401,9 +416,10 @@ Follow these steps to configure multi-cluster Anthos Service Mesh.
 
 ## Deploy a sample application
 
-In this section you deploy a sample application ([Online Boutique](https://github.com/GoogleCloudPlatform/microservices-demo)) on both GKE1 and GKE2 to verify multi-cluster mesh.
+In this section, you deploy a sample application ([Online Boutique](https://github.com/GoogleCloudPlatform/microservices-demo)) on both GKE1 and GKE2 to verify 
+the multi-cluster mesh.
 
-1.  Create online-boutique namespace on both clusters:
+1.  Create the `online-boutique` namespace on both clusters:
 
         cat <<EOF > ${WORKDIR}/namespace-online-boutique.yaml
         apiVersion: v1
@@ -423,7 +439,7 @@ In this section you deploy a sample application ([Online Boutique](https://githu
         kubectl --context=${GKE1_CTX} -n online-boutique apply -f ${WORKDIR}/online-boutique/release/kubernetes-manifests.yaml
         kubectl --context=${GKE2_CTX} -n online-boutique apply -f ${WORKDIR}/online-boutique/release/kubernetes-manifests.yaml
 
-1.  Delete some deployments from each cluster to setup application architecture with services communicating transparently across clusters:
+1.  Delete some deployments from each cluster to set up the application architecture with services communicating transparently across clusters:
 
         kubectl --context=${GKE1_CTX} -n online-boutique delete deployment adservice
         kubectl --context=${GKE1_CTX} -n online-boutique delete deployment cartservice
@@ -437,7 +453,7 @@ In this section you deploy a sample application ([Online Boutique](https://githu
         kubectl --context=${GKE2_CTX} -n online-boutique delete deployment checkoutservice
         kubectl --context=${GKE2_CTX} -n online-boutique delete deployment recommendationservice
 
-1.  Wait for all deployments to be ready.
+1.  Wait for all deployments to be ready:
 
         kubectl --context=${GKE1_CTX} -n online-boutique wait --for=condition=available --timeout=5m --all deployments
         kubectl --context=${GKE2_CTX} -n online-boutique wait --for=condition=available --timeout=5m --all deployments
@@ -457,7 +473,7 @@ In this section you deploy a sample application ([Online Boutique](https://githu
         kubectl --context=${GKE1_CTX} -n online-boutique apply -f ${WORKDIR}/asm-terraform/tutorial/online-boutique/asm-manifests.yaml
         kubectl --context=${GKE2_CTX} -n online-boutique apply -f ${WORKDIR}/asm-terraform/tutorial/online-boutique/asm-manifests.yaml
 
-1.  Access Online Boutique via the Anthos Service Mesh ingress
+1.  Access Online Boutique through the Anthos Service Mesh ingress:
 
         export GKE1_ASM_INGRESS_IP=$(kubectl --context=${GKE1_CTX} --namespace ${ASM_GATEWAYS_NAMESPACE} get svc asm-ingressgateway -o jsonpath={.status.loadBalancer.ingress..ip})
         export GKE2_ASM_INGRESS_IP=$(kubectl --context=${GKE2_CTX} --namespace ${ASM_GATEWAYS_NAMESPACE} get svc asm-ingressgateway -o jsonpath={.status.loadBalancer.ingress..ip})
@@ -465,11 +481,13 @@ In this section you deploy a sample application ([Online Boutique](https://githu
         echo -e "GKE1 ASM Ingressgateway IP is ${GKE1_ASM_INGRESS_IP} accessible at http://${GKE1_ASM_INGRESS_IP}"
         echo -e "GKE2 ASM Ingressgateway IP is ${GKE2_ASM_INGRESS_IP} accessible at http://${GKE2_ASM_INGRESS_IP}"
 
-    Verify multicluster mesh service discovery and routing by accessing the Online Boutique application through the Anthos Service Mesh ingress gateways. You can access the application through either IP address. Browse through the application to observe behavior from each endpoint. Note that it should be the same. 
+    Verify multicluster mesh service discovery and routing by accessing the Online Boutique application through the Anthos Service Mesh ingress gateways.
+    You can access the application through either IP address. Browse through the application to observe behavior from each endpoint. The behavior should be the 
+    same. 
 
 ## Monitor application golden signals
 
-Inspect Service dashboards by accessing the link generated in the following command:
+Inspect service dashboards by accessing the link generated in the following command:
 
     echo -e "https://console.cloud.google.com/anthos/services?project=${PROJECT_ID}"
 
@@ -477,14 +495,7 @@ Explore the topology and metrics for services by switching to Topology view loca
 
 ## Clean up
 
-The easiest way to eliminate billing is to delete the project you created for the tutorial.
-
-**Caution**: Deleting a project has the following effects:
-
-* **Everything in the project is deleted**. If you used an existing project for this tutorial, when you delete it, you also delete any other work you've done in the project.
-* **Custom project IDs are lost**. When you created this project, you might have created a custom project ID that you want to use in the future. To preserve the URLs that use the project ID, such as an appspot.com URL, delete selected resources inside the project instead of deleting the whole project.
-
-If you plan to explore multiple tutorials and quickstarts, reusing projects can help you avoid exceeding project quota limits.
+The easiest way to prevent continued billing for the resources that you created for this tutorial is to delete the project you created for the tutorial.
 
 To delete a project, do the following:
 
