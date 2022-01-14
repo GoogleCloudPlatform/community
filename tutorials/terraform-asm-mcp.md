@@ -79,7 +79,7 @@ Follow these steps to set up your environment.
 
         gcloud config set project "${PROJECT_ID}"
         
-1.  Enable GCP APIs required for this tutorial:
+1.  Enable the Google Cloud APIs required for this tutorial:
 
         gcloud --project="${PROJECT_ID}" services enable \
             container.googleapis.com \
@@ -87,24 +87,25 @@ Follow these steps to set up your environment.
             gkehub.googleapis.com \
             cloudresourcemanager.googleapis.com
 
-## Set up VPC and GKE clusters with Terraform
+## Set up the VPC network and GKE clusters with Terraform
 
-Follow these steps to set up Terraform.
+Follow these steps to set up the VPC network and GKE clusters with Terraform.
 
 1.  Set up Terraform authentication:
 
         gcloud auth application-default login --no-launch-browser
 
-    For more information, see [Google Provider Configuration Reference](https://registry.terraform.io/providers/hashicorp/google/latest/docs/guides/provider_reference#authentication).
+    For more information, see
+    [Google Provider Configuration Reference](https://registry.terraform.io/providers/hashicorp/google/latest/docs/guides/provider_reference#authentication).
 
-1.  Clone the repo:
+1.  Clone the repository and go to the tutorial directory:
 
         git clone "${REPO_URL}" ${WORKDIR}/asm-terraform
         cd ${WORKDIR}/asm-terraform
         git checkout aa/tutorial
         cd tutorial
 
-1.  Prepare VPC and GKE terraform modules. This step populates the variables and provider files with the variables defined at the beginning of the tutorial.
+1.  Prepare the VPC and GKE terraform modules. This step populates the variables and provider files with the variables defined at the beginning of the tutorial.
 
         cd vpc-gke
         envsubst < variables.tf.tmpl > variables.tf
@@ -116,9 +117,10 @@ Follow these steps to set up Terraform.
         terraform plan && \
         terraform apply --auto-approve
 
-    The deployment can take up to 10 minutes to complete. This module also exports the kubeconfig using the gke_auth module for the two GKE clusters as local_file resources. These kubeconfig files are used in the Anthos Service Mesh module later.
+    The deployment can take up to 10 minutes to complete. This module also exports the kubeconfig using the `gke_auth` module for the two GKE clusters as 
+    local_file resources. These kubeconfig files are used in the Anthos Service Mesh module later.
 
-1.  Inspect the deployed resources using gcloud commands starting from the global VPC network called vpc:
+1.  Inspect the deployed resources using `gcloud` commands starting from the global VPC network called `vpc`:
 
         gcloud compute networks describe vpc
 
@@ -137,11 +139,11 @@ Follow these steps to set up Terraform.
         x_gcloud_bgp_routing_mode: GLOBAL
         x_gcloud_subnet_mode: CUSTOM
 
-1.  List GKE clusters GKE1 and GKE2:
+1.  List the GKE clusters:
 
         gcloud container clusters list
 
-    Take note of the `MASTER_IP` value for each. This is the cluster endpoint which you will need in the following Anthos Service Mesh module.
+    Take note of the `MASTER_IP` value for each. This is the cluster endpoint, which you will need in the following Anthos Service Mesh module.
     
     The output is similar to the following:
 
@@ -163,9 +165,9 @@ Follow these steps to set up Terraform.
         NUM_NODES: 2
         STATUS: RUNNING
 
-1.  Verify that the cluster endpoint in both the generated kubeconfig files match the values in the previous step:
+1.  Verify that the cluster endpoint in each of the generated kubeconfig files matches the value in the previous step:
 
-    * gke1
+    *   GKE1
 
             cat ${WORKDIR}/gke1_kubeconfig
 
@@ -179,12 +181,11 @@ Follow these steps to set up Terraform.
                 user: gke1
               name: gke1
 
-    * gke2
+    *   GKE2
 
             cat ${WORKDIR}/gke2_kubeconfig
 
         The output is similar to the following:
-
 
                 server: https://23.251.149.3
               name: gke2
@@ -193,7 +194,6 @@ Follow these steps to set up Terraform.
                 cluster: gke2
                 user: gke2
               name: gke2
-
 
 ## Set up Anthos Service Mesh
 
