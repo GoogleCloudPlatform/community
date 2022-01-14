@@ -11,17 +11,17 @@ Ali Zaidi | Solutions Architect | Google
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This tutorial shows you how to install managed Anthos Service Mesh with a Google-managed control plane on two Google Kubernetes Engine (GKE) clusters using the
-[Anthos Service Mesh Terraform submodule](https://gitlab.com/asm7/asm-terraform). This tutorial has been tested in [Google Cloud Shell](https://cloud.google.com/shell/docs/features). Cloud Shell has all the tools you need to perform the following steps.
+[Anthos Service Mesh Terraform submodule](https://gitlab.com/asm7/asm-terraform). This tutorial has been tested in
+[Google Cloud Shell](https://cloud.google.com/shell/docs/features). Cloud Shell has all the tools you need to perform the following steps.
 
 ## Objectives
 
 - Prepare Terraform.
-- Build a Virtual Private Cloud (VPC).
+- Build a Virtual Private Cloud (VPC) network.
 - Create two GKE clusters.
 - Install Anthos Service Mesh.
-- Deploy the [sample "Online Boutique" application](https://github.com/GoogleCloudPlatform/microservices-demo).
+- Deploy the [sample Online Boutique application](https://github.com/GoogleCloudPlatform/microservices-demo).
 - Monitor application golden signals.
-- Clean up.
 
 ## Costs
 
@@ -34,7 +34,7 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
 
 ## Before you begin
 
-This guide assumes you have owner IAM permissions for your Google project. In production, you do not require owner permission.
+This guide assumes that you have owner IAM permissions for your Google Cloud project. In production, you do not require owner permission.
 
 1.  [Select or create a Google Cloud project](https://console.cloud.google.com/projectselector2).
 
@@ -52,9 +52,9 @@ Follow these steps to set up your environment.
         cd asm-terraform-tutorial
         export WORKDIR=$(pwd)
 
-1.  Define variables used in this workshop. Replace the value of `PROJECT_ID` with your Project ID. You can use the `ASM_CHANNEL` variable to set up Anthos Service Mesh with Regular, Rapid or Stable release channels. For more information, see Anthos Service Mesh control plane revisions.
-
-    Note that to support GKE Autopilot clusters, `CNI_ENABLED` must be true in order.
+1.  Define variables used in this tutorial. Replace the value of `PROJECT_ID` with your project ID. You can use the `ASM_CHANNEL` variable to set up Anthos
+    Service Mesh with Regular, Rapid, or Stable release channels. For more information, see
+    [Anthos Service Mesh control plane revisions](https://cloud.google.com/service-mesh/docs/revisions-overview).
 
         export PROJECT_ID=PROJECT ID
         export REPO_URL="https://gitlab.com/asm7/asm-terraform"
@@ -72,6 +72,8 @@ Follow these steps to set up your environment.
         export ASM_CHANNEL="regular"
         export CNI_ENABLED="true"
         export ASM_GATEWAYS_NAMESPACE="asm-gateways"
+        
+    To support GKE Autopilot clusters, `CNI_ENABLED` must be `true`.
 
 1.  Configure your Google Cloud project:
 
