@@ -12,7 +12,7 @@ Ali Zaidi | Solutions Architect | Google
 
 This tutorial shows you how to install managed Anthos Service Mesh with a Google-managed control plane on two Google Kubernetes Engine (GKE) clusters using the
 [Anthos Service Mesh Terraform submodule](https://gitlab.com/asm7/asm-terraform). This tutorial has been tested in
-[Google Cloud Shell](https://cloud.google.com/shell/docs/features). Cloud Shell has all the tools you need to perform the following steps.
+[Google Cloud Shell](https://cloud.google.com/shell/docs/features). Cloud Shell has all of the tools that you need to perform the following steps.
 
 ## Objectives
 
