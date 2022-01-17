@@ -15,7 +15,7 @@ Anna Muscarella | Strategic Cloud Engineer | Google
 This tutorial demonstrates how to deploy Grafana serverless and restrict access to the dashboard. This tutorial is for developers, DevOps engineers, and anyone
 interested in deploying applications serverless or restricting access to them.
 
-Tou use this tutorial, you need basic knowledge of Google Cloud, Grafana, and Terraform, and you need to own a domain and be able to modify its A record.
+To use this tutorial, you need basic knowledge of Google Cloud, Grafana, and Terraform, and you need to own a domain and be able to modify its A record.
 
 ![Serverless Grafana architecture](https://storage.googleapis.com/gcp-community/tutorials/serverless-grafana-with-iap/grafana-iap-architecture.png)
 
@@ -37,11 +37,16 @@ This tutorial uses billable components of Google Cloud, including the following:
 
 Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage.
 
-## What happens behind the scenes
+## How the code for this tutorial works
 
-First, all [required APIs are enabled by the Terraform script](./code/main.tf#L10), e.g. IAM, Cloud Run, Compute, IAP, SQL. This is necessary to allow the usage of those API during the deployment in your project.
+First, required APIs (including IAM, Cloud Run, Compute Engine, Identity-Aware Proxy, and Cloud SQL) are enabled by the Terraform script. For
+details, see [the Terraform script](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/serverless-grafana-with-iap/code/main.tf#L18).
+Enabling the APIs is necessary to allow the usage of the APIs during the deployment in your project.
 
-Grafana requires a database for storing users, roles, datasources and dashboards. Therefore, [a CloudSQL instance is created](./code/cloudsql.tf#L48). The password for the database user is placed in Secret Manager, for secured access. We decided to use a MySQL micro instance, since only a small amount of data stored in MySQL.
+Grafana requires a database for storing users, roles, datasources and dashboards. Therefore, a Terraform script creates a Cloud SQL instance. 
+For details, see [the Terraform script](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/serverless-grafana-with-iap/code/cloudsql.tf#L48).
+The password for the database user is placed in Secret Manager for secured access. This tutorial usse a MySQL micro instance because only a small amount of data 
+is stored in MySQL.
 
 Then, the [Cloud Run container is deployed](./code/main.tf#L28) using the GCR mirror of the Grafana container image and started. The script also [passes required environment variables to the container](./code/main.tf#L134), such as information about the database connection, and auth proxy. 
 
@@ -52,12 +57,13 @@ To access your Grafana dashboard, Cloud Load Balancer is configured to service H
 
 ### Before you begin
 
-You should have a Google Cloud Platform account and project setup, billing configured for your project, and Terraform installed and enabled.
+To complete this tutorial, you need a Google Cloud account, a Google Cloud project with billig enabled, and Terraform installed and enabled.
+
   1. [Create or select a Google Cloud project.](https://console.cloud.google.com/project)
   1. [Enable billing for your project.](https://support.google.com/cloud/answer/6293499#enable-billing)
-  1. Choose a region to host your project in, ideally one that’s close to you. You can find an overview of available regions [here](https://cloud.google.com/compute/docs/regions-zones).
-  1. Make sure you know the domain name where you want to host your Grafana dashboard and are able to edit the A record for this domain.
-
+  1. Choose a region to host your project in, ideally one that’s close to you. For information about available regions, see
+     [Regions and zones](https://cloud.google.com/compute/docs/regions-zones).
+  1. Make sure that you know the domain name where you will host your Grafana dashboard and are able to edit the A record for this domain.
 
 ### Configure the OAuth consent screen
 
