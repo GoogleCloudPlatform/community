@@ -3,7 +3,7 @@ title: How to deploy Grafana on Cloud Run with IAP using Terraform
 description: Learn how to deploy Grafana serverless and restrict access to the dashboard.
 author: cgrotz,annamuscarella
 tags: serverless, identity, proxy, sql
-date_published: 2022-1-19
+date_published: 2022-01-19
 ---
 
 Christoph Grotz | Strategic Cloud Engineer | Google
