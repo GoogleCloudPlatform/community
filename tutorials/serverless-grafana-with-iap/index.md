@@ -1,9 +1,9 @@
 ---
 title: How to deploy Grafana on Cloud Run with IAP using Terraform
-description: In this tutorial, we'll be demonstrating how to deploy Grafana serverless and restrict access to the dashboard.
+description: Learn how to deploy Grafana serverless and restrict access to the dashboard.
 author: cgrotz,annamuscarella
 tags: serverless, identity, proxy, sql
-date_published: 2021-11-28
+date_published: 2022-1-19
 ---
 
 Christoph Grotz | Strategic Cloud Engineer | Google
@@ -12,26 +12,25 @@ Anna Muscarella | Strategic Cloud Engineer | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-In this tutorial, we'll be demonstrating how to deploy Grafana serverless and restrict access to the dashboard. If you're a developer, DevOps engineer, or simply interested in deploying applications serverless or restricting access to it, read on.
+This tutorial demonstrates how to deploy Grafana serverless and restrict access to the dashboard. This tutorial is for developers, DevOps engineers, and anyone
+interested in deploying applications serverless or restricting access to them.
 
-You should have basic knowledge of Google Cloud Platform, Grafana and Terraform, own a domain, and can modify its A record.
+Tou use this tutorial, you need basic knowledge of Google Cloud, Grafana, and Terraform, and you need to own a domain and be able to modify its A record.
 
-![Serverless Grafana architecture](./grafana-iap-architecture.png)
-
+![Serverless Grafana architecture](https://storage.googleapis.com/gcp-community/tutorials/serverless-grafana-with-iap/grafana-iap-architecture.png)
 
 ## Objectives
 
-By the end of this tutorial, you'll have information to:
-
-  * Run the Terraform script to deploy Grafana on Cloud Run with CloudSQL as database and Identity Aware Proxy setup.
+  * Run the Terraform script to deploy Grafana on Cloud Run with Cloud SQL as database and Identity-Aware Proxy setup.
   * Create a new user for accessing the dashboard.
-  * Explore and test the capabilities of Identity Aware Proxy (IAP) to restrict access to your Grafana dashboard.
+  * Explore and test the capabilities of Identity-Aware Proxy to restrict access to your Grafana dashboard.
 
 ## Costs
 
-We'll be using billable components of Google Cloud, including the following:
+This tutorial uses billable components of Google Cloud, including the following:
+
   * [Cloud Run](https://cloud.google.com/run)
-  * [CloudSQL](https://cloud.google.com/sql)
+  * [Cloud SQL](https://cloud.google.com/sql)
   * [Cloud Load Balancer](https://cloud.google.com/load-balancing)
   * [Identity-Aware Proxy](https://cloud.google.com/iap)
   * [Secret Manager](https://cloud.google.com/secret-manager)
@@ -65,10 +64,10 @@ You should have a Google Cloud Platform account and project setup, billing confi
 Configure an OAuth consent screen for Identity-Aware Proxy. 
   1. Go to GCP Console > Security > Identity-Aware Proxy. If necessary, enable the Identity-Aware proxy when the console requests it.
   2. If you didn’t configure a consent screen before, there will be a red warning message prompting you to configure one. 
-  ![Consent missing error message](./iap-consent-not-configured.png)
+  ![Consent missing error message](https://storage.googleapis.com/gcp-community/tutorials/serverless-grafana-with-iap/iap-consent-not-configured.png)
   Select internal users, this allows only users that are part of your Cloud Identity organisation to use Grafana, but requires you to have a Cloud Identity organisation. If you want to enable IAP with external identities, you will have to use [GCP Identity Platform](https://cloud.google.com/identity-platform) which we don't cover in this tutorial. 
   3. Click Configure Consent Screen, choose User Type Internal. Add a name and support email addresses and click Create.
-  ![Configure consent](./iap-configure-oauth.png)
+  ![Configure consent](https://storage.googleapis.com/gcp-community/tutorials/serverless-grafana-with-iap/iap-configure-oauth.png)
   4. Click Save and Continue within the Scopes step
   5. Enter the app name and user support email, then click **Save** and continue until the process is complete.
 
@@ -122,7 +121,7 @@ Open a new [incognito browser window](https://support.google.com/chrome/answer/9
 ## Conclusion
 Congratulations, you now have a serverless deployment of Grafana up and running, connected with Google Cloud Monitoring and secured using Google's Identity-Aware Proxy. You can now access and login to Grafana using your browser and accessing your domain. There should already be a dashboard available monitoring GCLB for you. This provides you with reduced worries around properly hosting your Grafana dashboards, while also providing a very low cost solution to hosting Grafana. Please keep in mind that should you want to use the alerts feature from Grafana you should consider keeping some [CPU allocated](https://cloud.google.com/run/docs/configuring/cpu-allocation), otherwise alerts might not be triggered. 
 
-![Grafana dashboard screenshot](./grafana-dashboard-screenshot.png)
+![Grafana dashboard screenshot](https://storage.googleapis.com/gcp-community/tutorials/serverless-grafana-with-iap/grafana-dashboard-screenshot.png)
 
 ## Cleaning up
 
