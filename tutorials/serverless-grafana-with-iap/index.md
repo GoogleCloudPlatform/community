@@ -77,24 +77,35 @@ For more information, see [Securing your app with signed headers](https://cloud.
 
 To complete this tutorial, you need a Google Cloud account, a Google Cloud project with billing enabled, and Terraform installed and enabled.
 
-  1. [Create or select a Google Cloud project.](https://console.cloud.google.com/project)
-  1. [Enable billing for your project.](https://support.google.com/cloud/answer/6293499#enable-billing)
-  1. Choose a region to host your project in, ideally one that’s close to you. For information about available regions, see
-     [Regions and zones](https://cloud.google.com/compute/docs/regions-zones).
-  1. Make sure that you know the domain name where you will host your Grafana dashboard and are able to edit the A record for this domain.
+1.  [Create or select a Google Cloud project.](https://console.cloud.google.com/project)
+1.  [Enable billing for your project.](https://support.google.com/cloud/answer/6293499#enable-billing)
+1.  Choose a region to host your project in, ideally one that’s close to you. For information about available regions, see
+    [Regions and zones](https://cloud.google.com/compute/docs/regions-zones).
+1.  Make sure that you know the domain name where you will host your Grafana dashboard and are able to edit the A record for this domain.
 
 ## Configure the OAuth consent screen
 
 In this section, you configure an OAuth [consent screen](https://developers.google.com/workspace/guides/configure-oauth-consent) for Identity-Aware Proxy. 
 
-  1. Go to the [Identity-Aware Proxy page](https://console.cloud.google.com/security/iap) in the Cloud Console. If necessary, enable the Identity-Aware proxy when the console requests it.
-  2. If you didn’t configure a consent screen before, there will be a red warning message prompting you to configure one. 
-  ![Consent missing error message](https://storage.googleapis.com/gcp-community/tutorials/serverless-grafana-with-iap/iap-consent-not-configured.png)
-  Select internal users, this allows only users that are part of your Cloud Identity organisation to use Grafana, but requires you to have a Cloud Identity organisation. If you want to enable IAP with external identities, you will have to use [GCP Identity Platform](https://cloud.google.com/identity-platform) which we don't cover in this tutorial. 
-  3. Click Configure Consent Screen, choose User Type Internal. Add a name and support email addresses and click Create.
-  ![Configure consent](https://storage.googleapis.com/gcp-community/tutorials/serverless-grafana-with-iap/iap-configure-oauth.png)
-  4. Click Save and Continue within the Scopes step
-  5. Enter the app name and user support email, then click **Save** and continue until the process is complete.
+1.  Go to the [Identity-Aware Proxy page](https://console.cloud.google.com/security/iap) in the Cloud Console.
+
+    If you are prompted to enable the IAP API, then do so.
+
+    If you haven't already configured a consent screen, then you are prompted to do so:
+ 
+    ![Consent missing error message](https://storage.googleapis.com/gcp-community/tutorials/serverless-grafana-with-iap/iap-consent-not-configured.png)
+    
+1.  Click the **Configure Consent Screen** button, choose **Internal** under **User type**, and click **Create**.
+
+    You select **Internal** to allow only users that are part of your Cloud Identity organization to use Grafana. This option requires you to have a Cloud 
+    Identity organization. If you want to enable IAP with external identities, you need to use
+    [Google Cloud Identity Platform](https://cloud.google.com/identity-platform), which is not covered in this tutorial.
+ 
+1.  Click **Save and continue** within the **Scopes** step
+
+1.  Enter the app name and user support email, and then click **Save and continue** until the process is complete.
+
+### Troubleshooting
 
 If you see the following error message while deploying, this means you have not configured the consent screen for your Google Cloud project.
 
@@ -107,57 +118,87 @@ If you see the following error message while deploying, this means you have not 
 
 ## Set up your environment
 
-Next, you’re going to set up the environment in order for the project to deploy.
-  1. [Open a new Cloud Shell session.](https://console.cloud.google.com/?cloudshell=true)
-  1. *Run* `git clone https://github.com/GoogleCloudPlatform/community.git` to download the sources to your cloud shell.
-  1. `cd ./community/tutorials/serverless-grafana-with-iap/code` change directory to the *code* folder.
-  1. *Set* required environment variables. Replace [YOUR_DOMAIN] with the domain on which you want to host your Grafana dashboard.
-  ```
-  export TF_VAR_project_id=$GOOGLE_CLOUD_PROJECT
-  export TF_VAR_domain=[YOUR_DOMAIN]
-  ```
-  1. *Run* `terraform init`
+In this section, you set up the environment in order for the project to deploy.
 
+1.  [Open a new Cloud Shell session.](https://console.cloud.google.com/?cloudshell=true)
+1.  Download the source code for this tutorial:
+
+        git clone https://github.com/GoogleCloudPlatform/community.git
+        
+1.  Go to the `code` folder:
+
+        cd ./community/tutorials/serverless-grafana-with-iap/code
+
+1.  Set the required environment variables:
+
+        export TF_VAR_project_id=$GOOGLE_CLOUD_PROJECT
+        export TF_VAR_domain=[YOUR_DOMAIN]
+
+     Replace `[YOUR_DOMAIN]` with the domain on which to host your Grafana dashboard.
+     
+1.  Initialize Terraform:
+
+        terraform init`
 
 ## Run the Terraform script to create your Grafana dashboard
 
-  1. *Run* `terraform plan` and confirm that all steps are correct.
-  2. *Run* `terraform apply`.
-  3. Confirm the command has been executed successfully. You should see the IP address of your Load Balancer printed in the console as in the example output below. This may take up to 15 min. 
-  ```
-  module.lb-http.google_compute_global_forwarding_rule.https[0]: Creation complete after 11s [id=projects/[YOUR_PROJECT_ID]/global/forwardingRules/tf-cr-lb-https]
+1.  Create an execution plan and verify all of the steps:
 
-  Apply complete! Resources: 8 added, 0 changed, 0 destroyed.
+        terraform plan
 
-  Outputs:
+1.  Apply the changes:
 
-  external_ip = "[YOUR_EXTERNAL_IP]"
-  ```
-  4. *Copy* the external_ip from the console outputs. 
-  5. *Add* an A record from your domain to this IP address. If you are managing your domain through GCP, you can do this step in Cloud DNS. If not, an A record can be set through your domain registrar.
-  6. Wait around 5 - 10 minutes for GCP Load Balancer to perform certificate checks.
+        terraform apply
+        
+    The deployment may take up to 15 minutes.
+
+1.  Confirm that the deployment has been executed successfully.
+
+    You should see the IP address of your load balancer printed in the console as in this example:
+    
+        module.lb-http.google_compute_global_forwarding_rule.https[0]: Creation complete after 11s [id=projects/[YOUR_PROJECT_ID]/global/forwardingRules/tf-cr-lb-https]
+
+        Apply complete! Resources: 8 added, 0 changed, 0 destroyed.
+
+        Outputs:
+
+        external_ip = "[YOUR_EXTERNAL_IP]"
+  
+1.  Copy the value of `external_ip`.
+
+1.  Add an A record from your domain to this IP address.
+
+    If you are managing your domain through Google Cloud, then you can do this step in Cloud DNS. If not, an A record can be set through your domain registrar.
+    
+1.  Wait 10 minutes for Google Cloud Load Balancer to perform certificate checks.
 
 ## Access your Grafana Dashboard
 
-To grant users access to your Grafana instance, you need to grant them the role "IAP-Secured Web App User" for the resource. You can do this with the following gcloud command. You should do this for your user account.
+To grant users access to your Grafana instance, you need to grant them the role **IAP-Secured Web App User** for the resource.
 
-```
-gcloud iap web add-iam-policy-binding \
-            --resource-type=backend-services \
-            --member='user:<your_user_email>' \
-            --service='tf-cr-lb-backend-default' \
-            --role='roles/iap.httpsResourceAccessor'
-```
+Grant your user account the necessary role with the following command:
 
-Afterwards you can open Grafana by visiting [YOUR_DOMAIN] from the browser. Since the database is automatically provisioned your user will only have Viewer permissions in Grafana. If you want to elevate your user to an Admin, you will need to access the MySQL instance and modify the user table entry for your user.
+    gcloud iap web add-iam-policy-binding \
+      --resource-type=backend-services \
+      --member='user:[YOUR_USER_ACCOUNT_EMAIL_ADDRESS]' \
+      --service='tf-cr-lb-backend-default' \
+      --role='roles/iap.httpsResourceAccessor'
 
-## Test Access your Grafana Dashboard
+YOu can open Grafana by visiting `[YOUR_DOMAIN]` from the browser. Because the database is automatically provisioned, your user will only have **Viewer**
+permissions in Grafana. If you want to elevate your user to an Admin, you need to access the MySQL instance and modify the user table entry for your user.
 
-Open a new [incognito browser window](https://support.google.com/chrome/answer/95464?hl=en&co=GENIE.Platform%3DDesktop) and visit [YOUR_DOMAIN]. You will be forwarded to your configured OAuth consent screen. After login in, you should also have access to Grafana.
+## Test access your Grafana dashboard
+
+Open a new [Incognito browser window](https://support.google.com/chrome/answer/95464) and visit `[YOUR_DOMAIN]`. You will be forwarded to your configured OAuth
+consent screen. After you log in, you should also have access to Grafana.
 
 ## Conclusion
 
-Congratulations, you now have a serverless deployment of Grafana up and running, connected with Google Cloud Monitoring and secured using Google's Identity-Aware Proxy. You can now access and login to Grafana using your browser and accessing your domain. There should already be a dashboard available monitoring GCLB for you. This provides you with reduced worries around properly hosting your Grafana dashboards, while also providing a very low cost solution to hosting Grafana. Please keep in mind that should you want to use the alerts feature from Grafana you should consider keeping some [CPU allocated](https://cloud.google.com/run/docs/configuring/cpu-allocation), otherwise alerts might not be triggered. 
+You now have a serverless deployment of Grafana up and running, connected with Google Cloud Monitoring and secured using Identity-Aware Proxy. You can now access
+and log in to Grafana using your browser and accessing your domain. There should already be a dashboard available monitoring Google Cloud Load Balancing for you.
+This provides you with reduced worries around properly hosting your Grafana dashboards, while also providing a very low cost solution to hosting Grafana. If you
+want to use the alerts feature from Grafana, consider keeping some [CPU allocated](https://cloud.google.com/run/docs/configuring/cpu-allocation); otherwise 
+alerts might not be triggered. 
 
 ![Grafana dashboard screenshot](https://storage.googleapis.com/gcp-community/tutorials/serverless-grafana-with-iap/grafana-dashboard-screenshot.png)
 
