@@ -73,7 +73,7 @@ secret are passed to the Load Balancer configuration. IAP provides headers conta
 For more information, see [Securing your app with signed headers](https://cloud.google.com/iap/docs/signed-headers-howto). Grafana provides the
 [functionality](https://grafana.com/docs/grafana/latest/auth/auth-proxy/) to receive such header information for authentication. 
 
-### Before you begin
+## Before you begin
 
 To complete this tutorial, you need a Google Cloud account, a Google Cloud project with billing enabled, and Terraform installed and enabled.
 
@@ -83,10 +83,11 @@ To complete this tutorial, you need a Google Cloud account, a Google Cloud proje
      [Regions and zones](https://cloud.google.com/compute/docs/regions-zones).
   1. Make sure that you know the domain name where you will host your Grafana dashboard and are able to edit the A record for this domain.
 
-### Configure the OAuth consent screen
+## Configure the OAuth consent screen
 
-Configure an OAuth consent screen for Identity-Aware Proxy. 
-  1. Go to GCP Console > Security > Identity-Aware Proxy. If necessary, enable the Identity-Aware proxy when the console requests it.
+In this section, you configure an OAuth [consent screen](https://developers.google.com/workspace/guides/configure-oauth-consent) for Identity-Aware Proxy. 
+
+  1. Go to the [Identity-Aware Proxy page](https://console.cloud.google.com/security/iap) in the Cloud Console. If necessary, enable the Identity-Aware proxy when the console requests it.
   2. If you didn’t configure a consent screen before, there will be a red warning message prompting you to configure one. 
   ![Consent missing error message](https://storage.googleapis.com/gcp-community/tutorials/serverless-grafana-with-iap/iap-consent-not-configured.png)
   Select internal users, this allows only users that are part of your Cloud Identity organisation to use Grafana, but requires you to have a Cloud Identity organisation. If you want to enable IAP with external identities, you will have to use [GCP Identity Platform](https://cloud.google.com/identity-platform) which we don't cover in this tutorial. 
@@ -95,8 +96,16 @@ Configure an OAuth consent screen for Identity-Aware Proxy.
   4. Click Save and Continue within the Scopes step
   5. Enter the app name and user support email, then click **Save** and continue until the process is complete.
 
+If you see the following error message while deploying, this means you have not configured the consent screen for your Google Cloud project.
 
-### Set up your Environment
+    Error: Error creating Client: googleapi: Error 404: Requested entity was not found.
+    │ 
+    │   with google_iap_client.project_client,
+    │   on lb.tf line 79, in resource "google_iap_client" "project_client":
+    │   79: resource "google_iap_client" "project_client" {
+    │ 
+
+## Set up your environment
 
 Next, you’re going to set up the environment in order for the project to deploy.
   1. [Open a new Cloud Shell session.](https://console.cloud.google.com/?cloudshell=true)
@@ -110,7 +119,7 @@ Next, you’re going to set up the environment in order for the project to deplo
   1. *Run* `terraform init`
 
 
-### Execute the Terraform script to create your Grafana Dashboard
+## Run the Terraform script to create your Grafana dashboard
 
   1. *Run* `terraform plan` and confirm that all steps are correct.
   2. *Run* `terraform apply`.
@@ -128,8 +137,10 @@ Next, you’re going to set up the environment in order for the project to deplo
   5. *Add* an A record from your domain to this IP address. If you are managing your domain through GCP, you can do this step in Cloud DNS. If not, an A record can be set through your domain registrar.
   6. Wait around 5 - 10 minutes for GCP Load Balancer to perform certificate checks.
 
-### Access your Grafana Dashboard
-In order to grant users access to your Grafana instance, you need to grant them the role "IAP-Secured Web App User" for the resource. You can do this with the following gcloud command. You should do this for your user account.
+## Access your Grafana Dashboard
+
+To grant users access to your Grafana instance, you need to grant them the role "IAP-Secured Web App User" for the resource. You can do this with the following gcloud command. You should do this for your user account.
+
 ```
 gcloud iap web add-iam-policy-binding \
             --resource-type=backend-services \
@@ -137,52 +148,30 @@ gcloud iap web add-iam-policy-binding \
             --service='tf-cr-lb-backend-default' \
             --role='roles/iap.httpsResourceAccessor'
 ```
+
 Afterwards you can open Grafana by visiting [YOUR_DOMAIN] from the browser. Since the database is automatically provisioned your user will only have Viewer permissions in Grafana. If you want to elevate your user to an Admin, you will need to access the MySQL instance and modify the user table entry for your user.
 
-### Test Access your Grafana Dashboard
+## Test Access your Grafana Dashboard
+
 Open a new [incognito browser window](https://support.google.com/chrome/answer/95464?hl=en&co=GENIE.Platform%3DDesktop) and visit [YOUR_DOMAIN]. You will be forwarded to your configured OAuth consent screen. After login in, you should also have access to Grafana.
 
 ## Conclusion
+
 Congratulations, you now have a serverless deployment of Grafana up and running, connected with Google Cloud Monitoring and secured using Google's Identity-Aware Proxy. You can now access and login to Grafana using your browser and accessing your domain. There should already be a dashboard available monitoring GCLB for you. This provides you with reduced worries around properly hosting your Grafana dashboards, while also providing a very low cost solution to hosting Grafana. Please keep in mind that should you want to use the alerts feature from Grafana you should consider keeping some [CPU allocated](https://cloud.google.com/run/docs/configuring/cpu-allocation), otherwise alerts might not be triggered. 
 
 ![Grafana dashboard screenshot](https://storage.googleapis.com/gcp-community/tutorials/serverless-grafana-with-iap/grafana-dashboard-screenshot.png)
 
 ## Cleaning up
 
-To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete most resources used with Terraform.
+To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can use Terraform to delete most of the resources. If you 
+created a new project for deploying the resources, you can also delete the entire project.
 
-Alternatively, if you created a new peoject for deploying the resources, you may also delete the whole project.
+To delete resources using Terraform, run the following command:
 
-Deleting a project has the following consequences:
+    terraform destroy
 
-- If you used an existing project, you'll also delete any other work that you've done in the project.
-- You can't reuse the project ID of a deleted project. If you created a custom project ID that you plan to use in the
-  future, delete the resources inside the project instead. This ensures that URLs that use the project ID, such as
-  an `appspot.com` URL, remain available.
-- If you want to avoid further cost, it's a good idea to delete the resources in the project before deleting the project
-
-To delete a project, do the following:
+To delete the project, do the following:
 
 1.  In the Cloud Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
-2.  In the project list, select the project you want to delete and click **Delete**.
-3.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
-
-
-To delete resources only, do the following:
-
-1. *Execute* `terraform destroy` to delete the remaining resources. 
-
-
-
-## Troubleshooting
-
-If you see the following error message while deploying, this means you have not configured the Consent Screen for your GCP project.
-
-```
-Error: Error creating Client: googleapi: Error 404: Requested entity was not found.
-│ 
-│   with google_iap_client.project_client,
-│   on lb.tf line 79, in resource "google_iap_client" "project_client":
-│   79: resource "google_iap_client" "project_client" {
-│ 
-```
+1.  In the project list, select the project you want to delete and click **Delete**.
+1.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
