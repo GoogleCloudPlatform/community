@@ -21,7 +21,7 @@ To use this tutorial, you need basic knowledge of Google Cloud, Grafana, and Ter
 
 ## Objectives
 
-  * Run the Terraform script to deploy Grafana on Cloud Run with Cloud SQL as database and Identity-Aware Proxy (IAP) setup.
+  * Run the Terraform script to deploy Grafana on Cloud Run with Cloud SQL as the database and Identity-Aware Proxy (IAP).
   * Create a new user for accessing the dashboard.
   * Explore and test the capabilities of Identity-Aware Proxy to restrict access to your Grafana dashboard.
 
@@ -47,7 +47,7 @@ Enabling the APIs is necessary to allow the usage of the APIs during the deploym
 Grafana requires a database for storing users, roles, data sources, and dashboards. Therefore, a Terraform script creates a Cloud SQL instance. 
 For details, see the
 [`cloudsql.tf` Terraform script](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/serverless-grafana-with-iap/code/cloudsql.tf#L48).
-The password for the database user is placed in Secret Manager for secured access. This tutorial usse a MySQL micro instance because only a small amount of data 
+The password for the database user is placed in Secret Manager for secured access. This tutorial uses a MySQL micro instance because only a small amount of data 
 is stored in MySQL.
 
 The Cloud Run container is deployed using the Google Container Registry mirror of the Grafana container image and started. For details, see the
@@ -57,19 +57,19 @@ The script also
 such as information about the database connection and auth proxy. 
 
 To make sure that your Grafana dashboard is useful, a datasource for Cloud Monitoring is provisioned. This tutorial uses the
-[Grafanas provisioning mechanism](https://grafana.com/docs/grafana/latest/administration/provisioning/) for that, which discovers data sources and dashboards 
-from the disk. Because Cloud Run instances don't have persistent volumes, you can't just place the data source and dashboard file into the filesystem. As a 
+[Grafana provisioning mechanism](https://grafana.com/docs/grafana/latest/administration/provisioning/), which discovers data sources and dashboards 
+from the disk. Because Cloud Run instances don't have persistent volumes, you can't just place the data source and dashboard file into the file system. As a 
 workaround, the file is added as a secret to Secret Manager and then mounted to the required location so Grafana can pick up the data source correctly. For 
 details, see the
 [`main.tf` Terraform script](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/serverless-grafana-with-iap/code/main.tf#L187).
-With this, you have mock data in your dashboard. An alternative could be to use
-[Cloud Storage FUSE](https://cloud.google.com/run/docs/tutorials/network-filesystems-fuse), which allows you to mount a Cloud Storage bucket into the filesystem,
-but this requires modifying the Docker image.
+With this, you have mock data in your dashboard. An alternative is to use
+[Cloud Storage FUSE](https://cloud.google.com/run/docs/tutorials/network-filesystems-fuse), which allows you to mount a Cloud Storage bucket into the file 
+system, but this requires modifying the Docker image.
 
 To access your Grafana dashboard, Cloud Load Balancer is configured to service HTTPS traffic from Cloud Run using a serverless network endpoint group (NEG) as  a 
 backend service. Identity-Aware Proxy (IAP) is integrated with the Load Balancer backend service, as shown in the
 [`lb.tf` Terraform script](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/serverless-grafana-with-iap/code/lb.tf#L50). The client ID and
-secret are passed to the Load Balancer configuration. IAP provides headers containing the authorization information to applications secured with it
+secret are passed to the Load Balancer configuration. IAP provides headers containing the authorization information to applications secured with it.
 For more information, see [Securing your app with signed headers](https://cloud.google.com/iap/docs/signed-headers-howto). Grafana provides the
 [functionality](https://grafana.com/docs/grafana/latest/auth/auth-proxy/) to receive such header information for authentication. 
 
@@ -81,7 +81,7 @@ To complete this tutorial, you need a Google Cloud account, a Google Cloud proje
 1.  [Enable billing for your project.](https://support.google.com/cloud/answer/6293499#enable-billing)
 1.  Choose a region to host your project in, ideally one that’s close to you. For information about available regions, see
     [Regions and zones](https://cloud.google.com/compute/docs/regions-zones).
-1.  Make sure that you know the domain name where you will host your Grafana dashboard and are able to edit the A record for this domain.
+1.  Make sure that you know the domain name where you will host your Grafana dashboard, and make sure that you are able to edit the A record for this domain.
 
 ## Configure the OAuth consent screen
 
@@ -103,11 +103,11 @@ In this section, you configure an OAuth [consent screen](https://developers.goog
  
 1.  Click **Save and continue** within the **Scopes** step
 
-1.  Enter the app name and user support email, and then click **Save and continue** until the process is complete.
+1.  Enter the app name and user support email address, and then click **Save and continue** until the process is complete.
 
 ### Troubleshooting
 
-If you see the following error message while deploying, this means you have not configured the consent screen for your Google Cloud project.
+If you see the following error message while deploying, this means you have not configured the consent screen for your Google Cloud project:
 
     Error: Error creating Client: googleapi: Error 404: Requested entity was not found.
     │ 
@@ -138,7 +138,7 @@ In this section, you set up the environment in order for the project to deploy.
      
 1.  Initialize Terraform:
 
-        terraform init`
+        terraform init
 
 ## Run the Terraform script to create your Grafana dashboard
 
@@ -184,7 +184,7 @@ Grant your user account the necessary role with the following command:
       --service='tf-cr-lb-backend-default' \
       --role='roles/iap.httpsResourceAccessor'
 
-YOu can open Grafana by visiting `[YOUR_DOMAIN]` from the browser. Because the database is automatically provisioned, your user will only have **Viewer**
+You can open Grafana by visiting `[YOUR_DOMAIN]` from the browser. Because the database is automatically provisioned, your user will only have **Viewer**
 permissions in Grafana. If you want to elevate your user to an Admin, you need to access the MySQL instance and modify the user table entry for your user.
 
 ## Test access your Grafana dashboard
