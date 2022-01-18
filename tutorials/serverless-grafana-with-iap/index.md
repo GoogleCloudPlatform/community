@@ -1,5 +1,5 @@
 ---
-title: How to deploy Grafana on Cloud Run with IAP using Terraform
+title: How to deploy Grafana on Cloud Run with Identity-Aware Proxy using Terraform
 description: Learn how to deploy Grafana serverless and restrict access to the dashboard.
 author: cgrotz,annamuscarella
 tags: serverless, identity, proxy, sql
@@ -13,7 +13,7 @@ Anna Muscarella | Strategic Cloud Engineer | Google
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This tutorial demonstrates how to deploy Grafana serverless and restrict access to the dashboard. This tutorial is for developers, DevOps engineers, and anyone
-interested in deploying applications serverless or restricting access to them.
+interested in deploying serverless applications or restricting access to them.
 
 To use this tutorial, you need basic knowledge of Google Cloud, Grafana, and Terraform, and you need to own a domain and be able to modify its A record.
 
@@ -21,7 +21,7 @@ To use this tutorial, you need basic knowledge of Google Cloud, Grafana, and Ter
 
 ## Objectives
 
-  * Run the Terraform script to deploy Grafana on Cloud Run with Cloud SQL as database and Identity-Aware Proxy setup.
+  * Run the Terraform script to deploy Grafana on Cloud Run with Cloud SQL as database and Identity-Aware Proxy (IAP) setup.
   * Create a new user for accessing the dashboard.
   * Explore and test the capabilities of Identity-Aware Proxy to restrict access to your Grafana dashboard.
 
@@ -40,24 +40,42 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
 ## How the code for this tutorial works
 
 First, required APIs (including IAM, Cloud Run, Compute Engine, Identity-Aware Proxy, and Cloud SQL) are enabled by the Terraform script. For
-details, see [the Terraform script](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/serverless-grafana-with-iap/code/main.tf#L18).
+details, see the
+[`main.tf` Terraform script](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/serverless-grafana-with-iap/code/main.tf#L18).
 Enabling the APIs is necessary to allow the usage of the APIs during the deployment in your project.
 
-Grafana requires a database for storing users, roles, datasources and dashboards. Therefore, a Terraform script creates a Cloud SQL instance. 
-For details, see [the Terraform script](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/serverless-grafana-with-iap/code/cloudsql.tf#L48).
+Grafana requires a database for storing users, roles, data sources, and dashboards. Therefore, a Terraform script creates a Cloud SQL instance. 
+For details, see the
+[`cloudsql.tf` Terraform script](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/serverless-grafana-with-iap/code/cloudsql.tf#L48).
 The password for the database user is placed in Secret Manager for secured access. This tutorial usse a MySQL micro instance because only a small amount of data 
 is stored in MySQL.
 
-Then, the [Cloud Run container is deployed](./code/main.tf#L28) using the GCR mirror of the Grafana container image and started. The script also [passes required environment variables to the container](./code/main.tf#L134), such as information about the database connection, and auth proxy. 
+The Cloud Run container is deployed using the Google Container Registry mirror of the Grafana container image and started. For details, see the
+[`main.tf` Terraform script](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/serverless-grafana-with-iap/code/main.tf#L56).
+The script also
+[passes required environment variables to the container](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/serverless-grafana-with-iap/code/main.tf#L151),
+such as information about the database connection and auth proxy. 
 
-To make sure your Grafana dashboard is useful, a datasource for Google Cloud Monitoring is provisioned as well. We use [Grafanas provisioning mechanism](https://grafana.com/docs/grafana/latest/administration/provisioning/) for that, which discovers data sources and dashboards from the disk. Since Cloud Run instances don't have persistent volumes at the moment, we can't just place the datasource and dashboard file into the filesystem. As a workaround, [the file is added as a secret to Secret Manager](./code/main.tf#L171) and then [mounted to the required location](./code/main.tf#L65) so Grafana can pick up the data source correctly. Et voila, you now have mock data in your dashboard! An alternative could be to use [GCS Fuse](https://cloud.google.com/run/docs/tutorials/network-filesystems-fuse), which allows mounting a GCS bucket into the filesystem, but this requires modifying the Docker image.
+To make sure that your Grafana dashboard is useful, a datasource for Cloud Monitoring is provisioned. This tutorial uses the
+[Grafanas provisioning mechanism](https://grafana.com/docs/grafana/latest/administration/provisioning/) for that, which discovers data sources and dashboards 
+from the disk. Because Cloud Run instances don't have persistent volumes, you can't just place the data source and dashboard file into the filesystem. As a 
+workaround, the file is added as a secret to Secret Manager and then mounted to the required location so Grafana can pick up the data source correctly. For 
+details, see the
+[`main.tf` Terraform script](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/serverless-grafana-with-iap/code/main.tf#L187).
+With this, you have mock data in your dashboard. An alternative could be to use
+[Cloud Storage FUSE](https://cloud.google.com/run/docs/tutorials/network-filesystems-fuse), which allows you to mount a Cloud Storage bucket into the filesystem,
+but this requires modifying the Docker image.
 
-To access your Grafana dashboard, Cloud Load Balancer is configured to service HTTPS traffic from CloudRun using a Serverless Network Endpoint Group (NEG) as backend service. [Identity-Aware Proxy (IAP) is integrated with the Load Balancer backend service](./code/lb.tf#L50). Client ID and secret are passed to the Load Balancer configuration. IAP provides headers containing the authorization information to applications secured with it ([link to documentation](https://cloud.google.com/iap/docs/signed-headers-howto)). Grafana provides the [functionality](https://grafana.com/docs/grafana/latest/auth/auth-proxy/) to receive exactly such header information for authentication. 
-
+To access your Grafana dashboard, Cloud Load Balancer is configured to service HTTPS traffic from Cloud Run using a serverless network endpoint group (NEG) as  a 
+backend service. Identity-Aware Proxy (IAP) is integrated with the Load Balancer backend service, as shown in the
+[`lb.tf` Terraform script](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/serverless-grafana-with-iap/code/lb.tf#L50). The client ID and
+secret are passed to the Load Balancer configuration. IAP provides headers containing the authorization information to applications secured with it
+For more information, see [Securing your app with signed headers](https://cloud.google.com/iap/docs/signed-headers-howto). Grafana provides the
+[functionality](https://grafana.com/docs/grafana/latest/auth/auth-proxy/) to receive such header information for authentication. 
 
 ### Before you begin
 
-To complete this tutorial, you need a Google Cloud account, a Google Cloud project with billig enabled, and Terraform installed and enabled.
+To complete this tutorial, you need a Google Cloud account, a Google Cloud project with billing enabled, and Terraform installed and enabled.
 
   1. [Create or select a Google Cloud project.](https://console.cloud.google.com/project)
   1. [Enable billing for your project.](https://support.google.com/cloud/answer/6293499#enable-billing)
