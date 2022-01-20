@@ -15,10 +15,9 @@ Théo Chamley | Cloud Solutions Architect | Google
 ## Objectives
 
 In this tutorial, you build a centrally managed Cloud Build pipeline step by step. Using webhook triggers, you also trigger builds from a source code repository,
-which is not natively supported by Cloud Build. You use GitLab in this tutorial, but you can apply the same principles to other source code repositories.
-One example of why a setup like this one is useful is a Terraform automation pipeline. Terraform typically uses powerful service accounts to apply changes to the 
-infrastructure. In this scenario, you might want to control exactly which commands are executed in the pipeline, and therefore to keep the automation pipeline 
-code separate from the Terraform code.
+which is not natively supported by Cloud Build. One example of why a setup like this one is useful is a Terraform automation pipeline. Terraform typically uses 
+powerful service accounts to apply changes to the infrastructure. In this scenario, you might want to control exactly which commands are executed in the 
+pipeline, and therefore to keep the automation pipeline code separate from the Terraform code.
 
 To achieve this result, you need a pipeline that follows these steps:
 
@@ -28,6 +27,8 @@ To achieve this result, you need a pipeline that follows these steps:
 4. The build pipeline applies the code changes.
 
 ![pipeline_schema](https://storage.googleapis.com/gcp-community/tutorials/using-cloudbuild-with-webhooks/schema.png)
+
+You use GitLab in this tutorial, but you can apply the same principles to other source code repositories.
 
 ## Costs
 
@@ -44,7 +45,7 @@ section at the end of this tutorial.
 
 ## Prerequisites
 
-This tutorial uses a sample Git repository on gitlab.com. If you don’t already have an account on gitlab.com, you can
+This tutorial uses a sample Git repository on GitLab. If you don’t already have an account on GitLab, you can
 [create an account for free on GitLab](https://gitlab.com/users/sign_up).
 
 ## Before you begin
@@ -57,7 +58,7 @@ This tutorial uses a sample Git repository on gitlab.com. If you don’t already
 
 1.  Open [Cloud Shell](https://console.cloud.google.com/?cloudshell=true).
 
-1.  In Cloud Shell, configure your project ID with the following command:
+1.  In Cloud Shell, set the working project with the following command:
 
         gcloud config set project [PROJECT_ID]
         
@@ -70,7 +71,9 @@ This tutorial uses a sample Git repository on gitlab.com. If you don’t already
           secretmanager.googleapis.com 
 
 1.  [Sign in to GitLab.](https://gitlab.com/users/sign_in)
+
 1.  In GitLab, fork the [sample repository](https://gitlab.com/mogr/cloudbuild-webhooks):
+
     1.  Click the **Fork** button.
     1.  Select your personal namespace in the **Project URL** field.
     1.  Select **Private** as the visibility level.
@@ -78,68 +81,76 @@ This tutorial uses a sample Git repository on gitlab.com. If you don’t already
 
 ## Create a webhook Cloud Build trigger
 
-1. In the Google Cloud Console, go to the [Triggers page](https://console.cloud.google.com/cloud-build/triggers).
-2. Click **Create Trigger**.
-3. Enter “webhook-trigger” in the **Name** field.
-4. Choose “Webhook event” for the **Event** field.
-5. Choose “Create new” in the **Secret** field and click **Create Secret**.
-6. Enter “webhook-trigger-secret” in the **Secret name** field and click **Create Secret**.
-7. Click **Create**.
+1.  In the Cloud Console, go to the [Triggers page](https://console.cloud.google.com/cloud-build/triggers).
+1.  Click **Create Trigger**.
+1.  Enter `webhook-trigger` in the **Name** field.
+1.  Choose **Webhook event** for the **Event** field.
+1.  Choose **Create new** in the **Secret** field, and click **Create Secret**.
+1.  Enter `webhook-trigger-secret` in the **Secret name** field, and click **Create Secret**.
+1.  Click **Create**.
 
 ## Configure the GitLab repository webhook
 
-1. Go to the [Triggers](https://console.cloud.google.com/cloud-build/triggers) page.
-2. Click on the “webhook-trigger” trigger.
-3. Click on the **Show URL preview** link and copy the webhook URL.
-4. On GitLab.com, click on **Settings** in your forked GitLab repository.
-5. Click on **webhooks**.
-6. Insert the URL copied on step 3 to the **URL** field.
-7. Click on **Add webhook**.
+1.  Go to the [Triggers](https://console.cloud.google.com/cloud-build/triggers) page.
+1.  Click the `webhook-trigger` trigger.
+1.  Click the **Show URL preview** link and copy the webhook URL.
+1.  On GitLab, click **Settings** in your forked GitLab repository.
+1.  Click **webhooks**.
+1.  Insert the URL that you copied in step 3 in the **URL** field.
+1.  Click **Add webhook**.
 
-You can learn more about creating webhooks in the official GitLab [documentation](https://docs.gitlab.com/ee/user/project/integrations/webhooks.html).
+You can learn more about creating webhooks in the [GitLab documentation](https://docs.gitlab.com/ee/user/project/integrations/webhooks.html).
 
 ## Test the webhook
 
-To test the new webhook, follow these steps:
-1. In your GitLab repository, click **settings** then click **webhooks**.
-2. At the bottom of the page, find **Project Hooks** block with the new webhook.
-3. Next to your webhook, click on **Test** and choose **Push events**. \
-This triggers the Cloud Build job.
-4. Go to the [Cloud Build history page](https://console.cloud.google.com/cloud-build/builds) to see it running.
-5. Find the build with “webhook-trigger” as **Trigger name** which is running or ran recently and click on it. You should see “hello world” in the build log.
+1.  In your GitLab repository, click **settings**, and then click **webhooks**.
+1.  At the bottom of the page, find the **Project Hooks** block with the new webhook.
+1.  Next to your webhook, click **Test** and choose **Push events**.
+
+    This triggers the Cloud Build job.
+
+1.  Go to the [Cloud Build history page](https://console.cloud.google.com/cloud-build/builds) to see it running.
+1.  Find the build with `webhook-trigger` as **Trigger name** that is running or ran recently and click it. You should see `“hello world”` in the build log.
 
 ## Get the repository URL from the push event
 
-To be able to fetch the source code from the repository, you first need to get the repository URL from the [event payload](https://cloud.google.com/build/docs/configuring-builds/use-bash-and-bindings-in-substitutions#creating_substitutions_using_payload_bindings).
-1. Go to the [Triggers](https://console.cloud.google.com/cloud-build/triggers) page in your gcp project.
-2. Click on the “webhook-trigger” trigger.
-3. In the **Configuration** block click on **Open editor**.
-4. In the right panel modify the inline build config like this:
-    ```
-    steps:
-      - name: ubuntu
-        args:
-          - echo
-          - ${_GIT_REPO}
-    substitutions:
-      _GIT_REPO: $(body)
-    ```
-5. Click **Done** and then **Save**.
-6. Trigger the Test push event from the GitLab repository again.
-7. Go to the [Cloud Build history page](https://console.cloud.google.com/cloud-build/builds) to see your new job running.
-8. Click on the new job. \
-Instead of the “hello world” line, you should  see a json object with the content of the event payload. There are 2 fields of particular interest: **project.git\_http\_url** and **project.git\_ssh\_url**. In this tutorial we use a token for the authorisation, so we focus on the **project.git\_http\_url** field.
-9. In the Cloud Build trigger configuration, modify the inline build config once again to display only the necessary field from the event payload:
-    ```
-    steps: 
-      - name: ubuntu 
-        args: 
-          - echo 
-          - '${_GIT_REPO}' 
-    substitutions: 
-      _GIT_REPO: $(body.project.git_http_url)
-    ```
-10. Trigger the Test push event from GitLab again. In the [Cloud Build history page](https://console.cloud.google.com/cloud-build/builds) you should see the line with the GitLab http url.  
+To be able to fetch the source code from the repository, you first need to get the repository URL from the
+[event payload](https://cloud.google.com/build/docs/configuring-builds/use-bash-and-bindings-in-substitutions#creating_substitutions_using_payload_bindings).
+
+1.  Go to the [Triggers page](https://console.cloud.google.com/cloud-build/triggers) for your Google Cloud project.
+1.  Click the `webhook-trigger` trigger.
+1.  In the **Configuration** block, click **Open editor**.
+1.  In the right panel, modify the inline build config like the following:
+
+        steps:
+          - name: ubuntu
+            args:
+              - echo
+              - ${_GIT_REPO}
+        substitutions:
+          _GIT_REPO: $(body)
+
+1.  Click **Done**, and then click **Save**.
+1.  Trigger the test push event from the GitLab repository again.
+1.  Go to the [Cloud Build history page](https://console.cloud.google.com/cloud-build/builds) to see your new job running.
+1.  Click the new job.
+
+    Instead of the `“hello world”` line, you should see a JSON object with the content of the event payload. There are two fields of particular interest: 
+    `project.git\_http\_url` and `project.git\_ssh\_url`. This tutorial uses a token for the authorization, so it focuses on the `project.git\_http\_url` field.
+
+1.  In the Cloud Build trigger configuration, modify the inline build config again to display only the necessary field from the event payload:
+
+        steps: 
+          - name: ubuntu 
+            args: 
+              - echo 
+              - '${_GIT_REPO}' 
+        substitutions: 
+          _GIT_REPO: $(body.project.git_http_url)
+
+1.  Trigger the test push event from GitLab again.
+
+    On the [Cloud Build history page](https://console.cloud.google.com/cloud-build/builds), you should see the line with the GitLab HTTP URL.  
 
 ## Clone the GitLab repository
 
