@@ -3,7 +3,7 @@ title: Use webhooks to trigger a central Cloud Build pipeline from multiple Git 
 description: Learn how to trigger a centrally managed Cloud Build pipeline with a webhook.
 author: gmogr,MrTrustor
 tags: cloudbuild, cicd, webhooks
-date_published: 2022-01-19
+date_published: 2022-01-21
 ---
 
 Grigory Movsesyan | Cloud Engineer | Google
@@ -12,10 +12,8 @@ Théo Chamley | Cloud Solutions Architect | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-## Objectives
-
 In this tutorial, you build a centrally managed Cloud Build pipeline step by step. Using webhook triggers, you also trigger builds from a source code repository,
-which is not natively supported by Cloud Build. One example of why a setup like this one is useful is a Terraform automation pipeline. Terraform typically uses 
+which is not natively supported by Cloud Build. One example of why a setup like this is useful is a Terraform automation pipeline. Terraform typically uses 
 powerful service accounts to apply changes to the infrastructure. In this scenario, you might want to control exactly which commands are executed in the 
 pipeline, and therefore to keep the automation pipeline code separate from the Terraform code.
 
@@ -40,7 +38,7 @@ This tutorial uses the following billable components of Google Cloud:
 
 To generate a cost estimate based on your projected usage, use the [pricing calculator](https://cloud.google.com/products/calculator).
 
-When you finish this tutorial, you can avoid continued billing by deleting the resources that you created. For more details, see the "Cleaning up"
+When you finish this tutorial, you can avoid continued billing by deleting the resources that you created. For details, see the "Cleaning up"
 section at the end of this tutorial.
 
 ## Prerequisites
@@ -82,21 +80,33 @@ This tutorial uses a sample Git repository on GitLab. If you don’t already hav
 ## Create a webhook Cloud Build trigger
 
 1.  In the Cloud Console, go to the [Triggers page](https://console.cloud.google.com/cloud-build/triggers).
+
 1.  Click **Create Trigger**.
+
 1.  Enter `webhook-trigger` in the **Name** field.
+
 1.  Choose **Webhook event** for the **Event** field.
+
 1.  Choose **Create new** in the **Secret** field, and click **Create Secret**.
+
 1.  Enter `webhook-trigger-secret` in the **Secret name** field, and click **Create Secret**.
+
 1.  Click **Create**.
 
 ## Configure the GitLab repository webhook
 
 1.  Go to the [Triggers](https://console.cloud.google.com/cloud-build/triggers) page.
+
 1.  Click the `webhook-trigger` trigger.
-1.  Click the **Show URL preview** link and copy the webhook URL.
+
+1.  Click **Show URL preview** and copy the webhook URL.
+
 1.  On GitLab, click **Settings** in your forked GitLab repository.
+
 1.  Click **webhooks**.
+
 1.  Insert the URL that you copied in step 3 in the **URL** field.
+
 1.  Click **Add webhook**.
 
 You can learn more about creating webhooks in the [GitLab documentation](https://docs.gitlab.com/ee/user/project/integrations/webhooks.html).
@@ -104,12 +114,15 @@ You can learn more about creating webhooks in the [GitLab documentation](https:/
 ## Test the webhook
 
 1.  In your GitLab repository, click **settings**, and then click **webhooks**.
+
 1.  At the bottom of the page, find the **Project Hooks** block with the new webhook.
+
 1.  Next to your webhook, click **Test** and choose **Push events**.
 
     This triggers the Cloud Build job.
 
-1.  Go to the [Cloud Build history page](https://console.cloud.google.com/cloud-build/builds) to see it running.
+1.  Go to the [Cloud Build history page](https://console.cloud.google.com/cloud-build/builds) to see the Cloud Build job running.
+
 1.  Find the build with `webhook-trigger` as **Trigger name** that is running or ran recently and click it. You should see `“hello world”` in the build log.
 
 ## Get the repository URL from the push event
@@ -118,8 +131,11 @@ To be able to fetch the source code from the repository, you first need to get t
 [event payload](https://cloud.google.com/build/docs/configuring-builds/use-bash-and-bindings-in-substitutions#creating_substitutions_using_payload_bindings).
 
 1.  Go to the [Triggers page](https://console.cloud.google.com/cloud-build/triggers) for your Google Cloud project.
+
 1.  Click the `webhook-trigger` trigger.
+
 1.  In the **Configuration** block, click **Open editor**.
+
 1.  In the right panel, modify the inline build config like the following:
 
         steps:
@@ -131,8 +147,11 @@ To be able to fetch the source code from the repository, you first need to get t
           _GIT_REPO: $(body)
 
 1.  Click **Done**, and then click **Save**.
+
 1.  Trigger the test push event from the GitLab repository again.
+
 1.  Go to the [Cloud Build history page](https://console.cloud.google.com/cloud-build/builds) to see your new job running.
+
 1.  Click the new job.
 
     Instead of the `“hello world”` line, you should see a JSON object with the content of the event payload. There are two fields of particular interest: 
@@ -155,14 +174,14 @@ To be able to fetch the source code from the repository, you first need to get t
 ## Clone the GitLab repository
 
 You can clone a GitLab repository using tokens or using an SSH key. In this tutorial, you clone the repository using a token. For details of the SSH option, see
-[https://cloud.google.com/build/docs/automating-builds/build-repos-from-gitlab](https://cloud.google.com/build/docs/automating-builds/build-hosted-repos-gitlab).
+[Building repositories from GitLab](https://cloud.google.com/build/docs/automating-builds/build-hosted-repos-gitlab).
 
 To be able to clone the GitLab repository, you first need to create the GitLab deploy token.
 
 1.  In GitLab, click **Settings** and choose **Repository**.
 1.  Click **Expand** next to **Deploy tokens**.
-1.  Type `cloudbuild` in the **Name** field.
-1.  Type `gitlab-token` in the **Username** field.
+1.  Enter `cloudbuild` in the **Name** field.
+1.  Enter `gitlab-token` in the **Username** field.
 1.  Select **read\_repository** in **Scopes**.
 1.  Click **Create deploy token**.
 1.  Copy the token value.
@@ -191,130 +210,148 @@ To be able to clone the GitLab repository, you first need to create the GitLab d
 
 ## Move the GitLab token to Secret Manager
 
-Storing the GitLab token in plain text in the inline Build config is against best practices. In this section, you move it to Google Cloud Secret Manager.
+For security reasons, you should not store the GitLab token in plaintext in the inline Cloud Build config. In this section, you move the token to Google Cloud 
+Secret Manager.
 
-1. Go to the [Secret Manager page](https://console.cloud.google.com/security/secret-manager).
-2. Click **Create secret**.
-3. Type ”gitlab-token” in the **Name** field.
-4. Copy the GitLab token in the **Secret value** field.
-5. Click on the **Create secret** button to create the secret.
+1.  Go to the [Secret Manager page](https://console.cloud.google.com/security/secret-manager).
 
-To access the secret value, the Cloud Build service account needs the secretmanager.versions.access permission. To give it:
-1. Go to the [IAM & Admin page](https://console.cloud.google.com/iam-admin/iam).
-2. Find the Cloud Build service account with the name <project\_number>@cloudbuild.gserviceaccount.com and click on **edit member** button.
-3. Click on **Add another role** button.
-4. Add the “Secret Manager Secret Accessor” role.
-5. Click **save**.
-6. Modify once again the Build inline config to read the token value from Secret Manager:
-    ```
-    steps: 
-      - name: gcr.io/cloud-builders/git 
-        args: 
-          - '-c' 
-          - 'git clone https://gitlab-token:$$GITLAB_TOKEN@${_REPO_URL} repo'
-        entrypoint: bash
-        secretEnv:
-         - GITLAB_TOKEN
-    substitutions:
-      _GIT_REPO: $(body.project.git_http_url)
-      _REPO_URL: '${_GIT_REPO##https://}'
-    availableSecrets:
-      secretManager:
-        - versionName: 'projects/${PROJECT_ID}/secrets/gitlab-token/versions/latest'
-          env: GITLAB_TOKEN
-    ```
-7. Test the new Build config by triggering a test push event from GitLab.
+1.  Click **Create secret**.
+
+1.  Enter `gitlab-token` in the **Name** field.
+
+1.  Copy the GitLab token into the **Secret value** field.
+
+1.  Click **Create secret** to create the secret.
+
+## Give the Cloud Build service account access to the secret value
+
+To access the secret value, the Cloud Build service account needs the `secretmanager.versions.access` role.
+
+1.  Go to the [IAM & Admin page](https://console.cloud.google.com/iam-admin/iam) in the Cloud Console.
+
+1.  Find the Cloud Build service account with the name `<project\_number>@cloudbuild.gserviceaccount.com` and click **Edit member**.
+
+1.  Click **Add another role**.
+
+1.  Add the Secret Manager Secret Accessor role.
+
+1.  Click **Save**.
+
+1.  Modify the Cloud Build inline config to read the token value from Secret Manager:
+
+        steps: 
+          - name: gcr.io/cloud-builders/git 
+            args: 
+              - '-c' 
+              - 'git clone https://gitlab-token:$$GITLAB_TOKEN@${_REPO_URL} repo'
+            entrypoint: bash
+            secretEnv:
+             - GITLAB_TOKEN
+        substitutions:
+          _GIT_REPO: $(body.project.git_http_url)
+          _REPO_URL: '${_GIT_REPO##https://}'
+        availableSecrets:
+          secretManager:
+            - versionName: 'projects/${PROJECT_ID}/secrets/gitlab-token/versions/latest'
+              env: GITLAB_TOKEN
+
+1.  Test the new Cloud Build config by triggering a test push event from GitLab.
 
 ## Apply the Terraform config
 
-Up until now, you did not execute any code contained in the Git repository. In this section, you execute the repository’s Terraform code.
+In this section, you execute the Terraform code from the Git repository.
 
-1. Create a Storage Bucket to store terraform state.
-    1. Go to the [Cloud Storage page](https://console.cloud.google.com/storage/browser).
-    2. Click on **Create bucket**.
-    3. In the Name your bucket field enter “tf-state-<project\_id>” replacing the <project\_id> with your actual project\_id.
-    4. Click on the **create** button.
-2. Modify the inline Build config as shown below.
-    ```
-    steps:
-      - name: gcr.io/cloud-builders/git
-        args:
-          - '-c'
-          - 'git clone https://gitlab-token:$$GITLAB_TOKEN@${_REPO_URL} repo'
-        entrypoint: bash
-        secretEnv:
-          - GITLAB_TOKEN
-      - name: hashicorp/terraform
-        args:
-          - init
-          - '-backend-config=bucket=${_TF_BACKEND_BUCKET}'
-          - '-backend-config=prefix=${_TF_BACKEND_PREFIX}'
-        dir: repo
-      - name: hashicorp/terraform
-        args:
-          - plan
-          - '-var=project=${PROJECT_ID}'
-          - '-out=/workspace/tfplan-$BUILD_ID'
-        dir: repo
-      - name: hashicorp/terraform
-        args:
-          - apply
-          - '-auto-approve'
-          - /workspace/tfplan-$BUILD_ID
-        dir: repo
-    substitutions:
-      _GIT_REPO: $(body.project.git_http_url)
-      _REPO_URL: '${_GIT_REPO##https://}'
-      _TF_BACKEND_BUCKET: 'tf-state-${PROJECT_ID}'
-      _TF_BACKEND_PREFIX: tf-state-prefix
-    availableSecrets:
-      secretManager:
-        - versionName: 'projects/${PROJECT_ID}/secrets/gitlab-token/versions/latest'
-          env: GITLAB_TOKEN
-    ```
-3. Trigger a test push event in your GitLab repository.
-4. Go to [Cloud Storage](https://console.cloud.google.com/storage/browser) and observe that there is a bucket called `test-bucket-[project_id]`.
+1.  Create a Cloud Storage bucket to store Terraform state:
 
-Now, whenever you push changes to the Terraform repository, you also trigger the Cloud Build pipeline which deploys changes to your project. If you decide to add another Terraform project to the same pipeline, you only need  to add a webhook to the repository.
+    1.  Go to the [Cloud Storage page](https://console.cloud.google.com/storage/browser) in the Cloud Console.
+    1.  Click **Create bucket**.
+    1.  In the **Name your bucket** field enter `tf-state-[PROJECT_ID]`, replacing `[PROJECT_ID]` with your actual project ID.
+    1.  Click **Create**.
+
+1.  Modify the inline Cloud Build config as follows:
+
+        steps:
+          - name: gcr.io/cloud-builders/git
+            args:
+              - '-c'
+              - 'git clone https://gitlab-token:$$GITLAB_TOKEN@${_REPO_URL} repo'
+            entrypoint: bash
+            secretEnv:
+              - GITLAB_TOKEN
+          - name: hashicorp/terraform
+            args:
+              - init
+              - '-backend-config=bucket=${_TF_BACKEND_BUCKET}'
+              - '-backend-config=prefix=${_TF_BACKEND_PREFIX}'
+            dir: repo
+          - name: hashicorp/terraform
+            args:
+              - plan
+              - '-var=project=${PROJECT_ID}'
+              - '-out=/workspace/tfplan-$BUILD_ID'
+            dir: repo
+          - name: hashicorp/terraform
+            args:
+              - apply
+              - '-auto-approve'
+              - /workspace/tfplan-$BUILD_ID
+            dir: repo
+        substitutions:
+          _GIT_REPO: $(body.project.git_http_url)
+          _REPO_URL: '${_GIT_REPO##https://}'
+          _TF_BACKEND_BUCKET: 'tf-state-${PROJECT_ID}'
+          _TF_BACKEND_PREFIX: tf-state-prefix
+        availableSecrets:
+          secretManager:
+            - versionName: 'projects/${PROJECT_ID}/secrets/gitlab-token/versions/latest'
+              env: GITLAB_TOKEN
+
+1.  Trigger a test push event in your GitLab repository.
+
+1.  Go to the [Cloud Storage page](https://console.cloud.google.com/storage/browser) and observe that there is a bucket called `test-bucket-[PROJECT_ID]`.
+
+After you have followed these steps, whenever you push changes to the Terraform repository, you also trigger the Cloud Build pipeline, which deploys changes to
+your project. If you decide to add another Terraform project to the same pipeline, you only need to add a webhook to the repository.
 
 ## Cleaning up
 
-You can clean up all the resources created in this tutorial by [shutting down the project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#shutting_down_projects). However, if you used an existing project that contains resources other than the one created in this tutorial, you should remove the resources one by one instead:
+You can clean up all the resources created in this tutorial by
+[shutting down the project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#shutting_down_projects). However, if you used an existing
+project that contains resources other than those created in this tutorial, you can remove the resources created in this tutorial instead:
 
-1. In Cloud Shell set the PROJECT_ID env variable: \
-    ```
-    export PROJECT_ID=$(gcloud config get-value project)
-    ```
-2. Delete the cloud build trigger: \
-    ```
-    gcloud beta builds triggers delete webhook-trigger
-    ```
-3. Delete the Cloud Secrets manager: \
-    ```
-    gcloud secrets delete webhook-trigger-secret
-    gcloud secrets delete gitlab-token
-    ```
-4. Delete the IAM policy: \
-    ```
-    gcloud projects remove-iam-policy-binding ${PROJECT_ID} \
-      --member=serviceAccount:${PROJECT_ID}@cloudbuild.gserviceaccount.com \
-      --role=roles/secretmanager.secretAccessor
-    ```
-5. Delete the Storage Buckets \
-    ```
-    gsutil rm -r gs://test-bucket-${PROJECT_ID}
-    gsutil rm -r gs://tf-state-${PROJECT_ID}
-    ```
+1.  In Cloud Shell set the `PROJECT_ID` env variable:
 
-### Delete the Deploy token key from your repository
+        export PROJECT_ID=$(gcloud config get-value project)
 
-1. In GitLab, click on **settings** and then choose **Repository**.
-2. Click on the **Expand** button next to **Deploy tokens**.
-3. In the **Active deploy tokens** block find the “cloudbuild” and click on **Revoke**.
+1.  Delete the Cloud Build trigger:
 
-### Delete the GitLab repository
+        gcloud beta builds triggers delete webhook-trigger
 
-1. In your GitLab repository, click **settings** then click **general**.
-2. Click on the **Expand** button next to **Advanced**.
-3. At the bottom of the page, click on **Delete project**.
-4. Confirm deletion by typing the repoository name and clicking **Yes, delete project**.
+1.  Delete the secret and token from Secret Manager:
+
+        gcloud secrets delete webhook-trigger-secret
+        gcloud secrets delete gitlab-token
+
+1.  Delete the IAM policy:
+
+        gcloud projects remove-iam-policy-binding ${PROJECT_ID} \
+          --member=serviceAccount:${PROJECT_ID}@cloudbuild.gserviceaccount.com \
+          --role=roles/secretmanager.secretAccessor
+
+1.  Delete the Cloud Storage buckets:
+
+        gsutil rm -r gs://test-bucket-${PROJECT_ID}
+        gsutil rm -r gs://tf-state-${PROJECT_ID}
+
+1.  Delete the deploy token key from your repository:
+
+    1.  In GitLab, click **Settings** and choose **Repository**.
+    1.  Click **Expand** next to **Deploy tokens**.
+    1.  In the **Active deploy tokens** block, find the `cloudbuild` token and click **Revoke**.
+
+1.  Delete the GitLab repository:
+
+    1. In your GitLab repository, click **Settings**, and then click **General**.
+    1. Click **Expand** next to **Advanced**.
+    1. At the bottom of the page, click **Delete project**.
+    1. Confirm deletion by typing the repoository name and clicking **Yes, delete project**.
