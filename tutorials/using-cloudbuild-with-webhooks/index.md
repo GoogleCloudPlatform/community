@@ -154,35 +154,40 @@ To be able to fetch the source code from the repository, you first need to get t
 
 ## Clone the GitLab repository
 
-There are 2 ways to clone a GitLab repository. The first is to use an SSH key and the other is to use tokens. In this tutorial, we focus on cloning the repository using a token. You can find the implementation using SSH [here](https://cloud.google.com/build/docs/automating-builds/build-hosted-repos-gitlab).
+You can clone a GitLab repository using tokens or using an SSH key. In this tutorial, you clone the repository using a token. For details of the SSH option, see
+[https://cloud.google.com/build/docs/automating-builds/build-repos-from-gitlab](https://cloud.google.com/build/docs/automating-builds/build-hosted-repos-gitlab).
 
-To be able to clone the GitLab repository, you first need to create the GitLab deploy token. 
-1. In GitLab, click on **settings** and then choose **Repository**.
-2. Click on the **Expand** button next to **Deploy tokens**.
-3. Type “cloudbuild” in the **Name** field.
-4. Type “gitlab-token” in the **Username** field.
-5. Select “read\_repository” in **Scopes**.
-6. Click on the **Create deploy token** button.
-7. Copy the token value. \
-You can read more on creation of deploy tokens in GitLab [here](https://docs.gitlab.com/ee/user/project/deploy_tokens/). \
-You can use the token to clone the repository with the following command: \
-`git clone https://gitlab-token:<gitlab_token>@<git_url>`
-8. Modify the Cloud Build Trigger inline config again, replacing `[GITLAB_TOKEN]` with actual value.
-    ```
-    steps: 
-      - name: gcr.io/cloud-builders/git 
-        args: 
-          - '-c' 
-          - 'git clone https://gitlab-token:[GITLAB_TOKEN]@${_REPO_URL}'
-        entrypoint: bash 
-    substitutions: 
-      _GIT_REPO: $(body.project.git_http_url) 
-      _REPO_URL: '${_GIT_REPO##https://}'
-    ```
-   The parameter **project.git\_http\_url** from the event payload already contains the protocol: **https://**<git\_url>. You need to insert the token after the protocol but before the actual URL. To achieve this, you remove the protocol from the string and then build the URL again using [bash parameter extension](https://cloud.google.com/build/docs/configuring-builds/use-bash-and-bindings-in-substitutions#bash_parameter_expansions).
+To be able to clone the GitLab repository, you first need to create the GitLab deploy token.
 
-9. Test the new Trigger config, trigger the test push event from GitLab. \
-You should see the repository successfully cloned in the Build logs on the Build history page.
+1.  In GitLab, click **Settings** and choose **Repository**.
+1.  Click **Expand** next to **Deploy tokens**.
+1.  Type `cloudbuild` in the **Name** field.
+1.  Type `gitlab-token` in the **Username** field.
+1.  Select **read\_repository** in **Scopes**.
+1.  Click **Create deploy token**.
+1.  Copy the token value.
+
+    For more information, see [Deploy tokens](https://docs.gitlab.com/ee/user/project/deploy_tokens/) in the GitLab documentation.
+
+1.  Modify the Cloud Build trigger inline config again, replacing `[GITLAB_TOKEN]` with actual value of the token in the line with the `git clone` command.
+
+        steps: 
+          - name: gcr.io/cloud-builders/git 
+            args: 
+              - '-c' 
+              - 'git clone https://gitlab-token:[GITLAB_TOKEN]@${_REPO_URL}'
+            entrypoint: bash 
+        substitutions: 
+          _GIT_REPO: $(body.project.git_http_url) 
+          _REPO_URL: '${_GIT_REPO##https://}'
+
+    The parameter `project.git\_http\_url` from the event payload already contains the protocol: `https://<git\_url>`. You need to insert the token after the 
+    protocol but before the actual URL. To achieve this, you remove the protocol from the string and then build the URL again using
+    [bash parameter extension](https://cloud.google.com/build/docs/configuring-builds/use-bash-and-bindings-in-substitutions#bash_parameter_expansions).
+
+1.  To test the new trigger config, trigger the test push event from GitLab.
+
+    You should see the repository successfully cloned in the build logs on the Cloud Build history page.
 
 ## Move the GitLab token to Secret Manager
 
