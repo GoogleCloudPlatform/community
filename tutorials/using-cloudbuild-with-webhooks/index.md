@@ -315,11 +315,11 @@ your project. If you decide to add another Terraform project to the same pipelin
 
 ## Cleaning up
 
-You can clean up all the resources created in this tutorial by
+You can clean up all of the resources created in this tutorial by
 [shutting down the project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#shutting_down_projects). However, if you used an existing
 project that contains resources other than those created in this tutorial, you can remove the resources created in this tutorial instead:
 
-1.  In Cloud Shell set the `PROJECT_ID` env variable:
+1.  In Cloud Shell set the `PROJECT_ID` environment variable:
 
         export PROJECT_ID=$(gcloud config get-value project)
 
@@ -354,4 +354,4 @@ project that contains resources other than those created in this tutorial, you c
     1. In your GitLab repository, click **Settings**, and then click **General**.
     1. Click **Expand** next to **Advanced**.
     1. At the bottom of the page, click **Delete project**.
-    1. Confirm deletion by typing the repoository name and clicking **Yes, delete project**.
+    1. Confirm deletion by typing the repository name and clicking **Yes, delete project**.
