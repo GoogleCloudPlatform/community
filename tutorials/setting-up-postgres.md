@@ -53,13 +53,15 @@ available in earlier versions.
 
 1. In the Cloud Console, go to the [**VM instances**](https://console.cloud.google.com/compute/instances) page.
 1. Click **Create instance**.
-1. Set **Name** to `postgres-tutorial`.
-1. In the **Public images** tab, choose **Ubuntu** for **Operating system**.
-1. In the **Version** dropdown list, choose **Ubuntu 20.04 LTS**.
-1. In the **Boot disk type** section, select **Standard persistent disk**.
-1. Click **Select**.
-1. Under the **Firewall** section, expand **Management, security, disks, networking, sole tenancy**, select the **Networking** tab, and
-   enter `postgres-tutorial` for the **Network tags** field.
+1. In the **Name** field, enter `postgres-tutorial`.
+1. In the **Book disk** section, click **Change**.
+1. In the Boot disk window, perform the following steps in the **Public images** tab:
+    1. In the **Operating system** menu, select **Ubuntu**.
+    1. In the **Version** menu, select **Ubuntu 20.04 LTS**.
+    1. In the **Boot disk type** menu, select **Standard persistent disk**.
+    1. Click **Select**.
+1. In the **Firewall** section, expand **Management, security, disks, networking, sole tenancy**, and then expand **Networking**.
+1. In the **Network tags** field, enter `postgres-tutorial`.
 1. Click **Create** to create the instance.
 
 It will take a few moments to create your new instance.
@@ -152,14 +154,14 @@ that you want to connect to each database.
     that the [CIDR](https://wikipedia.org/wiki/Classless_Inter-Domain_Routing)
     suffix `/32` is used for a single address, which is what you're providing in this tutorial.
 
-1.  Save the file and exit the editor. In nano, press `Control+x` and then
+1.  Save the file and exit the editor. In nano, press `Control+x`, press `y`, and then
     use the `Return` key to accept the prompts to save the file. Note that nano
     might not clear the console screen properly, so if you have trouble reading the
     text in the console after closing nano, enter `clear` to clear the screen.
 
 #### Edit `postgresql.conf`
 
-1.  Open [`postgresql.conf`](https://www.postgresql.org/docs/9.3/static/config-setting.html) for editing.
+1.  In the SSH terminal window, edit [`postgresql.conf`](https://www.postgresql.org/docs/9.3/static/config-setting.html).
 
     For example, enter the following command:
 
@@ -189,7 +191,7 @@ PostgreSQL accepts remote connections on port 5432. Follow these steps to add
 a firewall rule that enables traffic on this port.
 
 1.  In the Cloud Console, navigate to the
-    [**Create a firewall rule** page](https://console.cloud.google.com/networking/firewalls/add)**.
+    [**Create a firewall rule** page](https://console.cloud.google.com/networking/firewalls/add).
 
 1.  In the **Name** field, enter `postgres-tutorial`.
 
@@ -199,9 +201,13 @@ a firewall rule that enables traffic on this port.
 
 1.  In the **Action on match** field, select **Allow**.
 
-1.  In the **Target tags** field, enter the network tag (`postgres-tutorial`) that you used for the instance.
+1.  In the **Targets** menu, select **Specified Target tags**.
 
-1.  In **Source IP Ranges**, enter the same IP address that you used in `hba.conf`.
+1.  In the **Targets tags** field, enter the network tag (`postgres-tutorial`) that you used for the instance.
+
+1.  In the **Source filter** menu, select **IPv4 ranges**.
+
+1.  In the **Source IPv4 ranges** field, enter the same IP address that you used in `hba.conf`.
 
     This is the IP address of your local computer. Remember to include the `/32`
     suffix, for example: `1.2.3.4/32`.
@@ -282,18 +288,18 @@ After you've finished the PostgreSQL tutorial, you can clean up the resources yo
 The easiest way to eliminate billing is to delete the project you created for the tutorial.
 
 1.  In the Cloud Console, go to the [**Projects** page](https://console.cloud.google.com/iam-admin/projects).
-1.  Click the trash can icon to the right of the project name.
+1.  Click the checkbox next to the project you want to delete.
+1.  Click the **Delete** button at the top of the page.
 
 **Warning**: Deleting a project has the following consequences:
 
 If you used an existing project, you'll also delete any other work you've done in the project.
-You can't reuse the project ID of a deleted project. If you created a custom project ID that you plan to use in the future, you should delete the resources i
-nside the project instead. This ensures that URLs that use the project ID, such as an `appspot.com` URL, remain available.
+You can't reuse the project ID of a deleted project. If you created a custom project ID that you plan to use in the future, you should delete the resources inside the project instead. This ensures that URLs that use the project ID, such as an `appspot.com` URL, remain available.
 
 ### Deleting Compute Engine VM instances
 
 1. In the Cloud Console, go to the [**VM instances** page](https://console.cloud.google.com/compute/instances).
-1. Click the checkbox next to your `postgres-tutorial` instance.
+1. Click the checkbox next to the VM instance you want to delete.
 1. Click the **Delete** button at the top of the page.
 
 ### Deleting firewall rules for the default network
