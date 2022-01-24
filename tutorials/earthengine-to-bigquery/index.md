@@ -27,37 +27,22 @@ This solution uses GeoBeam to ingest Raster TIFF images generated in Google Eart
 
 ![architecture](https://storage.googleapis.com/gcp-community/tutorials/cloud-pubsub-drainer/architecture.png)
 
-There are several components to the architecture:
+There are several components to this architecture:
 
-* Data ingest Pub/Sub topic: This is where events of interest are received.
-* Cloud Monitoring alert, which consists of the following:
-    * Alerting policy watching metrics related to a subscription associated with the data ingest topic
-    * Webhook notification channel that points to a Cloud Function
-* Pub/Sub topic, which durably records the alert incident relaying it to the Archiver function
-* Archiver function, which uses streaming pull with Pub/Sub and streaming write to Cloud Storage to
-  efficiently batch and move event data from Pub/Sub to Cloud Storage.
+* Google Earth Engine: This is where the TIFF image from Copernicus Sentinel-2 satellite imagery is generated. 
+* Cloud Storage Bucket: The TIFF image from Google Earth Engine is stored in a Cloud Storage Bucket        
+* Cloud Dataflow: The TIFF image in GCS bucket is processed in Dataflow using GeoBeam
+* BigQuery: The processed image is stored in BigQuery as rows that include BigQuery Geospatial [POINT GEOGRAPHY](https://cloud.google.com/bigquery/docs/reference/standard-sql/data-types#geography_type) datatype
 
 ## Before you begin
 
 1.  Create a Google Cloud project for this tutorial to allow for easier cleanup.
-1.  Create a new [workspace](https://cloud.google.com/monitoring/workspaces/guide) in the
-    Google Cloud project that you created above.
-1.  Enable Cloud Functions:
-
-        gcloud services enable cloudfunctions.googleapis.com
-
-## Setting up the automation
-
-Commands in this tutorial assume that you are running from the tutorial folder:
-
-    git clone https://github.com/GoogleCloudPlatform/community.git
-    cd community/tutorials/cloud-pubsub-drainer/
-
-### Install components
-
-You will use the command-line interface for Cloud Monitoring resources, which is provided by the `gcloud` `alpha` component:
-
-    gcloud components install alpha
+2.  Get access to Google Earth Engine API using the link: https://signup.earthengine.google.com/.
+3.  Enable the BigQuery API and the Cloud Storage API in the project.
+4.  Install the geobeam python library 
+    ```
+    pip install geobeam
+    ```
 
 ### Set environment variables
 
@@ -66,17 +51,20 @@ These environment variables are used throughout the project:
     export FULL_PROJECT=$(gcloud config list project --format "value(core.project)")
     export PROJECT_ID="$(echo $FULL_PROJECT | cut -f2 -d ':')"
 
-### Create a data archive bucket
+### Create GCS buckets
 
-This is the bucket into which we archive data from Pub/Sub:
+    ```
+    gsutil mb gs://{bucket_to_store_images}
+    gsutil mb gs://{bucket_to_store_geobeam_jobrun_info}
+    ```
 
-    gsutil mb gs://$PROJECT_ID-data-archive
+### Create BigQuery Dataset
 
-### Create Pub/Sub resources
-
-    gcloud pubsub topics create demo-data
-    gcloud pubsub subscriptions create bulk-drainer --topic demo-data
-    gcloud pubsub topics create drain-tasks
+*   Create a Create a BigQuery dataset where you want to ingest the TIF file from GCS.
+*   Create a table in the dataset with the schema as mentioned [here](https://github.com/GoogleCloudPlatform/dataflow-geobeam/blob/main/geobeam/examples/dem_schema.json)
+```
+[ { "name": "elev", "type": "INT64" }, { "name": "geom", "type": "GEOGRAPHY" } ]
+```
 
 The `demo-data` topic is the main topic where data is sent that we want to archive. It may have several subscriptions to
 it that react to events or process streaming data. In Pub/Sub, each subscription gets its own durable copy of the 
