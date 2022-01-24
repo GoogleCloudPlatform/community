@@ -100,11 +100,11 @@ built from the source code under the `test-logger` subdirectory.
 
         docker tag test-logger gcr.io/${project_id}/test-logger
 
-1. Push the container image:
+1.  Push the container image:
 
         docker push gcr.io/${project_id}/test-logger
 
-1. Update the deployment file:
+1.  Update the deployment file:
 
         envsubst < kubernetes/test-logger.yaml > kubernetes/test-logger-deploy.yaml
 
