@@ -56,9 +56,9 @@ In this section, you define variables that control where elements of the infrast
 
 1.  Set the variables used by this tutorial:
 
-        region=us-east1
-        zone=${region}-b
-        project_id=[YOUR_PROJECT_ID]
+        export region=us-east1
+        export zone=${region}-b
+        export project_id=[YOUR_PROJECT_ID]
         
     This tutorial uses the region `us-east-1`. If you change the region, make sure that the zone values reference your region.
 
