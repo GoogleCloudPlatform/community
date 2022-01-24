@@ -6,7 +6,7 @@ gevent==1.4.0
 greenlet==0.4.15
 idna==2.8
 itsdangerous==1.1.0
-Jinja2==2.10.1
+Jinja2==2.11.3
 locustio==0.13.0
 MarkupSafe==1.1.1
 msgpack==0.6.1
@@ -14,5 +14,5 @@ msgpack-python==0.5.6
 pyzmq==18.0.1
 requests==2.21.0
 six==1.12.0
-urllib3==1.24.2
-Werkzeug==0.15.1
+urllib3==1.26.5
+Werkzeug==0.15.3
