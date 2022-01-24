@@ -25,7 +25,7 @@ This solution uses GeoBeam to ingest Raster TIFF images generated in Google Eart
 
 ## Architecture
 
-![architecture](https://storage.googleapis.com/gcp-community/tutorials/cloud-pubsub-drainer/architecture.png)
+![architecture](image/ee2bq_architecture.png)
 
 There are several components to this architecture:
 
@@ -53,39 +53,18 @@ These environment variables are used throughout the project:
 
 ### Create GCS buckets
 
-    ```
-    gsutil mb gs://{bucket_to_store_images}
-    gsutil mb gs://{bucket_to_store_geobeam_jobrun_info}
-    ```
+```
+gsutil mb gs://{bucket_to_store_images}
+gsutil mb gs://{bucket_to_store_geobeam_jobrun_info}
+```
 
 ### Create BigQuery Dataset
 
-*   Create a Create a BigQuery dataset where you want to ingest the TIF file from GCS.
+*   Create a BigQuery dataset where you want to ingest the TIF file from GCS.
 *   Create a table in the dataset with the schema as mentioned [here](https://github.com/GoogleCloudPlatform/dataflow-geobeam/blob/main/geobeam/examples/dem_schema.json)
 ```
 [ { "name": "elev", "type": "INT64" }, { "name": "geom", "type": "GEOGRAPHY" } ]
 ```
-
-The `demo-data` topic is the main topic where data is sent that we want to archive. It may have several subscriptions to
-it that react to events or process streaming data. In Pub/Sub, each subscription gets its own durable copy of the 
-data.
-
-The `bulk-drainer` subscription is created to act as the storage buffer dedicated to the archiver task.
-
-The `drain-tasks` topic serves as a durable relay of the alert occurrence.
-
-### Deploy the archiving function
-
-The `Archiver` function is awakened by a condition-based alert and drains any outstanding events in
-the `bulk-drainer` subscription into chunked objects in the `data-archive` bucket.
-
-    cd drainer-func
-    gcloud functions deploy Archiver \
-        --runtime go111 \
-        --trigger-topic drain-tasks \
-        --update-env-vars BUCKET_NAME=$PROJECT_ID-data-archive,SUBSCRIPTION_NAME=bulk-drainer,AUTH_TOKEN=abcd
-
-How much is consolidated per object is configured in the code; it can be set to a number of messages or a number of bytes.
 
 ### Deploy webhook relay
 
@@ -94,28 +73,6 @@ to act as a simple relay. The `AUTH_TOKEN` environment variable sets an expected
 notification channel and the webhook.
 
     gcloud functions deploy StackDriverRelay --runtime go111 --trigger-http --update-env-vars AUTH_TOKEN=abcd
-
-### Allow Cloud Monitoring to call the webhook
-
-*[Cloud Function IAM Alpha](http://bit.ly/gcf-iam-alpha) Users Only* 
-
-Cloud Monitoring can only reach publicly accesible webhooks. If you are using a project with function authorization enabled,
-you need to make it reachable:
-
-    gcloud alpha functions add-iam-policy-binding StackDriverRelay --member "allUsers" --role "roles/cloudfunctions.invoker"
-
-### Create a Cloud Monitoring notification channel
-
-In Cloud Monitoring, a notification channel is a resource that can be used with one or more alerting policies. These can be 
-created in the Cloud Console or through an API. Using the URL from our deployed function, you create a new channel and then
-get the channel identifier as an environment variable:
-
-    cd ..
-    export URL=$(gcloud functions describe StackDriverRelay --format='value(httpsTrigger.url)')
-
-    gcloud alpha monitoring channels create --channel-content-from-file channel.json --channel-labels url=$URL?token=abcd
-
-    export CHANNEL=$(gcloud alpha monitoring channels list --filter='displayName="Archiver"' --format='value("name")')
 
 ### Download Earth Engine Image
 
@@ -180,7 +137,7 @@ the [alerting policy overview](https://cloud.google.com/monitoring/alerts/).
 
 Check BigQuery Viz to see if the images match roughly
 
-![BQ Viz](../image/bqgeoviz.png)
+![BQ Viz](image/bqgeoviz.png)
 
 The `Archiver` function logs should show the archiving activity, including how many messages were archived.
 
