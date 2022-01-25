@@ -6,9 +6,9 @@ tags: Dataflow, Google Earth Engine, GeoBeam, BigQuery
 date_published: 2022-02-15
 ---
 
-Author: Kannappan Sirchabesan | Cloud Data Engineer | Google
-Collaborator: Donna Schut | Solutions Manager | Google
-Collaborator: Travis Webb | Solutions Engineer | Google
+Author: Kannappan Sirchabesan | Cloud Data Engineer | Google  
+Collaborator: Donna Schut | Solutions Manager | Google  
+Collaborator: Travis Webb | Solutions Engineer | Google  
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
