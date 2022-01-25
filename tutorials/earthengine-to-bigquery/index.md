@@ -53,6 +53,7 @@ export IMAGES_BUCKET=tmp_images_bucket_1
 export GEOBEAM_BUCKET=tmp_geobeam_bucket_1
 export BQ_DATASET=tmp_bq_dataset_1
 export BQ_DATASET_LOCATION=us-central1
+export BQ_TABLE=tmp_bq_table_1
 ```
 
 ### Create GCS buckets
@@ -67,11 +68,13 @@ gsutil mb gs://${GEOBEAM_BUCKET}
 *   Create a BigQuery dataset where you want to ingest the TIF file from GCS.
 ```
 bq --location=${BQ_DATASET_LOCATION} mk \
---dataset \
-${PROJECT_ID}:${BQ_DATASET}
+--dataset ${PROJECT_ID}:${BQ_DATASET}
 ```
 *   Create a table in the dataset with the schema as mentioned [here](https://github.com/GoogleCloudPlatform/dataflow-geobeam/blob/main/geobeam/examples/dem_schema.json)
 ```
+bq mk \
+--table \
+${PROJECT_ID}:${BQ_DATASET}.${BQ_TABLE} \
 [ { "name": "elev", "type": "INT64" }, { "name": "geom", "type": "GEOGRAPHY" } ]
 ```
 
@@ -100,7 +103,7 @@ task.start()
 
 ### Run GeoBeam job
 
-Run the GeoBeam job to ingest the TIFF file from GCS bucket into BigQuery. The job takes roughly 15 minutes to complete. 
+Run the GeoBeam job to ingest the TIFF file from GCS bucket into BigQuery. The job takes roughly 20 minutes to complete. 
 
 ```
 python -m geobeam.examples.geotiff_dem \
@@ -108,7 +111,7 @@ python -m geobeam.examples.geotiff_dem \
   --worker_harness_container_image gcr.io/dataflow-geobeam/example-py37 \
   --experiment use_runner_v2 \
   --project lbg-sandbox \
-  --temp_location gs://{bucket_to_store_geobeam_jobrun_info} \
+  --temp_location gs://${GEOBEAM_BUCKET} \
   —-service_account_email {service_account_email_from_previous_step} \
   --region us-central1 \
   --gcs_url gs://{bucket_to_store_images}/copernicusExport.tif \
@@ -121,18 +124,24 @@ python -m geobeam.examples.geotiff_dem \
   --centroid_only true
 ```
 
+The progress of the GeoBeam job can be monitored in Dataflow. The job graph should look like the below. 
+![GeoBeam Graph](image/geobeam_graph.png)
+
+### Verify the data in BigQuery
+
+![BQ Data Preview](image/bqdatapreview.png)
+
 ### Check BigQuery Viz
 
 Check BigQuery Viz to see if the images match roughly
 
 ![BQ Viz](image/bqgeoviz.png)
 
-## Cleaning up and next steps
+## Cleaning up
 
-    gcloud functions delete Archiver
-    gcloud functions delete StackDriverRelay
-    gcloud pubsub subscriptions delete bulk-drainer --topic demo-data
-    gcloud pubsub topics delete drain-tasks
-    gcloud pubsub topics delete demo-data
-
-You can choose to delete the notifications and alert policy in the console.
+You can choose to delete the project and the GCS bucket if you don't need them
+```
+gsutil rm -r gs://${GEOBEAM_BUCKET}
+gsutil rm -r gs://${IMAGES_BUCKET}
+gcloud projects delete ${PROJECT_ID}
+```
