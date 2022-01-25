@@ -129,6 +129,8 @@ The progress of the GeoBeam job can be monitored in Dataflow. The job graph shou
 
 ### Verify the data in BigQuery
 
+Once the GeoBeam job completes, the data should get ingested into BigQuery. This can be verified in the cloud console by looking at the preview of the bigquery table. It should look like below with the elev column and the geom column containing the points of the image as POINT object with the corresponding latitude and longitude.
+
 ![BQ Data Preview](image/bqdatapreview.png)
 
 ### Check BigQuery Viz
