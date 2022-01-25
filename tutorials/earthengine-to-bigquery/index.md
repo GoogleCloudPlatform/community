@@ -46,33 +46,39 @@ There are several components to this architecture:
 
 ### Set environment variables
 
-These environment variables are used throughout the project:
-
-    export FULL_PROJECT=$(gcloud config list project --format "value(core.project)")
-    export PROJECT_ID="$(echo $FULL_PROJECT | cut -f2 -d ':')"
+Set and configure the below environment variables as required in your project
+```
+export PROJECT_ID=ee-geobeam-sandbox
+export IMAGES_BUCKET=tmp_images_bucket_1
+export GEOBEAM_BUCKET=tmp_geobeam_bucket_1
+export BQ_DATASET=tmp_bq_dataset_1
+export BQ_DATASET_LOCATION=us-central1
+```
 
 ### Create GCS buckets
 
 ```
-gsutil mb gs://{bucket_to_store_images}
-gsutil mb gs://{bucket_to_store_geobeam_jobrun_info}
+gsutil mb gs://${IMAGES_BUCKET}
+gsutil mb gs://${GEOBEAM_BUCKET}
 ```
 
 ### Create BigQuery Dataset
 
 *   Create a BigQuery dataset where you want to ingest the TIF file from GCS.
+```
+bq --location=${BQ_DATASET_LOCATION} mk \
+--dataset \
+${PROJECT_ID}:${BQ_DATASET}
+```
 *   Create a table in the dataset with the schema as mentioned [here](https://github.com/GoogleCloudPlatform/dataflow-geobeam/blob/main/geobeam/examples/dem_schema.json)
 ```
 [ { "name": "elev", "type": "INT64" }, { "name": "geom", "type": "GEOGRAPHY" } ]
 ```
 
-### Deploy webhook relay
+### Create Cloud IAM Service Account
 
-Cloud Monitoring does not currently have a native Pub/Sub alert notification channel. We use a small HTTP Cloud Function
-to act as a simple relay. The `AUTH_TOKEN` environment variable sets an expected shared secret between the Cloud Monitoring 
-notification channel and the webhook.
-
-    gcloud functions deploy StackDriverRelay --runtime go111 --trigger-http --update-env-vars AUTH_TOKEN=abcd
+*   Create a Cloud IAM Service Account 
+*   Assign permissions to the service account to BigQuery and GCS
 
 ### Download Earth Engine Image
 
@@ -80,84 +86,46 @@ Export the Earth Engine Image as a TIF file to the bucket created in GCS.
 
 Wait for a couple of minutes for the export to complete.  
 
-    image = ee.ImageCollection("COPERNICUS/S2").first().select(['B4', 'B3', 'B2']);
+```
+image = ee.ImageCollection("COPERNICUS/S2").first().select(['B4', 'B3', 'B2']);
+task_config = {
+    'description': 'copernicus-3',    
+    'scale': 30,
+    'bucket': 'ee-geobeam-2',
+    'fileNamePrefix': 'copernicusExport'
+}
+task = ee.batch.Export.image.toCloudStorage(image, **task_config)
+task.start()
+```
 
-    task_config = {
-      'description': 'copernicus-3',    
-      'scale': 30,
-      'bucket': 'ee-geobeam-2',
-      'fileNamePrefix': 'copernicusExport'
-    }
+### Run GeoBeam job
 
-    task = ee.batch.Export.image.toCloudStorage(image, **task_config)
-    task.start()
+Run the GeoBeam job to ingest the TIFF file from GCS bucket into BigQuery. The job takes roughly 15 minutes to complete. 
 
-
-## Testing the solution
-
-### Create test data
-
-The loader script creates some synthetic test data
-
-    cd ../loader
-    go get
-    # note you may see a warning about gopath if you are in Cloud Shell
-    go run main.go
-    
-You should see output that looks like:
-
-    bulking out
-    done bulking out
-    2019/03/05 16:55:33 Published Batch
-    2019/03/05 16:55:34 Published Batch
-    2019/03/05 16:55:35 Published Batch
-    2019/03/05 16:55:36 Published Batch
-    2019/03/05 16:55:37 Published Batch
-    2019/03/05 16:55:38 Published Batch
-    2019/03/05 16:55:39 Published Batch
-    2019/03/05 16:55:40 Published Batch
-    2019/03/05 16:55:41 Published Batch
-    2019/03/05 16:55:42 Published Batch
-
-To test the age-based condition in the policy, let the loader run just for a moment, cancel by pressing Ctrl-C, and then
-wait a few minutes until the condition is triggered.
-
-![alerting policy](https://storage.googleapis.com/gcp-community/tutorials/cloud-pubsub-drainer/stackdriver_alerting_policy.png)
-
-For a trigger based on backlog size, let the loader tool run for several minutes before canceling. (Do not let this
-script run indefinitely, since it will continue to generate billable volumes of data.)
-
-Note that Cloud Monitoring metrics do not appear instantaneously; it takes some time for them to show in the alert policy charts. 
-Also note that for the condition to fire, it has to be true for 1 minute (this is a configurable part of policy).
-
-While you wait for an alert to fire, you can to check out
-the [alerting policy overview](https://cloud.google.com/monitoring/alerts/).
+```
+python -m geobeam.examples.geotiff_dem \
+  --runner DataflowRunner \
+  --worker_harness_container_image gcr.io/dataflow-geobeam/example-py37 \
+  --experiment use_runner_v2 \
+  --project lbg-sandbox \
+  --temp_location gs://{bucket_to_store_geobeam_jobrun_info} \
+  —-service_account_email {service_account_email_from_previous_step} \
+  --region us-central1 \
+  --gcs_url gs://{bucket_to_store_images}/copernicusExport.tif \
+  --dataset {name_of_bq_dataset} \
+  --table dem \
+  --band_column elev \
+  --max_num_workers 3 \
+  --machine_type c2-standard-30 \
+  --merge_blocks 80 \
+  --centroid_only true
+```
 
 ### Check BigQuery Viz
 
 Check BigQuery Viz to see if the images match roughly
 
 ![BQ Viz](image/bqgeoviz.png)
-
-The `Archiver` function logs should show the archiving activity, including how many messages were archived.
-
-![archiver function logs](https://storage.googleapis.com/gcp-community/tutorials/cloud-pubsub-drainer/stackdriver_archiver_function_logs.png)
-
-### Check the archive bucket
-
-If you look in the data archive bucket in the Cloud Console [storage browser](https://console.cloud.google.com/storage)
-you will see a set of nested folders by year/month/day and then named for the time the archive event occurred.
-
-The size archive size is set to 1MB in this tutorial, though that is adjustable in the function code.
-
-![storage export](https://storage.googleapis.com/gcp-community/tutorials/cloud-pubsub-drainer/cloud_storage_export.png)
-
-## Limits of the pattern
-
-This pattern is not appropriate for all cases. Notably, function invocations are limited to 10 minutes. This means that the
-alert policy should trigger often enough that the archive task completes within this timeframe.
-
-If the data volume into Pub/Sub is too much to be archived by such a periodic task, it is better handled by a proper [streaming Dataflow job](https://cloud.google.com/dataflow/docs/guides/templates/provided-templates#cloudpubsubtogcstext).
 
 ## Cleaning up and next steps
 
@@ -168,11 +136,3 @@ If the data volume into Pub/Sub is too much to be archived by such a periodic ta
     gcloud pubsub topics delete demo-data
 
 You can choose to delete the notifications and alert policy in the console.
-
-### Next steps
-
-There are several ways to extend this pattern:
-
-* Add scheduled run of the archiver using [Cloud Scheduler](https://cloud.google.com/scheduler/) as an extra backstop.
-* Add conversion and compression (e.g., using Avro) to the data as you write it to Cloud Storage.
-* Add nightly [load of all archived files into BigQuery](https://cloud.google.com/bigquery/docs/loading-data-cloud-storage).
