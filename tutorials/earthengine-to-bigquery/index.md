@@ -3,10 +3,12 @@ title: Ingest data from Google Earth Engine to BigQuery
 description: Use Cloud Dataflow and GeoBeam to ingest raster image data(TIFF files) from Google Earth Engine to BigQuery. 
 author: kannappans
 tags: Dataflow, Google Earth Engine, GeoBeam, BigQuery
-date_published: 2019-03-15
+date_published: 2022-02-15
 ---
 
-Kannappan Sirchabesan | Cloud Data Engineer | Google
+Author: Kannappan Sirchabesan | Cloud Data Engineer | Google
+Collaborator: Donna Schut | Solutions Manager | Google
+Collaborator: Travis Webb | Solutions Engineer | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
@@ -46,7 +48,7 @@ There are several components to this architecture:
 
 ### Set environment variables
 
-Set and configure the below environment variables as required in your project
+Set the environment variables and replace the values with values corresponding to your project.
 ```
 export PROJECT_ID=ee-geobeam-sandbox
 export IMAGES_BUCKET=tmp_images_bucket_1
@@ -65,7 +67,7 @@ gsutil mb gs://${GEOBEAM_BUCKET}
 
 ### Create BigQuery Dataset
 
-*   Create a BigQuery dataset where you want to ingest the TIF file from GCS.
+*   Create a BigQuery dataset where you want to ingest the TIFF file from GCS.
 ```
 bq --location=${BQ_DATASET_LOCATION} mk \
 --dataset ${PROJECT_ID}:${BQ_DATASET}
@@ -85,7 +87,7 @@ ${PROJECT_ID}:${BQ_DATASET}.${BQ_TABLE} \
 
 ### Download Earth Engine Image
 
-Export the Earth Engine Image as a TIF file to the bucket created in GCS.  
+Export the first image in Copernicus Sentinel-2 Earth Engine ImageCollection as a TIFF file to the bucket created in GCS.  
 
 Wait for a couple of minutes for the export to complete.  
 
