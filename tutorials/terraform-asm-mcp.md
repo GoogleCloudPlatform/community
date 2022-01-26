@@ -3,7 +3,7 @@ title: Install Anthos Service Mesh with a Google-managed control plane on GKE wi
 description: Use Terraform to deploy a Kubernetes Engine cluster and install Anthos Service Mesh with a Google-managed control plane.
 author: alizaidis
 tags: Kubernetes Engine, ASM, MCP, Managed
-date_published: 2021-01-22
+date_published: 2022-01-21
 ---
 
 Ali Zaidi | Solutions Architect | Google
