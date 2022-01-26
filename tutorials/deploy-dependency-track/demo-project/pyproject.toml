@@ -7,7 +7,7 @@ authors = ["Duncan Dickinson <dickinsond@google.com>"]
 [tool.poetry.dependencies]
 python = "^3.7"
 Flask = "^1.1.2"
-Django = "1.2"
+Django = "2.2.25"
 
 [tool.poetry.dev-dependencies]
 cyclonedx-bom = "^0.4.3"
