@@ -227,10 +227,6 @@ The output includes the following:
 
 In this section, you create another Dataproc cluster to verify that the Hive data and Hive metastore can be shared across multiple clusters.
 
-1.  Set environment variables:
-
-        export REGION2="us-east1"
-
 1.  Create the second worker cluster in a different region:
 
         gcloud dataproc clusters create hive-worker2 \
