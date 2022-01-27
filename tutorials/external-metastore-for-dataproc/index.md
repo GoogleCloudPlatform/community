@@ -93,8 +93,9 @@ In Cloud Shell, set the default Compute Engine zone and region where you are goi
     export PROJECT="$(gcloud info --format='value(config.project)')"
     export REGION="us-central1"
     export ZONE="us-central1-a"
-    export WAREHOUSE_MULTI_REGION="us"
-    gcloud config set compute/zone "${ZONE}"        
+    export REGION2="us-east1"    
+    export ZONE2="us-east1-a"
+    export WAREHOUSE_MULTI_REGION="us" 
 
 ## Creating resources
 
@@ -190,6 +191,7 @@ In Cloud Shell, run the following command to create first worker cluster in the 
     gcloud dataproc clusters create hive-worker1 \
     --image-version 2.0-debian10 \
     --region ${REGION} \
+    --zone ${ZONE} \
     --properties=^#^hive:hive.metastore.warehouse.dir=gs://${PROJECT}-warehouse/datasets \
     --properties=^#^hive:hive.metastore.uris=thrift://hive-metastore1-m:9083,thrift://hive-metastore2-m:9083
 
@@ -234,6 +236,7 @@ In this section, you create another Dataproc cluster to verify that the Hive dat
         gcloud dataproc clusters create hive-worker2 \
         --image-version 2.0-debian10 \
         --region ${REGION2} \
+        --zone ${ZONE2} \        
         --properties=^#^hive:hive.metastore.warehouse.dir=gs://${PROJECT}-warehouse/datasets \
         --properties=^#^hive:hive.metastore.uris=thrift://hive-metastore1-m:9083,thrift://hive-metastore2-m:9083
 
