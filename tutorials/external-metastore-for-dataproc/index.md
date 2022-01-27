@@ -12,9 +12,9 @@ Anant Damle | Solutions Architect | Google
 
 Google Cloud [Dataproc]() service provides a managed Hadoop clusters, which along with [Dataproc Metastore](https://cloud.google.com/dataproc-metastore/docs) for managed Hive Metastore allows developers and enterprises to use ephemeral clusters without loosing flexibility of using Hive and related ecosystem.
 
-Hive is a popular open source data warehouse system built on [Apache Hadoop](https://hadoop.apache.org/). Hive offers a SQL-like query language called [HiveQL](https://wikipedia.org/wiki/Apache_Hive#HiveQL), which is used to analyze large, structured datasets. The Hive metastore holds metadata about Hive tables, such as their schema and location. Where MySQL is commonly used as a backend for the Hive metastore, Cloud SQL makes it easy to set up, maintain, manage, and administer your relational databases on Google Cloud.
+Hive is a popular open source data warehouse system built on [Apache Hadoop](https://hadoop.apache.org/). Hive offers a SQL-like query language called [HiveQL](https://wikipedia.org/wiki/Apache_Hive#HiveQL), which is used to analyze large, structured datasets. The Hive metastore holds metadata about Hive tables, such as their schema and location. MySQL is commonly used as a backend for the Hive metastore, Cloud SQL makes it easy to set up, maintain, manage, and administer your relational databases on Google Cloud.
 
-Dataproc is a fast, easy-to-use, fully managed service on Google Cloud for running [Apache Spark](https://spark.apache.org/) and [Apache Hadoop](https://hadoop.apache.org/) workloads in a simple, cost-efficient way. Even though Dataproc instances can remain stateless, we recommend persisting the Hive data in Cloud Storage and the Hive metastore in MySQL on Cloud SQL.
+Dataproc is a fast, easy-to-use, fully managed service on Google Cloud for running [Apache Spark](https://spark.apache.org/) and [Apache Hadoop](https://hadoop.apache.org/) workloads in a simple, cost-efficient way. Even though Dataproc clusters can remain stateless, we recommend persisting the Hive table data in Cloud Storage and the Hive metastore in MySQL on Cloud SQL.
 
 This document builds on the multi-regional architecture concept described in the companion architecture on [using Apache Hive on Dataproc](https://cloud.google.com/architecture/using-apache-hive-on-cloud-dataproc#considerations_for_multi-regional_architectures) when [Dataproc Metastore](https://cloud.google.com/dataproc-metastore/docs) service is unavailble.
 
@@ -26,8 +26,8 @@ This document is intended for a technical audience whose responsibilities includ
  * Create MySQL instance on Cloud SQL for the Hive metastore
  * Deploy two single-node Dataproc clusters for Hive metastore service
  * Install [Cloud SQL Proxy]() on the Hive metastore Dataproc clusters
- * Upload Hive data to Cloud Storage
- * Create compute Dataproc clusters in two regions
+ * Upload Hive table data files to Cloud Storage
+ * Create ephemeral worker Dataproc clusters in two separate regions 
  * Run Hive queries on compute clusters
 
 ## Costs
@@ -45,15 +45,19 @@ projected usage.
 
 ![multi-regional hive metastore usage](https://cloud.google.com/architecture/images/using-apache-hive-on-cloud-dataproc-2.svg)
 
-The metastore service cluster is single node to optimize costs as the Hive metastore service can only run on the Dataproc cluster master nodes. The metastore service clusters are designed the same region as that of Cloud SQL instance to reduce the latency as the metastore service sends high volumes of requests to the database.
+As the Hive metastore service can only run on the Dataproc cluster master nodes, the metastore service cluster is provisioned as a single node cluster to optimize costs. The Hive metastore is a stateless service and allows for multiple independent metastore services to be started in paralled to provide High Availability
+
+The metastore service sends a high volume of requests to the database; to minimize latency, the metastore service clusters are deployed in the same region as the Cloud SQL instance.
+
+In production, you might consider using the high availability configuration for Cloud SQL instances, to protect against rare cases of infrastructure failure.
 
 
 With this architecture, the lifecycle of a Hive query follows these steps:
 
   1. The Hive client submits a query to the Hive server that runs in an ephemeral cluster.
   1. The server processes the query and requests the metadata from the metastore service running in a seperate cluster.
-  1. The metastore service fetches the Hive metadata from Cloud SQL through the Cloud SQL Proxy.
-  1. The server loads data from the Hive warehouse located in a [multi-regional bucket](https://cloud.google.com/storage/docs/locations#location-mr) in Cloud Storage.
+  1. The metastore service fetches the Hive metadata from Cloud SQL through a secure tunnel created by  the Cloud SQL Proxy.
+  1. The worker processes the data by loading data from the Hive warehouse located in a [multi-regional bucket](https://cloud.google.com/storage/docs/locations#location-mr) in Cloud Storage.
   1. The server returns the result to the client.
 
 You can also consider using a regional bucket if the Hive data needs to be accessed only from Hive servers that are located in a single location. The choice between regional and multi-regional buckets depends on your use case. You must balance latency, availability, and bandwidth costs. Refer to the documentation on [location considerations](https://cloud.google.com/storage/docs/bucket-locations#considerations) for more details.
@@ -86,24 +90,21 @@ cleanup easiest at the end of the tutorial, we recommend that you create a new p
 
 In Cloud Shell, set the default Compute Engine zone and region where you are going to create your Dataproc clusters:
 
-        export PROJECT="$(gcloud info --format='value(config.project)')"
-        export REGION="us-central1"
-        export ZONE="us-central1-a"
-        export WAREHOUSE_MULTI_REGION="us"
-        gcloud config set compute/zone "${ZONE}"        
+    export PROJECT="$(gcloud info --format='value(config.project)')"
+    export REGION="us-central1"
+    export ZONE="us-central1-a"
+    export WAREHOUSE_MULTI_REGION="us"
+    gcloud config set compute/zone "${ZONE}"        
 
 ## Creating resources
-
-The tutorial uses following resources:
-
- * A Cloud Storage bucket as the data warehouse for test data storage
- * A cloud SQL instance
 
 ### Create the warehouse Cloud Storage bucket
 
 Create a Cloud Storage bucket for storing test data, run the following command on Cloud Shell:
 
-        gsutil mb -p ${PROJECT} -l ${WAREHOUSE_MULTI_REGION} "gs://${PROJECT}-warehouse" 
+    gsutil mb -p ${PROJECT} \
+    -l ${WAREHOUSE_MULTI_REGION} \
+    "gs://${PROJECT}-warehouse" 
 
 ### Create Cloud SQL instance
 
@@ -112,10 +113,10 @@ Create a MySQL on Cloud SQL instance to be used later to host the Hive metastore
 
 In Cloud Shell, execute the following command to create a new Cloud SQL instance:
         
-        gcloud sql instances create hive-metastore-db \
-        --database-version="MYSQL_5_7" \
-        --activation-policy=ALWAYS \
-        --zone ${ZONE}
+    gcloud sql instances create hive-metastore-db \
+    --database-version="MYSQL_5_7" \
+    --activation-policy=ALWAYS \
+    --zone ${ZONE}
 
 This command might take a few minutes to complete.
 
@@ -125,38 +126,38 @@ Create the first single-node Dataproc cluster that will be the Hive metastore se
 
 In Cloud Shell, execute the following command:
 
-        gcloud dataproc clusters create hive-metastore1 \
-        --enable-component-gateway \
-        --scopes sql-admin \
-        --region ${REGION} \
-        --zone ${ZONE} \
-        --single-node \
-        --master-machine-type n1-standard-8 \
-        --master-boot-disk-type pd-ssd \
-        --master-boot-disk-size 500 \
-        --image-version 2.0.29-debian10 \
-        --properties hive:hive.metastore.warehouse.dir=gs://${PROJECT}-warehouse/datasets \
-        --initialization-actions gs://goog-dataproc-initialization-actions-${REGION}/cloud-sql-proxy/cloud-sql-proxy.sh \
-        --metadata hive-metastore-instance=${PROJECT}:${REGION}:hive-metastore-db
+    gcloud dataproc clusters create hive-metastore1 \
+    --enable-component-gateway \
+    --scopes sql-admin \
+    --region ${REGION} \
+    --zone ${ZONE} \
+    --single-node \
+    --master-machine-type n1-standard-8 \
+    --master-boot-disk-type pd-ssd \
+    --master-boot-disk-size 500 \
+    --image-version 2.0-debian10 \
+    --properties hive:hive.metastore.warehouse.dir=gs://${PROJECT}-warehouse/datasets \
+    --initialization-actions gs://goog-dataproc-initialization-actions-${REGION}/cloud-sql-proxy/cloud-sql-proxy.sh \
+    --metadata hive-metastore-instance=${PROJECT}:${REGION}:hive-metastore-db
 
 This command will take a few minutes to create and initialize the cluster.
 
-Create a failover metastore service cluster using the following command in Cloud Shell:
+Since the Hive metastore is stateless, multiple instances can be deployed to achieve High Availability. Create a failover metastore service cluster using the following command in Cloud Shell:
 
-        gcloud dataproc clusters create hive-metastore2 \
-        --async
-        --enable-component-gateway \
-        --scopes sql-admin \
-        --region ${REGION} \
-        --zone ${ZONE} \
-        --single-node \
-        --master-machine-type n1-standard-8 \
-        --master-boot-disk-type pd-ssd \
-        --master-boot-disk-size 500 \
-        --image-version 2.0.29-debian10 \
-        --properties hive:hive.metastore.warehouse.dir=gs://${PROJECT}-warehouse/datasets \
-        --initialization-actions gs://goog-dataproc-initialization-actions-${REGION}/cloud-sql-proxy/cloud-sql-proxy.sh \
-        --metadata hive-metastore-instance=${PROJECT}:${REGION}:hive-metastore-db
+    gcloud dataproc clusters create hive-metastore2 \
+    --enable-component-gateway \
+    --scopes sql-admin \
+    --region ${REGION} \
+    --zone ${ZONE} \
+    --single-node \
+    --master-machine-type n1-standard-8 \
+    --master-boot-disk-type pd-ssd \
+    --master-boot-disk-size 500 \
+    --image-version 2.0-debian10 \
+    --properties hive:hive.metastore.warehouse.dir=gs://${PROJECT}-warehouse/datasets \
+    --initialization-actions gs://goog-dataproc-initialization-actions-${REGION}/cloud-sql-proxy/cloud-sql-proxy.sh \
+    --metadata hive-metastore-instance=${PROJECT}:${REGION}:hive-metastore-db \
+    --async        
 
 ### Create a Hive table
 
@@ -186,52 +187,53 @@ In this section, you create two Dataproc clusters in different regions preferrab
 
 In Cloud Shell, run the following command to create first worker cluster in the same region:
 
-        gcloud dataproc clusters create hive-worker1 \
-        --image-version 2.0.29-debian10 \
-        --region ${REGION} \
-        --properties hive:hive.metastore.warehouse.dir=gs://${PROJECT}-warehouse/datasets \
-        --properties hive:hive.metastore.uris=thrift://hive-metastore1-m:9083,thrift://hive-metastore2-m:9083
+    gcloud dataproc clusters create hive-worker1 \
+    --image-version 2.0-debian10 \
+    --region ${REGION} \
+    --properties hive:hive.metastore.warehouse.dir=gs://${PROJECT}-warehouse/datasets \
+    --properties hive:hive.metastore.uris=thrift://hive-metastore1-m:9083,thrift://hive-metastore2-m:9083
 
-    Note: The `hive.metastore.uris` property points the metastore service to the external Hive metastore service clusters.
-
-
+Note: The `hive.metastore.uris` property points the metastore service to the external Hive metastore service clusters. It is possible to indicate multiple, comma-separated metastore instances.
 
 ## Running Hive Query on workers
 
 You can use different tools inside Dataproc to run Hive queries like Hive jobs API, [Beeline](https://cwiki.apache.org/confluence/display/Hive/HiveServer2+Clients#HiveServer2Clients-Beeline%E2%80%93CommandLineShell) CLI client and [SparkSQL](https://spark.apache.org/sql/). In this section, you learn how to perform queries using the Hive jobs API:
 
-        gcloud dataproc jobs submit hive \
-        --cluster hive-worker1 \
-        --region ${REGION} \
-        --execute "SELECT * FROM transactions LIMIT 10;"
+    gcloud dataproc jobs submit hive \
+    --cluster hive-worker1 \
+    --region ${REGION} \
+    --execute "SELECT * FROM transactions LIMIT 10;"
 
 The output includes the following:
 
-        +-----------------+--------------------+------------------+
-        | submissiondate  | transactionamount  | transactiontype  |
-        +-----------------+--------------------+------------------+
-        | 2017-12-03      | 1167.39            | debit            |
-        | 2017-09-23      | 2567.87            | debit            |
-        | 2017-12-22      | 1074.73            | credit           |
-        | 2018-01-21      | 5718.58            | debit            |
-        | 2017-10-21      | 333.26             | debit            |
-        | 2017-09-12      | 2439.62            | debit            |
-        | 2017-08-06      | 5885.08            | debit            |
-        | 2017-12-05      | 7353.92            | authorization    |
-        | 2017-09-12      | 4710.29            | authorization    |
-        | 2018-01-05      | 9115.27            | debit            |
-        +-----------------+--------------------+------------------+
+    +-----------------+--------------------+------------------+
+    | submissiondate  | transactionamount  | transactiontype  |
+    +-----------------+--------------------+------------------+
+    | 2017-12-03      | 1167.39            | debit            |
+    | 2017-09-23      | 2567.87            | debit            |
+    | 2017-12-22      | 1074.73            | credit           |
+    | 2018-01-21      | 5718.58            | debit            |
+    | 2017-10-21      | 333.26             | debit            |
+    | 2017-09-12      | 2439.62            | debit            |
+    | 2017-08-06      | 5885.08            | debit            |
+    | 2017-12-05      | 7353.92            | authorization    |
+    | 2017-09-12      | 4710.29            | authorization    |
+    | 2018-01-05      | 9115.27            | debit            |
+    +-----------------+--------------------+------------------+
 
 ## Creating another Dataproc cluster
 
 In this section, you create another Dataproc cluster to verify that the Hive data and Hive metastore can be shared across multiple clusters.
 
+1.  Set environment variables:
+
+        export REGION2="us-east1"
 
 1.  Create the second worker cluster in a different region:
 
         gcloud dataproc clusters create hive-worker2 \
-        --image-version 2.0.29-debian10 \
-        --region us-east1 \
+        --image-version 2.0-debian10 \
+        --region ${REGION2} \
         --properties hive:hive.metastore.warehouse.dir=gs://${PROJECT}-warehouse/datasets \
         --properties hive:hive.metastore.uris=thrift://hive-metastore1-m:9083,thrift://hive-metastore2-m:9083
 
@@ -239,7 +241,7 @@ In this section, you create another Dataproc cluster to verify that the Hive dat
 
         gcloud dataproc jobs submit hive \
         --cluster hive-worker2 \
-        --region ${REGION} \
+        --region ${REGION2} \
         --execute "
         SELECT TransactionType, COUNT(TransactionType) as Count 
         FROM transactions 
@@ -271,8 +273,5 @@ To avoid incurring charges to your Google Cloud account for the resources used i
 * Read the companion document on 
 [Using Apache Hive on Dataproc](https://cloud.google.com/architecture/using-apache-hive-on-cloud-dataproc).
 * Learn about [Dataproc Metastore](https://cloud.google.com/dlp/docs/inspecting-storage).
-* Learn about handling
-  [de-identification and re-identification of PII in large-scale datasets using Cloud DLP](https://cloud.google.com/solutions/de-identification-re-identification-pii-using-cloud-dlp).
-* Learn more about [Cloud DLP](https://cloud.google.com/dlp).
-* Learn more about [Cloud KMS](https://cloud.google.com/kms).
-* Learn more about [BigQuery](https://cloud.google.com/bigquery).  
+* Learn more about [Using BigQuery connector with Spark](https://cloud.google.com/dataproc/docs/tutorials/bigquery-connector-spark-example).
+* Explore reference architectures, diagrams, tutorials, and best practices about Google Cloud. Take a look at our [Cloud Architecture Center](https://cloud.google.com/architecture).
