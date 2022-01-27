@@ -190,8 +190,8 @@ In Cloud Shell, run the following command to create first worker cluster in the 
     gcloud dataproc clusters create hive-worker1 \
     --image-version 2.0-debian10 \
     --region ${REGION} \
-    --properties hive:hive.metastore.warehouse.dir=gs://${PROJECT}-warehouse/datasets \
-    --properties hive:hive.metastore.uris=thrift://hive-metastore1-m:9083,thrift://hive-metastore2-m:9083
+    --properties=^#^hive:hive.metastore.warehouse.dir=gs://${PROJECT}-warehouse/datasets \
+    --properties=^#^hive:hive.metastore.uris=thrift://hive-metastore1-m:9083,thrift://hive-metastore2-m:9083
 
 Note: The `hive.metastore.uris` property points the metastore service to the external Hive metastore service clusters. It is possible to indicate multiple, comma-separated metastore instances.
 
@@ -234,8 +234,8 @@ In this section, you create another Dataproc cluster to verify that the Hive dat
         gcloud dataproc clusters create hive-worker2 \
         --image-version 2.0-debian10 \
         --region ${REGION2} \
-        --properties hive:hive.metastore.warehouse.dir=gs://${PROJECT}-warehouse/datasets \
-        --properties hive:hive.metastore.uris=thrift://hive-metastore1-m:9083,thrift://hive-metastore2-m:9083
+        --properties=^#^hive:hive.metastore.warehouse.dir=gs://${PROJECT}-warehouse/datasets \
+        --properties=^#^hive:hive.metastore.uris=thrift://hive-metastore1-m:9083,thrift://hive-metastore2-m:9083
 
 1.  Verify that the new cluster can access the data:
 
