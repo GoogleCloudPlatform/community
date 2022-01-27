@@ -232,7 +232,7 @@ In this section, you create another Dataproc cluster to verify that the Hive dat
         gcloud dataproc clusters create hive-worker2 \
         --image-version 2.0-debian10 \
         --region ${REGION2} \
-        --zone ${ZONE2} \        
+        --zone ${ZONE2} \
         --properties=^#^hive:hive.metastore.warehouse.dir=gs://${PROJECT}-warehouse/datasets \
         --properties=^#^hive:hive.metastore.uris=thrift://hive-metastore1-m:9083,thrift://hive-metastore2-m:9083
 
