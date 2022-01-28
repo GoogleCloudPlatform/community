@@ -56,7 +56,7 @@ With this architecture, the lifecycle of a Hive query follows these steps:
 
   1. The Hive client submits a query to the Hive server that runs in an ephemeral cluster.
   1. The server processes the query and requests the metadata from the metastore service running in a seperate cluster.
-  1. The metastore service fetches the Hive metadata from Cloud SQL through a secure tunnel created by  the Cloud SQL Proxy.
+  1. The metastore service fetches the Hive metadata from Cloud SQL through a secure tunnel created by the Cloud SQL Proxy.
   1. The worker processes the data by loading data from the Hive warehouse located in a [multi-regional bucket](https://cloud.google.com/storage/docs/locations#location-mr) in Cloud Storage.
   1. The server returns the result to the client.
 
@@ -94,7 +94,7 @@ In Cloud Shell, set the default Compute Engine zone and region where you are goi
     export REGION="us-central1"
     export ZONE="us-central1-a"
     export REGION2="us-east1"    
-    export ZONE2="us-east1-a"
+    export ZONE2="us-east1-b"
     export WAREHOUSE_MULTI_REGION="us" 
 
 ## Creating resources
