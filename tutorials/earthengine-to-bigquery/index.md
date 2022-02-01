@@ -45,17 +45,22 @@ There are several components to this architecture:
     ```
     pip install geobeam
     ```
+5.  Install the Earth Engine Python library
+    ```
+    pip install earthengine-api
+    ```
 
 ### Set environment variables
 
 Set the environment variables and replace the values with values corresponding to your project.
 ```
 export PROJECT_ID=ee-geobeam-sandbox
-export IMAGES_BUCKET=tmp_images_bucket_1
+export IMAGES_BUCKET=gs://tmp_images_bucket_1
 export GEOBEAM_BUCKET=tmp_geobeam_bucket_1
 export BQ_DATASET=tmp_bq_dataset_1
-export BQ_DATASET_LOCATION=us-central1
+export BQ_DATASET_REGION=us-central1
 export BQ_TABLE=tmp_bq_table_1
+export SERVICE_ACCOUNT_EMAIL=lbg-ccai-poc@lbg-sandbox.iam.gserviceaccount.com
 ```
 
 ### Create GCS buckets
@@ -77,7 +82,7 @@ bq --location=${BQ_DATASET_LOCATION} mk \
 bq mk \
 --table \
 ${PROJECT_ID}:${BQ_DATASET}.${BQ_TABLE} \
-[ { "name": "elev", "type": "INT64" }, { "name": "geom", "type": "GEOGRAPHY" } ]
+elev:INT64,geom:GEOGRAPHY
 ```
 
 ### Create Cloud IAM Service Account
@@ -92,18 +97,13 @@ Export the first image in Copernicus Sentinel-2 Earth Engine ImageCollection as 
 Wait for a couple of minutes for the export to complete.  
 
 ```
-image = ee.ImageCollection("COPERNICUS/S2").first().select(['B4', 'B3', 'B2']);
-task_config = {
-    'description': 'copernicus-3',    
-    'scale': 30,
-    'bucket': 'ee-geobeam-2',
-    'fileNamePrefix': 'copernicusExport'
-}
-task = ee.batch.Export.image.toCloudStorage(image, **task_config)
-task.start()
+earthengine authenticate
+python download_ee_image_to_gcs.py
 ```
 
 ### Run GeoBeam job
+
+export GOOGLE_APPLICATION_CREDENTIALS="<Path of the keyfile JSON>"
 
 Run the GeoBeam job to ingest the TIFF file from GCS bucket into BigQuery. The job takes roughly 20 minutes to complete. 
 
@@ -113,11 +113,11 @@ python -m geobeam.examples.geotiff_dem \
   --worker_harness_container_image gcr.io/dataflow-geobeam/example-py37 \
   --experiment use_runner_v2 \
   --project lbg-sandbox \
-  --temp_location gs://${GEOBEAM_BUCKET} \
-  —-service_account_email {service_account_email_from_previous_step} \
-  --region us-central1 \
-  --gcs_url gs://{bucket_to_store_images}/copernicusExport.tif \
-  --dataset {name_of_bq_dataset} \
+  --temp_location gs://${GEOBEAM_BUCKET}/ \
+  —-service_account_email ${SERVICE_ACCOUNT_EMAIL} \
+  --region ${BQ_DATASET_REGION} \
+  --gcs_url gs://{IMAGES_BUCKET}/copernicusExport.tif \
+  --dataset ${BQ_DATASET} \
   --table dem \
   --band_column elev \
   --max_num_workers 3 \
