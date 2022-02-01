@@ -52,7 +52,7 @@ There are several components to this architecture:
 
 ### Set environment variables
 
-Set the environment variables and replace the values with values corresponding to your project.
+Set the environment variables and REPLACE the values with values corresponding to your project.
 ```
 export PROJECT_ID=ee-geobeam-sandbox
 export IMAGES_BUCKET=gs://tmp_images_bucket_1
@@ -60,7 +60,7 @@ export GEOBEAM_BUCKET=tmp_geobeam_bucket_1
 export BQ_DATASET=tmp_bq_dataset_1
 export BQ_DATASET_REGION=us-central1
 export BQ_TABLE=tmp_bq_table_1
-export SERVICE_ACCOUNT_EMAIL=lbg-ccai-poc@lbg-sandbox.iam.gserviceaccount.com
+export SERVICE_ACCOUNT_EMAIL=<serviceaccount email>
 ```
 
 ### Create GCS buckets
