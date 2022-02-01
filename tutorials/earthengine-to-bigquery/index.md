@@ -103,7 +103,9 @@ python download_ee_image_to_gcs.py
 
 ### Run GeoBeam job
 
+```
 export GOOGLE_APPLICATION_CREDENTIALS="<Path of the keyfile JSON>"
+```
 
 Run the GeoBeam job to ingest the TIFF file from GCS bucket into BigQuery. The job takes roughly 20 minutes to complete. 
 
