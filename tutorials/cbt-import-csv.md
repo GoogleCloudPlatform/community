@@ -10,6 +10,10 @@ Billy Jacobson | Developer Programs Engineer | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
+
+<p style="background-color:#F3A8BC;"><i>Note: The Cloud Bigtable CLI <a href="https://medium.com/google-cloud/easy-csv-importing-into-cloud-bigtable-ed3f62139b89">now supports importing files via CSV</a> with the cbt import command. You can still follow this tutorial to use Dataflow to import a CSV file and can use it as a starting point if you need to have a customized csv import.</i></p>
+
+
 This tutorial walks you through importing data into a Cloud Bigtable table.
 Using Dataflow, you take a CSV file and map each row to a table row
 and use the headers as column qualifiers all placed under the same column 
