@@ -47,9 +47,9 @@ projected usage.
 
 As the Hive metastore service can only run on the Dataproc cluster master nodes, the metastore service cluster is provisioned as a single node cluster to optimize costs. The Hive metastore is a stateless service and allows for multiple independent metastore services to be started in paralled to provide High Availability
 
-The metastore service sends a high volume of requests to the database; to minimize latency, the metastore service clusters are deployed in the same region as the Cloud SQL instance.
+The metastore service sends a high volume of requests to the database; to minimize latency, the metastore service clusters are deployed in the same region as the Cloud SQL instance. 
 
-In production, you might consider using the high availability configuration for Cloud SQL instances, to protect against rare cases of infrastructure failure.
+The solutions uses the [high availability configuration for Cloud SQL](https://cloud.google.com/sql/docs/mysql/high-availability) instances, to protect against rare cases of infrastructure failure. This solution also demonstrates the use of [private IP](https://cloud.google.com/vpc/docs/ip-addresses#:~:text=Private%20IP%20addresses%20are%20addresses,connected%20to%20a%20VPC%20network.&text=Public%20IP%20addresses%20are%20internet%20routable.)s to secure the perimeter of the data analytics system including the MySQL database.
 
 
 With this architecture, the lifecycle of a Hive query follows these steps:
@@ -83,6 +83,7 @@ cleanup easiest at the end of the tutorial, we recommend that you create a new p
         gcloud services enable \
         compute.googleapis.com \
         dataproc.googleapis.com \
+        servicenetworking.googleapis.com \
         storage.googleapis.com \
         sqladmin.googleapis.com
 
@@ -93,9 +94,11 @@ In Cloud Shell, set the default Compute Engine zone and region where you are goi
     export PROJECT="$(gcloud info --format='value(config.project)')"
     export REGION="us-central1"
     export ZONE="us-central1-a"
-    export REGION2="us-east1"    
-    export ZONE2="us-east1-b"
-    export WAREHOUSE_MULTI_REGION="us" 
+    export ZONE2="us-central1-b"
+    export WORKER_REGION2="us-east1"    
+    export WORKER_ZONE2="us-east1-b"
+    export WAREHOUSE_MULTI_REGION="us"
+    export VPC_NETWORK_NAME="hive-network"
 
 ## Creating resources
 
@@ -107,17 +110,67 @@ Create a Cloud Storage bucket for storing test data, run the following command o
     -l ${WAREHOUSE_MULTI_REGION} \
     "gs://${PROJECT}-warehouse" 
 
+
+### Create private VPC network
+
+Create user defined cloud networking and peer it with Google services
+
+1.  In Cloud Shell, run the following command to create the VPC network:
+
+        gcloud compute networks create ${VPC_NETWORK_NAME} \
+        --subnet-mode=auto \
+        --bgp-routing-mode=global
+
+1.  In Cloud Shell, run the follwing command to reserve the IPs required for the network:
+
+        gcloud compute addresses create \
+        google-managed-services-${VPC_NETWORK_NAME} \
+        --global \
+        --purpose=VPC_PEERING \
+        --prefix-length=16 \
+        --network=projects/${PROJECT}/global/networks/${VPC_NETWORK_NAME}
+
+1.  In Cloud Shell, run the command to setup VPC peering for Google service on the private VPC network:
+
+        gcloud services vpc-peerings connect \
+        --ranges=google-managed-services-${VPC_NETWORK_NAME} \
+        --network=${VPC_NETWORK_NAME} \
+        --project=${PROJECT}
+
+1.  In Cloud Shell, run the following command to enable VM-to-VM communication for Dataproc clusters and CloudSQL.
+
+        gcloud compute firewall-rules create allow-all-internal \
+        --network projects/${PROJECT}/global/networks/${VPC_NETWORK_NAME} \
+        --allow=all
+
+1.  In Cloud Shell, run the command to enable Private Google access to the two regions that you will use for this tutorial:
+
+        gcloud compute networks subnets update "${VPC_NETWORK_NAME}" \
+        --region=${REGION} \
+        --enable-private-ip-google-access
+        
+        gcloud compute networks subnets update "${VPC_NETWORK_NAME}" \
+        --region=${WORKER_REGION2} \
+        --enable-private-ip-google-access
+
 ### Create Cloud SQL instance
 
-
-Create a MySQL on Cloud SQL instance to be used later to host the Hive metastore database.
+Create a [high availability](https://cloud.google.com/sql/docs/mysql/high-availability) MySQL on Cloud SQL instance to be used later to host the Hive metastore database. The CloudSQL instance uses private IPs for added protection.
 
 In Cloud Shell, execute the following command to create a new Cloud SQL instance:
         
-    gcloud sql instances create hive-metastore-db \
+    gcloud beta sql instances create hive-metastore-db \
     --database-version="MYSQL_5_7" \
     --activation-policy=ALWAYS \
-    --zone ${ZONE}
+    --enable-bin-log \
+    --no-assign-ip \
+    --network="projects/${PROJECT}/global/networks/${VPC_NETWORK_NAME}" \
+    --availability-type=regional \
+    --zone="${ZONE}" \
+    --secondary-zone="${ZONE2}"
+
+**Note:** This tutorial uses an empty `root` user password for simplicity. You can add `--root-password=<your-password>` in the command above to set a root user password, and follow the [initialization guide](https://github.com/GoogleCloudDataproc/initialization-actions/tree/master/cloud-sql-proxy#protecting-passwords-with-kms) for CloudSQL proxy on using passwords with Hive.
+
 
 This command might take a few minutes to complete.
 
@@ -128,11 +181,13 @@ Create the first single-node Dataproc cluster that will be the Hive metastore se
 In Cloud Shell, execute the following command:
 
     gcloud dataproc clusters create hive-metastore1 \
+    --no-address \
     --enable-component-gateway \
     --scopes sql-admin \
     --region ${REGION} \
     --zone ${ZONE} \
     --single-node \
+    --network="projects/${PROJECT}/global/networks/${VPC_NETWORK_NAME}" \
     --master-machine-type n1-standard-8 \
     --master-boot-disk-type pd-ssd \
     --master-boot-disk-size 500 \
@@ -146,11 +201,13 @@ This command will take a few minutes to create and initialize the cluster.
 Since the Hive metastore is stateless, multiple instances can be deployed to achieve High Availability. Create a failover metastore service cluster using the following command in Cloud Shell:
 
     gcloud dataproc clusters create hive-metastore2 \
+    --no-address \
     --enable-component-gateway \
     --scopes sql-admin \
     --region ${REGION} \
-    --zone ${ZONE} \
+    --zone ${ZONE2} \
     --single-node \
+    --network="projects/${PROJECT}/global/networks/${VPC_NETWORK_NAME}" \
     --master-machine-type n1-standard-8 \
     --master-boot-disk-type pd-ssd \
     --master-boot-disk-size 500 \
@@ -192,8 +249,9 @@ In Cloud Shell, run the following command to create first worker cluster in the 
     --image-version 2.0-debian10 \
     --region ${REGION} \
     --zone ${ZONE} \
+    --network="projects/${PROJECT}/global/networks/${VPC_NETWORK_NAME}" \
     --properties=^#^hive:hive.metastore.warehouse.dir=gs://${PROJECT}-warehouse/datasets \
-    --properties=^#^hive:hive.metastore.uris=thrift://hive-metastore1-m:9083,thrift://hive-metastore2-m:9083
+    --properties=^#^hive:hive.metastore.uris=thrift://hive-metastore1-m.${ZONE}.c.${PROJECT}.internal:9083,thrift://hive-metastore2-m.${ZONE2}.c.${PROJECT}.internal:9083
 
 Note: The `hive.metastore.uris` property points the metastore service to the external Hive metastore service clusters. It is possible to indicate multiple, comma-separated metastore instances.
 
@@ -225,22 +283,23 @@ The output includes the following:
 
 ## Creating another Dataproc cluster
 
-In this section, you create another Dataproc cluster to verify that the Hive data and Hive metastore can be shared across multiple clusters.
+In this section, you create another Dataproc cluster to verify that the Hive data and Hive metastore can be shared across multiple clusters in separate regions.
 
 1.  Create the second worker cluster in a different region:
 
         gcloud dataproc clusters create hive-worker2 \
         --image-version 2.0-debian10 \
-        --region ${REGION2} \
-        --zone ${ZONE2} \
+        --region ${WORKER_REGION2} \
+        --zone ${WORKER_ZONE2} \
+        --network="projects/${PROJECT}/global/networks/${VPC_NETWORK_NAME}" \
         --properties=^#^hive:hive.metastore.warehouse.dir=gs://${PROJECT}-warehouse/datasets \
-        --properties=^#^hive:hive.metastore.uris=thrift://hive-metastore1-m:9083,thrift://hive-metastore2-m:9083
+        --properties=^#^hive:hive.metastore.uris=thrift://hive-metastore1-m.${ZONE}.c.${PROJECT}.internal:9083,thrift://hive-metastore2-m.${ZONE2}.c.${PROJECT}.internal:9083
 
 1.  Verify that the new cluster can access the data:
 
         gcloud dataproc jobs submit hive \
         --cluster hive-worker2 \
-        --region ${REGION2} \
+        --region ${WORKER_REGION2} \
         --execute "
         SELECT TransactionType, COUNT(TransactionType) as Count 
         FROM transactions 
