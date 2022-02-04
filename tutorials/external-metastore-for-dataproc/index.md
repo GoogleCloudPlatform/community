@@ -45,7 +45,7 @@ projected usage.
 
 ![multi-regional hive metastore usage](https://cloud.google.com/architecture/images/using-apache-hive-on-cloud-dataproc-2.svg)
 
-As the Hive metastore service can only run on the Dataproc cluster master nodes, the metastore service cluster is provisioned as a single node cluster to optimize costs. The Hive metastore is a stateless service and allows for multiple independent metastore services to be started in paralled to provide High Availability
+As the Hive metastore service can only run on the Dataproc cluster master nodes, the metastore service cluster is provisioned as a single node cluster to optimize costs. The Hive metastore is a stateless service and allows for multiple independent metastore services to be started in parallel to provide High Availability
 
 The metastore service sends a high volume of requests to the database; to minimize latency, the metastore service clusters are deployed in the same region as the Cloud SQL instance. 
 
