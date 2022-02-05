@@ -203,7 +203,7 @@ The tokenizer service uses the configuration file
 
 1.  Deploy using the following command:  
 
-        gcloud run deploy tokenizer --image gcr.io/$PROJECT/tokenizer --platform managed --no-allow-unauthenticated --region us-central1 --memory 128M
+        gcloud run deploy tokenizer --image gcr.io/$PROJECT/tokenizer --platform managed --no-allow-unauthenticated --region us-central1 --memory 128Mi
 
     - `tokenizer` is the name of your service.
     - `--image` is the image you created in the previous step.
