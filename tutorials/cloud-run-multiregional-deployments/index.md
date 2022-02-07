@@ -108,6 +108,7 @@ In this section, you set up the environment in order for the project to deploy.
 
         terraform apply
 
+    When prompted you may have to approve the Terrafrom apply action by typing 'yes' at the command line.
     The deployment may take up to 15 minutes.
 
 1.  Confirm that the deployment has been executed successfully.
