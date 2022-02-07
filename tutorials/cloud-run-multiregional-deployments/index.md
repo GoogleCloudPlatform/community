@@ -15,7 +15,7 @@ The target audience for this tutorial is Developers of all levels as well as Dev
 
 To complete this tutorial, you require a basic working knowledge of Google Cloud, Containers, and Terraform. You will also be required to own a domain name for which you can modify the DNS records and a VPN that allows you to emulate your browser's country of origin.
 
-![Multiregional Serverless Cloud Run Architecture](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/architecture-diagram.png)
+![Multiregional Serverless Cloud Run Architecture](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/cloud-run-multiregional-deployments/architecture-diagram.png)
 
 ## Objectives
 
@@ -140,7 +140,7 @@ In this section, you set up the environment in order for the project to deploy.
 
 You can open your sample application by visiting `[YOUR_DOMAIN]` from a web browser. When the application loads you should be greeted with a wealth of information about your applications deployment including the [Cloud Region](https://cloud.google.com/compute/docs/regions-zones) in which your sample application is responding to your request from.
 
-![Running Service](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/running-service.png)
+![Running Service](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/cloud-run-multiregional-deployments/running-service.png)
 
 ## Test the multiregional deployment (With VPN)
 
@@ -196,7 +196,7 @@ To show the ease of deploying to additional Cloud Regions with this IaC Terrafor
 
 1.  Revisit the above section `Expand your multiregional deployment` however this time try setting your VPN to additional locations including Canada, Asia, The Nordics and South America and see the results. See if you can hit all of the deployed Cloud Regions listed in your variables files. Additionally try for yourself add and deploy to additional Cloud Regions where [Cloud Run is available](https://cloud.google.com/run/docs/locations).
 
-![Additional Cloud Run Instances](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/cloud-run-services.png)
+![Additional Cloud Run Instances](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/cloud-run-multiregional-deployments/cloud-run-services.png)
 
 ## Conclusion
 
@@ -210,7 +210,7 @@ In addition, Google Cloud Run only charges you for the resources you actually us
 
 Finally we covered how you can easily modify the included example code to update your Infrastructure through code to scale your multiregional services to even more Cloud Regions in only a few minutes.
 
-![Load Balancer Global Route Monitoring](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/lb-route-monitoring.png)
+![Load Balancer Global Route Monitoring](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/cloud-run-multiregional-deployments/lb-route-monitoring.png)
 
 ## Cleaning up
 
