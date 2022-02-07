@@ -68,6 +68,10 @@ data "google_iam_policy" "noauth" {
       "allUsers",
     ]
   }
+
+  depends_on = [
+    google_project_service.project
+  ]
 }
 
 resource "google_cloud_run_service_iam_policy" "noauth" {
@@ -77,4 +81,8 @@ resource "google_cloud_run_service_iam_policy" "noauth" {
   service     = each.value.name
 
   policy_data = data.google_iam_policy.noauth.policy_data
+
+  depends_on = [
+    google_project_service.project
+  ]
 }

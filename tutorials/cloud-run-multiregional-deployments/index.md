@@ -160,9 +160,9 @@ To show the ease of deploying to additional Cloud Regions with this IaC Terrafor
 
 1.  From within the Cloud Shell Editor UI navigate to the `community/tutorials/cloud-run-multiregional-deployments/code` directory.
 
-1.  Open the `variables.tf` file [(Reference)](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/code/variables.tf#L20).
+1.  Open the file [(`variables.tf` code reference)](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/code/variables.tf#L20).
 
-1.  Locate the variable `regions` [(Line 20)](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/code/variables.tf#L20). Then comment out the defaults on [line 23](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/code/variables.tf#L23) by adding a `#` before the work `default`. Finally remove the `#` before the word `default` on [line 25](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/code/variables.tf#L25) to uncomment the extended defaults. This will expand the deployment regions from 3 Global Cloud Regions to 7 Global Cloud Regions. Save the `variables.tf` file.
+1.  Locate the variable `regions` [(line 20)](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/code/variables.tf#L20). Then comment out the defaults on [line 23](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/code/variables.tf#L23) by adding a `#` before the work `default`. Finally remove the `#` before the word `default` on [line 25](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/code/variables.tf#L25) to uncomment the extended defaults. This will expand the deployment regions from 3 Global Cloud Regions to 7 Global Cloud Regions. Save the `variables.tf` file.
 
 1.  Select the `Open Terminal` button to return to the shell and confirm you are still currently in the `community/tutorials/cloud-run-multiregional-deployments/code` directory.
 

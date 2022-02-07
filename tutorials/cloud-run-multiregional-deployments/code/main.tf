@@ -15,7 +15,7 @@
  */
 
 locals {
-  apis = ["run.googleapis.com", "compute.googleapis.com", "iap.googleapis.com"]
+  apis = [ "compute.googleapis.com", "run.googleapis.com", "iap.googleapis.com"]
 }
 
 data "google_project" "project" {
@@ -33,10 +33,18 @@ resource "google_service_account" "my_global_app_sa" {
   account_id   = "my-global-app"
   display_name = "Service Account for Cloud Run Service"
   project      = data.google_project.project.project_id
+
+  depends_on = [
+    google_project_service.project
+  ]
 }
 
 resource "google_project_iam_member" "myglobalapp_monitoring_viewer_role_assignment" {
   project = data.google_project.project.project_id
   role    = "roles/monitoring.viewer"
   member  = "serviceAccount:${google_service_account.my_global_app_sa.email}"
+
+  depends_on = [
+    google_project_service.project
+  ]
 }
