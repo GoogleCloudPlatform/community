@@ -140,6 +140,8 @@ In this section, you set up the environment in order for the project to deploy.
 
 You can open your sample aplpication by visiting `[YOUR_DOMAIN]` from a web browser. When the application loads you should be greated with a wealth of information about your applications deployment including the [Cloud Region](https://cloud.google.com/compute/docs/regions-zones) in which your sample application is responding to your request from.
 
+![Running Service](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/running-service.png)
+
 ## Test the multiregional deployment (With VPN)
 
 In the previous step you viewed your sample application. The site showed the Cloud Region in which your application was responding from.
@@ -192,9 +194,9 @@ To show the ease of deploying to additional Cloud Regions with this IaC Terrafor
 
         external_ip = "[YOUR_EXTERNAL_IP]"
 
-![Additional Cloud Run Instances](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/cloud-run-services.png)
-
 1.  Revisit the above section `Expand your multiregional deployment` however this time try setting your VPN to additional locations including Canada, Asia, The Nordics and South America and see the results. See if you can hit all of the deployed Cloud Regions listed in your variables files. Additionally try for yourself add and deploy to additional Cloud Regions where [Cloud Run is available](https://cloud.google.com/run/docs/locations).
+
+![Additional Cloud Run Instances](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/cloud-run-services.png)
 
 ## Conclusion
 
