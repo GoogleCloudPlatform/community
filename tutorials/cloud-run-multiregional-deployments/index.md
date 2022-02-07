@@ -13,7 +13,7 @@ This tutorial demonstrates how you can easily utilize Terraform to deploy a mult
 
 The target audience for this tutorial is Developers of all levels as well as DevOps engineers and serverless enthusiasts with a basic understanding of cloud principles.
 
-To complete this tutorial, you require a basic working knowledge of Google Cloud, Containers, and Terraform. You will also require own a domain name for which you can modify the DNS records and a VPN that allows you to emulate your browsers country of origin.
+To complete this tutorial, you require a basic working knowledge of Google Cloud, Containers, and Terraform. You will also be required to own a domain name for which you can modify the DNS records and a VPN that allows you to emulate your browser's country of origin.
 
 ![Multiregional Serverless Cloud Run Architecture](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/architecture-diagram.png)
 
@@ -34,31 +34,31 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
 
 ## How the code for this tutorial works
 
-The entirety of this deployment is executed through terraform scripts.
+The entirety of this deployment is executed through Terraform scripts.
 
-Initially the required Google Cloud APIs (Cloud Run & Compute Engine) are iteratively enabled within your specified Google Cloud project via the [`google_project_service`](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/google_project_service) Terraform provider [(`main.tf` code reference)](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/code/main.tf#L25). The enabling of these APIs is a dependancy to the the Terraform execution steps that follow.
+Initially, the required Google Cloud APIs (Cloud Run & Compute Engine) are iteratively enabled within your specified Google Cloud project via the [`google_project_service`](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/google_project_service) Terraform provider [(`main.tf` code reference)](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/code/main.tf#L25). The enabling of these APIs is a dependency to the Terraform execution steps that follow.
 
-A new Service Account is created [(`main.tf` code reference)](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/code/main.tf#L32) as part of the deployment. This service account is assigned the role `roles/monitoring.viewer` as read only monitoring access within the Google Cloud Console and API [(`main.tf` code reference)](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/code/main.tf#L38).
+A new Service Account is created [(`main.tf` code reference)](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/code/main.tf#L32) as part of the deployment. This Service Account is assigned the role `roles/monitoring.viewer` as read only monitoring access within the Google Cloud Console and API [(`main.tf` code reference)](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/code/main.tf#L38).
 
-In this tutorial we are deploying a containerized application. For example purposes we are using the
-[`GoogleCloudPlatform/cloud-run-hello`](https://github.com/GoogleCloudPlatform/cloud-run-hello) sample application. It is a publically available container image mirrored in the Google Container Registry [`gcr.io/cloudrun/hello`](https://gcr.io/cloudrun/hello). This sample container is perfect for your purposes as when up and running it visually reports back the following information:
+In this tutorial, we are deploying a containerized application. For example purposes we are using the
+[`GoogleCloudPlatform/cloud-run-hello`](https://github.com/GoogleCloudPlatform/cloud-run-hello) sample application. It is a publically available container image mirrored in the Google Container Registry [`gcr.io/cloudrun/hello`](https://gcr.io/cloudrun/hello). This sample container is perfect for our purposes, as when up and running it visually reports back the following information:
 
 1. The Cloud Run container deployment revision.
 1. The Cloud Run service name.
 1. The Cloud Run deployment region.
 1. The Google Cloud project name in which the container is deployed.
 
-We can therefore use this container image to easily test the concept of deploying multiregional deploymnets behind a global L7 load balancer.
+We can therefore use this container image to easily test the concept of deploying multiregional deployments behind a External Global L7 Cloud Load Balancer.
 
-This container image is deployed as a service within Google Cloud Run using the [`google_cloud_run_service`](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloud_run_service) terraform provider. In order to achieve the goal of this tutorial and make this service multiregional a new Cloud Run Service is deployed via the terraform scripts [(`cloud-run.tf` code reference)](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/code/cloud-run.tf#L17) in each region in which we wish to make it available. This operation is completed using the Terraform [`for_each`](https://www.terraform.io/language/meta-arguments/for_each) syntax to loop over an array of Cloud Regions provided to the terrafrom scripts via way of the `regions` variable [(`variables.tf` defaults here)](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/code/variables.tf#L20).
+This container image is deployed as a service within Google Cloud Run using the [`google_cloud_run_service`](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloud_run_service) Terraform provider. In order to achieve the goal of this tutorial and make this service multiregional, a new Cloud Run Service is deployed via the Terraform scripts [(`cloud-run.tf` code reference)](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/code/cloud-run.tf#L17) in each region in which we wish to make it available. This operation is completed using the Terraform [`for_each`](https://www.terraform.io/language/meta-arguments/for_each) syntax to loop over an array of Cloud Regions provided to the Terrafrom scripts via the `regions` variable [(`variables.tf` defaults here)](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/code/variables.tf#L20).
 
-By default your Cloud Run services are configured to only be accessible by authorized users. However for this tutorial we would like to make the services publically available. Therefore your Terraform scripts [(`cloud-run.tf` code reference)](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/code/cloud-run.tf#L64) bind the Cloud Run IAM role [`roles/run.invoker`](https://cloud.google.com/run/docs/reference/iam/roles#standard-roles) to the membership [`allUsers`](https://cloud.google.com/iam/docs/overview#all-users) and then apply this policy to each of your Cloud Run services [(`cloud-run.tf` code reference)](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/code/cloud-run.tf#L73)
+By default, your Cloud Run services are configured to only be accessible by authorized users. However, for this tutorial we would like to make the services publically available. Therefore your Terraform scripts [(`cloud-run.tf` code reference)](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/code/cloud-run.tf#L64) bind the Cloud Run IAM role [`roles/run.invoker`](https://cloud.google.com/run/docs/reference/iam/roles#standard-roles) to the membership [`allUsers`](https://cloud.google.com/iam/docs/overview#all-users) and then apply this policy to each of your Cloud Run services [(`cloud-run.tf` code reference)](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/code/cloud-run.tf#L73)
 
-Each of the above Cloud Run services is also configured to only accept incomming network traffic from sources that are internal to your Google Cloud project VPC or from an associated Cloud Load Balancer. This is configured via the Cloud Run metadata & YAML annotation: [`run.googleapis.com/ingress`](https://cloud.google.com/run/docs/securing/ingress#setting_ingress) [(`cloud-run.tf` code reference)](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/code/cloud-run.tf#L27). Therefore in order to make your application accessible the terraform script deploys a Cloud Load Balancer.
+Each of the above Cloud Run services is also configured to only accept incoming network traffic from sources within the same Google Cloud project VPC or from an associated Cloud Load Balancer. This is configured via the Cloud Run metadata & YAML annotation: [`run.googleapis.com/ingress`](https://cloud.google.com/run/docs/securing/ingress#setting_ingress) [(`cloud-run.tf` code reference)](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/code/cloud-run.tf#L27). To ensure your application is still accessible, the Terraform script deploys a Cloud Load Balancer for you.
 
-The Cloud Load Balancer is finally configured with a default backend and a collection of network endpoint groups (NEG). Each NEG represents one of our previously deployed Cloud Run Services, again one for each deployment region [(`lb.tf` code reference)](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/code/lb.tf#L18).
+The Cloud Load Balancer is finally configured with a default backend and a collection of [serverless Network Endpoint Groups (NEG)](https://cloud.google.com/load-balancing/docs/negs/serverless-neg-concepts#:~:text=A%20network%20endpoint%20group%20(NEG,or%20a%20group%20of%20services.). Each NEG represents one of our previously deployed Cloud Run Services, again one for each deployment region [(`lb.tf` code reference)](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/code/lb.tf#L18).
 
-When fully deployed a user can use a web enabled device to hit your external Global Load Balancer and you they will recieve a response from your example application. The application will display the Cloud Regions in which the container they have been routed too is running. If the deployment is configured correctly, with multiple regions the Global Load Balancer will route your users web request automatically to the [closest, healthy](https://cloud.google.com/load-balancing/docs/https) Cloud Run Service that is running your application.
+When fully deployed, a user can use a web enabled device to call your external Global Load Balancer and they will receive a response from your example application. The application will display the Cloud Regions in which the container they have been routed to is running. If the deployment is configured correctly, with multiple regions the Global Load Balancer will route your users web request automatically to the [closest](https://cloud.google.com/load-balancing/docs/https) Cloud Run Service that is running your application.
 
 You should be able to easily add additional regions to your deployment variables to increase your global coverage and high availability.
 
@@ -102,19 +102,19 @@ In this section, you set up the environment in order for the project to deploy.
 
         terraform plan
 
-    If prompted you should Authorize Cloud Shell so that gcloud can access your credentials to make a GCP API calls.
+    If prompted you should Authorize Cloud Shell so that gcloud can access your credentials to make GCP API calls.
 
 1.  Apply the changes:
 
         terraform apply
 
-    When prompted you may have to approve the Terrafrom apply action by typing 'yes' at the command line.
+    When prompted you may have to approve the Terraform apply action by typing 'yes' at the command line.
 
     The deployment may take up to 15 minutes.
 
     **Troubleshooting:**
 
-    > Should you recieve an _ERROR_ similar to `Error creating {RESOURCE NAME}: googleapi: Error 403: Compute Engine API has not been used in project {YOUR PROJECT ID} before or it is disabled`. Simply wait 1-3 minutes and then attempt to re-run the `terraform apply` step again before continuing with the next steps.
+    > Should you receive an _ERROR_ similar to `Error creating {RESOURCE NAME}: googleapi: Error 403: Compute Engine API has not been used in project {YOUR PROJECT ID} before or it is disabled`. Simply wait 1-3 minutes and then attempt to re-run the `terraform apply` step again before continuing with the next steps.
 
 1.  Confirm that the deployment has been executed successfully.
 
@@ -138,7 +138,7 @@ In this section, you set up the environment in order for the project to deploy.
 
 ## Access your sample application
 
-You can open your sample aplpication by visiting `[YOUR_DOMAIN]` from a web browser. When the application loads you should be greated with a wealth of information about your applications deployment including the [Cloud Region](https://cloud.google.com/compute/docs/regions-zones) in which your sample application is responding to your request from.
+You can open your sample application by visiting `[YOUR_DOMAIN]` from a web browser. When the application loads you should be greeted with a wealth of information about your applications deployment including the [Cloud Region](https://cloud.google.com/compute/docs/regions-zones) in which your sample application is responding to your request from.
 
 ![Running Service](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/running-service.png)
 
@@ -146,7 +146,7 @@ You can open your sample aplpication by visiting `[YOUR_DOMAIN]` from a web brow
 
 In the previous step you viewed your sample application. The site showed the Cloud Region in which your application was responding from.
 
-The Global External Load Balancer automatically routes your browsers request to the nearest Cloud Region in which your application is hosted. To test thi visit your `[YOUR_DOMAIN]` again and make note of the deployment region; for example (`europe-west1` or `us-central1` or `australia-southeast1`).
+The Global External Load Balancer automatically routes your browsers request to the nearest Cloud Region in which your application is hosted. To test this visit your `[YOUR_DOMAIN]` again and make note of the deployment region; for example (`europe-west1` or `us-central1` or `australia-southeast1`).
 
 Then, if you have the ability, use your VPN on your machine to set your network location to a completely different region of the world far away from the deployment region you noted previously.
 
@@ -156,13 +156,13 @@ Sample Ideas:
 - If you noted down a `us-central1` based deployment set your VPN to somewhere located in Europe.
 - If you noted down a `australia-southeast1` based deployment set your VPN to somewhere located in Europe.
 
-When the VPN has updated your network location. Open up a new browser tab and revisit `[YOUR_DOMAIN]`. Your application will respond again, however this time the Cloud Region in which your application is hosted should have changed to show your broswers request is being routed to the New nearest Cloud Region.
+When the VPN has updated your network location. Open up a new browser tab and revisit `[YOUR_DOMAIN]`. Your application will respond again, however this time the Cloud Region in which your application is hosted should have changed to show your browser's request is being routed to the New nearest Cloud Region.
 
 ## Expand your multiregional deployment
 
-To show the ease of deploying to additional Cloud Regions with this IaC Terraform setup lets add several more cloud reigons to the application architecture with a very simple modification.
+To show the ease of deploying to additional Cloud Regions with this IaC Terraform setup lets add several more cloud reigon's to the application architecture with a very simple modification.
 
-1.  From within your existing Cloud Shell session select the "Open Editor" button to open the `Cloud Shell Editior` and wait for the Editior UI to be provisioned (1-3 minutes).
+1.  From within your existing Cloud Shell session select the "Open Editor" button to open the `Cloud Shell Editor` and wait for the Editor UI to be provisioned (1-3 minutes).
 
 1.  From within the Cloud Shell Editor UI navigate to the `community/tutorials/cloud-run-multiregional-deployments/code` directory.
 
