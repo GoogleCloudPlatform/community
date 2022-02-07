@@ -49,13 +49,17 @@ There are several components to this architecture:
     ```
     pip install earthengine-api
     ```
+6.  Enable the Earth Engine API
+    ```
+    gcloud services enable earthengine.googleapis.com
+    ```
 
 ### Set environment variables
 
 Set the environment variables and REPLACE the values with values corresponding to your project.
 ```
 export PROJECT_ID=ee-geobeam-sandbox
-export IMAGES_BUCKET=gs://tmp_images_bucket_1
+export IMAGES_BUCKET=tmp_images_bucket_1
 export GEOBEAM_BUCKET=tmp_geobeam_bucket_1
 export BQ_DATASET=tmp_bq_dataset_1
 export BQ_DATASET_REGION=us-central1
@@ -118,7 +122,7 @@ python -m geobeam.examples.geotiff_dem \
   --temp_location gs://${GEOBEAM_BUCKET}/ \
   —-service_account_email ${SERVICE_ACCOUNT_EMAIL} \
   --region ${BQ_DATASET_REGION} \
-  --gcs_url gs://{IMAGES_BUCKET}/copernicusExport.tif \
+  --gcs_url gs://${IMAGES_BUCKET}/copernicusExport.tif \
   --dataset ${BQ_DATASET} \
   --table dem \
   --band_column elev \
