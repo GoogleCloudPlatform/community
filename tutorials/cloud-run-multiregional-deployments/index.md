@@ -41,7 +41,7 @@ Initially the required Google Cloud APIs (Cloud Run & Compute Engine) are iterat
 A new Service Account is created [(`main.tf` code reference)](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/code/main.tf#L32) as part of the deployment. This service account is assigned the role `roles/monitoring.viewer` as read only monitoring access within the Google Cloud Console and API [(`main.tf` code reference)](https://github.com/timbohiatt/community/blob/master/tutorials/cloud-run-multiregional-deployments/code/main.tf#L38).
 
 In this tutorial we are deploying a containerized application. For example purposes we are using the
-[`GoogleCloudPlatform/cloud-run-hello`](https://github.com/GoogleCloudPlatform/cloud-run-hello) sample application. It is a publically available container image mirrored in the Google Container Registry [`gcr.io/cloudrun/hello`](gcr.io/cloudrun/hello). This sample container is perfect for our purposes as when up and running it visually reports back the following information:
+[`GoogleCloudPlatform/cloud-run-hello`](https://github.com/GoogleCloudPlatform/cloud-run-hello) sample application. It is a publically available container image mirrored in the Google Container Registry [`gcr.io/cloudrun/hello`](https://gcr.io/cloudrun/hello). This sample container is perfect for our purposes as when up and running it visually reports back the following information:
 
 1. The Cloud Run container deployment revision.
 1. The Cloud Run service name.
