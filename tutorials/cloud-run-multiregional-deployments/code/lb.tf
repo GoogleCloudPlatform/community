@@ -64,6 +64,7 @@ module "lb-http" {
   }
   depends_on = [
     google_project_service.project
+    google_compute_region_network_endpoint_group.cloud_run_neg
   ]
 }
 
