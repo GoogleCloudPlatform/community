@@ -101,14 +101,15 @@ In this section, you set up the environment in order for the project to deploy.
 1.  Create an execution plan and verify all of the steps:
 
         terraform plan
-    
-    If prompted you should Authorize Cloud Shell so that gcloud can access your credentials to make a GCP API calls. 
+
+    If prompted you should Authorize Cloud Shell so that gcloud can access your credentials to make a GCP API calls.
 
 1.  Apply the changes:
 
         terraform apply
 
     When prompted you may have to approve the Terrafrom apply action by typing 'yes' at the command line.
+
     The deployment may take up to 15 minutes.
 
 1.  Confirm that the deployment has been executed successfully.
@@ -178,7 +179,7 @@ To show the ease of deploying to additional Cloud Regions with this IaC Terrafor
 1.  Confirm that the deployment has been executed & updated successfully.
 
     You should see the IP address of your load balancer printed in the console as in this example:
-        
+
         module.lb-http.google_compute_backend_service.default["default"]: Modifications complete after 11s [id=projects/YOUR_PROJECT_ID]/global/backendServices/tf-cr-lb-backend-default]
 
         Apply complete! Resources: 12 added, 1 changed, 0 destroyed.
