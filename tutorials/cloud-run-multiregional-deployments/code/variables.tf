@@ -27,7 +27,3 @@ variable "regions" {
 
 variable "domain" {
 }
-
-variable "ssl" {
-  default=true
-}

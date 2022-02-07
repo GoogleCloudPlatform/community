@@ -34,9 +34,9 @@ module "lb-http" {
   name    = "tf-cr-lb"
   project = data.google_project.project.project_id
 
-  ssl                             = false
+  ssl                             = true
   managed_ssl_certificate_domains = [var.domain]
-  https_redirect                  = false
+  https_redirect                  = true
   
   backends = {
     default = {
