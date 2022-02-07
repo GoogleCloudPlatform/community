@@ -115,9 +115,9 @@ In this section, you set up the environment in order for the project to deploy.
 
     You should see the IP address of your load balancer printed in the console as in this example:
 
-        module.lb-http.google_compute_global_forwarding_rule.https[0]: Creation complete after 11s [id=projects/[YOUR_PROJECT_ID]/global/forwardingRules/tf-cr-lb-https]
+        module.lb-http.google_compute_global_forwarding_rule.https[0]: Creation complete after 13s [id=projects/[YOUR_PROJECT_ID]/global/forwardingRules/tf-cr-lb-https]
 
-        Apply complete! Resources: 20 added, 0 changed, 0 destroyed.
+        Apply complete! Resources: 24 added, 0 changed, 0 destroyed.
 
         Outputs:
 
@@ -178,7 +178,7 @@ To show the ease of deploying to additional Cloud Regions with this IaC Terrafor
 1.  Confirm that the deployment has been executed & updated successfully.
 
     You should see the IP address of your load balancer printed in the console as in this example:
-
+        
         module.lb-http.google_compute_backend_service.default["default"]: Modifications complete after 11s [id=projects/YOUR_PROJECT_ID]/global/backendServices/tf-cr-lb-backend-default]
 
         Apply complete! Resources: 12 added, 1 changed, 0 destroyed.
