@@ -101,6 +101,8 @@ In this section, you set up the environment in order for the project to deploy.
 1.  Create an execution plan and verify all of the steps:
 
         terraform plan
+    
+    If prompted you should Authorize Cloud Shell so that gcloud can access your credentials to make a GCP API calls. 
 
 1.  Apply the changes:
 
