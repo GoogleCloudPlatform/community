@@ -176,6 +176,9 @@ To show the ease of deploying to additional Cloud Regions with this IaC Terrafor
 
     The deployment again, may take up to 15 minutes.
 
+        Troubleshooting: 
+        if you recieve an error similar to `Error creating {RESOURCE NAME}: googleapi: Error 403: Compute Engine API has not been used in project {YOUR PROJECT ID} before or it is disabled`. Simply wait 1-3 minutes and then attempt to re-run the `terraform apply` step again before continuing with the next steps.
+
 1.  Confirm that the deployment has been executed & updated successfully.
 
     You should see the IP address of your load balancer printed in the console as in this example:
