@@ -10,7 +10,7 @@ Anant Damle | Solutions Architect | Google
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 
-Google Cloud [Dataproc]() service provides a managed Hadoop clusters, which along with [Dataproc Metastore](https://cloud.google.com/dataproc-metastore/docs) for managed Hive Metastore allows developers and enterprises to use ephemeral clusters without loosing flexibility of using Hive and related ecosystem.
+Google Cloud [Dataproc](https://cloud.google.com/dataproc) service provides a managed Hadoop clusters, which along with [Dataproc Metastore](https://cloud.google.com/dataproc-metastore/docs) for managed Hive Metastore allows developers and enterprises to use ephemeral clusters without loosing flexibility of using Hive and related ecosystem.
 
 Hive is a popular open source data warehouse system built on [Apache Hadoop](https://hadoop.apache.org/). Hive offers a SQL-like query language called [HiveQL](https://wikipedia.org/wiki/Apache_Hive#HiveQL), which is used to analyze large, structured datasets. The Hive metastore holds metadata about Hive tables, such as their schema and location. MySQL is commonly used as a backend for the Hive metastore, Cloud SQL makes it easy to set up, maintain, manage, and administer your relational databases on Google Cloud.
 
