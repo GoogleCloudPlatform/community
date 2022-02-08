@@ -208,7 +208,10 @@ For detailed instructions for adding a VPC peering connection, see the
 
     The connection string is in the following format:
 
-        mongodb+srv://[USERNAME]:[PASSWORD]@[CLUSTER_NAME].[SUBDOMAIN].mongodb.net/
+        mongodb+srv://[USERNAME]:[PASSWORD]@[CLUSTER_NAME]-pri.[SUBDOMAIN].mongodb.net/
+        
+    For more information about the MongoDB connection string format, see
+    [Private Connection Strings](https://docs.atlas.mongodb.com/reference/faq/connection-changes/#std-label-connstring-private).
 
 1.  Click **Close**.
 
