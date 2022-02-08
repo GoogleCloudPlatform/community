@@ -169,7 +169,7 @@ In Cloud Shell, execute the following command to create a new Cloud SQL instance
     --zone="${ZONE}" \
     --secondary-zone="${ZONE2}"
 
-**Note:** This tutorial uses an empty `root` user password for simplicity. You can add `--root-password=<your-password>` in the command above to set a root user password, and follow the [initialization guide](https://github.com/GoogleCloudDataproc/initialization-actions/tree/master/cloud-sql-proxy#protecting-passwords-with-kms) for CloudSQL proxy on using passwords with Hive.
+**Note:** This tutorial uses an empty `root` user password for simplicity. To follow the best practice for production systems add `--root-password=<your-password>` in the command above to set a root user password, and follow the [initialization guide](https://github.com/GoogleCloudDataproc/initialization-actions/tree/master/cloud-sql-proxy#protecting-passwords-with-kms) for CloudSQL proxy on using passwords with Hive.
 
 
 This command might take a few minutes to complete.
