@@ -141,7 +141,8 @@ Create user defined cloud networking and peer it with Google services
 
         gcloud compute firewall-rules create allow-all-internal \
         --network projects/${PROJECT}/global/networks/${VPC_NETWORK_NAME} \
-        --allow=all
+        --allow=tcp,udp,icmp \
+        --source-ranges=10.128.0.0/9
 
 1.  In Cloud Shell, run the command to enable Private Google access to the two regions that you will use for this tutorial:
 
