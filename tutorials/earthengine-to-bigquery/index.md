@@ -141,7 +141,7 @@ python -m geobeam.examples.geotiff_dem \
   --runner DataflowRunner \
   --worker_harness_container_image gcr.io/dataflow-geobeam/example-py37 \
   --experiment use_runner_v2 \
-  --project lbg-sandbox \
+  --project ${PROJECT_ID} \
   --temp_location gs://${GEOBEAM_BUCKET}/ \
   —-service_account_email ${SERVICE_ACCOUNT_EMAIL} \
   --region ${BQ_DATASET_REGION} \
