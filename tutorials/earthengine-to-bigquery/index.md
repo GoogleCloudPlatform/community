@@ -70,6 +70,7 @@ export SERVICE_ACCOUNT_EMAIL=<serviceaccount email>
 ### Create GCS buckets
 
 ```
+gcloud config set project ${PROJECT_ID}
 gsutil mb gs://${IMAGES_BUCKET}
 gsutil mb gs://${GEOBEAM_BUCKET}
 ```
