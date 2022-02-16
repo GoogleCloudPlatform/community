@@ -44,6 +44,33 @@ To reverse the tokenization example, pass the token as the first argument and op
 {"cc":"5454545454545454","mm":"12","yyyy":"2029"}
 ```
 
+### Batch Tokenizing
+
+Install required Python modules
+
+```commandline
+pip3 install -r requirements.txt
+```
+
+The simplest example is to call the batch_tokenize.sh with sample csv file in csv_files directory. 
+CSV file includes some dummy credit card data:
+
+```
+./batch_tokenize.sh csv_files/batch_tokenize_sample_csv.csv 
+```
+
+You can find the output csv file "batch_tokenize_sample_csv_output.csv" in "csv_files" directory.
+
+### Batch Detokenizing
+
+For detokenizing, update the "batch_detokenize_sample_csv.csv" n "csv_files" directory with tokenized data.
+Run below command for batch detokenizing
+
+```
+./batch_detokenize.sh csv_files/batch_detokenize_sample_csv.csv 
+```
+You can find the output csv file "batch_detokenize_sample_csv_output.csv" in "csv_files" directory.
+
 If you get a validation error, ensure that the userID matches.
 
 ## License
