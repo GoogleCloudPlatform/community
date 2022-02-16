@@ -79,7 +79,7 @@ gsutil mb gs://${GEOBEAM_BUCKET}
 
 *   Create a BigQuery dataset where you want to ingest the TIFF file from GCS.
 ```
-bq --location=${BQ_DATASET_LOCATION} mk \
+bq --location=${BQ_DATASET_REGION} mk \
 --dataset ${PROJECT_ID}:${BQ_DATASET}
 ```
 *   Create a table in the dataset with the schema as mentioned [here](https://github.com/GoogleCloudPlatform/dataflow-geobeam/blob/main/geobeam/examples/dem_schema.json)
@@ -139,7 +139,7 @@ Run the GeoBeam job to ingest the TIFF file from GCS bucket into BigQuery. The j
 ```
 python -m geobeam.examples.geotiff_dem \
   --runner DataflowRunner \
-  --worker_harness_container_image gcr.io/dataflow-geobeam/example-py37 \
+  --worker_harness_container_image gcr.io/dataflow-geobeam/example \
   --experiment use_runner_v2 \
   --project ${PROJECT_ID} \
   --temp_location gs://${GEOBEAM_BUCKET}/ \
