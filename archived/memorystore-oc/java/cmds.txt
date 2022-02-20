@@ -1,0 +1,2 @@
+mvn package -DskipTests
+mvn exec:java -Dexec.mainClass=com.example.memorystore.App
