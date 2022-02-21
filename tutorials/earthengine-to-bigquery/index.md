@@ -64,6 +64,7 @@ export GEOBEAM_BUCKET=tmp_geobeam_bucket_1
 export BQ_DATASET=tmp_bq_dataset_1
 export BQ_DATASET_REGION=us-central1
 export BQ_TABLE=tmp_bq_table_1
+export BQ_SCHEMA='elev:INT64,geom:GEOGRAPHY'
 export SERVICE_ACCOUNT_EMAIL=<serviceaccount email>
 ```
 
@@ -150,7 +151,7 @@ python -m geobeam.examples.geotiff_dem \
   --table dem \
   --band_column elev \
   --max_num_workers 3 \
-  --machine_type c2-standard-30 \
+  --machine_type c2-standard-4 \
   --merge_blocks 80 \
   --centroid_only true
 ```
