@@ -41,15 +41,16 @@ There are several components to this architecture:
 1.  Create a Google Cloud project for this tutorial to allow for easier cleanup.
 2.  Get access to Google Earth Engine API using the link: https://signup.earthengine.google.com/.
 3.  Enable the BigQuery API and the Cloud Storage API in the project.
-4.  Install the geobeam python library 
+4.  Ensure you have Python 3.8 as this tutorial works best with Python 3.8.
+5.  Install the geobeam python library 
     ```
     pip install geobeam
     ```
-5.  Install the Earth Engine Python library
+6.  Install the Earth Engine Python library
     ```
     pip install earthengine-api
     ```
-6.  Enable the Earth Engine API
+7.  Enable the Earth Engine API
     ```
     gcloud services enable earthengine.googleapis.com
     ```
