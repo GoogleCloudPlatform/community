@@ -304,6 +304,7 @@ resource "google_compute_firewall" "default" {
    protocol = "tcp"
    ports    = ["5000"]
  }
+ source_tags = ["mynetwork"]
 }
 ```
 

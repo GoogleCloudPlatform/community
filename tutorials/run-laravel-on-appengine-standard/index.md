@@ -274,9 +274,13 @@ You can send error reports to Stackdriver Error Reporting from PHP applications 
 1.  Edit the `report` function in the same file
     [`app/Exceptions/Handler.php`][app-exceptions-handler-php] as follows:
 
-        public function report(Exception $exception)
-        {
-            if (isset($_SERVER['GAE_SERVICE'])) {
+        public function report(Throwable $exception)
+        { 
+            if (!isset($_SERVER['GAE_SERVICE'])) {
+                $e = $this->mapException($exception);
+                if ($this->shouldntReport($e)) {
+                    return;
+                }
                 Bootstrap::init();
                 Bootstrap::exceptionHandler($exception);
             } else {

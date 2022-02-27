@@ -1,4 +1,4 @@
 google-cloud-dlp==0.5.0
 google-cloud-storage==1.9.0
 matplotlib==2.2.2
-Pillow==5.1.0
+Pillow==9.0.0

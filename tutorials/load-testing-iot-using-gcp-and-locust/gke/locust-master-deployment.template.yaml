@@ -1,10 +1,14 @@
 kind: Deployment
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 metadata:
   name: locust-master
   labels:
     component: "master"
 spec:
+  selector:
+    matchLabels:
+      app: locust
+      component: "master"
   replicas: 1
   template:
     metadata:
