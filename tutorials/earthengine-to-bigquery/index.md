@@ -12,18 +12,18 @@ Collaborator: Travis Webb | Solutions Engineer | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-Google Earth Engine is a geospatial processing platform powered by Google Cloud that combines a multi-petabyte catalog of satellite imagery and geospatial datasets with planetary-scale analysis capabilities. Earth Engine is used for analyzing forest and water coverage, land use change, assessing the health of agricultural fields, etc.
+Google Earth Engine is a geospatial processing platform powered by Google Cloud that combines a multi-petabyte catalog of satellite imagery and geospatial datasets with planetary-scale analysis capabilities. Earth Engine is used for analyzing forest and water coverage, analyzing land use change, assessing the health of agricultural fields, etc.
 
-[GeoBeam](https://github.com/GoogleCloudPlatform/dataflow-geobeam) is a framework that provides a set of Apache Beam classes and utilities that make it easier to process and transform massive amounts of Geospatial data using Google Cloud Dataflow. 
+[geobeam](https://github.com/GoogleCloudPlatform/dataflow-geobeam) is a Python-based framework that provides a set of Apache Beam classes and utilities that make it easier to process and transform massive amounts of geospatial data using Google Cloud Dataflow. 
 
-This solution uses GeoBeam to ingest Raster TIFF images generated in Google Earth Engine into BigQuery. 
+This solution uses geobeam to ingest raster TIFF images that have been generated in Earth Engine into BigQuery. 
 
 ## Objectives
 
-* Import a Google Earth Engine TIFF image to a GCS bucket.
-* Install the python library GeoBeam.
-* Run a GeoBeam job to ingest the TIFF file from GCS bucket to BigQuery.
-* Use BigQuery GeoViz to verify that the TIFF image has been ingested correctly.
+* Import a Earth Engine TIFF image into a Cloud Storage bucket.
+* Install the geobeam library.
+* Run a geobeam job to ingest the TIFF file from the Cloud Storage bucket to BigQuery.
+* Use BigQuery Geo Viz to verify that the TIFF image has been ingested correctly.
 
 ## Architecture
 
@@ -32,33 +32,36 @@ This solution uses GeoBeam to ingest Raster TIFF images generated in Google Eart
 There are several components to this architecture:
 
 * Google Earth Engine: This is where the TIFF image from Copernicus Sentinel-2 satellite imagery is generated. 
-* Cloud Storage Bucket: The TIFF image from Google Earth Engine is stored in a Cloud Storage Bucket        
-* Cloud Dataflow: The TIFF image in GCS bucket is processed in Dataflow using GeoBeam
-* BigQuery: The processed image is stored in BigQuery as rows that include BigQuery Geospatial [POINT GEOGRAPHY](https://cloud.google.com/bigquery/docs/reference/standard-sql/data-types#geography_type) datatype
+* Cloud Storage: The TIFF image from Earth Engine is stored in a Cloud Storage bucket.        
+* Dataflow: The TIFF image in the Cloud Storage bucket is processed in Dataflow using geobeam.
+* BigQuery: The processed image is stored in BigQuery as a set of rows that include the BigQuery geospatial point using the [GEOGRAPHY](https://cloud.google.com/bigquery/docs/reference/standard-sql/data-types#geography_type) data type.
 
 ## Before you begin
 
+You can run all the commands for this solution in [Cloud Shell](https://cloud.google.com/shell), or you can install the 
+[gcloud CLI](https://cloud.google.com/sdk/docs/install) and run the commands locally.
+
 1.  Create a Google Cloud project for this tutorial to allow for easier cleanup.
-2.  Get access to Google Earth Engine API using the link: https://signup.earthengine.google.com/.
+2.  [Get access](https://signup.earthengine.google.com/) to the Earth Engine API.
 3.  Enable the BigQuery API and the Cloud Storage API in the project.
-4.  Ensure you have Python 3.8 as this tutorial works best with **Python 3.8**.
-5.  Install the geobeam python library 
+4.  Ensure you have Python 3.8. This tutorial works best with Python 3.8.
+5.  Install the geobeam library:
     ```
     pip install geobeam
     ```
-6.  Install the Earth Engine Python library
+6.  Install the Earth Engine library:
     ```
     pip install earthengine-api
     ```
-7.  Enable the Earth Engine API
+7.  Enable the Earth Engine API:
     ```
     gcloud services enable earthengine.googleapis.com
     ```
-8.  Ensure you have an existing Cloud IAM Service Account or create a new one and assign appropriate permissions for the service account to write to BigQuery and GCS. 
+8.  Ensure you have an existing Cloud IAM service account, or create a new one and assign appropriate permissions for the service account to write to BigQuery and Cloud Storage. 
 
 ### Set environment variables
 
-Set the environment variables and REPLACE the values with values corresponding to your project.
+Set the following environment variables and replace the values with values corresponding to your project.
 ```
 export PROJECT_ID=ee-geobeam-sandbox
 export IMAGES_BUCKET=tmp_images_bucket_1
@@ -70,22 +73,24 @@ export BQ_SCHEMA='elev:INT64,geom:GEOGRAPHY'
 export SERVICE_ACCOUNT_EMAIL=<serviceaccount email>
 ```
 
-### Create GCS buckets
+### Create Cloud Storage buckets
 
+Create two buckets:
 ```
 gcloud config set project ${PROJECT_ID}
 gsutil mb gs://${IMAGES_BUCKET}
 gsutil mb gs://${GEOBEAM_BUCKET}
 ```
 
-### Create BigQuery Dataset
+### Create a BigQuery dataset
 
-*   Create a BigQuery dataset where you want to ingest the TIFF file from GCS.
+*   Create a BigQuery dataset where you want to ingest the TIFF file:
 ```
 bq --location=${BQ_DATASET_REGION} mk \
 --dataset ${PROJECT_ID}:${BQ_DATASET}
 ```
-*   Create a table in the dataset with the schema as mentioned [here](https://github.com/GoogleCloudPlatform/dataflow-geobeam/blob/main/geobeam/examples/dem_schema.json)
+*   Create a table in the dataset with the schema that's described in the [dataflow-geobeam
+](https://github.com/GoogleCloudPlatform/dataflow-geobeam/blob/main/geobeam/examples/dem_schema.json) repo:
 ```
 bq mk \
 --table \
@@ -93,17 +98,14 @@ ${PROJECT_ID}:${BQ_DATASET}.${BQ_TABLE} \
 elev:INT64,geom:GEOGRAPHY
 ```
 
-### Download Earth Engine Image
+### Download the Earth Engine image
 
-Export the first image in Copernicus Sentinel-2 Earth Engine ImageCollection as a TIFF file to the bucket created in GCS.  
-
-Wait for a couple of minutes for the export to complete.  
-
+Authenticate to Earth Engine:
 ```
 earthengine authenticate
 ```
 
-Execute the below python code
+Run the following Python code to export the first image in the Copernicus Sentinel-2 Earth Engine image collection as a TIFF file to the Cloud Storage bucket. This process takes a couple of minutes.
 ```
 import ee
 import os
@@ -126,13 +128,15 @@ task.start()
 print('Please wait for 5 minutes for the export to GCS to complete')
 ```
 
-### Run GeoBeam job
+### Run the geobeam job
+
+Get the credentials for running the geobeam job:
 
 ```
 export GOOGLE_APPLICATION_CREDENTIALS="<Path of the keyfile JSON>"
 ```
 
-Run the GeoBeam job to ingest the TIFF file from GCS bucket into BigQuery. The job takes roughly 20 minutes to complete. 
+Run the GeoBeam job to ingest the TIFF file from the Cloud Storage bucket into BigQuery. The job takes about 20 minutes. 
 
 ```
 python -m geobeam.examples.geotiff_dem \
@@ -153,24 +157,26 @@ python -m geobeam.examples.geotiff_dem \
   --centroid_only true
 ```
 
-The progress of the GeoBeam job can be monitored in Dataflow. The job graph should look like the below. 
-![GeoBeam Graph](image/geobeam_graph.png)
+You can monitor the progress of the geobeam job in Dataflow in the Cloud Console. The job graph looks similar to the following image: 
+
+![geobeam graph.](image/geobeam_graph.png)
 
 ### Verify the data in BigQuery
 
-Once the GeoBeam job completes, the data should get ingested into BigQuery. This can be verified in the cloud console by looking at the preview of the bigquery table. It should look like below with the elev column and the geom column containing the points of the image as POINT object with the corresponding latitude and longitude.
+When the geobeam job finishes, the data has been ingested into BigQuery. You can verify this in the Cloud Console by looking at the preview of the BigQuery table. The output looks like the following, the `elev` column and the `geom` column containing the points of the image as `POINT` objecta with the corresponding latitude and longitude.
 
-![BQ Data Preview](image/bqdatapreview.png)
+![BigQuery data preview.](image/bqdatapreview.png)
 
-### Check BigQuery Viz
+### Check BigQuery Geo Viz
 
-Check BigQuery Viz to see if the images match roughly
+Check BigQuery Geo Viz to make sure that the images are similar.
 
-![BQ Viz](image/bqgeoviz.png)
+![BigQuery Geo Viz visualization.](image/bqgeoviz.png)
 
 ## Cleaning up
 
-You can choose to delete the project and the GCS bucket if you don't need them
+To avoid incurring charges to your Google Cloud account for the resources used in this document, you can delete the projects and the resources that you created:
+
 ```
 gsutil rm -r gs://${GEOBEAM_BUCKET}
 gsutil rm -r gs://${IMAGES_BUCKET}
