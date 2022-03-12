@@ -41,11 +41,9 @@ This tutorial assumes that you know the basics of the following products and ser
 
 In this section, you will create a sample dotnet core application using visual studio. .NET 6.0 and visual studio 2022 community version is used in this tutorial.
 
-1. Follow [dotnet core](https://docs.microsoft.com/en-us/aspnet/core/?view=aspnetcore-6.0) documentation on how to create a new project. While creating a project make sure to add docker support for windows. 
+1. Follow [dotnet core](https://docs.microsoft.com/en-us/aspnet/core/?view=aspnetcore-6.0) documentation on how to create a new project. While creating a project make sure to add docker support for windows. This tutorial using SampleApplication name.
 1.  Once project is created, verify if visual studio build is working and you are able to run the application.
-1.  Verify that that the sample Angular application is working by going to `http://localhost:4200`.
-1.  In the `src/assets` folder, add `envconfig.js` and `envconfig.template.js` files.
-1.  Copy the following code into the `envconfig.js` file:
+1.  Copy the following code into the `Dockerfile`:
 
         (function(window) {
               window["envconfig"] = window["envconfig"] || {};
