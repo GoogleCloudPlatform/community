@@ -24,7 +24,7 @@ This tutorial assumes that you know the basics of the following products and ser
 
 ## Objectives
 
-*   Create and set up dotnet core application using visual studio [Visual Studio](https://visualstudio.microsoft.com/).
+*   Create and set up dotnet core application using [Visual Studio](https://visualstudio.microsoft.com/).
 *   Build and containerize your app using the [Cloud SDK](https://cloud.google.com/sdk).
 *   Deploy your app to the web using the [`gcloud` command-line tool](https://cloud.google.com/sdk/gcloud).
 
@@ -37,14 +37,12 @@ This tutorial assumes that you know the basics of the following products and ser
 1.  Enable the GKE, Cloud Build, and Container Registry APIs. For details, see
     [Enabling APIs](https://cloud.google.com/apis/docs/getting-started#enabling_apis).
 
-## Angular project and App Engine environment variable setup
+## dotnet core application creation and setup
 
-In this section, you create a sample Angular application and use App Engine environment variables to use dynamic API URLs in for your application interface.
+In this section, you will create a sample dotnet core application using visual studio. .NET 6.0 and visual studio 2022 community version is used in this tutorial.
 
-You can see the sample code in
-[this tutorial's GitHub repository](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/appengine-angular-nginx-docker/).
-
-1.  Follow these instructions to create a sample Angular application: [Setting up the local environment and workspace](https://angular.io/guide/setup-local).
+1. Follow [dotnet core](https://docs.microsoft.com/en-us/aspnet/core/?view=aspnetcore-6.0) documentation on how to create a new project. While creating a project make sure to add docker support for windows. 
+1.  Once project is created, verify if visual studio build is working and you are able to run the application.
 1.  Verify that that the sample Angular application is working by going to `http://localhost:4200`.
 1.  In the `src/assets` folder, add `envconfig.js` and `envconfig.template.js` files.
 1.  Copy the following code into the `envconfig.js` file:
