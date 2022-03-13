@@ -1,6 +1,6 @@
 ---
 title: dotnet core application in GKE with docker and ingress
-description: Learn how to deploy a sample dotnet core application to gke using docker, cloud build and expose using ingress
+description: Learn how to deploy a dotnet core application to gke using docker, cloud build and expose using ingress
 author: livesankp
 tags: GKE, docker, dotnet, ingress
 date_published: 2022-04-05
@@ -10,7 +10,7 @@ Sandeep Parmar
 
 <p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
-This tutorial shows you how to deploy a sample dotnet core application to gke using the `gcloud` command-line tool.
+This tutorial shows you how to deploy a dotnet core application to gke using the `gcloud` command-line tool.
 
 After following this tutorial, you will be able to deploy a dotnet core application in GKE using cloud build and Docker.
 
@@ -41,16 +41,33 @@ This tutorial assumes that you know the basics of the following products and ser
 
 In this section, you will create a sample dotnet core application using visual studio. .NET 6.0 and visual studio 2022 community version is used in this tutorial.
 
-1. Follow [dotnet core](https://docs.microsoft.com/en-us/aspnet/core/?view=aspnetcore-6.0) documentation on how to create a new project. While creating a project make sure to add docker support for windows. This tutorial using SampleApplication name.
+1. Follow [dotnet core](https://docs.microsoft.com/en-us/aspnet/core/?view=aspnetcore-6.0) documentation on how to create a new project. While creating a project make sure to add docker support for windows. This tutorial is using SampleApplication name.
 1.  Once project is created, verify if visual studio build is working and you are able to run the application.
 1.  Copy the following code into the `Dockerfile`:
-
-        (function(window) {
-              window["envconfig"] = window["envconfig"] || {};
-
-              // Environment variables
-              window["envconfig"]["apiurl"] = "http://localhost:8080/api";
-        })(this);
+              
+	      #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging. 
+	      #Depending on the operating system of the host machines(s) that will build or run the containers, the image specified in the FROM statement may need to be changed.
+	      #For more information, please see https://aka.ms/containercompat
+	      
+	      FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+	      WORKDIR /app
+	      #EXPOSE 80
+	      #EXPOSE 443
+	      
+	      FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+	      WORKDIR /src
+	      COPY ["SampleApplication.csproj", "."]
+	      RUN dotnet restore "./SampleApplication.csproj"
+	      COPY . .
+	      WORKDIR "/src/."
+	      RUN dotnet build "SampleApplication.csproj" -c Release -o /app/build
+	      FROM build AS publish
+	      RUN dotnet publish "SampleApplication.csproj" -c Release -o /app/publish
+	      
+	      FROM base AS final
+	      WORKDIR /app
+	      COPY --from=publish /app/publish .
+	      ENTRYPOINT ["dotnet", "SampleApplication.dll"]
 
 1.  Copy the following code into the `envconfig.template.js` file:
 
