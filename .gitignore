@@ -29,3 +29,7 @@ tutorials/cicd-datalake-part-1/testdata/
 
 target/
 *.iml
+/tutorials/gke-dotnet-docker-ingress/SampleApplication/.vs/SampleApplication/v17
+/tutorials/gke-dotnet-docker-ingress/SampleApplication/bin/Debug/net6.0
+/.vs
+/tutorials/gke-dotnet-docker-ingress/SampleApplication/obj

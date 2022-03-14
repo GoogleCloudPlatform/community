@@ -1,0 +1,15 @@
+﻿apiVersion: v1
+kind: Service
+metadata:
+  name: sample-application-service
+  namespace: sample-application-ns
+  annotations:
+   cloud.google.com/backend-config: '{"ports": {"80":"http-healthcheck-config"}}'  
+spec:
+  type: NodePort
+  selector:
+    app: sample-application
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
