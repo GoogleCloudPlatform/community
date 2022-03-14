@@ -59,10 +59,6 @@ conda config --add channels conda-forge
 conda install ibis-framework ibis-bigquery
 ```
 
-**Note**: At the time of this post, the latest release of Ibis (1.4.0) has an
-[incompatibility with SQLAlchemy version 1.4.x](https://github.com/ibis-project/ibis/issues/2689). You may need to
-install SQLAlchemy 1.3.x before installing Ibis.
-
 ## Connect to BigQuery
 
 Use the `connect()` function to authenticate with BigQuery and set the
@@ -80,7 +76,7 @@ conn = ibis_bigquery.connect(
 
 ## Build an expression
 
-Build an [Ibis expression](https://ibis-project.org/user_guide/design.html)
+Build an [Ibis expression](https://ibis-project.org/user_guide/design)
 representing the query you'd like to run. Follow the instructions in this
 example to build a query expression that determines the percentage of Stack
 Overflow questions with answers, grouped by year.
@@ -153,7 +149,7 @@ projection = table['creation_date', 'answer_count']
 
 Call a function on the column to build an expression graph that transforms
 the original column. For example, to extract the year from the created date,
-call the [`year()` timestamp method](http://docs.ibis-project.org/api.html#timestamp-methods).
+call the [`year()` timestamp method](https://ibis-project.org/api/expressions/timestamps).
 
 [embedmd]:# (ibis_bigquery.py /^.*START bigquery_ibis_transform_timestamp.*/ /END bigquery_ibis_transform_timestamp]/)
 ```py
@@ -168,9 +164,10 @@ into a Boolean that indicates if the question has any answers.
 has_answer_boolean = projection.answer_count > 0
 ```
 
-Use the [`ifelse()` boolean method](http://docs.ibis-project.org/api.html#boolean-methods) to convert
-from a Boolean back to an integer, because you'll be adding this transformed
-column to construct the percentage.
+Use the [`ifelse()` boolean
+method](https://ibis-project.org/api/expressions/numeric/#ibis.expr.types.logical.BooleanValue.ifelse)
+to convert from a Boolean back to an integer, because you'll be adding this
+transformed column to construct the percentage.
 
 [embedmd]:# (ibis_bigquery.py /^.*START bigquery_ibis_transform_boolean.*/ /END bigquery_ibis_transform_boolean]/)
 ```py
@@ -193,7 +190,7 @@ except AttributeError as exp:
 
 ### Aggregate columns
 
-Use the [column methods](http://docs.ibis-project.org/api.html#column-methods) `count()` and
+Use the [column methods](https://ibis-project.org/api/expressions/generic/#ibis.expr.types.generic.ColumnExpr-methods) `count()` and
 `sum()` to calculate the percentage of questions answered.
 
 [embedmd]:# (ibis_bigquery.py /^.*START bigquery_ibis_aggregate.*/ /END bigquery_ibis_aggregate]/)
@@ -205,7 +202,7 @@ percentage_answered = has_answer_int.mean() * 100
 ### Group by year
 
 Use the
-[aggregate()](http://docs.ibis-project.org/generated/ibis.expr.api.TableExpr.aggregate.html#ibis.expr.api.TableExpr.aggregate)
+[aggregate()](https://ibis-project.org/api/expressions/tables/#ibis.expr.types.relations.TableExpr.aggregate)
 method to combine the aggregations together and group by the year column
 expression.
 
@@ -263,7 +260,7 @@ wish to explore how to build more complex queries with Ibis.
 
 ### Write a UDF
 
-Ibis supports [user defined functions in BigQuery](https://ibis-project.org/backends/bigquery.html) by compiling Python
+Ibis supports user defined functions in BigQuery by compiling Python
 code into JavaScript. This means that you can write UDFs for BigQuery in
 Python!
 
@@ -283,8 +280,8 @@ print(conn.execute(expression))
 
 Combine multiple tables together in your query expression by using joins.
 
-See the [Table methods](http://docs.ibis-project.org/api.html#api-table)
-reference for links to the various join methods. Read the [joins section in the guide for SQL programmers](https://ibis-project.org/user_guide/sql.html)
+See the [Table methods](https://ibis-project.org/api/expressions/tables)
+reference for links to the various join methods. Read the [joins section in the guide for SQL programmers](https://ibis-project.org/ibis-for-sql-programmers/#joins)
 for examples.
 
 [embedmd]:# (ibis_bigquery.py /^.*START bigquery_ibis_joins.*/ /END bigquery_ibis_joins]/)
@@ -314,6 +311,6 @@ print(conn.execute(
 
 ### Resources
 
-- [Ibis tutorials](https://ibis-project.org/tutorial/index.html)
-- [Ibis API reference](http://docs.ibis-project.org/api.html)
-- [Ibis guide for SQL programmers](https://ibis-project.org/user_guide/sql.html)
+- [Ibis tutorials](https://ibis-project.org/tutorial/01-Introduction-to-Ibis)
+- [Ibis API reference](https://ibis-project.org/api/expressions)
+- [Ibis guide for SQL programmers](https://ibis-project.org/ibis-for-sql-programmers)

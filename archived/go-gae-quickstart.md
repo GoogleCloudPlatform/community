@@ -16,7 +16,7 @@ date_published: 2019-01-19
 <walkthrough-alt>
 Take the interactive version of this tutorial, which runs in the Cloud Console:
 
-[![Open in Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=go_gae_quickstart)
+[![Open in Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?tutorial=go_gae_quickstart)
 
 </walkthrough-alt>
 

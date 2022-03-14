@@ -235,7 +235,7 @@ Welcome page.
 [cloudsql-apis]:https://pantheon.corp.google.com/apis/library/sqladmin.googleapis.com/?pro
 
 [create-project]: https://cloud.google.com/resource-manager/docs/creating-managing-projects
-[enable-billing]: https://support.google.com/cloud/answer/6293499?hl=en
+[enable-billing]: https://support.google.com/cloud/answer/6293499
 [php-gcp]: https://cloud.google.com/php
 [symfony]: http://symfony.com
 [symfony-install]: http://symfony.com/doc/current/setup.html

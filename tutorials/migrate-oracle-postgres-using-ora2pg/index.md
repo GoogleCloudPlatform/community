@@ -1,6 +1,6 @@
 ---
-title: Migrating from an Oracle database to Cloud SQL for PostgreSQL using Ora2pg
-description: Learn how to use Ora2PG to perform schema conversion and data migration from an Oracle database to Cloud SQL for PostgreSQL.
+title: Migrating from an Oracle database to Cloud SQL for PostgreSQL using Ora2Pg
+description: Learn how to use Ora2Pg to perform schema conversion and data migration from an Oracle database to Cloud SQL for PostgreSQL.
 author: ktchana
 tags: cloud sql, database migration, postgresql, ora2pg, oracle
 date_published: 2021-04-26
@@ -10,19 +10,19 @@ Thomas Chan | Solutions Architect | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-This tutorial shows you how to perform schema conversion and offline data migration from an Oracle database to a Cloud SQL for PostgreSQL database using Ora2pg. 
+This tutorial shows you how to perform schema conversion and offline data migration from an Oracle database to a Cloud SQL for PostgreSQL database using Ora2Pg. 
 
-[Ora2pg](http://ora2pg.darold.net/) is an open source tool used to migrate an Oracle database to a PostgreSQL database. The tool scans and extracts the database 
+[Ora2Pg](http://ora2pg.darold.net/) is an open source tool used to migrate an Oracle database to a PostgreSQL database. The tool scans and extracts the database 
 schema and data and then generates PostgreSQL-compatible SQL scripts that you can use to populate the database.
 
 This document is intended for a technical audience who is responsible for database management and migration. This document assumes that you're familiar with 
 database administration and schema conversions, and that you have basic knowledge of using shell scripts and Google Cloud.
 
-High-level overview of the migration procedure using Ora2pg:
+High-level overview of the migration procedure using Ora2Pg:
 
-1. Install Ora2pg and initialize the migration project.
+1. Install Ora2Pg and initialize the migration project.
 2. Set up source and target database connectivity.
-3. Configure Ora2pg migration parameters.
+3. Configure Ora2Pg migration parameters.
 4. Generate a database migration report.
 5. Export the database schema from the Oracle database.
 6. Import the database schema into Cloud SQL for PostgreSQL.
@@ -39,14 +39,14 @@ document series:
 *   [Migrating Oracle users to Cloud SQL for PostgreSQL: Queries, stored procedures, functions, and triggers](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-queries)
 *   [Migrating Oracle users to Cloud SQL for PostgreSQL: Security, operations, monitoring, and logging](https://cloud.google.com/solutions/migrating-oracle-users-to-cloud-sql-for-postgresql-security)
 
-Though Ora2pg supports exporting data from Oracle database and importing it into Cloud SQL for PostgreSQL, it is an offline migration in which the database must
+Though Ora2Pg supports exporting data from Oracle database and importing it into Cloud SQL for PostgreSQL, it is an offline migration in which the database must
 be taken out of service during the data migration process. It's common to use data migration tools that support real-time replication, such as Striim
 or Oracle GoldenGate for migrations that require minimal downtime.
 
 ## Objectives
 
-*   Learn how to perform Oracle to PostgreSQL schema conversion using Ora2pg.
-*   Perform an offline data migration from an Oracle database to PostgreSQL using Ora2pg.
+*   Learn how to perform Oracle to PostgreSQL schema conversion using Ora2Pg.
+*   Perform an offline data migration from an Oracle database to PostgreSQL using Ora2Pg.
 *   Understand the downtime requirements and data integrity considerations during data migration.
 
 ## Costs
@@ -70,14 +70,14 @@ cleanup easiest at the end of the tutorial, we recommend that you create a new p
 When you finish this tutorial, you can avoid continued billing by deleting the resources that you created, as described in the "Cleaning up" section at the end 
 of this document.
 
-## Install Ora2pg and initialize the migration project
+## Install Ora2Pg and initialize the migration project
 
-Ora2pg uses Oracle client libraries to connect to the source Oracle database to perform scans and exports. Though it is possible to install and use Ora2pg on the
-same machine as the source Oracle database, we recommend that you use a dedicated machine for the Ora2pg installation and runtime to prevent potential 
+Ora2Pg uses Oracle client libraries to connect to the source Oracle database to perform scans and exports. Though it is possible to install and use Ora2Pg on the
+same machine as the source Oracle database, we recommend that you use a dedicated machine for the Ora2Pg installation and runtime to prevent potential 
 interruptions to the source database. 
 
 This section shows an example of creating a [Compute Engine instance](https://cloud.google.com/compute/docs/instances/create-start-instance#publicimage) and
-installing Ora2pg on that instance. 
+installing Ora2Pg on that instance. 
 
 1.  Set a variable for the Google Cloud project ID for VM creation:
 
@@ -95,7 +95,7 @@ installing Ora2pg on that instance.
 
     -   Oracle client library installation
     -   PostgreSQL client library installation
-    -   Working directory for Ora2pg (usually less than 1GB, excluding data)
+    -   Working directory for Ora2Pg (usually less than 1GB, excluding data)
     -   Data export files from source database (optional)
 
 1.  Create the Compute Engine instance:
@@ -141,18 +141,18 @@ installing Ora2pg on that instance.
         sudo yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
         sudo yum install -y postgresql12-libs.x86_64 postgresql12.x86_64
 
-1.  Install Ora2pg dependencies:
+1.  Install Ora2Pg dependencies:
 
         sudo yum install -y devtoolset-8 perl-CPAN perl-DBD-Pg libaio perl-Test-Simple perl-Test-NoWarnings
 
-1.  As root, [download Ora2pg](https://github.com/darold/ora2pg/releases). This example uses Ora2pg v21.0. 
+1.  As root, [download Ora2pg](https://github.com/darold/ora2pg/releases). This example uses Ora2Pg v21.0. 
 
         yum install -y wget
         wget https://github.com/darold/ora2pg/archive/v21.0.zip
 
-1.  As root, [install Ora2pg](http://ora2pg.darold.net/documentation.html#Installing-Ora2Pg).
+1.  As root, [install Ora2Pg](http://ora2pg.darold.net/documentation.html#Installing-Ora2Pg).
 
-    1.  Make sure that the following environment variables are set before installing. These environment variables are required whenever Ora2pg is used.
+    1.  Make sure that the following environment variables are set before installing. These environment variables are required whenever Ora2Pg is used.
 
             export ORACLE_HOME=[PATH_TO_INSTANT_CLIENT_DIRECTORY]
             export LD_LIBRARY_PATH=$ORACLE_HOME
@@ -166,25 +166,25 @@ installing Ora2pg on that instance.
 
             perl -MCPAN -e 'install DBD::Oracle'
 
-    1.  Extract and build Ora2pg:
+    1.  Extract and build Ora2Pg:
 
             unzip v21.0.zip
             cd ora2pg-21.0
             perl Makefile.PL
             make && make install
 
-        After installation, Ora2pg should be available to all users.
+        After installation, Ora2Pg should be available to all users.
         
 1.  Set the `ORACLE_HOME` and `LD_LIBRARY_PATH` environment variables:
 
         export ORACLE_HOME=[PATH_TO_INSTANT_CLIENT_DIRECTORY]
         export LD_LIBRARY_PATH=$ORACLE_HOME
             
-1.  Run Ora2pg:
+1.  Run Ora2Pg:
 
         ora2pg --help
 
-1.  Initialize an Ora2pg project:
+1.  Initialize an Ora2Pg project:
 
         ora2pg --project_base $HOME --init_project migration_project
 
@@ -226,7 +226,7 @@ installing Ora2pg on that instance.
 
 ## Set up source and target database connectivity
 
-This section focuses on how to configure Ora2pg to connect to the source and target database. This section assumes that the necessary network setup—such as
+This section focuses on how to configure Ora2Pg to connect to the source and target database. This section assumes that the necessary network setup—such as
 [VPC](https://cloud.google.com/vpc), [Cloud VPN](https://cloud.google.com/network-connectivity/docs/vpn/concepts/overview), or
 [Cloud Interconnect](https://cloud.google.com/network-connectivity/docs/interconnect/concepts/overview)—is already in place to allow network traffic among 
 various components. For details of the connectivity options and detailed setup instructions, see
@@ -234,11 +234,11 @@ various components. For details of the connectivity options and detailed setup i
 
 ### Set up connectivity for the source Oracle database
 
-By default, Ora2pg uses a configuration file located at `/etc/ora2pg/ora2pg.conf`. All of the source Oracle database connectivity settings are configured in this
-file. You can also specify your own configuration file by using the `-c` flag when running Ora2pg. Throughout this document, the configuration file generated 
-during Ora2pg project initialization is used: `$HOME/migration\_project/config/ora2pg.conf`.
+By default, Ora2Pg uses a configuration file located at `/etc/ora2pg/ora2pg.conf`. All of the source Oracle database connectivity settings are configured in this
+file. You can also specify your own configuration file by using the `-c` flag when running Ora2Pg. Throughout this document, the configuration file generated 
+during Ora2Pg project initialization is used: `$HOME/migration\_project/config/ora2pg.conf`.
 
-To configure and test the connectivity between Ora2pg and the source Oracle database, do the following:
+To configure and test the connectivity between Ora2Pg and the source Oracle database, do the following:
 
 1.  Edit the `$HOME/migration\_project/config/ora2pg.conf` file to set the values of these parameters as shown:
 
@@ -260,7 +260,7 @@ To configure and test the connectivity between Ora2pg and the source Oracle data
 
 ### Set up connectivity for the target Cloud SQL for PostgreSQL database
 
-To configure the connectivity between Ora2pg and the target Cloud SQL for PostgreSQL database, do the following:
+To configure the connectivity between Ora2Pg and the target Cloud SQL for PostgreSQL database, do the following:
 
 1.  Configure the [authorized network](https://cloud.google.com/sql/docs/mysql/authorize-networks#console) to allow the Compute Engine instance to connect to 
     your Cloud SQL for PostgreSQL database.
@@ -273,7 +273,7 @@ To configure the connectivity between Ora2pg and the target Cloud SQL for Postgr
 
     Replace `[DB_NAME]`, `[PG_IP_ADDRESS]`, `[PG_USERNAME]`, and `[PG_PWD]` with the actual connection details.
 
-1.  Ora2pg uses the [psql client](https://www.postgresql.org/docs/12/app-psql.html) to perform various operations. To prevent psql from repeatedly prompting for
+1.  Ora2Pg uses the [psql client](https://www.postgresql.org/docs/12/app-psql.html) to perform various operations. To prevent psql from repeatedly prompting for
     a password during import operations, create a [password file](https://www.postgresql.org/docs/12/libpq-pgpass.html) `$HOME/.pgpass` with the following 
     content:
 
@@ -296,25 +296,25 @@ To configure the connectivity between Ora2pg and the target Cloud SQL for Postgr
 
     If the password file is set up correctly, no password prompt should appear.
 
-## Configure Ora2pg migration parameters
+## Configure Ora2Pg migration parameters
 
-Ora2pg provides many [parameters](http://ora2pg.darold.net/documentation.html#CONFIGURATION) to control various aspects of the migration process. It is important 
+Ora2Pg provides many [parameters](http://ora2pg.darold.net/documentation.html#CONFIGURATION) to control various aspects of the migration process. It is important 
 to understand the effect each parameter has and configure them properly for a successful migration. 
 
 Here are a few common parameters, their meanings, and suggested values:
 
 
-| Ora2pg parameter        | Description | Suggested value |
+| Ora2Pg parameter        | Description | Suggested value |
 |-------------------------|-------------|-----------------|
-| `DATA_TYPE`             | Controls the data type mappings between Oracle and PostgreSQL. Ora2pg comes with a set of data type mappings by default. Change this parameter if you want to customize the mappings. | Modify only if needed. |
-| `MODIFY_TYPE`           | Force Ora2pg to use a data type for a particular table column. | Modify only if needed. |
-| `EXPORT_SCHEMA`         | By default, Ora2pg generates schema creation scripts that will import objects into the public schema of the target PostgreSQL database. Applications that explicitly reference the schema name could run into problems when an object does not exist in the target schema. Setting this parameter to `1` instructs Ora2pg to export the schema and create all objects under the correct schema name. | `1` |
-| `SCHEMA`                | Specifies which schemas are exported by Ora2pg. If not specified, Ora2pg exports all objects from all schemas. | Application schema names |
-| `EXCLUDE`               | Objects to be excluded from export. Objects that are flagged as not supported by Ora2pg in the migration report should be added to this list and manually handled if needed.| Space-separated or comma-separated list of object names to be excluded |
-| `PG_SUPPORTS_PROCEDURE` | Procedures are supported since PostgreSQL 11. Setting this parameter to `1` instructs Ora2pg to use PostgreSQL procedures during conversion.| `1` for PostgreSQL 11 or above; `0` otherwise|
-| `EXTERNAL_TO_FDW`       | By default, external tables in Oracle databases are converted by Ora2pg to foreign tables in PostgreSQL using the `file_fdw` extension. However, the `file_fdw` extension is not supported by Cloud SQL for PostgreSQL, and errors will be returned during import. Setting this parameter to `0` instructs Ora2pg to exclude these tables. | `0` |
-| `USE_ORAFCE`            | [Orafce](https://github.com/orafce/orafce) is an open-source PostgreSQL extension that provides a subset of functions and packages from Oracle RDBMS. Setting this parameter to `1` instructs Ora2pg to translate Oracle RDBMS function references to reference Orafce functions. Cloud SQL for PostgreSQL does not support the Orafce extension. | `0` |
-| `STOP_ON_ERROR`         | By default, `\set ON_ERROR_STOP ON` is included in all SQL scripts generated by Ora2pg. This stops import operations on any errors. Set it to `0` to disable this behavior and allow import to continue even if errors occur. | `0` |
+| `DATA_TYPE`             | Controls the data type mappings between Oracle and PostgreSQL. Ora2Pg comes with a set of data type mappings by default. Change this parameter if you want to customize the mappings. | Modify only if needed. |
+| `MODIFY_TYPE`           | Force Ora2Pg to use a data type for a particular table column. | Modify only if needed. |
+| `EXPORT_SCHEMA`         | By default, Ora2Pg generates schema creation scripts that will import objects into the public schema of the target PostgreSQL database. Applications that explicitly reference the schema name could run into problems when an object does not exist in the target schema. Setting this parameter to `1` instructs Ora2Pg to export the schema and create all objects under the correct schema name. | `1` |
+| `SCHEMA`                | Specifies which schemas are exported by Ora2Pg. If not specified, Ora2Pg exports all objects from all schemas. | Application schema names |
+| `EXCLUDE`               | Objects to be excluded from export. Objects that are flagged as not supported by Ora2Pg in the migration report should be added to this list and manually handled if needed.| Space-separated or comma-separated list of object names to be excluded |
+| `PG_SUPPORTS_PROCEDURE` | Procedures are supported since PostgreSQL 11. Setting this parameter to `1` instructs Ora2Pg to use PostgreSQL procedures during conversion.| `1` for PostgreSQL 11 or above; `0` otherwise|
+| `EXTERNAL_TO_FDW`       | By default, external tables in Oracle databases are converted by Ora2Pg to foreign tables in PostgreSQL using the `file_fdw` extension. However, the `file_fdw` extension is not supported by Cloud SQL for PostgreSQL, and errors will be returned during import. Setting this parameter to `0` instructs Ora2Pg to exclude these tables. | `0` |
+| `USE_ORAFCE`            | [Orafce](https://github.com/orafce/orafce) is an open-source PostgreSQL extension that provides a subset of functions and packages from Oracle RDBMS. Setting this parameter to `1` instructs Ora2Pg to translate Oracle RDBMS function references to reference Orafce functions. Cloud SQL for PostgreSQL does not support the Orafce extension. | `0` |
+| `STOP_ON_ERROR`         | By default, `\set ON_ERROR_STOP ON` is included in all SQL scripts generated by Ora2Pg. This stops import operations on any errors. Set it to `0` to disable this behavior and allow import to continue even if errors occur. | `0` |
 | `NLS_LANG`, `NLS_NCHAR` | Controls the `NLS_LANG` and `NLS_NCHAR` environment variables used by Oracle client library. Set these parameters to match the source database character set settings to avoid potential character conversion issues. | Use source database NLS settings. |
 
 To configure these parameters, modify the `$HOME/migration\_project/config/ora2pg.conf` file. 
@@ -341,8 +341,8 @@ To install the Oracle HR sample schema, follow the instructions in
 ## Generate a database migration report
 
 Before performing the actual migration, it is a good idea to generate a
-[database migration report](http://ora2pg.darold.net/documentation.html#Migration-cost-assessment) using Ora2pg. When you generate this report, 
-Ora2pg inspects all database objects and codes and reports whether there is anything that couldn't be automatically converted.
+[database migration report](http://ora2pg.darold.net/documentation.html#Migration-cost-assessment) using Ora2Pg. When you generate this report, 
+Ora2Pg inspects all database objects and codes and reports whether there is anything that couldn't be automatically converted.
 
 1.  Generate the report:
 
@@ -353,10 +353,10 @@ Ora2pg inspects all database objects and codes and reports whether there is anyt
 
 ## Export the database schema from the Oracle database
 
-Exporting a schema from an Oracle database involves running the Ora2pg command, specifying the `ora2pg.conf` file with the correct settings, and supplying 
+Exporting a schema from an Oracle database involves running the `ora2pg` command, specifying the `ora2pg.conf` file with the correct settings, and supplying 
 command-line arguments specifying the type of objects to be exported. This requires multiple commands and a good knowledge of the tool itself. To ease this 
 process, a shell script called `export_schema.sh` is generated during the project initialization step. This is a wrapper script that takes the 
-`ora2pg.conf` as input and then issues the required Ora2pg commands to export the actual schema from the source database. Use the following command to perform 
+`ora2pg.conf` as input and then issues the required Ora2Pg commands to export the actual schema from the source database. Use the following command to perform 
 schema export from an Oracle database:
 
 
@@ -422,10 +422,10 @@ used during import. You can examine and make changes to the files if needed. The
 
 ## Import the database schema into Cloud SQL for PostgreSQL
 
-Ora2pg exports schema definitions as PostgreSQL-compliant SQL files. You can use standard PostgreSQL clients such as psql to execute those SQL files to import
+Ora2Pg exports schema definitions as PostgreSQL-compliant SQL files. You can use standard PostgreSQL clients such as psql to execute those SQL files to import
 the schema into the target Cloud SQL for PostgreSQL database. 
 
-A shell script called `import_all.sh` is generated by Ora2pg during the project initialization step. This is a wrapper script that takes the `ora2pg.conf`
+A shell script called `import_all.sh` is generated by Ora2Pg during the project initialization step. This is a wrapper script that takes the `ora2pg.conf`
 file as input and uses psql client commands to perform the schema import. 
 
 Depending on the data migration methodologies, it is advisable to first import static schema structures such as tables, partitions, views, functions, and 
@@ -447,7 +447,7 @@ Optionally, use the `-D` flag to enable dry-run mode without actually changing t
 
 ## Perform data migration
 
-After the schema is imported into the target Cloud SQL for PostgreSQL database, you can start the actual data migration. Ora2pg supports exporting data from 
+After the schema is imported into the target Cloud SQL for PostgreSQL database, you can start the actual data migration. Ora2Pg supports exporting data from 
 an Oracle database and importing it into Cloud SQL for PostgreSQL. 
 
 To export data from source the Oracle database and import the data directly into the target PostgreSQL database, use the following command:
@@ -482,7 +482,7 @@ any discrepancies in the data.
 1.  Compare the number of rows between the source and target database tables to identify any gaps. In addition to running `count`, also run `sum`, `avg`, `min`,
     and `max` on the same set of tables.
 
-    Ora2pg comes with a test mode that compares the source Oracle database and target PostgreSQL database in terms of row counts and object counts:
+    Ora2Pg comes with a test mode that compares the source Oracle database and target PostgreSQL database in terms of row counts and object counts:
 
         ora2pg -t TEST -c config/ora2pg.conf
 

@@ -32,7 +32,7 @@ project with an existing managed instance group that you want to monitor.
 ## Running the dashboard
 
 To run the dashboard locally, you need to set up a new Google Cloud application.
-[Set up OAuth](https://support.google.com/cloud/answer/6158849?hl=en&ref_topic=6262490) to obtain the client ID that will be used to identify your application when
+[Set up OAuth](https://support.google.com/cloud/answer/6158849) to obtain the client ID that will be used to identify your application when
 making API calls. Choose **Web application** as application type, and add
 [http://localhost:8080](http://localhost:8000) to the list
 of authorized JavaScript origins for your app.

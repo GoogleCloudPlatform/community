@@ -1,0 +1,18 @@
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: bc-psweb
+spec:
+  healthCheck:
+    type: HTTP
+    requestPath: /hc
+    checkIntervalSec: 30
+    timeoutSec: 10
+    healthyThreshold: 1
+    unhealthyThreshold: 3
+  cdn:
+    enabled: true
+    cachePolicy:
+      includeHost: true
+      includeProtocol: false
+      includeQueryString: true

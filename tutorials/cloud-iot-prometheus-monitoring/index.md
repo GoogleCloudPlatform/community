@@ -155,12 +155,12 @@ grafana.ini:
         root_url: https://[project-id].appspot.com
 ```
 
-Install [Helm](https://github.com/kubernetes/helm) in your Cloud Shell. The instructions below assume that you are starting
+Install [Helm](https://helm.sh/docs/intro/install/) in your Cloud Shell instance. The instructions below assume that you are starting
 from this tutorial's root level: `$HOME/community/tutorials/cloud-iot-prometheus-monitoring`
 
 ```
-wget https://storage.googleapis.com/kubernetes-helm/helm-v2.12.0-linux-amd64.tar.gz
-tar -xzvf helm-v2.12.0-linux-amd64.tar.gz
+wget https://get.helm.sh/helm-v2.17.0-linux-amd64.tar.gz
+tar -xzvf helm-v2.17.0-linux-amd64.tar.gz
 mv linux-amd64/helm $HOME/bin/
 
 # Be sure you have the current cluster credentials
@@ -619,7 +619,7 @@ While you can embed an iFrame for the complete edit view URL if you want the ful
 choices.
 
 Assuming a standard edit URL like the following, you can choose
-[**Publish to Web**](https://support.google.com/docs/answer/183965?co=GENIE.Platform%3DDesktop&hl=en),
+[**Publish to the web**](https://support.google.com/docs/answer/183965),
 which will make the document public and will automatically create the `iframe src` code for you if you choose to embed it:
 
 ```
@@ -627,7 +627,7 @@ https://docs.google.com/spreadsheets/d/1FvwKEqVbnY1k3ZfQ3SJNLr-CAb3U_3bIOIFe_XE2
 ```
 
 If you want to keep the document private to your shared recipients or a
-[group](https://support.google.com/a/answer/167101?hl=en), you can use a special URL to get the content.
+[group](https://support.google.com/a/answer/167101), you can use a special URL to get the content.
 Replace `edit#gid=0` in the URL with `htmlembed?single=true&gid=0&widget=false&chrome=false`. You can also
 add `range=f2:g6` if you want to further restrict to a specific range.
 

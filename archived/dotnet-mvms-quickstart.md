@@ -14,7 +14,7 @@ date_published: 2019-03-22
 <walkthrough-alt>
 Take the interactive version of this tutorial, which runs in the Cloud Console:
 
-[![Open in Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=dotnet_mvms_quickstart)
+[![Open in Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?tutorial=dotnet_mvms_quickstart)
 
 </walkthrough-alt>
 

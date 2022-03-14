@@ -355,7 +355,6 @@ receives the signal, and traffic is redirected to the other node.
             --healthy-threshold=1 \
             --unhealthy-threshold=2 \
             --port=59997 \
-            --request=10.128.0.20 \
             --timeout="1s"
 
 1.  Add a firewall rule to allow the health check:

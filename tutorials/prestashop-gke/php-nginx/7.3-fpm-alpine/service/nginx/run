@@ -1,0 +1,18 @@
+#!/usr/bin/env sh
+set -eu
+
+exec 2>&1
+
+COMMAND=/usr/sbin/nginx
+PID_FILE=/run/nginx/nginx.pid
+
+# Create pid file's directory
+install -d -o nginx -g nginx ${PID_FILE%/*}
+
+# Check nginx command is executable or not
+test -x ${COMMAND} || exit 0
+
+# Test nginx configuration
+${COMMAND} -t -q || exit 0
+
+exec ${COMMAND} -c /etc/nginx/nginx.conf -g "pid $PID_FILE; daemon off;"

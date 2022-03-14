@@ -15,113 +15,101 @@ Kubernetes storage volumes in Google Kubernetes Engine
 from [Filestore](https://cloud.google.com/filestore/) using the 
 [Kubernetes NFS-Client Provisioner](https://github.com/kubernetes-incubator/external-storage/tree/master/nfs-client). Dynamic 
 provisioning allows storage volumes to be created on demand in the NFS volume managed by a Filestore instance. Typical
-use cases include running databases, such as [PostgreSQL](https://www.postgresql.org/), or a content management system like [WordPress](https://wordpress.com/) in a Kubernetes cluster.
+use cases include running databases, such as [PostgreSQL](https://www.postgresql.org/), or a content management system like
+[WordPress](https://wordpress.com/) in a Kubernetes cluster.
 
 [![button](http://gstatic.com/cloudssh/images/open-btn.png)](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/GoogleCloudPlatform/community&page=editor&tutorial=tutorials/gke-filestore-dynamic-provisioning/index.md)
 
-## (OPTIONAL) Create a project with a billing account attached 
-**(you can also use an existing project and skip to the next step)**
+## (Optional) Create a project with a billing account attached
 
-```sh
-ORG=[YOUR_ORG]
-BILLING_ACCOUNT=[YOUR_BILLING_ACCOUNT_NAME]
-PROJECT=[NAME FOR THE PROJECT YOU WILL CREATE]
-ZONE=[COMPUTE ZONE YOU WANT TO USE]
-gcloud projects create $PROJECT --organization=$ORG
-gcloud beta billing projects link $PROJECT --billing-account=$(gcloud beta billing accounts list | grep $BILLING_ACCOUNT | awk '{print $1}')
-gcloud config configurations create -- activate $PROJECT
-gcloud config set compute/zone $ZONE
-```
+If you use an existing project, you can skip this step.
+
+    ORG=[YOUR_ORG]
+    BILLING_ACCOUNT=[YOUR_BILLING_ACCOUNT_NAME]
+    PROJECT=[NAME FOR THE PROJECT YOU WILL CREATE]
+    ZONE=[COMPUTE ZONE YOU WANT TO USE]
+    gcloud projects create $PROJECT --organization=$ORG
+    gcloud beta billing projects link $PROJECT --billing-account=$(gcloud beta billing accounts list | grep $BILLING_ACCOUNT | awk '{print $1}')
+    gcloud config configurations create -- activate $PROJECT
+    gcloud config set compute/zone $ZONE
 
 ## Enable the required Google APIs
 
-```sh
-gcloud services enable file.googleapis.com
-```
+    gcloud services enable file.googleapis.com
 
 ## Create a Filestore volume
 
-1. Create a Filestore instance with 1TB of storage capacity
+1.  Create a Filestore instance with 1TB of storage capacity
 
-    ```sh
-    FS=[NAME FOR THE FILESTORE YOU WILL CREATE]
-    gcloud beta filestore instances create ${FS} \
-        --project=${PROJECT} \
-        --zone=${ZONE} \
-        --tier=STANDARD \
-        --file-share=name="volumes",capacity=1TB \
-        --network=name="default"
-    ```
+        FS=[NAME FOR THE FILESTORE YOU WILL CREATE]
+        gcloud beta filestore instances create ${FS} \
+          --project=${PROJECT} \
+          --zone=${ZONE} \
+          --tier=STANDARD \
+          --file-share=name="volumes",capacity=1TB \
+          --network=name="default"
 
-2. Retrieve the IP address of the Filestore instance
+1.  Retrieve the IP address of the Filestore instance
 
-    ```sh
-    FSADDR=$(gcloud beta filestore instances describe ${FS} \
-         --project=${PROJECT} \
-         --zone=${ZONE} \
-         --format="value(networks.ipAddresses[0])")
-    ```
+        FSADDR=$(gcloud beta filestore instances describe ${FS} \
+          --project=${PROJECT} \
+          --zone=${ZONE} \
+          --format="value(networks.ipAddresses[0])")
 
 ## Create a Kubernetes Engine cluster
 
-1. Create the cluster and get its credentials
+1.  Create the cluster and get its credentials:
 
-    ```sh
-    CLUSTER=[NAME OF THE KUBERNETES CLUSTER YOU WILL CREATE]
-    gcloud container clusters create ${CLUSTER}
-    gcloud container clusters get-credentials ${CLUSTER}
-    ```
+        CLUSTER=[NAME OF THE KUBERNETES CLUSTER YOU WILL CREATE]
+        gcloud container clusters create ${CLUSTER}
+        gcloud container clusters get-credentials ${CLUSTER}
 
-2. Grant yourself cluster-admin privileges
+1.  Grant yourself cluster-admin privileges:
 
-    ```sh
-    ACCOUNT=$(gcloud config get-value core/account)
-    kubectl create clusterrolebinding core-cluster-admin-binding \
-        --user ${ACCOUNT} \
-        --clusterrole cluster-admin
-    ```
+        ACCOUNT=$(gcloud config get-value core/account)
+        kubectl create clusterrolebinding core-cluster-admin-binding \
+          --user ${ACCOUNT} \
+          --clusterrole cluster-admin
 
-3. Install [Helm](https://github.com/helm/helm)
+1.  Install [Helm](https://helm.sh/docs/intro/install/):
 
-    Download the [desired version](https://github.com/helm/helm/releases) and unpack it.
+    1.  Download Helm and extract the contents of the archive file:
 
-        wget https://storage.googleapis.com/kubernetes-helm/helm-v2.11.0-linux-amd64.tar.gz
-        tar xf helm-v2.11.0-linux-amd64.tar.gz
+            wget https://get.helm.sh/helm-v2.17.0-linux-amd64.tar.gz
+            tar xf helm-v2.17.0-linux-amd64.tar.gz
 
-    Add the `helm` binary to `/usr/local/bin`.
+    1.  Add the `helm` binary to `/usr/local/bin`.
 
-        sudo ln -s $PWD/linux-amd64/helm /usr/local/bin/helm
+            sudo ln -s $PWD/linux-amd64/helm /usr/local/bin/helm
 
-    Create a file named `rbac-config.yaml` containing the following:
+    1.  Create a file named `rbac-config.yaml` containing the following:
 
-    ```yaml
-    apiVersion: v1
-    kind: ServiceAccount
-    metadata:
-            name: tiller
-            namespace: kube-system
-    ---
-    apiVersion: rbac.authorization.k8s.io/v1beta1
-    kind: ClusterRoleBinding
-    metadata:
-            name: tiller
-    roleRef:
-            apiGroup: rbac.authorization.k8s.io
-            kind: ClusterRole
-            name: cluster-admin
-    subjects:
-            - kind: ServiceAccount
-            name: tiller
-            namespace: kube-system
-    ```
+            apiVersion: v1
+            kind: ServiceAccount
+            metadata:
+                    name: tiller
+                    namespace: kube-system
+            ---
+            apiVersion: rbac.authorization.k8s.io/v1beta1
+            kind: ClusterRoleBinding
+            metadata:
+                    name: tiller
+            roleRef:
+                    apiGroup: rbac.authorization.k8s.io
+                    kind: ClusterRole
+                    name: cluster-admin
+            subjects:
+                    - kind: ServiceAccount
+                    name: tiller
+                    namespace: kube-system
 
-    Create the `tiller` service account and `cluster-admin` role binding.
+    1.  Create the `tiller` service account and `cluster-admin` role binding:
 
-        kubectl apply -f rbac-config.yaml
+            kubectl apply -f rbac-config.yaml
 
-    Initialize Helm.
+    1.  Initialize Helm:
 
-        helm init --service-account tiller
+            helm init --service-account tiller
 
 ## Deploy the NFS-Client Provisioner
 

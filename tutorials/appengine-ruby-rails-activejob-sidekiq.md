@@ -142,44 +142,7 @@ need to obtain the internal address and password of your Redis instance. In the 
 your Compute Engine instance with Redis installed. This IP address and the password that you saved are be provided through environment variables
 at deployment time to configure Sidekiq.
 
-### Option A: Shared worker and web application
-
-For this option, the App Engine service runs both the web server and a worker process through a process manager called
-[foreman](https://ddollar.github.io/foreman/). If you choose this method, App Engine scales your web and worker
-instances together.
-
-1.  Add `foreman` gem to your `Gemfile`:
-
-        bundle add foreman
-
-1.  Create a `Procfile` at the root of your application:
-
-        web: bundle exec rails server -p 8080
-        worker: bundle exec sidekiq
-
-1. Create an `app.yaml` for deploying the application to Google App Engine:
-
-        runtime: ruby
-        env: flex
-
-        entrypoint: bundle exec foreman start
-
-        env_variables:
-          REDIS_PROVIDER: REDIS_URL
-          REDIS_URL: redis://[REDIS_IP_ADDRESS]:6379
-          REDIS_PASSWORD: [PASSWORD]
-          SECRET_KEY_BASE: [SECRET_KEY]
-
-    Replace `[REDIS_IP_ADDRESS]` and `[PASSWORD]` with the internal IP address of your Redis instance and its required password that you gave it,
-    respectively. Replace `[SECRET_KEY]` with a secret key for Rails sessions.
-
-1.  Deploy to App Engine
-
-        gcloud app deploy app.yaml
-
-### Option B: Separate worker and web application
-
-For this option, you create two App Engine services: one runs the web server and one runs worker processes. Both
+You create two App Engine services: one runs the web server and one runs worker processes. Both
 services use the same application code. This configuration allows you to scale background worker instances independently
 of your web instances at the cost of potentially using more resources. To pass the App Engine health checks and keep your background worker instance 
 alive, you use the [sidekiq_alive](https://github.com/arturictus/sidekiq_alive) gem to enable the Sidekiq server to respond to each liveness and readiness 
@@ -258,7 +221,7 @@ request with a `200` HTTP status code.
     If you choose an `automatic_scaling` option, be aware that scaling for the background processing is based off
     of CPU utilization, not queue size.
 
-1.  Deploy both services to App Engine
+1.  Deploy both services to App Engine:
 
         gcloud app deploy app.yaml worker.yaml
 

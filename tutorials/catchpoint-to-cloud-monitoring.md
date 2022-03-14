@@ -78,7 +78,7 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
 1.  Edit [`Stackdriver-Webhook/.env`](https://github.com/catchpoint/Integrations.GoogleCloudMonitoring/blob/master/Stackdriver-Webhook/.env) and update the
     value of the `GoogleProjectId` variable to the project ID for your Google Cloud project.
    
-    For more information about environment variables, see [Using environment variables](https://cloud.google.com/functions/docs/env-var).
+    For more information about environment variables, see [Using environment variables](https://cloud.google.com/functions/docs/configuring/env-var).
 
 1.  On the Cloud SDK command line, go to the directory where you cloned the Node.js scripts:
 

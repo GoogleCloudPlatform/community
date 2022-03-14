@@ -432,9 +432,14 @@ function handleACPKCEAuthRequest (req, res) {
 }
 ```
 
-This function first checks if all the required parameters (`client_id`, `redirect_url`, `code_challenge`) are present, then makes sure that the client ID and the redirect URL exist in the database and the client is allowed to initiate the flow, and at last renders a page where user can sign in with their account. The user credentials, along with other information, are `POST`ed to `/signin`. Note that in this sample parameter `code_challenge_method`, though required, is not used, as it is assumed that all code challenges are hashed using `SHA-256`.
+This function first checks whether all the required parameters (`client_id`, `redirect_url`, `code_challenge`) are present. The function then makes sure that
+the client ID and the redirect URL exist in the database and the client is allowed to initiate the flow. Finally, the function renders a page on which the user
+can sign in with their account. The user credentials, along with other information, are sent in a `POST` request to `/signin`. In this sample, parameter 
+`code_challenge_method`, though required, is not used, because it is assumed that all code challenges are hashed using `SHA-256`.
 
-Requests with `response_type` set to `code` but do not have parameters `code_challenge` and `code_challenge_method` initiate the Authorization Code (PKCE) flow and are processed by function `handleACPKCEAuthRequest`; and requests with the `token` response_type are sent to function `handleImplicitAuthRequest`. The logic behind these two functions are largely the same as `handleACPKCEAuthRequest`:
+Requests with `response_type` set to `code` but without the parameters `code_challenge` and `code_challenge_method` initiate the Authorization Code (PKCE) flow 
+and are processed by the `handleACAuthRequest` function; and requests with the `token` response_type are sent to the `handleImplicitAuthRequest` function. The 
+logic behind these two functions is largely the same as `handleACPKCEAuthRequest`:
 
 ```js
 function handleACAuthRequest (req, res) {

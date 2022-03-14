@@ -1,0 +1,13 @@
+#!/usr/bin/env sh
+set -eu
+exec 2>&1
+
+echo 'Waiting for services to stop...'
+sv -w196 force-stop /service/*
+sv exit /service/*
+
+# kill any other processes still running in the container
+for ORPHAN_PID in $(ps --no-headers -eo "%p," -o stat | tr -d ' ' | grep 'Z' | cut -d',' -f1); do
+    timeout 5 /bin/sh -c "kill $ORPHAN_PID && wait $ORPHAN_PID || kill -9 $ORPHAN_PID"
+done
+

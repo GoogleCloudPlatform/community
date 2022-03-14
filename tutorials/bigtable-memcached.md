@@ -163,7 +163,8 @@ configuration.
 
 ## Optionally connect to Memcached via Telnet
 
-The [Memorystore for Memcached documentation](https://cloud.google.com/memorystore/docs/memcached/connecting-memcached-instance?hl=en_US) contains more information about this process, but you can just run the commands below to set and get a value in the cache:
+The [Memorystore for Memcached documentation](https://cloud.google.com/memorystore/docs/memcached/connecting-memcached-instance) contains more information about
+this process, but you can just run the commands below to set and get a value in the cache:
 
     sudo apt-get install telnet
     telnet $DISCOVERY_ENDPOINT_ID 11211

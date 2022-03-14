@@ -10,8 +10,8 @@ Brent Shaffer | Developer Programs Engineer | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-[WordPress][wordpress] is an open source web framework for PHP developers that encourages the use of the
-model-view-controller (MVC) pattern.
+[WordPress][wordpress] is an open-source content management system (CMS) for PHP developers that pairs
+with a MySQL or MariaDB database.
 
 This tutorial illustrates how to use a simple command-line tool for downloading
 and configuring WordPress on App Engine standard environment for PHP 7.2.

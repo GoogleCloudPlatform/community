@@ -30,9 +30,8 @@ def get_supported_languages(project_id):
     print("\n")
 
 
-def batch_translate_text(
-    input_uri, output_uri, project_id, location, source_lang, target_lang
-):
+def batch_translate_text(input_uri, output_uri, project_id, location, source_lang, target_lang):
+    from time import sleep
     # call batch translate against orig.txt
 
     client = translate.TranslationServiceClient()
@@ -44,18 +43,31 @@ def batch_translate_text(
     input_configs = [input_configs_element]
     gcs_destination = {"output_uri_prefix": output_uri}
     output_config = {"gcs_destination": gcs_destination}
-    parent = client.location_path(project_id, location)
+    parent = f"projects/{project_id}/locations/{location}"
 
     operation = client.batch_translate_text(
-        parent=parent,
-        source_language_code=source_lang,
-        target_language_codes=target_language_codes,
-        input_configs=input_configs,
-        output_config=output_config)
+        request={
+            "parent": parent,
+            "source_language_code": source_lang,
+            "target_language_codes": target_language_codes,
+            "input_configs": input_configs,
+            "output_config": output_config,
+        })
 
-    print(u"Waiting for operation to complete...")
-    response = operation.result(90)
+    # Initial delay
+    total_wait_secs = 90
+    print(f"Waiting for operation to complete... {total_wait_secs:.0f} secs")
 
+    delay_secs = 10
+    sleep(90)
+    while not operation.done():
+        # Exponential backoff
+        delay_secs *= 1.1
+        total_wait_secs += delay_secs
+        print(f"Checking again in: {delay_secs:.0f} seconds | total wait: {total_wait_secs:.0f} secs")
+        sleep(delay_secs)
+
+    response = operation.result()
     print(u"Total Characters: {}".format(response.total_characters))
     print(u"Translated Characters: {}".format(response.translated_characters))
 
@@ -63,13 +75,16 @@ def batch_translate_text(
 def main():
     import argparse
 
-    location = 'us-central1'
-
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--project_id",
         type=str,
         required=True
+    )
+    parser.add_argument(
+        "--location",
+        type=str,
+        default='us-central1'
     )
     parser.add_argument(
         "--source_lang",
@@ -93,9 +108,8 @@ def main():
     )
     args = parser.parse_args()
 
-    get_supported_languages(args.project_id)
     batch_translate_text(args.input_uri, args.output_uri, args.project_id,
-                         location, args.source_lang, args.target_lang)
+                         args.location, args.source_lang, args.target_lang)
 
 
 if __name__ == "__main__":
