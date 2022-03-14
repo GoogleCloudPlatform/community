@@ -1,6 +1,6 @@
 ---
 title: Dotnet core application deployment in GKE using docker, ingress and load balancer
-description: Learn how to build a dotnet core application using cloud build deploy to gke and expose using ingress
+description: Learn how to build a dotnet core application using cloud build deploy to gke and expose using ingress.
 author: livesankp
 tags: GKE, docker, dotnet, ingress, load balancing
 date_published: 2022-04-05
