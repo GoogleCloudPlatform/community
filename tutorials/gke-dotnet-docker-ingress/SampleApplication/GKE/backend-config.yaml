@@ -1,0 +1,10 @@
+﻿apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: http-healthcheck-config
+  namespace: sample-application-ns
+spec:
+  healthCheck:
+    checkIntervalSec: 60
+    type: HTTP
+    requestPath: /healthz

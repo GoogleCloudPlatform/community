@@ -1,0 +1,28 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample-application-deployment
+  namespace: sample-application-ns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sample-application
+  template:
+    metadata:
+      labels:
+        app: sample-application
+    spec:      
+      containers:
+      - name: sample-application
+        # Replace $PROJECT_ID with your project ID
+        image: us.gcr.io/$PROJECT_ID/sample-application:latest
+        imagePullPolicy: "Always"
+        # This app listens on port 8080 for web traffic by default.
+        ports:
+        - containerPort: 8080
+        env:
+          - name: PORT
+            value: "8080"
+          - name: ASPNETCORE_ENVIRONMENT
+            value: "Development"
