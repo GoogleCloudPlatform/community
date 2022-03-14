@@ -1,8 +1,8 @@
 ---
-title: dotnet core application in GKE with docker and ingress
-description: Learn how to deploy a dotnet core application to gke using docker, cloud build and expose using ingress
+title: Dotnet core application deployment in GKE using docker, ingress and load balancer
+description: Learn how to deploy a dotnet core application to gke using docker, cloud build and expose using ingress and load balancer
 author: livesankp
-tags: GKE, docker, dotnet, ingress
+tags: GKE, docker, dotnet, ingress, load balancing
 date_published: 2022-04-05
 ---
 
@@ -32,7 +32,7 @@ This tutorial assumes that you know the basics of the following products and ser
 
 1.  Select or create a Google Cloud project.
 
-    [Go to the **Manage resources** page.](https://console.cloud.google.com/cloud-resource-manager)
+    [Go to the **manage resources** page.](https://console.cloud.google.com/cloud-resource-manager)
 
 1.  Enable the GKE, Cloud Build, and Container Registry APIs. For details, see
     [Enabling APIs](https://cloud.google.com/apis/docs/getting-started#enabling_apis).
