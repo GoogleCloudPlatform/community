@@ -154,8 +154,8 @@ Deleting a project has the following consequences:
 To delete a project, do the following:
 
 1.  In the Cloud Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
-1.  In the project list, select the project you want to delete and click **Delete**.
-1.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
+2.  In the project list, select the project you want to delete and click **Delete**.
+3.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
 
 ## What's next
 
