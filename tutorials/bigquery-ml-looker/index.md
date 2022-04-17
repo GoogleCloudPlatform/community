@@ -6,10 +6,10 @@ tags: bigquery, bigquery ml, machine learning, looker
 date_published: 2022-04-18
 ---
 
-Kanchana Patlolla | Customer Engineer | Google
+Kanchana Patlolla | Customer Engineer | Google <br>
 San Thongprasert | Customer Engineering Manager | SADA
 
-<p style="background-color:#CAFACA;"><i>Contributed by SADA & Google employees.</i></p>
+<p style="background-color:#CAFACA;"><i>Contributed by Google & SADA employees.</i></p>
 
 This tutorial is intended to provide a quick start tutorial for how to create [BigQueryML] (https://cloud.google.com/bigquery-ml/) model and integrate the prediction results with [Looker] (https://www.looker.com/) to familiarize yourself with BigQueryML syntax and how quickly it is for you to train your own machine learning model with BigQuery with minimal coding required. 
 
@@ -25,9 +25,9 @@ This tutorial uses billable components of Google Cloud and Looker, including the
 
 Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage.
 
-## Architecture
+## Objectives
 
-The solution described in this document comprises of:
+This solution is intended to describe a solution for how to create a machine learning model in BigQuery with visualization in Looker. This solution comprises of:
 
   * BigQuery ML
   * BigQuery Public Dataset
