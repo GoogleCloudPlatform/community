@@ -1,7 +1,7 @@
 ---
 title: Create a machine learning model within BigQuery using Covid public dataset and run prediction within Looker to visualize the results
-description: A process to create unsupervised machine learning model within BigQuery and run prediction with Looker
-author: kanchpat & santhongprasert
+description: A process to create unsupervised machine learning model within BigQuery and run prediction with Looker.
+author: kanchpat,santhongprasert
 tags: bigquery, bigquery ml, machine learning, looker
 date_published: 2022-04-18
 ---
