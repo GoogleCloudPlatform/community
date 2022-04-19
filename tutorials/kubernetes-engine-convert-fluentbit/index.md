@@ -191,12 +191,11 @@ The [Lua filter](https://docs.fluentbit.io/manual/pipeline/filters/lua) allows y
 
 For example, the following code will extract a string enclosed between `{` and `}` and use it to replace the original `log` field.
 
-        ```lua
         function extract_json(tag, timestamp, record)
           record["log"] = string.gsub(record["log"], ".-%s*({.*}).*", "%1")
           return 2, timestamp, record
         end
-        ```
+
 If the code is executed on the `log` field for the following string
 
         Another test {"Info": "Processing system events"**, "Code": 101} end
