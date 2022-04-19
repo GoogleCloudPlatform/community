@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-logger
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      component: test-logger
+  template:
+    metadata:
+      labels:
+        component: test-logger
+    spec:
+      containers:
+        - name: test-logger
+          image: gcr.io/${project_id}/test-logger
+          env:
+          - name: GOOGLE_CLOUD_PROJECT
+            value: ${project_id}
+          - name: LOG_INTERVAL
+            value: "3"
