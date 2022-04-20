@@ -89,14 +89,12 @@ CubeBackup itself has object versioning and data encryption functions, so there 
 
 ## Initial configuration for Google Workspace backup through CubeBackup console
 
-1. Open the initial configuration wizard.
-
+1. Open the initial configuration wizard.  
 After launching the CubeBackup Compute Engine VM and creating the Cloud Storage bucket, you can open the CubeBackup console by visiting *http://\<ComputeEngineVM-IP\>* from your web browser. Follow the configuration wizard to complete the initial configuration of CubeBackup.
  
-1. Choose the Google Cloud Storage bucket to store the backup data.
-
+1. Choose the Google Cloud Storage bucket to store the backup data.  
 In the “Set up data storage location” step, choose *Google Cloud storage* as the Storage type, and leave the Data Index path as it is. Then enter the name of the bucket you just created. By default, CubeBackup will store the backup data encrypted with the *Coldline* storage type. In most cases, you should keep the default settings as they are, then click **Next**. 
-   ![Deploy on compute engine](./step2google.png) 
+        ![Deploy on compute engine](./step2google.png) 
 
 
 
