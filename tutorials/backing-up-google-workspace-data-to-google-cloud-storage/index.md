@@ -138,8 +138,7 @@ The newly created service account needs to be authorized to access your Google W
         https://www.googleapis.com/auth/drive,
         https://www.googleapis.com/auth/calendar,
         https://www.googleapis.com/auth/contacts, 
-        https://sites.google.com/feeds/
- 
+        https://sites.google.com/feeds/  
     The service account has now been authorized to make API calls in your domain. In the CubeBackup configuration wizard Step 4, click the **Next** button to see if all changes have been successful. Please note that Google Workspace domain-wide authorization may need some time to propagate, so if any error message pops up, please retry after a few minutes.
 
 1. Complete other configurations.
