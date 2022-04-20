@@ -6,7 +6,7 @@ tags: google workspace, google cloud, cubebackup
 date_published: 2022-04-28
 ---
 
-Jerry Wang | co-founder | CubeBackup
+Jerry Wang | Product Manager | CubeBackup
 
 <p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
