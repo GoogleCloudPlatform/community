@@ -122,8 +122,7 @@ In the “Set up data storage location” step, choose *Google Cloud storage* as
     Now, return to the CubeBackup configuration wizard, click the **Choose File** button and select the service account JSON key file just generated. After the Google Workspace domain name, the domain administrator, and the service account key file are all set, click **Next**.
            <img src="./step3.png" alt="domain and service account"  style="width: 70%"> 
 
-1.  Authorize domain-wide access to the service account.
- 
+1.  Authorize domain-wide access to the service account.  
 The newly created service account needs to be authorized to access your Google Workspace data through Google APIs. 
 *  Sign in to the [Google Admin console](https://admin.google.com/) using a domain administrator account.
 *  Select **Security** > **Access and data control** > **API controls** from the main menu.
@@ -141,9 +140,16 @@ The newly created service account needs to be authorized to access your Google W
         https://www.googleapis.com/auth/contacts, 
         https://sites.google.com/feeds/
  
- 
-The service account has now been authorized to make API calls in your domain.  In the CubeBackup configuration wizard Step 4, click the Next button to see if all changes have been successful.  Please note that Google Workspace domain-wide authorization may need some time to propagate, so if any error message pops up, please retry after a few minutes.
+    The service account has now been authorized to make API calls in your domain. In the CubeBackup configuration wizard Step 4, click the **Next** button to see if all changes have been successful. Please note that Google Workspace domain-wide authorization may need some time to propagate, so if any error message pops up, please retry after a few minutes.
 
+1. Complete other configurations.
+
+    In the following steps, you can select the Google Workspace users/OUs you would like to backup. For Google Workspace Business/Enterprise/Education/Nonprofit organizations, you also can configure which Shared Drives to backup.
+
+    In the final step, you can set the administrator and password for the CubeBackup console. CubeBackup supports multiple administrators with different roles, so you can add more administrative accounts later in the console, if you wish.
+
+    When the initial configuration of CubeBackup completes, you will automatically log into the CubeBackup web console.
+ 
 
 
 
