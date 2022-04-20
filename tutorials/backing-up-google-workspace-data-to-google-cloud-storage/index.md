@@ -61,12 +61,14 @@ As a Google Workspace backup solution, CubeBackup is available on the [Google Cl
 
 1. Search for “CubeBackup” in the Google Cloud Marketplace. You will see 3 results: *CubeBackup for Linux*, *CubeBackup for Windows*, and *CubeBackup for Docker*. Click whichever image you desire.
 1. On the CubeBackup image page, click **LAUNCH**.  
-   Google APIs, like *Compute Engine API*, are required to deploy a VM from Marketplace. If prompted with the *Required APIs* dialog, click **ENABLE** to proceed. 
+   Google APIs, like *Compute Engine API*, *Cloud Deployment Manager V2 API*,and *Cloud Runtime Configuration API*, are required to deploy a VM from Marketplace. If prompted with the *Required APIs* dialog, click **ENABLE** to proceed. 
 
 1. On the CubeBackup deployment page, configure the *Deployment name*, *Zone*, *Machine type*, and *Boot Disk size* for your VM.  
     * Please select the Zone which is closest to your organization, or in accordance with the data policy of your organization or country.
     * CubeBackup requires no less than 4 GB of memory (8GB is strongly recommended) and 100GB for the boot disk.
     * If you’d like to access the web console from the Internet, please be sure to allow HTTP and HTTPS traffic in the Firewall section.
+
+<img src="./compute-engine-vm.png" alt="depoly on compute engine" style="width:80%">
 
 1.  When all parameters have been properly set, click **DEPLOY** to start the VM instance. The deployment process may take one or two minutes to complete.
 1.  Once the CubeBackup image is successfully deployed and the new VM is running, the CubeBackup service will have been installed and automatically started. After creating a Google Cloud Storage bucket, you can click **VISIT THE SITE** to start the initial configuration of CubeBackup.
@@ -83,7 +85,8 @@ Please note that you should select the location based on the security & privacy 
 1. Choose a default storage class for the backup data (*Coldline* is recommended), then click **CONTINUE**.   
 The pricing of Google Cloud Storage varies depending on location and storage class. Please see [Cloud Storage Pricing](https://cloud.google.com/storage/pricing) for more information. 
 1. Choose *Uniform* as the Access control type, and click **CONTINUE**.  
-1. CubeBackup itself has object versioning and data encryption functions, so there is no need to enable the *Object versioning*, *Retention policy*, or *Data Encryption* for this bucket. Otherwise, this may result in unnecessary file duplication and extra costs. Leave these options as default, then click **CREATE**.  
+1. Leave other options as default, then click **CREATE**.
+CubeBackup itself has object versioning and data encryption functions, so there is no need to enable the *Object versioning*, *Retention policy*, or *Data Encryption* for this bucket. Otherwise, this may result in unnecessary file duplication and extra costs. 
 
 
 
