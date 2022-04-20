@@ -167,13 +167,13 @@ CubeBackup backs up multiple Google Workspace accounts in parallel.  In most cas
 
 You can also open the SETTINGS page for [more setting options of CubeBackup](https://www.cubebackup.com/docs/user_guide/more_configuration/).
 
-## Restore data
+## Restore and export data
 
 CubeBackup allows you to restore a whole account or any individual files/messages. Not only can you recover deleted data, but you can also recover files or folders to any previous status, or even restore data to a different Google Workspace account.
 
 #### Point in time recovery
 
-CubeBackup works similarly to [Git](https://git-scm.com/) or Mac Time Machine, making it easy to restore data to a previous point in time. For example, if you’d like to recover a Google Drive file or a folder to a previous status:
+CubeBackup works similarly to [Git](https://git-scm.com/) or <a href="https://en.wikipedia.org/wiki/Time_Machine_(macOS)">Mac Time Machine</a>, making it easy to restore data to a previous point in time. For example, if you’d like to recover a Google Drive file or a folder to a previous status:
 
 1.  Select the user or Shared drive on the RESTORE page.
 2.  Select the file or folder that you’d like to revert. The search feature can help you locate files quickly and easily.
@@ -192,9 +192,9 @@ CubeBackup even allows restoring data to an account in a different domain. This 
 
 CubeBackup also allows you to export your backups of Google Drive files, Gmail messages, Contacts, or Calendar events to your computer.  
 
-The data is exported as a zip file. 
-For privacy reasons, the data export feature is disabled by default. However, the administrator of CubeBackup can turn on this option by modifying a configuration file.
-Exporting a large number of files/messages may take a long time; however, you can safely allow the data export to run in the background. Later, you can check on the progress of the export from the HISTORY page and download the zip file from there.
+* The data is exported as a zip file. 
+* For privacy reasons, the data export feature is disabled by default. However, the administrator of CubeBackup can [turn on this option by modifying the configuration file](https://www.cubebackup.com/docs/tutorials/enable-data-export/).
+* Exporting a large number of files/messages may take a long time; however, you can safely allow the data export to run in the background. Later, you can check on the progress of the export from the HISTORY page and download the zip file from there.
 
 
 
