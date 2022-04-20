@@ -94,7 +94,7 @@ After launching the CubeBackup Compute Engine VM and creating the Cloud Storage 
  
 1. Choose the Google Cloud Storage bucket to store the backup data.  
 In the “Set up data storage location” step, choose *Google Cloud storage* as the Storage type, and leave the Data Index path as it is. Enter the name of the bucket you just created, then click **Next**. 
-           <img src="./step2google.png" alt="deploy on compute engine"  style="width: 70%"> 
+           <img src="./step2google.png" alt="set up backup location"  style="width: 70%"> 
 1. Create a Google Service account.
 
 In step 3 in the wizard, you must supply the service account key file, along with the Google Workspace domain name and domain administrator. But first, you need to enable necessary APIs in your project:
@@ -117,7 +117,29 @@ Next, you will need to create a Google Service account.
 *  Close the dialog that pops up and save the generated JSON key file locally.
  
 Now, return to the CubeBackup configuration wizard, click the **Choose File** button and select the service account JSON key file just generated. After the Google Workspace domain name, the domain administrator, and the service account key file are all set, click **Next**.
+           <img src="./step3.png" alt="domain and service account"  style="width: 70%"> 
+
+1.  Authorize domain-wide access to the service account
  
+The newly created service account needs to be authorized to access your Google Workspace data through Google APIs. 
+*  Sign in to the [Google Admin console](https://admin.google.com/) using a domain administrator account.
+*  Select **Security** > **Access and data control** > **API controls** from the main menu.
+*  Click **MANAGE DOMAIN WIDE DELEGATION** in the *Domain wide delegation* section.
+*  In the *Domain-wide Delegation* page, click **Add new**.
+*  In the **Client ID** field, paste the Client ID copied from the step 4 of the configuration wizard.
+*  In the **OAuth Scopes** field, copy and paste the following scopes, then Click **AUTHORIZE**.
+
+        https://www.googleapis.com/auth/admin.directory.domain.readonly,
+        https://www.googleapis.com/auth/admin.directory.user.readonly,
+        https://www.googleapis.com/auth/admin.directory.orgunit.readonly,
+        https://mail.google.com/,
+        https://www.googleapis.com/auth/drive,
+        https://www.googleapis.com/auth/calendar,
+        https://www.googleapis.com/auth/contacts, 
+        https://sites.google.com/feeds/
+ 
+ 
+The service account has now been authorized to make API calls in your domain.  In the CubeBackup configuration wizard Step 4, click the Next button to see if all changes have been successful.  Please note that Google Workspace domain-wide authorization may need some time to propagate, so if any error message pops up, please retry after a few minutes.
 
 
 
