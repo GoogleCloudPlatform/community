@@ -76,7 +76,7 @@ In this section, you define variables that control where elements of the infrast
 
 1.  Go to the directory for this tutorial in the cloned repository:
 
-        cd community/tutorials/kubernetes-engine-convert-fluentbit
+        cd community/tutorials/kubernetes-engine-transform-fluentbit
 
 1.  Create the GKE cluster with system-only logging turned on:
 
@@ -226,7 +226,7 @@ For example, the following code will extract a string enclosed between `{` and `
 
 If the code is executed on the `log` field for the following string
 
-        Another test {"Info": "Processing system events"**, "Code": 101} end
+        Another test {"Info": "Processing system events", "Code": 101} end
 
 the new `log` field will be the following: 
 
