@@ -67,7 +67,7 @@ As a Google Workspace backup solution, CubeBackup is available on the [Google Cl
     * Please select the Zone which is closest to your organization, or in accordance with the data policy of your organization or country.
     * CubeBackup requires no less than 4 GB of memory (8GB is strongly recommended) and 100GB for the boot disk.
     * If you’d like to access the web console from the Internet, please be sure to allow HTTP and HTTPS traffic in the Firewall section.
-    ![Deploy on compute engine](./compute-engine-vm.png) 
+   ![Deploy on compute engine](./compute-engine-vm.png) 
 1.  When all parameters have been properly set, click **DEPLOY** to start the VM instance. The deployment process may take one or two minutes to complete.
 1.  Once the CubeBackup image is successfully deployed and the new VM is running, the CubeBackup service will have been installed and automatically started. After creating a Google Cloud Storage bucket, you can click **VISIT THE SITE** to start the initial configuration of CubeBackup.
 
@@ -85,6 +85,18 @@ The pricing of Google Cloud Storage varies depending on location and storage cla
 1. Choose *Uniform* as the Access control type, and click **CONTINUE**.  
 1. Leave other options as default, then click **CREATE**.
 CubeBackup itself has object versioning and data encryption functions, so there is no need to enable the *Object versioning*, *Retention policy*, or *Data Encryption* for this bucket. Otherwise, this may result in unnecessary file duplication and extra costs. 
+
+
+## Initial configuration for Google Workspace backup through CubeBackup console
+
+1. Open the initial configuration wizard.
+After launching the CubeBackup Compute Engine VM and creating the Cloud Storage bucket, you can open the CubeBackup console by visiting *http://<ComputeEngineVM-IP>* from your web browser. Follow the configuration wizard to complete the initial configuration of CubeBackup.
+ 
+1. Choose the Google Cloud Storage bucket to store the backup data.
+In the “Set up data storage location” step, choose *Google Cloud storage* as the Storage type, and leave the Data Index path as it is. Then enter the name of the bucket you just created. By default, CubeBackup will store the backup data encrypted with the *Coldline* storage type. In most cases, you should keep the default settings as they are, then click **Next**. 
+   ![Deploy on compute engine](./step2google.png) 
+
+
 
 
 
