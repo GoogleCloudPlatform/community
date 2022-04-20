@@ -186,10 +186,10 @@ The data retention policy in an organization controls how long the data must be 
 
 By default, CubeBackup runs a backup job once per hour. Each time, it builds a new snapshot of the data based on the previous snapshot and the new or modified data. CubeBackup keeps track of these snapshots in SQLite files to manage the version history of your data. The built-in rules for history versions in CubeBackup are: 
 
-    *  Keep one snapshot for each hour over the last 24 hours.
-    *  Keep one snapshot for each day over the last 30 days.
-    *  Keep one snapshot for each week over the last 2 years.
-    *  Keep one snapshot per year after two years.
+ *  Keep one snapshot for each hour over the last 24 hours.
+ *  Keep one snapshot for each day over the last 30 days.
+ *  Keep one snapshot for each week over the last 2 years.
+ *  Keep one snapshot per year after two years.
 
 If the data retention policy is set to a specific time, such as 365 days, all history versions older than one year will be automatically removed from the backup data.
 
