@@ -18,7 +18,7 @@ It is always important to make backups of your Google Workspace business data. A
 
 CubeBackup is a self-hosted application for Google Workspace.  Deploying CubeBackup on Google Cloud Platform offers an efficient, stable, and resilient backup for your Google Workspace business data. See [CubeBackup's website](https://cubebackup.com) for more information.
 
-![Architecture diagram](./google-workspace-backup-diagram.png)
+<img src="./google-workspace-backup-diagram.png" alt="Architecture diagram" style="width:75%">
 
 
 ## Objectives
@@ -61,12 +61,17 @@ As a Google Workspace backup solution, CubeBackup is available on the [Google Cl
 
 1. Search for “CubeBackup” in the Google Cloud Marketplace. You will see 3 results: *CubeBackup for Linux*, *CubeBackup for Windows*, and *CubeBackup for Docker*. Click whichever image you desire.
 1. On the CubeBackup image page, click **LAUNCH**.  
-   Google APIs, like Compute Engine API, are required to deploy a VM from Marketplace. If prompted with the *Required APIs* dialog, click **ENABLE** to proceed. 
+   Google APIs, like *Compute Engine API*, are required to deploy a VM from Marketplace. If prompted with the *Required APIs* dialog, click **ENABLE** to proceed. 
 
 1. On the CubeBackup deployment page, configure the *Deployment name*, *Zone*, *Machine type*, and *Boot Disk size* for your VM.  
     * Please select the Zone which is closest to your organization, or in accordance with the data policy of your organization or country.
     * CubeBackup requires no less than 4 GB of memory (8GB is strongly recommended) and 100GB for the boot disk.
     * If you’d like to access the web console from the Internet, please be sure to allow HTTP and HTTPS traffic in the Firewall section.
+
+1.  When all parameters have been properly set, click **DEPLOY** to start the VM instance. The deployment process may take one or two minutes to complete.
+1.  Once the CubeBackup image is successfully deployed and the new VM is running, the CubeBackup service will have been installed and automatically started. After creating a Google Cloud Storage bucket, you can click **VISIT THE SITE** to start the initial configuration of CubeBackup.
+
+
 
 
 
