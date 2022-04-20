@@ -66,7 +66,7 @@ As a Google Workspace backup solution, CubeBackup is available on the [Google Cl
 1. On the CubeBackup deployment page, configure the *Deployment name*, *Zone*, *Machine type*, and *Boot Disk size* for your VM.  
     * Please select the Zone which is closest to your organization, or in accordance with the data policy of your organization or country.
     * CubeBackup requires no less than 4 GB of memory (8GB is strongly recommended) and 100GB for the boot disk.
-    * If you’d like to access the web console from the Internet, please be sure to allow HTTP and HTTPS traffic in the Firewall section.  
+    * If you’d like to access the web console from the Internet, please be sure to allow HTTP and HTTPS traffic in the Firewall section.
 <img src="./compute-engine-vm.png" alt="depoly on compute engine" style="width:80%;">   
 
 1.  When all parameters have been properly set, click **DEPLOY** to start the VM instance. The deployment process may take one or two minutes to complete.
