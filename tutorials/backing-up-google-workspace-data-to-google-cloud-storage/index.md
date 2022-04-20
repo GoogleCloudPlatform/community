@@ -170,19 +170,16 @@ You can also open the SETTINGS page for [more setting options of CubeBackup](htt
 
 In the CubeBackup dashboard, there are many configuration options.
 
-### Choose which Google Workspace services to backup
+#### Choose which Google Workspace services to backup
 
-By default, CubeBackup will backup all data for Google Drive, Shared drives, Gmail, Contacts, Calendar, and classic Google Sites in your Google Workspace domain.  However, you are free to select which Google apps you’d like to backup. For example, if it is not necessary to backup Calendar events and Google Sites in your organization, you can simply turn off the Contacts and Sites in the  Apps section on the SETTINGS page.
+By default, CubeBackup will backup all data for Google Drive, Shared drives, Gmail, Contacts, Calendar, and classic Google Sites in your Google Workspace domain. However, you are free to select which Google apps you’d like to backup. For example, if it is not necessary to backup Calendar events and Google Sites in your organization, you can simply turn off the Contacts and Sites in the *Apps section* on the SETTINGS page.
 
-
-
-
-Click the Options link beside the Drive selector, and the Google Drive & Shared Drives backup filter settings will pop up, from which you can configure whether to backup the “Files shared with me” and set different file exclusion rules for drive backup.  For example, to save backup space, you may not want to backup video files which are larger than 5GB in Google Drive or Shared Drives; thus, you can add a file exclusion rule like this:
+Click the **Options** link beside the Drive selector, and the Google Drive & Shared Drives backup filter settings will pop up, from which you can configure whether to backup the “Files shared with me” and set different file exclusion rules for drive backup.  For example, to save backup space, you may not want to backup video files which are larger than 5GB in Google Drive or Shared Drives; thus, you can add a file exclusion rule like this:
 
 has suffix ".mp4", ".mkv", ".avi", ".mov", ".rm", ".rmvb" AND size > 5GB
 You can add multiple file exclusion rules in CubeBackup as you wish. This gives you a powerful tool to exclude unnecessary or unimportant files from the backup.  For detailed instructions on how to set the file exclusion rules, see this doc. 
 
-Set data retention policy
+#### Set data retention policy
 
 The data retention policy in an organization controls how long the data must be kept for compliance or regulatory reasons.  By default, CubeBackup will keep versions of your data for an unlimited time.  In the Data retention policy on  the SETTINGS page,  you can set the value of  “Number of days for historical versions to be preserved” to comply with the data retention policy of your organization.
 
