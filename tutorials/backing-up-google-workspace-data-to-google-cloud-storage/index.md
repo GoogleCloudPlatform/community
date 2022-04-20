@@ -21,30 +21,29 @@ It is always important to make backups of your Google Workspace business data. A
 ## Objectives
 
 * Launch CubeBackup for Google Workspace on a Google Cloud Compute Engine VM instance.
-* Configure CubeBackup by creating a Google Cloud Project and service account.
+* Create a Google Cloud Project and a service account.
 * Create a Google Cloud Storage bucket to store the backup data.
 * Backup, restore, or export data using CubeBackup.
 
 ## Costs
 
-The following billable components of Google Cloud are used in this tutorial:
+This tutorial uses billable components of Google Cloud, including the following:
 
-* Compute Engine
+* [Compute Engine](https://cloud.google.com/compute)
 
-For performance reasons, CubeBackup requires a Google Compute Engine VM with at least 4 GB RAM.
-For organizations with more than 100 employees, an E2-standard-2 VM with 8GB RAM is recommended for running the backup service.
+For organizations with more than 100 employees, an *e2-standard-2* VM instance with 8GB RAM is recommended for running the backup service.
 
-* Cloud Storage
+* [Cloud Storage](https://cloud.google.com/storage)
 
-The pricing for Google Cloud Storage varies depending on the storage class and the location of your bucket. Considering both the data storage cost and the data processing cost (data operation charges), the **Coldline Storage** class is recommended for storing your Google Workspace backups.
+The pricing for Google Cloud Storage varies depending on the storage class and the location of your bucket. Considering both the data storage cost and the data processing cost, the **Coldline Storage** class is recommended for storing your Google Workspace backups.
 
-Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a Google Cloud cost estimate based on the size of your organization.
+Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a Google Cloud cost estimate based of your projected usage.
 
 
-In addtion to the cost of Google Cloud, you also need to pay for the license of CubeBackup. CubeBackup is licensed on a per-user basise:
-   *$5/user/year* for Google Workspace Business/Enterprise organizations
-   *$2/user/year* for Google Workspace Education/Nonprofit organizations
-   An unlimited 14-day trial of CubeBackup is available to all new users.
+In addtion to the cost of Google Cloud, you also need to pay for the license of CubeBackup. CubeBackup is licensed on a per-user basise:  
+*   *$5/user/year* for Google Workspace Business/Enterprise organizations.
+*   *$2/user/year* for Google Workspace Education/Nonprofit organizations.
+*   An unlimited 14-day trial of CubeBackup is available to all new users.
 
 
 
