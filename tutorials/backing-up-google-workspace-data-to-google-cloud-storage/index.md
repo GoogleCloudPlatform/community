@@ -10,7 +10,7 @@ Jerry Wang | Product Manager | CubeBackup
 
 <p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
-This tutorial describes how to set up a backup solution using [CubeBackup](https://www.cubebackup.com) to automatically backup Google Workspace data in your organization to your own Google Cloud Storage bucket. This tutorial is for Google Workspace administrators, security operators, and Google Workspace partners.
+This tutorial describes how to set up a backup solution using CubeBackup to automatically backup Google Workspace data in your organization to your own Google Cloud Storage bucket. This tutorial is for Google Workspace administrators, security operators, and Google Workspace partners.
 
 To use this tutorial, you need basic knowledge of Google Compute Engine, Google Cloud Storage and CubeBackup.
 
