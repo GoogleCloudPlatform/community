@@ -170,86 +170,71 @@ You can also open the SETTINGS page for [more setting options of CubeBackup](htt
 
 In the CubeBackup dashboard, there are many configuration options.
 
-*  Choose which Google Workspace services to backup
+####  Choose which Google Workspace services to backup
 
 By default, CubeBackup will backup all data for Google Drive, Shared drives, Gmail, Contacts, Calendar, and classic Google Sites in your Google Workspace domain. However, you are free to select which Google apps you’d like to backup. For example, if it is not necessary to backup Calendar events and Google Sites in your organization, you can simply turn off the Contacts and Sites in the *Apps section* on the SETTINGS page.
 
-Click the **Options** link beside the Drive selector, and the Google Drive & Shared Drives backup filter settings will pop up, from which you can configure whether to backup the “Files shared with me” and set different file exclusion rules for drive backup.  For example, to save backup space, you may not want to backup video files which are larger than 5GB in Google Drive or Shared Drives; thus, you can add a file exclusion rule like this:
+Click the **Options** link beside the Drive selector, and the Google Drive & Shared Drives backup filter settings will pop up, from which you can configure whether to backup the “*Files shared with me*” and set different file exclusion rules for drive backup. For example, to save backup space, you may not want to backup video files which are larger than 5GB in Google Drive or Shared Drives; thus, you can add a file exclusion rule like this:
 
-has suffix ".mp4", ".mkv", ".avi", ".mov", ".rm", ".rmvb" AND size > 5GB
-You can add multiple file exclusion rules in CubeBackup as you wish. This gives you a powerful tool to exclude unnecessary or unimportant files from the backup.  For detailed instructions on how to set the file exclusion rules, see this doc. 
+        has suffix ".mp4", ".mkv", ".avi", ".mov", ".rm", ".rmvb" AND size > 5GB
+
+You can add multiple file exclusion rules in CubeBackup as you wish. This gives you a powerful tool to exclude unnecessary or unimportant files from the backup. See detailed instructions on [how to set the file exclusion rules](https://www.cubebackup.com/docs/user_guide/more_configuration/#drive-backup-optionsi).
 
 #### Set data retention policy
 
-The data retention policy in an organization controls how long the data must be kept for compliance or regulatory reasons.  By default, CubeBackup will keep versions of your data for an unlimited time.  In the Data retention policy on  the SETTINGS page,  you can set the value of  “Number of days for historical versions to be preserved” to comply with the data retention policy of your organization.
+The data retention policy in an organization controls how long the data must be kept for compliance or regulatory reasons. By default, CubeBackup will keep versions of your data for an unlimited time. In the **Data retention policy** on the *SETTINGS* page, you can set the value of “*Number of days for historical versions to be preserved*” to comply with the data retention policy of your organization.
 
-By default, CubeBackup runs a backup job once per hour.  Each time, it builds a new snapshot of the data based on the previous snapshot and the new or modified data. CubeBackup keeps track of these snapshots in SQLite files, which carefully manage the version history of your data. The built-in rules for history versions in CubeBackup are: 
+By default, CubeBackup runs a backup job once per hour. Each time, it builds a new snapshot of the data based on the previous snapshot and the new or modified data. CubeBackup keeps track of these snapshots in SQLite files to manage the version history of your data. The built-in rules for history versions in CubeBackup are: 
 
-Keep one snapshot for each hour over the last 24 hours.
-Keep one snapshot for each day over the last 30 days.
-Keep one snapshot for each week over the last 2 years.
-Keep one snapshot per year after two years.
-                
+    *  Keep one snapshot for each hour over the last 24 hours.
+    *  Keep one snapshot for each day over the last 30 days.
+    *  Keep one snapshot for each week over the last 2 years.
+    *  Keep one snapshot per year after two years.
+
 If the data retention policy is set to a specific time, such as 365 days, all history versions older than one year will be automatically removed from the backup data.
-  
-Select Users and Shared drives to backup
 
-In the Users and Shared drives section on the SETTINGS page, you can select which users or which Shared drives to be backed up:
-The integrated search function can help you easily locate users or Shared drives.
-You don’t have to select users one-by-one, you can select entire Organization Units at a time.
-By default, new users or new Shared drives will be automatically included in the backup, which can greatly ease the burden on administrators.
-In the advanced settings, you can specify which OUs will have new users automatically added to the backup, which can be very convenient in some scenarios. For example, in a K-12 school, you may want to automatically include new teachers in the backup, but not new students.  
-If a user is deleted from Google Workspace, that user will be automatically deselected from the user list, and no longer take up a CubeBackup license seat. However, all data for deleted users is still preserved in the backups and can be restored to an active account or exported at any time if necessary.
+####  Select Users and Shared drives to backup
 
+In the **Users and Shared drives** section on the *SETTINGS* page, you can select which users or which Shared drives to be backed up:
 
+* The integrated search function can help you easily locate users or Shared drives.
+* You don’t have to select users one-by-one, you can select entire Organization Units at a time.
+* By default, new users or new Shared drives will be automatically included in the backup, which can greatly ease the burden on administrators.
+* In the advanced settings, you can specify which OUs will have new users automatically added to the backup, which can be very convenient in some scenarios. For example, in a K-12 school, you may want to automatically include new teachers in the backup, but not new students.  
+* If a user is deleted from Google Workspace, that user will be automatically deselected from the user list, and no longer take up a CubeBackup license seat. However, all data for deleted users is still preserved in the backups and can be restored to an active account or exported at any time if necessary.
 
+####  Set the backup interval
 
-Set the backup interval
-By default, CubeBackup initiates a new backup once each hour. The first few backups may take longer than one hour, but don’t worry, each backup will complete before the next one begins. You may change the backup interval to any time that fits the needs or policies of your company, however, in most cases, the default one-hour backup should be sufficient.
-
-
-Email report settings
-Most backup administrators will want to receive notifications on the backup and restore status. CubeBackup can send you monthly, weekly, or even daily email reports of backup status, progress, space used, etc.  In the Email reports section on the SETTINGS > System page,  you can select how often you’d like to receive backup status notifications. 
-For convenience, CubeBackup will send the email reports to recipients using notification@cubebackup.com by default. These reports are generated locally by your backup machine. All details and statistical data used to generate the reports remain private.  Of course, you can also choose a SMTP service, such as Gmail SMTP service or the SMTP server inside your organization to send backup & restore status reports.   See How are email reports generated for detailed information and instructions.
+By default, CubeBackup initiates a new backup once each hour. You may change the backup interval to any time that fits the needs or policies of your company, however, in most cases, the default one-hour backup should be sufficient.
 
 
+####  Email report settings
 
-Add more administrative accounts 
+Most backup administrators will want to receive notifications on the backup and restore status. CubeBackup can send you *monthly*, *weekly*, or even *daily* email reports of backup status, progress, space used, etc. In the **Email reports** section on the **SETTINGS** > **System** page, you can select how often you’d like to receive backup status notifications. 
 
-CubeBackup allows you to add multiple administrative accounts in the CubeBackup dashboard.  This feature is especially helpful for large organizations or Google Workspace partners who manage multiple domains for their clients.  
+For convenience, CubeBackup will send the email reports to recipients using notification@cubebackup.com by default. These reports are generated locally by your backup machine. All details and statistical data used to generate the reports remain private.  Of course, you can also choose a SMTP service, such as Gmail SMTP service or the SMTP server inside your organization to send backup & restore status reports. See [How are email reports generated](https://www.cubebackup.com/docs/faq/email-report-notification/) for detailed information and instructions.
 
-There are three different types of administrative accounts in CubeBackup:
+####  Add more administrative accounts
 
-System Admin: Has full control of CubeBackup.
-Domain Admin:  Has backup/restore and all administrative powers for a specific domain.
-Domain Operator: Has only backup/restore permissions for Google Workspace users in a specific domain.
-If your organization has multiple domains, or you are a Google Workspace partner managing multiple domains in CubeBackup,  you can have 1 or 2 System Admin accounts, then assign each Google Workspace domain a Domain Admin, as well as add several Domain Operators for backup and restore operations.
+CubeBackup allows you to add multiple administrative accounts in the dashboard. There are three different types of administrative accounts in CubeBackup:
+
+* **System Admin**: Has full control of CubeBackup.
+* **Domain Admin**:  Has backup/restore and all administrative powers for a specific domain.
+* **Domain Operator**: Has only backup/restore permissions for Google Workspace users in a specific domain.
+
+If your organization has multiple domains, or you are a Google Workspace partner managing multiple domains in CubeBackup, you can have 1 or 2 *System Admin* accounts, then assign each Google Workspace domain a *Domain Admin*, as well as add several *Domain Operators* for backup and restore operations.
+
 CubeBackup also allows you to enable end-users to access and restore their own data using Google OAuth login.
 
 
+####  Audit log
 
-
-
-Audit log
-
-The audit log in CubeBackup takes note of every operation for all users, providing a complete track record of changes in your backup & restore system. Audit logs can give an administrator invaluable insight into what kind of behavior is normal and what isn’t, making them useful for maintaining security and examining suspicious activities.  The system administrator of CubeBackup can view and search records in the audit log by domain, email, operation, and date.
+The audit log in CubeBackup takes note of every operation for all users, providing a complete track record of changes in your backup & restore system. Audit logs can give an administrator valuable insight into what kind of behavior is normal and what isn’t, making them useful for maintaining security and examining suspicious activities. The system administrator of CubeBackup can view and search records in the audit log by domain, email, operation, and date.
  
-The audit log is immutable.
-The audit log is only visible to CubeBackup system administrators.
-Only manual operations are recorded in the audit log. Automatic backups are not recorded.
-The audit log, and portions thereof, can be exported as an excel file.
-
-
-
-
-
-
-
-
-
-
-
-
+*  The audit log is immutable.
+*  The audit log is only visible to CubeBackup system administrators.
+*  Only manual operations are recorded in the audit log. Automatic backups are not recorded.
+*  The audit log, and portions thereof, can be exported as an excel file.
 
 
 ## Restore and export data
