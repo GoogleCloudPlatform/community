@@ -120,7 +120,7 @@ In the “Set up data storage location” step, choose *Google Cloud storage* as
     *  Close the dialog that pops up and save the generated JSON key file locally.
  
     Now, return to the CubeBackup configuration wizard, click the **Choose File** button and select the service account JSON key file just generated. After the Google Workspace domain name, the domain administrator, and the service account key file are all set, click **Next**.
-
+           <img src="./step3.png" alt="domain and service account"  style="width: 70%"> 
 1.  Authorize domain-wide access to the service account.
 
     The newly created service account needs to be authorized to access your Google Workspace data through Google APIs. 
@@ -227,7 +227,5 @@ To delete a project, do the following:
 
 ## What's next
 
-- Watch this tutorial's [Google Cloud Level Up episode on YouTube](https://youtu.be/uBzp5xGSZ6o).
-- Learn more about [AI on Google Cloud](https://cloud.google.com/solutions/ai/).
-- Learn more about [Cloud developer tools](https://cloud.google.com/products/tools).
+- Learn more about [CubeBackup for Google Workspace](https://www.cubebackup.com).
 - Try out other Google Cloud features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
