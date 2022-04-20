@@ -93,8 +93,30 @@ CubeBackup itself has object versioning and data encryption functions, so there 
 After launching the CubeBackup Compute Engine VM and creating the Cloud Storage bucket, you can open the CubeBackup console by visiting *http://\<ComputeEngineVM-IP\>* from your web browser. Follow the configuration wizard to complete the initial configuration of CubeBackup.
  
 1. Choose the Google Cloud Storage bucket to store the backup data.  
-In the “Set up data storage location” step, choose *Google Cloud storage* as the Storage type, and leave the Data Index path as it is. Then enter the name of the bucket you just created. By default, CubeBackup will store the backup data encrypted with the *Coldline* storage type. In most cases, you should keep the default settings as they are, then click **Next**. 
+In the “Set up data storage location” step, choose *Google Cloud storage* as the Storage type, and leave the Data Index path as it is. Enter the name of the bucket you just created, then click **Next**. 
            <img src="./step2google.png" alt="deploy on compute engine"  style="width: 70%"> 
+1. Create a Google Service account.
+In step 3 in the wizard, you must supply the service account key file, along with the Google Workspace domain name and domain administrator. But first, you need to enable necessary APIs in your project:
+
+*  Open the *API Library* page by selecting **APIs & services** > **Library** from the navigation menu.
+*  Search for **Google Drive API**, then on the *Google Drive API* page, click **ENABLE**.
+*  Return to the *API Library* page and follow the same steps to enable **Google Calendar API**, **Gmail API**, **Admin SDK API**, and **Google People API**.
+
+Next, you will need to create a Google Service account.
+
+*  Select **IAM & Admin** > **Service Accounts** in the navigation menu.
+*  Click **+CREATE SERVICE ACCOUNT**.
+*  In the “Service account details” step, enter a name for the service account (*e.g., cubebackup*) and click **CREATE AND CONTINUE**.
+*  In the second step, select “Basic” > “Owner” (or “Project” > “Owner”) as the Role, then click **CONTINUE**.
+*  Click **DONE** directly in the “Grant users access to this service account” step.
+*  On the Service accounts page, click the email of the service account you just created. This should take you to the Service account details page.
+*  Select the **KEYS** tab of the service account.
+*  Click **ADD KEY** > **Create new key**.
+*  Select **JSON** as the key type, then click **CREATE**.
+*  Close the dialog that pops up and save the generated JSON key file locally.
+ 
+Now, return to the CubeBackup configuration wizard, click the Choose File button and select the service account JSON key file just generated. After the Google Workspace domain name, the domain administrator, and the service account key file are all set, click Next.
+ 
 
 
 
