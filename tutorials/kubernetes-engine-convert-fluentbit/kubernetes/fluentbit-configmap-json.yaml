@@ -36,17 +36,11 @@ data:
         Mem_Buf_Limit           20MB
         Skip_Long_Lines         On
         Refresh_Interval        10
-        # Control the log line length
+        # Control the log       line length
         Buffer_Chunk_Size       256k
         Buffer_Max_Size         10240k
         # Using the docker mode to deal with multiline messages emitted by docker
         Docker_Mode             On
-
-  replace_info.lua: |
-        function extract_json(tag, timestamp, record)
-          record["log"] = string.gsub(record["log"], ".-%s*({.*}).*", "%1")
-          return 2, timestamp, record
-        end
 
   filter-kubernetes.conf: |
     [FILTER]
@@ -61,22 +55,21 @@ data:
         Merge_Log_Key       log_processed
         K8S-Logging.Parser  On
         K8S-Logging.Exclude Off
+
     [FILTER]
-        Name                lua
-        Match               kube.*
-        # lua script to extract data in log messages
-        script              replace_info.lua
-        call                extract_json
+        Name         parser
+        Match        kube.*
+        Key_Name     log
+        Reserve_Data True
+        Parser       containerd
+        
     [FILTER]
-        Name                parser
-        Match               kube.*
-        Key_Name            log
-        Parser              json
-    [FILTER]
-        Name                parser
-        Match               kube.*
-        Key_Name            log
-        Parser              my_paser
+        Name         parser
+        Match        kube.*
+        Key_Name     log
+        Parser       json
+
+
   output-stackdriver.conf: |
 
     [OUTPUT]
@@ -90,14 +83,10 @@ data:
         k8s_cluster_location    us-east1-b
 
   parsers.conf: |
-    [PARSER]
-        Name my_paser
-        Format regex
-        Regex ^(?<time>.+) (?<output>.+ .+) data:(?<int>[^ ]+) (?<float>[^ ]+) (?<bool>[^ ]+) (?<string>.+)$
 
     [PARSER]
-        Name   json
-        Format json
+        Name        json
+        Format      json
 
     [PARSER]
         Name        docker
@@ -105,6 +94,13 @@ data:
         Time_Key    time
         Time_Format %Y-%m-%dT%H:%M:%S.%L%z
         Time_Keep   On
+
+    [PARSER]
+        Name        containerd
+        Format      regex
+        Regex       ^(?<time>.+) (?<stream>stdout|stderr) [^ ]* (?<log>.*)$
+        Time_Key    time
+        Time_Format %Y-%m-%dT%H:%M:%S.%L%z
 
     [PARSER]
         Name        syslog

@@ -10,7 +10,8 @@ data:
   # =======================================================
   fluent-bit.conf: |
     [SERVICE]
-        Flush         1
+        Flush         5
+        Grace         120
         Log_Level     info
         Daemon        off
         Parsers_File  parsers.conf
@@ -25,19 +26,21 @@ data:
 
   input-kubernetes.conf: |
     [INPUT]
-        Name              tail
-        Path              /var/log/containers/*.log
-        Tag               kube.*
-        Parser            docker
-        DB                /var/log/flb_kube.db
-        Mem_Buf_Limit     20MB
-        Skip_Long_Lines   On
-        Refresh_Interval  10
-        # Control the log line length
+        Name                    tail
+        Path                    /var/log/containers/*.log
+        # System logs should be captured by the default system logging already
+        Exclude_Path            /var/log/containers/*_kube-system_*.log,/var/log/containers/*_istio-system_*.log,/var/log/containers/*_knative-serving_*.log,/var/log/containers/*_gke-system_*.log,/var/log/containers/*_config-management-system_*.log
+        Tag                     kube.*
+        Parser                  docker
+        DB                      /var/log/flb_kube.db
+        Mem_Buf_Limit           20MB
+        Skip_Long_Lines         On
+        Refresh_Interval        10
+        # Control the log       line length
         Buffer_Chunk_Size       256k
         Buffer_Max_Size         10240k
         # Using the docker mode to deal with multiline messages emitted by docker
-        Docker_Mode     On
+        Docker_Mode             On
 
   filter-kubernetes.conf: |
     [FILTER]
@@ -57,52 +60,25 @@ data:
 
     [OUTPUT]
         # write the log records that still have the 'kube.*' tags to Cloud Logging
-        Name    stackdriver
-        Match   kube.*
+        Name                    stackdriver
+        Match                   kube.*
         # The following fields are necessary. They allow filtering in Cloud Logging
         # based on resource types. Change them accordingly based on your setup.
-        resource  k8s_container
-        k8s_cluster_name  custom-fluentbit
-        k8s_cluster_location  us-east1-b
+        resource                k8s_container
+        k8s_cluster_name        custom-fluentbit
+        k8s_cluster_location    us-east1-b
 
   parsers.conf: |
-    [PARSER]
-        Name   apache
-        Format regex
-        Regex  ^(?<host>[^ ]*) [^ ]* (?<user>[^ ]*) \[(?<time>[^\]]*)\] "(?<method>\S+)(?: +(?<path>[^\"]*?)(?: +\S*)?)?" (?<code>[^ ]*) (?<size>[^ ]*)(?: "(?<referer>[^\"]*)" "(?<agent>[^\"]*)")?$
-        Time_Key time
-        Time_Format %d/%b/%Y:%H:%M:%S %z
 
     [PARSER]
-        Name   apache2
-        Format regex
-        Regex  ^(?<host>[^ ]*) [^ ]* (?<user>[^ ]*) \[(?<time>[^\]]*)\] "(?<method>\S+)(?: +(?<path>[^ ]*) +\S*)?" (?<code>[^ ]*) (?<size>[^ ]*)(?: "(?<referer>[^\"]*)" "(?<agent>[^\"]*)")?$
-        Time_Key time
-        Time_Format %d/%b/%Y:%H:%M:%S %z
-
-    [PARSER]
-        Name   apache_error
-        Format regex
-        Regex  ^\[[^ ]* (?<time>[^\]]*)\] \[(?<level>[^\]]*)\](?: \[pid (?<pid>[^\]]*)\])?( \[client (?<client>[^\]]*)\])? (?<message>.*)$
-
-    [PARSER]
-        Name   nginx
-        Format regex
-        Regex ^(?<remote>[^ ]*) (?<host>[^ ]*) (?<user>[^ ]*) \[(?<time>[^\]]*)\] "(?<method>\S+)(?: +(?<path>[^\"]*?)(?: +\S*)?)?" (?<code>[^ ]*) (?<size>[^ ]*)(?: "(?<referer>[^\"]*)" "(?<agent>[^\"]*)")?$
-        Time_Key time
-        Time_Format %d/%b/%Y:%H:%M:%S %z
-
-    [PARSER]
-        Name   json
-        Format json
-        Time_Key time
-        Time_Format %d/%b/%Y:%H:%M:%S %z
+        Name        json
+        Format      json
 
     [PARSER]
         Name        docker
         Format      json
         Time_Key    time
-        Time_Format %Y-%m-%dT%H:%M:%S.%L
+        Time_Format %Y-%m-%dT%H:%M:%S.%L%z
         Time_Keep   On
 
     [PARSER]

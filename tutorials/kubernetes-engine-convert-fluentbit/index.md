@@ -1,6 +1,6 @@
 ---
-title: Converting logs with Fluent Bit for Google Kubernetes Engine 
-description: Learn how to convert unstructured log to structured log with Fluent Bit for Google Kubernetes Engine logs.
+title: Log transformation with Fluent Bit for Google Kubernetes Engine 
+description: Learn how to transform unstructured logs to structured logs with Fluent Bit for Google Kubernetes Engine logs.
 author: xiangshen-dk
 tags: logging, stackdriver, gke, fluent-bit
 date_published: 2022-04-18
@@ -10,9 +10,8 @@ Xiang Shen | Solutions Architect | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-This tutorial describes how to customize [Fluent Bit](https://fluentbit.io/) logging for a [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine)
-cluster. In this tutorial, you learn how to host your own configurable Fluent Bit daemonset to send logs to Cloud Logging, instead of selecting the Cloud Logging
-option when creating the Google Kubernetes Engine (GKE) cluster, which does not allow configuration of the Fluent Bit daemon.
+This tutorial describes customizing [Fluent Bit](https://fluentbit.io/) logging for a [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine)
+cluster to transform unstructured logs to structured logs. In this tutorial, you learn how to host your own configurable Fluent Bit daemonset to send logs to Cloud Logging, instead of selecting the Cloud Logging option when creating the Google Kubernetes Engine (GKE) cluster, which does not allow configuration of the Fluent Bit daemon.
 
 This tutorial assumes that you're familiar with [Kubernetes](https://kubernetes.io/docs/home/).
 
@@ -23,7 +22,7 @@ Unless otherwise noted, you enter all commands for this tutorial in Cloud Shell.
 ## Objectives 
 
 +   Deploy your own Fluent Bit daemonset on a Google Kubernetes Engine cluster, configured to log data to [Cloud Logging](https://cloud.google.com/logging).
-+   Convert unstructured GKE log messages to structured ones.
++   Transform unstructured GKE log messages to structured ones.
 
 ## Costs
 
@@ -123,7 +122,7 @@ built from the source code under the `test-logger` subdirectory.
         test-logger-58f7bfdb89-qrlbl   1/1     Running   0          28s
         test-logger-58f7bfdb89-xfrkx   1/1     Running   0          28s
 
-1.The test-logger pods will continuously print messages randomly selected from the following for demo purposes. You can find the source in the [logger.go](./test-logger/logger.go) file.
+1. The test-logger pods will continuously print messages randomly selected from the following for demo purposes. You can find the source in the [logger.go](./test-logger/logger.go) file.
 
         
         {"Error": true, "Code": 1234, "Message": "error happened with logging system"}
@@ -177,17 +176,46 @@ Fluent Bit that you deploy in this procedure are versions of the ones available 
     
 1.  Click **Run Query**.
 
-1.  In the **Logs field explorer**, select **test-logger** for **CONTAINER_NAME** and you should see logs from our test containers. Expand one the log entry and you can see the log message from your container is stored as a string in the `log` field under `jsonPayload` regardless of its original format. Additional info such as timestamp is also added to the log field.
+1.  In the **Logs field explorer**, select **test-logger** for **CONTAINER_NAME** and you should see logs from our test containers. Expand one of the log entries, and you can see the log message from your container is stored as a string in the `log` field under `jsonPayload` regardless of its original format. Additional info such as timestamp is also added to the log field.
 
     ![fluentbit-filter-before](fluentbit-filter-before1.png)
 
-## Options to convert the logs
+## Options to transform the logs
 
-As you see earlier, the `log` field is a long string. You have multiple options to convert it to a json structure. Those options all involve using Fluent Bit [filters](https://docs.fluentbit.io/manual/pipeline/filters) and you also need some understanding of the format of your raw logs.
+As you see earlier, the `log` field is a long string. You have multiple options to transform it to a json structure. Those options all involve using Fluent Bit [filters](https://docs.fluentbit.io/manual/pipeline/filters) and you also need some understanding of the format for your raw log messages.
+
+### Use teh JSON filter
+
+If your log messages are already in json format like the example in the previous screenshot, you can use the JSON filter to parse them and view them in `jsonPayload`. However, before you do that you need to have another pair of parser and filter to remove the extraneous data. For example, use the following parser to extract your log string:
+
+
+        [PARSER]
+            Name        containerd
+            Format      regex
+            Regex       ^(?<time>.+) (?<stream>stdout|stderr) [^ ]* (?<log>.*)$
+            Time_Key    time
+            Time_Format %Y-%m-%dT%H:%M:%S.%L%z
+
+And use the following filters to transform the log messages:
+
+        [FILTER]
+            Name         parser
+            Match        kube.*
+            Key_Name     log
+            Reserve_Data True
+            Parser       containerd
+        
+        [FILTER]
+            Name         parser
+            Match        kube.*
+            Key_Name     log
+            Parser       json
+
+You can view a complete example in [fluentbit-configmap-json.yaml](kubernetes/fluentbit-configmap-json.yaml).
 
 ### Use the Lua and JSON filter
 
-The [Lua filter](https://docs.fluentbit.io/manual/pipeline/filters/lua) allows you to modify the incoming records using custom [Lua](https://www.lua.org/) scripts.
+Sometimes, your log strings have an embedded json structure or they are not well-formed in json. In that case, you can use the [Lua filter](https://docs.fluentbit.io/manual/pipeline/filters/lua), which allows you to modify the incoming records using custom [Lua](https://www.lua.org/) scripts.
 
 For example, the following code will extract a string enclosed between `{` and `}` and use it to replace the original `log` field.
 
@@ -200,7 +228,7 @@ If the code is executed on the `log` field for the following string
 
         Another test {"Info": "Processing system events"**, "Code": 101} end
 
-the new `log` field will have 
+the new `log` field will be the following: 
 
         {"Info": "Processing system events", "Code": 101}
 
@@ -221,7 +249,7 @@ With this transformation, you will see the logs for this message has the followi
 
 ### Use a custom filter with Regex
 
-If you logs have a static format, you can create a custom [parser](https://docs.fluentbit.io/manual/pipeline/filters/parser)filter with regex. For example:
+If your logs have a static format, you can create a custom [parser](https://docs.fluentbit.io/manual/pipeline/filters/parser) filter with regex. For example:
 
         [PARSER]
             Name my_paser
@@ -257,7 +285,7 @@ You can use multiple filters for different log messages. In the following sectio
 
 ## Updating the ConfigMap and Fluent Bit daemonset
 
-In this section, you use a new ConfigMap and convert the log messages.
+In this section, you use a new ConfigMap for Fluent Bit to transform the sample log messages.
 
 1.  Deploy the new version of the ConfigMap to your cluster:
 
