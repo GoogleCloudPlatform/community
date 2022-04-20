@@ -170,7 +170,7 @@ You can also open the SETTINGS page for [more setting options of CubeBackup](htt
 
 In the CubeBackup dashboard, there are many configuration options.
 
-#### Choose which Google Workspace services to backup
+#### - Choose which Google Workspace services to backup
 
 By default, CubeBackup will backup all data for Google Drive, Shared drives, Gmail, Contacts, Calendar, and classic Google Sites in your Google Workspace domain. However, you are free to select which Google apps you’d like to backup. For example, if it is not necessary to backup Calendar events and Google Sites in your organization, you can simply turn off the Contacts and Sites in the *Apps section* on the SETTINGS page.
 
