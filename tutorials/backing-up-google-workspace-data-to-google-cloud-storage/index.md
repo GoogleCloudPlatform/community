@@ -180,7 +180,7 @@ CubeBackup works similarly to [Git](https://git-scm.com/) or <a href="https://en
 3.  Select the right date and time point you’d like to revert to from the timeline in the left panel. You can also click the **Versions** button of a file to browse its history versions. 
 4.  Once you find the correct version, click **Restore**.
 
-By default,  the corresponding version will be restored to a new folder named “Restored \<date-time\>” in the user’s own Google Drive. You can also specify a target folder for the restoration if you wish.
+By default,  the corresponding version will be restored to a new folder named “*Restored \<date-time\>*” in the user’s own Google Drive. You can also specify a target folder for the restoration if you wish.
 
 #### Restore data to a different Google Workspace account
 
@@ -195,6 +195,23 @@ CubeBackup also allows you to export your backups of Google Drive files, Gmail m
 * The data is exported as a zip file. 
 * For privacy reasons, the data export feature is disabled by default. However, the administrator of CubeBackup can [turn on this option by modifying the configuration file](https://www.cubebackup.com/docs/tutorials/enable-data-export/).
 * Exporting a large number of files/messages may take a long time; however, you can safely allow the data export to run in the background. Later, you can check on the progress of the export from the HISTORY page and download the zip file from there.
+
+## Monitor the status of backup, restore, and export operations
+
+From the HISTORY page in the CubeBackup web console, you can access detailed status information about each backup and restore operation.
+
+* On the **HISTORY** > **Backup** page, all backup records are listed in chronological order. The backup status, time duration, error count, and data size are displayed for each backup. Click on a backup entry, and you will be directed to a page with detailed backup statistics for each user and each shared drive.
+
+* On the **HISTORY** > **Restore** page, all restore records are listed in chronological order, from which you can view the restore operator, description, status, time duration, data size, and other useful information. Click the number in the Files column to open a list of restored files/messages/contacts/calendar events. If there were any errors, you can click the number in the Errors column to see a detailed error report.
+
+* On the **HISTORY** > **Export** page, all export records are listed in chronological order. The information on the Export page is similar to the Restore page, except that you can also download the exported zip file from here.
+
+
+CubeBackup also keeps detailed log files containing all backup and restore operations, error messages, and web dashboard access records. These log files are located in the *<installation directory>/log* directory.
+
+
+
+
 
 
 
