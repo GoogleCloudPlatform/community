@@ -171,7 +171,7 @@ You can also open the SETTINGS page for [more setting options of CubeBackup](htt
 
 CubeBackup allows you to restore a whole account or any individual files/messages. Not only can you recover deleted data, but you can also recover files or folders to any previous status, or even restore data to a different Google Workspace account.
 
-* Point in time recovery
+#### Point in time recovery
 
 CubeBackup works similarly to [Git](https://git-scm.com/) or Mac Time Machine, making it easy to restore data to a previous point in time. For example, if you’d like to recover a Google Drive file or a folder to a previous status:
 
@@ -182,13 +182,13 @@ CubeBackup works similarly to [Git](https://git-scm.com/) or Mac Time Machine, m
 
 By default,  the corresponding version will be restored to a new folder named “Restored \<date-time\>” in the user’s own Google Drive. You can also specify a target folder for the restoration if you wish.
 
-* Restore data to a different Google Workspace account
+#### Restore data to a different Google Workspace account
 
 Not only can the backup data be restored to its owner’s account, CubeBackup also supports restoring data from one Google Workspace account to another. This can be helpful when a user has left your organization and a different user will be taking over his responsibilities and files.
 
 CubeBackup even allows restoring data to an account in a different domain. This provides flexibility when your organization has multiple domains, or when you are migrating from one domain to another.
 
-* Export data
+#### Export data
 
 CubeBackup also allows you to export your backups of Google Drive files, Gmail messages, Contacts, or Calendar events to your computer.  
 
