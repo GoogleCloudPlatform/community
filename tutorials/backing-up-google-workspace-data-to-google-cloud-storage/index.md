@@ -98,7 +98,9 @@ In the “Set up data storage location” step, choose *Google Cloud storage* as
            <img src="./step2google.png" alt="set up backup location"  style="width: 70%"> 
 1. Create a Google Service account.  
 
-    In step 3 in the wizard, you must supply the service account key file, along with the Google Workspace domain name and domain administrator. But first, you need to enable necessary APIs in your project:
+    In step 3 in the wizard, you must supply the service account key file, along with the Google Workspace domain name and domain administrator.
+
+    First, enable necessary APIs in your project:
 
     *  Open the *API Library* page by selecting **APIs & services** > **Library** from the navigation menu.
     *  Search for **Google Drive API**, then on the *Google Drive API* page, click **ENABLE**.
