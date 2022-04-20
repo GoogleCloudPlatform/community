@@ -18,7 +18,7 @@ It is always important to make backups of your Google Workspace business data. A
 
 CubeBackup is a self-hosted application for Google Workspace.  Deploying CubeBackup on Google Cloud Platform offers an efficient, stable, and resilient backup for your Google Workspace business data. See [CubeBackup's website](https://cubebackup.com) for more information.
 
-<img src="./google-workspace-backup-diagram.png" alt="Architecture diagram" style="width:80%; text-align:center; margin:auto">
+<img src="./google-workspace-backup-diagram.png" alt="Architecture diagram" style="width:80%">
 
 
 ## Objectives
