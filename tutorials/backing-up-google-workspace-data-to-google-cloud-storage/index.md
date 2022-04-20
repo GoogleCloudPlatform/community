@@ -60,7 +60,7 @@ In addtion to the cost of Google Cloud, you also need to pay for the license of 
 As a Google Workspace backup solution, CubeBackup is available on the [Google Cloud Marketplace](https://cloud.google.com/marketplace). Using the CubeBackup virtual machine images on the marketplace, you can easily launch a CubeBackup instance with only a few clicks.
 
 1. Search for “CubeBackup” in the Google Cloud Marketplace. You will see 3 results: *CubeBackup for Linux*, *CubeBackup for Windows*, and *CubeBackup for Docker*. Click whichever image you desire.
-1. On the CubeBackup image page, click **LAUNCH**.  
+1. Click **LAUNCH** on the CubeBackup image page.  
    Google APIs, like *Compute Engine API*, *Cloud Deployment Manager V2 API*,and *Cloud Runtime Configuration API*, are required to deploy a VM from Marketplace. If prompted with the *Required APIs* dialog, click **ENABLE** to proceed. 
 
 1. On the CubeBackup deployment page, configure the *Deployment name*, *Zone*, *Machine type*, and *Boot Disk size* for your VM.  
@@ -120,7 +120,6 @@ In the “Set up data storage location” step, choose *Google Cloud storage* as
     *  Close the dialog that pops up and save the generated JSON key file locally.
  
     Now, return to the CubeBackup configuration wizard, click the **Choose File** button and select the service account JSON key file just generated. After the Google Workspace domain name, the domain administrator, and the service account key file are all set, click **Next**.
-           <img src="./step3.png" alt="domain and service account"  style="width: 70%"> 
 
 1.  Authorize domain-wide access to the service account.
 
@@ -128,7 +127,7 @@ In the “Set up data storage location” step, choose *Google Cloud storage* as
 *  Sign in to the [Google Admin console](https://admin.google.com/) using a domain administrator account.
 *  Select **Security** > **Access and data control** > **API controls** from the main menu.
 *  Click **MANAGE DOMAIN WIDE DELEGATION** in the *Domain wide delegation* section.
-*  In the *Domain-wide Delegation* page, click **Add new**.
+*  Click **Add new** on the *Domain-wide Delegation* page.
 *  In the **Client ID** field, paste the Client ID copied from the step 4 of the configuration wizard.
 *  In the **OAuth Scopes** field, copy and paste the following scopes, then Click **AUTHORIZE**.
 
@@ -206,63 +205,19 @@ From the HISTORY page in the CubeBackup web console, you can access detailed sta
 
 * On the **HISTORY** > **Export** page, all export records are listed in chronological order. The information on the Export page is similar to the Restore page, except that you can also download the exported zip file from here.
 
-
 CubeBackup also keeps detailed log files containing all backup and restore operations, error messages, and web dashboard access records. These log files are located in the *<installation directory>/log* directory.
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## Tutorial body
-
-Break the tutorial body into as many sections and subsections as needed, with concise headings.
-
-### Use short numbered lists for procedures
-
-Use numbered lists of steps for procedures. Each action that the reader must take should be its own step. Start each step with the action, such as *Click*, 
-*Run*, or *Enter*.
-
-Keep procedures to 7 steps or less, if possible. If a procedure is longer than 7 steps, consider how it might be separated into sub-procedures, each in its
-own subsection.
-
-### Provide context, but don't overdo the screenshots
-
-Provide context and explain what's going on.
-
-Use screenshots only when they help the reader. Don't provide a screenshot for every step.
-
-Help the reader to recognize what success looks like along the way. For example, describing the result of a step helps the reader to feel like they're doing
-it right and helps them know things are working so far.
-
 ## Cleaning up
 
-Tell the reader how to shut down what they built to avoid incurring further costs.
-
-### Example: Cleaning up
-
-To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project.
+CubeBackup is free to use for 14 days. If you are happy with it, [purchase a license](https://www.cubebackup.com/pricing) to continue using CubeBackup.
+If you have only used this tutorial for testing purposes, to avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project.
 
 Deleting a project has the following consequences:
 
 - If you used an existing project, you'll also delete any other work that you've done in the project.
-- You can't reuse the project ID of a deleted project. If you created a custom project ID that you plan to use in the
-  future, delete the resources inside the project instead. This ensures that URLs that use the project ID, such as
-  an `appspot.com` URL, remain available.
+- Custom project IDs are lost. When you created this project, you might have created a custom project ID that you want to use in the future. To preserve the URLs that use the project ID, delete selected resources inside the project instead of deleting the whole project.
+
 
 To delete a project, do the following:
 
@@ -271,10 +226,6 @@ To delete a project, do the following:
 1.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
 
 ## What's next
-
-Tell the reader what they should read or watch next if they're interested in learning more.
-
-### Example: What's next
 
 - Watch this tutorial's [Google Cloud Level Up episode on YouTube](https://youtu.be/uBzp5xGSZ6o).
 - Learn more about [AI on Google Cloud](https://cloud.google.com/solutions/ai/).
