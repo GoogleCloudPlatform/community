@@ -16,17 +16,17 @@ To use this tutorial, you need basic knowledge of Google Compute Engine, Google 
 
 It is always important to make backups of your Google Workspace business data. Although Google’s cloud service is very reliable, it cannot protect against data loss caused by accidental or deliberate human error, like mistaken deletions, incorrect data hand-off from former employees, or even disgruntled insiders or malicious hackers. A reliable backup and restore solution like CubeBackup can act as a life-line when faced with this kind of data loss.
 
-CubeBackup is a self-hosted application for Google Workspace.  Deploying CubeBackup on Google Cloud Platform offers an efficient, stable, and resilient backup for your Google Workspace business data.
+CubeBackup is a self-hosted application for Google Workspace.  Deploying CubeBackup on Google Cloud Platform offers an efficient, stable, and resilient backup for your Google Workspace business data. See [CubeBackup's website](https://cubebackup.com) for more information.
 
 ![Architecture diagram](./google-workspace-backup-diagram.png)
 
 
 ## Objectives
 
-* Launch CubeBackup for Google Workspace on a Google Cloud Compute Engine VM instance.
-* Create a Google Cloud Project and a service account.
+* Launch CubeBackup on a Google Cloud Compute Engine VM instance.
+* Create a service account for CubeBackup.
 * Create a Google Cloud Storage bucket to store the backup data.
-* Backup, restore, or export data using CubeBackup.
+* Configure CubeBackup and start the backup.
 
 ## Costs
 
@@ -43,7 +43,7 @@ The pricing for Google Cloud Storage varies depending on the storage class and t
 Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a Google Cloud cost estimate based of your projected usage.
 
 
-In addtion to the cost of Google Cloud, you also need to pay for the license of CubeBackup. CubeBackup is licensed on a per-user basise:  
+In addtion to the cost of Google Cloud, you also need to pay for the license of CubeBackup. CubeBackup is licensed on a per-user basis:  
 *   *$5/user/year* for Google Workspace Business/Enterprise organizations.
 *   *$2/user/year* for Google Workspace Education/Nonprofit organizations.
 *   An unlimited 14-day trial of CubeBackup is available to all new users.
@@ -51,19 +51,28 @@ In addtion to the cost of Google Cloud, you also need to pay for the license of 
 
 ## Before you begin
 
-Give a numbered sequence of procedural steps that the reader must take to set up their environment before getting into the main tutorial.
+1.  Create a new Google Cloud project in the [Cloud Console](https://console.cloud.google.com/).
+1.  [Enable billing for your project](https://cloud.google.com/billing/docs/how-to/modify-project).
 
-Don't assume anything about the reader's environment. You can include simple installation instructions of only a few steps, but provide links to installation
-instructions for anything more complex.
 
-### Example: Before you begin
+## Deploy CubeBackup on Google Cloud using Google Cloud Image
 
-This tutorial assumes that you're using the Microsoft Windows operating system.
+As a Google Workspace backup solution, CubeBackup is available on the [Google Cloud Marketplace](https://cloud.google.com/marketplace). Using the CubeBackup virtual machine images on the marketplace, you can easily launch a CubeBackup instance with only a few clicks.
 
-1.  Create an account with the BigQuery free tier. See
-    [this video from Google](https://www.youtube.com/watch?v=w4mzE--sprY&list=PLIivdWyY5sqI6Jd0SbqviEgoA853EvDsq&index=2) for detailed instructions.
-1.  Create a Google Cloud project in the [Cloud Console](https://console.cloud.google.com/).
-1.  Install [DBeaver Community for Windows](https://dbeaver.io/download/).
+1. Search for “CubeBackup” in the Google Cloud Marketplace. You will see 3 results: *CubeBackup for Linux*, *CubeBackup for Windows*, and *CubeBackup for Docker*. Click whichever image you desire.
+1. On the CubeBackup image page, click **LAUNCH**.
+   **Tip**: Google APIs, like Compute Engine API, are required to deploy a VM from Marketplace. If prompted with the *Required APIs* dialog, click **ENABLE** to proceed. 
+
+1. On the CubeBackup deployment page, configure the *Deployment name*, *Zone*, *Machine type*, and *Boot Disk size* for your VM.
+
+   **Note**: 
+    * Please select the Zone which is closest to your organization, or in accordance with the data policy of your organization or country.
+    * CubeBackup requires no less than 4 GB of memory (8GB is strongly recommended) and 100GB for the boot disk.
+    * If you’d like to access the web console from the Internet, please be sure to allow HTTP and HTTPS traffic in the Firewall section.
+
+
+
+
 
 ## Tutorial body
 
