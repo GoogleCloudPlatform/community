@@ -167,6 +167,34 @@ CubeBackup backs up multiple Google Workspace accounts in parallel.  In most cas
 
 You can also open the SETTINGS page for [more setting options of CubeBackup](https://www.cubebackup.com/docs/user_guide/more_configuration/).
 
+## Restore data
+
+CubeBackup allows you to restore a whole account or any individual files/messages. Not only can you recover deleted data, but you can also recover files or folders to any previous status, or even restore data to a different Google Workspace account.
+
+* Point in time recovery
+
+CubeBackup works similarly to [Git](https://git-scm.com/) or Mac Time Machine, making it easy to restore data to a previous point in time. For example, if you’d like to recover a Google Drive file or a folder to a previous status:
+
+1.  Select the user or Shared drive on the RESTORE page.
+2.  Select the file or folder that you’d like to revert. The search feature can help you locate files quickly and easily.
+3.  Select the right date and time point you’d like to revert to from the timeline in the left panel. You can also click the **Versions** button of a file to browse its history versions. 
+4.  Once you find the correct version, click **Restore**.
+
+By default,  the corresponding version will be restored to a new folder named “Restored \<date-time\>” in the user’s own Google Drive. You can also specify a target folder for the restoration if you wish.
+
+* Restore data to a different Google Workspace account
+
+Not only can the backup data be restored to its owner’s account, CubeBackup also supports restoring data from one Google Workspace account to another. This can be helpful when a user has left your organization and a different user will be taking over his responsibilities and files.
+
+CubeBackup even allows restoring data to an account in a different domain. This provides flexibility when your organization has multiple domains, or when you are migrating from one domain to another.
+
+* Export data
+
+CubeBackup also allows you to export your backups of Google Drive files, Gmail messages, Contacts, or Calendar events to your computer.  
+
+The data is exported as a zip file. 
+For privacy reasons, the data export feature is disabled by default. However, the administrator of CubeBackup can turn on this option by modifying a configuration file.
+Exporting a large number of files/messages may take a long time; however, you can safely allow the data export to run in the background. Later, you can check on the progress of the export from the HISTORY page and download the zip file from there.
 
 
 
