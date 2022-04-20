@@ -125,8 +125,8 @@ In the “Set up data storage location” step, choose *Google Cloud storage* as
 1.  Authorize domain-wide access to the service account.
 
     The newly created service account needs to be authorized to access your Google Workspace data through Google APIs. 
-*  Sign in to the [Google Admin console](https://admin.google.com/) using a domain administrator account.
-*  Select **Security** > **Access and data control** > **API controls** from the main menu.
+  *  Sign in to the [Google Admin console](https://admin.google.com/) using a domain administrator account.
+  *  Select **Security** > **Access and data control** > **API controls** from the main menu.
 *  Click **MANAGE DOMAIN WIDE DELEGATION** in the *Domain wide delegation* section.
 *  In the *Domain-wide Delegation* page, click **Add new**.
 *  In the **Client ID** field, paste the Client ID copied from the step 4 of the configuration wizard.
@@ -142,7 +142,8 @@ In the “Set up data storage location” step, choose *Google Cloud storage* as
         https://sites.google.com/feeds/  
 
     The service account has now been authorized to make API calls in your domain. In the CubeBackup configuration wizard Step 4, click the **Next** button to see if all changes have been successful. Please note that Google Workspace domain-wide authorization may need some time to propagate, so if any error message pops up, please retry after a few minutes.
-1. Complete other configurations.
+
+5\. Complete other configurations.
 
     In the following steps, you can select the Google Workspace users/OUs you would like to backup. For Google Workspace Business/Enterprise/Education/Nonprofit organizations, you also can configure which Shared Drives to backup.
 
