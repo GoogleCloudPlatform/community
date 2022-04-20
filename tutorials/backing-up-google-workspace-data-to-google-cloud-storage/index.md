@@ -71,6 +71,19 @@ As a Google Workspace backup solution, CubeBackup is available on the [Google Cl
 1.  When all parameters have been properly set, click **DEPLOY** to start the VM instance. The deployment process may take one or two minutes to complete.
 1.  Once the CubeBackup image is successfully deployed and the new VM is running, the CubeBackup service will have been installed and automatically started. After creating a Google Cloud Storage bucket, you can click **VISIT THE SITE** to start the initial configuration of CubeBackup.
 
+##  Create a Google Cloud Storage bucket for the backup data
+
+When CubeBackup has been successfully deployed on the Compute Engine VM, you can start to create a Google Cloud Storage bucket to store the backup data.
+
+1. In your Google Cloud Console, Select **STORAGE** > **Cloud Storage** > **Browser** from the navigation menu.
+1. Click **CREATE BUCKET** on the *Cloud Storage Browser* page.
+1. In the *Create a bucket* page, enter a valid name for the bucket and click **CONTINUE**.
+1. Choose a location type for the bucket (*Region* or *Multi-region* is recommended), and select a location for the bucket, then click **CONTINUE**.  
+Please note that you should select the location based on the security & privacy policy of your organization. For example, for EU organizations, you may need to select a European data center to be in accordance with GDPR.  If possible, try to choose the same location as your Compute Engine VM.
+1. Choose a default storage class for the backup data (*Coldline* is recommended), then click **CONTINUE**.   
+The pricing of Google Cloud Storage varies depending on location and storage class. Please see [Cloud Storage Pricing](https://cloud.google.com/storage/pricing) for more information. 
+1. Choose *Uniform* as the Access control type, and click **CONTINUE**.  
+1. CubeBackup itself has object versioning and data encryption functions, so there is no need to enable the *Object versioning*, *Retention policy*, or *Data Encryption* for this bucket. Otherwise, this may result in unnecessary file duplication and extra costs. Leave these options as default, then click **CREATE**.  
 
 
 
