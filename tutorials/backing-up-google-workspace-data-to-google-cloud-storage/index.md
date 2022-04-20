@@ -210,7 +210,6 @@ CubeBackup also keeps detailed log files containing all backup and restore opera
 
 ## Cleaning up
 
-CubeBackup is free to use for 14 days. If you are happy with it, [purchase a license](https://www.cubebackup.com/pricing) to continue using CubeBackup.
 If you have only used this tutorial for testing purposes, to avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project.
 
 Deleting a project has the following consequences:
