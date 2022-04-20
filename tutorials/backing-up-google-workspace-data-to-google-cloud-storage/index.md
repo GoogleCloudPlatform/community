@@ -79,11 +79,12 @@ When CubeBackup has been successfully deployed on the Compute Engine VM, you can
 1. Click **CREATE BUCKET** on the *Cloud Storage Browser* page.
 1. In the *Create a bucket* page, enter a valid name for the bucket and click **CONTINUE**.
 1. Choose a location type for the bucket (*Region* or *Multi-region* is recommended), and select a location for the bucket, then click **CONTINUE**.  
-Please note that you should select the location based on the security & privacy policy of your organization. For example, for EU organizations, you may need to select a European data center to be in accordance with GDPR.  If possible, try to choose the same location as your Compute Engine VM.
+You should select the location based on the security & privacy policy of your organization. For example, for EU organizations, you may need to select a European data center to be in accordance with GDPR.  If possible, try to choose the same location as your Compute Engine VM.
 1. Choose a default storage class for the backup data (*Coldline* is recommended), then click **CONTINUE**.   
 The pricing of Google Cloud Storage varies depending on location and storage class. Please see [Cloud Storage Pricing](https://cloud.google.com/storage/pricing) for more information. 
 1. Choose *Uniform* as the Access control type, and click **CONTINUE**.  
 1. Leave other options as default, then click **CREATE**.
+
 CubeBackup itself has object versioning and data encryption functions, so there is no need to enable the *Object versioning*, *Retention policy*, or *Data Encryption* for this bucket. Otherwise, this may result in unnecessary file duplication and extra costs. 
 
 
@@ -95,8 +96,7 @@ After launching the CubeBackup Compute Engine VM and creating the Cloud Storage 
 1. Choose the Google Cloud Storage bucket to store the backup data.  
 In the “Set up data storage location” step, choose *Google Cloud storage* as the Storage type, and leave the Data Index path as it is. Enter the name of the bucket you just created, then click **Next**. 
            <img src="./step2google.png" alt="set up backup location"  style="width: 70%"> 
-1. Create a Google Service account.
-
+1. Create a Google Service account.  
 In step 3 in the wizard, you must supply the service account key file, along with the Google Workspace domain name and domain administrator. But first, you need to enable necessary APIs in your project:
 
 *  Open the *API Library* page by selecting **APIs & services** > **Library** from the navigation menu.
@@ -118,8 +118,7 @@ Next, you will need to create a Google Service account.
  
 Now, return to the CubeBackup configuration wizard, click the **Choose File** button and select the service account JSON key file just generated. After the Google Workspace domain name, the domain administrator, and the service account key file are all set, click **Next**.
            <img src="./step3.png" alt="domain and service account"  style="width: 70%"> 
-
-1.  Authorize domain-wide access to the service account
+1.  Authorize domain-wide access to the service account.
  
 The newly created service account needs to be authorized to access your Google Workspace data through Google APIs. 
 *  Sign in to the [Google Admin console](https://admin.google.com/) using a domain administrator account.
