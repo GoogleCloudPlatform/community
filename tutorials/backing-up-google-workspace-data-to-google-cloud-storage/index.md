@@ -10,13 +10,16 @@ Jerry Wang | co-founder | CubeBackup
 
 <p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
-This tutorial describes how to set up a backup solution using CubeBackup to automatically backup Google Workspace data in your organization to your own Google Cloud Storage bucket. This tutorial is for Google Workspace administrators, security operators, and Google Workspace partners.
+This tutorial describes how to set up a backup solution using [CubeBackup](https://www.cubebackup.com) to automatically backup Google Workspace data in your organization to your own Google Cloud Storage bucket. This tutorial is for Google Workspace administrators, security operators, and Google Workspace partners.
 
 To use this tutorial, you need basic knowledge of Google Compute Engine, Google Cloud Storage and CubeBackup.
 
 It is always important to make backups of your Google Workspace business data. Although Google’s cloud service is very reliable, it cannot protect against data loss caused by accidental or deliberate human error, like mistaken deletions, incorrect data hand-off from former employees, or even disgruntled insiders or malicious hackers. A reliable backup and restore solution like CubeBackup can act as a life-line when faced with this kind of data loss.
 
-[CubeBackup](https://www.cubebackup.com) is a self-hosted application for Google Workspace.  Deploying CubeBackup on Google Cloud Platform offers an efficient, stable, and resilient backup for your Google Workspace business data.
+CubeBackup is a self-hosted application for Google Workspace.  Deploying CubeBackup on Google Cloud Platform offers an efficient, stable, and resilient backup for your Google Workspace business data.
+
+![Architecture diagram](./google-workspace-backup-diagram.png)
+
 
 ## Objectives
 
@@ -29,11 +32,11 @@ It is always important to make backups of your Google Workspace business data. A
 
 This tutorial uses billable components of Google Cloud, including the following:
 
-* [Compute Engine](https://cloud.google.com/compute)
+*  [Compute Engine](https://cloud.google.com/compute)
 
-For organizations with more than 100 employees, an *e2-standard-2* VM instance with 8GB RAM is recommended for running the backup service.
+For organizations with more than 100 employees, an **e2-standard-2** VM instance with 8GB RAM is recommended for running the backup service.
 
-* [Cloud Storage](https://cloud.google.com/storage)
+*  [Cloud Storage](https://cloud.google.com/storage)
 
 The pricing for Google Cloud Storage varies depending on the storage class and the location of your bucket. Considering both the data storage cost and the data processing cost, the **Coldline Storage** class is recommended for storing your Google Workspace backups.
 
@@ -45,26 +48,6 @@ In addtion to the cost of Google Cloud, you also need to pay for the license of 
 *   *$2/user/year* for Google Workspace Education/Nonprofit organizations.
 *   An unlimited 14-day trial of CubeBackup is available to all new users.
 
-
-
-
-## Costs
-
-Tell the reader which technologies the tutorial uses and what it costs to use them.
-
-For Google Cloud services, link to the preconfigured [pricing calculator](https://cloud.google.com/products/calculator/) if possible.
-
-If there are no costs to be incurred, state that.
-
-### Example: Costs 
-
-This tutorial uses billable components of Google Cloud, including the following:
-
-*   [Cloud Functions](https://cloud.google.com/functions)
-*   [Cloud Scheduler](https://cloud.google.com/scheduler)
-*   [App Engine](https://cloud.google.com/appengine/docs/flexible/python)
-
-Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage.
 
 ## Before you begin
 
