@@ -96,6 +96,7 @@ After launching the CubeBackup Compute Engine VM and creating the Cloud Storage 
 In the “Set up data storage location” step, choose *Google Cloud storage* as the Storage type, and leave the Data Index path as it is. Enter the name of the bucket you just created, then click **Next**. 
            <img src="./step2google.png" alt="deploy on compute engine"  style="width: 70%"> 
 1. Create a Google Service account.
+
 In step 3 in the wizard, you must supply the service account key file, along with the Google Workspace domain name and domain administrator. But first, you need to enable necessary APIs in your project:
 
 *  Open the *API Library* page by selecting **APIs & services** > **Library** from the navigation menu.
@@ -115,8 +116,13 @@ Next, you will need to create a Google Service account.
 *  Select **JSON** as the key type, then click **CREATE**.
 *  Close the dialog that pops up and save the generated JSON key file locally.
  
-Now, return to the CubeBackup configuration wizard, click the Choose File button and select the service account JSON key file just generated. After the Google Workspace domain name, the domain administrator, and the service account key file are all set, click Next.
+Now, return to the CubeBackup configuration wizard, click the **Choose File** button and select the service account JSON key file just generated. After the Google Workspace domain name, the domain administrator, and the service account key file are all set, click **Next**.
  
+
+
+
+
+
 
 
 
