@@ -157,7 +157,7 @@ The backup service runs automatically in the background, and the first backup wi
 
    <img src="./cubebackup-overview.png" alt="overview page of CubeBackup"  style="width: 85%"> 
 
-CubeBackup employs an incremental backup algorithm. The first backup is a full backup of all data for Google Workspace accounts and Shared Drives, but in subsequent backups, only new or modified data will be added to the backup. Since the initial backup will download all Google Drive & Shared drives files, Gmail messages, Contacts and Calendar data in your domain, it may take a considerably long time. Depending on the number of accounts and the size of the data in your Google Workspace domain, the first backup may take several days or even weeks. Please wait patiently for the first backup to complete. All subsequent backups will be much faster and should complete more quickly.
+CubeBackup employs an incremental backup algorithm. The first backup is a full backup of all data for Google Workspace accounts and Shared Drives, but in subsequent backups, only new or modified data will be added to the backup. Since the initial backup will download all Google Drive & Shared drives files, Gmail messages, Contacts and Calendar data in your domain, it may take a considerably long time. All subsequent backups will be much faster and should complete more quickly.
 
 The speed and progress of the backup are displayed on the CubeBackup Overview page. Since the backup service keeps running in the background, you can close the web console page and return at any time to check the backup progress.
 
