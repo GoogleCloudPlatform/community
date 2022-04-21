@@ -101,7 +101,7 @@ cases, such as the following:
 *   [Performing BigQuery batch processes](https://github.com/GoogleCloudPlatform/python-docs-samples/blob/6879d73123135459fa45a36211505d1ead37978a/bigquery/cloud-client/simple_app.py#L24)
 *   [Running AutoML jobs](https://github.com/GoogleCloudPlatform/python-docs-samples/blob/899cee82641d9ea6b97a7813283585ece2f8923d/automl/cloud-client/batch_predict.py)
 *   [Running nightly tests](https://github.com/GoogleCloudPlatform/python-docs-samples/blob/master/functions/helloworld/sample_storage_test.py)
-*   [Cleaning up Cloud Storage buckets](https://github.com/GoogleCloudPlatform/python-docs-samples/blob/master/storage/cloud-client/storage_delete_file.py)
+*   [Cleaning up Cloud Storage buckets](https://github.com/googleapis/python-storage/blob/main/samples/snippets/storage_delete_file.py)
 
 
 ## Test the function locally
