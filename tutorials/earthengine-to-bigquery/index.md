@@ -147,8 +147,11 @@ Run the GeoBeam job to ingest the TIFF file from the Cloud Storage bucket into B
 Make sure to specify the correct image based on the version of python you are using. If using python 3.8, use the container at gcr.io/dataflow-geobeam/example, if using python 3.7, use gcr.io/dataflow-geobeam/example-py37. 
 
 Geobeam parameters:
+
 **band_column** - the name of the band value, as you specified in the bq table creation statement
+
 **merge_blocks** - ingestion tuning parameter. Increases the area over which similar pixel values are merged
+
 **centroid_only** - how to convert a pixel to a GEOGRAPHY. false will produce a POLYGON that encompasses the pixel, true will produce a POINT at the center of the pixel
 
 ```
