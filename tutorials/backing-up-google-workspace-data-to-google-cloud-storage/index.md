@@ -40,10 +40,10 @@ For organizations with more than 100 employees, an **e2-standard-2** VM instance
 
 The pricing for Google Cloud Storage varies depending on the storage class and the location of your bucket. Considering both the data storage cost and the data processing cost, the **Coldline Storage** class is recommended for storing your Google Workspace backups.
 
-Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a Google Cloud cost estimate based of your projected usage.
+Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a Google Cloud cost estimate based on your projected usage.
 
 
-In addtion to the cost of Google Cloud, you also need to pay for the license of CubeBackup. CubeBackup is licensed on a per-user basis:  
+In addition to the cost of Google Cloud, you also need to pay for the CubeBackup license. CubeBackup is licensed on a per-user basis:  
 *   *$5/user/year* for Google Workspace Business/Enterprise organizations.
 *   *$2/user/year* for Google Workspace Education/Nonprofit organizations.
 *   An unlimited 14-day trial of CubeBackup is available to all new users.
@@ -65,7 +65,7 @@ As a Google Workspace backup solution, CubeBackup is available on the [Google Cl
 
 1. On the CubeBackup deployment page, configure the *Deployment name*, *Zone*, *Machine type*, and *Boot Disk size* for your VM.  
     * Please select the Zone which is closest to your organization, or in accordance with the data policy of your organization or country.
-    * CubeBackup requires no less than 4 GB of memory (8GB is strongly recommended) and 100GB for the boot disk.
+    * CubeBackup requires at least 4 GB of memory (8 GB is strongly recommended) and 100 GB for the boot disk.
     * If you’d like to access the web console from the Internet, please be sure to allow HTTP and HTTPS traffic in the Firewall section.
    ![Deploy on compute engine](./compute-engine-vm.png) 
 1.  When all parameters have been properly set, click **DEPLOY** to start the VM instance. The deployment process may take one or two minutes to complete.
@@ -129,7 +129,7 @@ In the “Set up data storage location” step, choose *Google Cloud storage* as
 *  Click **MANAGE DOMAIN WIDE DELEGATION** in the *Domain wide delegation* section.
 *  Click **Add new** on the *Domain-wide Delegation* page.
 *  In the **Client ID** field, paste the Client ID copied from the step 4 of the configuration wizard.
-*  In the **OAuth Scopes** field, copy and paste the following scopes, then Click **AUTHORIZE**.
+*  In the **OAuth Scopes** field, copy and paste the following scopes, then click **AUTHORIZE**.
 
         https://www.googleapis.com/auth/admin.directory.domain.readonly,
         https://www.googleapis.com/auth/admin.directory.user.readonly,
@@ -144,7 +144,7 @@ In the “Set up data storage location” step, choose *Google Cloud storage* as
 
 5\. Complete other configurations.
 
-In the following steps, you can select the Google Workspace users you would like to backup. For Google Workspace Business/Enterprise/Education/Nonprofit organizations, you also can configure which Shared Drives to backup.
+In the following steps, you can select the Google Workspace users you would like to backup. For Google Workspace Business/Enterprise/Education/Nonprofit organizations, you also can configure which Shared drives to backup.
 
 In the final step, you can set the administrator and password for the CubeBackup console. CubeBackup supports multiple administrators with different roles, so you can add more administrative accounts later in the console, if you wish.
 
@@ -156,7 +156,7 @@ The backup service runs automatically in the background, and the first backup wi
 
    <img src="./cubebackup-overview.png" alt="overview page of CubeBackup"  style="width: 85%"> 
 
-CubeBackup employs an incremental backup algorithm. The first backup is a full backup of all data for Google Workspace accounts and Shared Drives, but in subsequent backups, only new or modified data will be added to the backup. Since the initial backup will download all Google Drive & Shared drives files, Gmail messages, Contacts and Calendar data in your domain, it may take a considerably long time. All subsequent backups will be much faster and should complete more quickly.
+CubeBackup employs an incremental backup algorithm. The first backup is a full backup of all data for Google Workspace accounts and Shared drives, but in subsequent backups, only new or modified data will be added to the backup. Since the initial backup will download all Google Drive & Shared drives files, Gmail messages, Contacts and Calendar data in your domain, it may take a considerably long time. All subsequent backups will be much faster and should complete more quickly.
 
 The speed and progress of the backup are displayed on the CubeBackup Overview page. Since the backup service keeps running in the background, you can close the web console page and return at any time to check the backup progress.
 
@@ -172,9 +172,9 @@ In the CubeBackup dashboard, there are many configuration options.
 
 ####  Choose which Google Workspace services to backup
 
-By default, CubeBackup will backup all data for Google Drive, Shared drives, Gmail, Contacts, Calendar, and classic Google Sites in your Google Workspace domain. However, you are free to select which Google apps you’d like to backup. For example, if it is not necessary to backup Calendar events and Google Sites in your organization, you can simply turn off the Contacts and Sites in the *Apps section* on the SETTINGS page.
+By default, CubeBackup will backup all data for Google Drive, Shared drives, Gmail, Contacts, Calendar, and classic Google Sites in your Google Workspace domain. However, you are free to select which Google apps you’d like to backup. For example, if it is not necessary to backup Calendar events and Google Sites in your organization, you can simply turn off the Calendar and Sites in the *Apps section* on the SETTINGS page.
 
-Click the **Options** link beside the Drive selector, and the Google Drive & Shared Drives backup filter settings will pop up, from which you can configure whether to backup the “*Files shared with me*” and set different file exclusion rules for drive backup. For example, to save backup space, you may not want to backup video files which are larger than 5GB in Google Drive or Shared Drives; thus, you can add a file exclusion rule like this:
+Click the **Options** link beside the Drive selector, and the Google Drive & Shared drives backup filter settings will pop up, from which you can configure whether to backup the “*Files shared with me*” and set different file exclusion rules for drive backup. For example, to save backup space, you may not want to backup video files which are larger than 5GB in Google Drive or Shared drives; thus, you can add a file exclusion rule like this:
 
         has suffix ".mp4", ".mkv", ".avi", ".mov", ".rm", ".rmvb" AND size > 5GB
 
@@ -270,18 +270,18 @@ CubeBackup also allows you to export your backups of Google Drive files, Gmail m
 
 From the HISTORY page in the CubeBackup web console, you can access detailed status information about each backup and restore operation.
 
-* On the **HISTORY** > **Backup** page, all backup records are listed in chronological order. The backup status, time duration, error count, and data size are displayed for each backup. Click on a backup entry, and you will be directed to a page with detailed backup statistics for each user and each shared drive.
+* On the **HISTORY** > **Backup** page, all backup records are listed in chronological order. The backup status, time duration, error count, and data size are displayed for each backup. Click on a backup entry, and you will be directed to a page with detailed backup statistics for each user and each Shared drive.
 
 * On the **HISTORY** > **Restore** page, all restore records are listed in chronological order, from which you can view the restore operator, description, status, time duration, data size, and other useful information. Click the number in the Files column to open a list of restored files/messages/contacts/calendar events. If there were any errors, you can click the number in the Errors column to see a detailed error report.
 
 * On the **HISTORY** > **Export** page, all export records are listed in chronological order. The information on the Export page is similar to the Restore page, except that you can also download the exported zip file from here.
 
-CubeBackup also keeps detailed log files containing all backup and restore operations, error messages, and web dashboard access records. These log files are located in the *<installation directory>/log* directory.
+CubeBackup also keeps detailed log files containing all backup and restore operations, error messages, and web dashboard access records. These log files are located in the *\<installation directoryi\>/log* directory.
 
 
 ## Cleaning up
 
-If you have only used this tutorial for testing purposes, to avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project.
+If you have only used this tutorial for testing purposes, you can delete the project to avoid incurring charges to your Google Cloud account for the resources used in this tutorial.
 
 Deleting a project has the following consequences:
 
