@@ -123,4 +123,4 @@ In situations where user is looking for a fully managed certificate authority th
   - CAS      : [link](https://cloud.google.com/certificate-authority-service/docs)
   - Istio CA : [link](https://istio.io/latest/docs/tasks/security/cert-management/plugin-ca-cert/)
   - Improving security with Istio : [link](https://www.youtube.com/watch?v=E0h1rS2D86k)
-  - watch on-demand security talks 2021 : [link](https://cloudonair.withgoogle.com/events/security-talks-december-2021?utm_source=cloud_sfdc&utm_medium=email&utm_campaign=fy21-q4-noram-smb950-onlineevent-er-securitytalks_dec&utm_content=confirmation&mkt_tok=ODA4LUdKVy0zMTQAAAGEGTqKfup86_Hl-NIQ9OYYGir-LJcvpVOlZzn3eoZP8UxOn20K4HB4WQMmqMAH8CxaPaFlwRhjyEpgr2r0xuXbliZUzvv-LeCFTpdoqnSsKAbMNd9l6g)
+  - watch on-demand security talks 2021 : [link](https://cloudonair.withgoogle.com/events/security-talks-december-2021)
