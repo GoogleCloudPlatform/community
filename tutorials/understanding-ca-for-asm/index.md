@@ -1,4 +1,22 @@
+---
+title: Understanding CA for ASM
+description: Document detailing about the different CA options available for ASM.
+author: mamgainparas
+tags: ASM, MeshCA, istioCA, CA, CAS, Security, GKE
+date_published: 2022-05-02
+---
+
+Paras Mamgain | Community Editor | Google
+
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 # Understanding Certificate Authority for ASM(Anthos Service Mesh)
+
+## Objectives
+To describe the different available options for configuring certificate authority while installing ASM.
+
+## Introduction
 
 Encrypting the traffic and the communication between different components of our infrastructure or deployed services is of uttermost important. One such way to acheive this in the ASM or Istio is with the help of a certificate authority.
 
@@ -6,8 +24,6 @@ There are couple of options available from the list of available certificate aut
 The later approach which provides best of both the other approaches(i.e. google managed and customer managed) is mostly useful when customer wants more flexibility from a Managed CA.
 
 Ever since Anthos has been released by google, it has gained lot of attention by different customer as it provides the single pane of visbility and allows them to easily manage the clusters running onpremise and oncloud. This also helps to leverage various features like ASM, Binay Authorization etc to ensure that the security and the trust of the end users is never compromised.
-
-## Introduction
 
 Anthos service mesh is google's implementation of the powerful Istio open-source project which enables you to manage your workloads, observe the traffic via telemetry and secure your services running in your clusters without having to change your application logic. Anthos service mesh(ASM) is to Istio what Google Kubernetes Engine(GKE) is to Kubernetes.
 
