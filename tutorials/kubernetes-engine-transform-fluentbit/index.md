@@ -184,7 +184,7 @@ Fluent Bit that you deploy in this procedure are versions of the ones available 
 
 As you see earlier, the `log` field is a long string. You have multiple options to transform it to a json structure. Those options all involve using Fluent Bit [filters](https://docs.fluentbit.io/manual/pipeline/filters) and you also need some understanding of the format for your raw log messages.
 
-### Use teh JSON filter
+### Use the JSON filter
 
 If your log messages are already in json format like the example in the previous screenshot, you can use the JSON filter to parse them and view them in `jsonPayload`. However, before you do that you need to have another pair of parser and filter to remove the extraneous data. For example, use the following parser to extract your log string:
 
