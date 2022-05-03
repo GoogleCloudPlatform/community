@@ -63,12 +63,12 @@ You can run all the commands for this solution in [Cloud Shell](https://cloud.go
 
 Set the following environment variables and replace the values with values corresponding to your project.
 ```
-export PROJECT_ID=project-name
-export IMAGES_BUCKET=bucket-name
-export GEOBEAM_BUCKET=tmp_geobeam_bucket
-export BQ_DATASET=bq_dataset
+export PROJECT_ID=remy-sandbox
+export IMAGES_BUCKET=tmp_images_bucket_rw3
+export GEOBEAM_BUCKET=tmp_geobeam_bucket_rw3
+export BQ_DATASET=geodata
 export BQ_DATASET_REGION=us-central1
-export BQ_TABLE=bq_table
+export BQ_TABLE=tutorial_test
 export SERVICE_ACCOUNT_EMAIL=serviceaccount email
 ```
 
