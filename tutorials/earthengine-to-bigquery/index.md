@@ -1,8 +1,8 @@
 ---
-title: Ingest data from Google Earth Engine to BigQuery
-description: Use Cloud Dataflow and GeoBeam to ingest raster image data(TIFF files) from Google Earth Engine to BigQuery. 
+title: Ingest Geospatial Data from Google Earth Engine to BigQuery
+description: Use Cloud Dataflow and Geobeam to ingest geospatial raster data from Google Earth Engine to BigQuery 
 author: kannappans, remyw
-tags: Dataflow, Google Earth Engine, GeoBeam, BigQuery
+tags: Dataflow, Google Earth Engine, Geobeam, BigQuery
 date_published: 2022-03-31
 ---
 
