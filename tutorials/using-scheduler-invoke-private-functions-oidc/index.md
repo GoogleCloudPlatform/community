@@ -45,13 +45,13 @@ You can run the commands in this tutorial in [Cloud Shell](https://cloud.google.
 
 We recommend that you create a new Google Cloud project for this tutorial, so that all created resources can be easily deleted when the tutorial is complete.
 
-1.  In the Cloud Console, on the project selector page, create a Cloud project. For details,
+1.  In the Cloud console, on the project selector page, create a Cloud project. For details,
     see [Create a project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#creating_a_project).
 1.  Make sure that billing is enabled for your project. For details, see [Confirm billing is enabled](https://cloud.google.com/billing/docs/how-to/modify-project#confirm_billing_is_enabled_on_a_project).
 
 1.  Enable the Cloud Build, Cloud Scheduler, and Cloud Functions APIs:
 
-    - [Enable the APIs in the Cloud Console.](https://console.cloud.google.com/flows/enableapi?apiid=cloudbuild.googleapis.com,cloudscheduler.googleapis.com,cloudfunctions.googleapis.com)
+    - [Enable the APIs in the Cloud console.](https://console.cloud.google.com/flows/enableapi?apiid=cloudbuild.googleapis.com,cloudscheduler.googleapis.com,cloudfunctions.googleapis.com)
     - Enable the APIs from the command line:
 
           gcloud services enable \
@@ -180,7 +180,7 @@ unauthenticated access is disallowed:
 After the function is deployed, it can be tested. Since the request must be authenticated, the most straightforward way of testing this function is in the Cloud
 Console. 
 
-1.  Go to the Cloud Console and navigate to the [**Cloud Functions**](https://console.cloud.google.com/functions) page.
+1.  Go to the Cloud console and navigate to the [**Cloud Functions**](https://console.cloud.google.com/functions) page.
 1.  Find the [`hello_world` function](https://console.cloud.google.com/functions/details/us-central1/hello_world), and click the
     [**Testing** tab](https://console.cloud.google.com/functions/details/us-central1/hello_world?tab=testing).
 1.  In the **Triggering event** field, enter valid JSON that contains a name key and a value: 
@@ -206,24 +206,24 @@ You can also test this event in the console with `curl` by specifying the author
 account that you created. 
 
 
-1.  Go to the Cloud Console and navigate to the [**Cloud Scheduler**](https://console.cloud.google.com/scheduler) page.
-1. Click on **Schedule a job**
-1. In the *Define the schedule* section, enter: 
-    * Name: `my-hourly-job`
-    * Region: `us-central1`
-    * Frequency: `0 * * * *` (hourly)
-    * Timezone: `Australia/Sydney` 
-1. Click **Continue**.
-1. In the *Configure the execution* section, enter:
-    * Target type: `HTTP`
-    * URL: the URL of the Cloud Function deployed earlier (`$FUNCTION_URL`)
-    * HTTP Method: `POST`
-    * Body:  `{"name": "Scheduler"}`
-    * Auth Header: **Add OIDC token**
-    * Service account: `my service account`
-1. Click **Continue**, then **Create**. 
+1.  In the Cloud console, go to the [**Cloud Scheduler**](https://console.cloud.google.com/scheduler) page.
+1.  Click **Schedule a job**
+1.  In the **Define the schedule** section, enter the following: 
+    * **Name**: `my-hourly-job`
+    * **Region**: `us-central1`
+    * **Frequency**: `0 * * * *` (hourly)
+    * **Timezone**: `Australia/Sydney` 
+1.  Click **Continue**.
+1.  In the **Configure the execution** section, enter the following:
+    * **Target type**: `HTTP`
+    * **URL**: the URL of the Cloud Function deployed earlier (`$FUNCTION_URL`)
+    * **HTTP Method**: `POST`
+    * **Body**:  `{"name": "Scheduler"}`
+    * **Auth Header**: **Add OIDC token**
+    * **Service account**: `my service account`
+1.  Click **Continue**, and then click **Create**. 
 
-You can alternatively run the following equivelent `gcloud` command: 
+Alternatively, you can run the following equivelent `gcloud` command: 
 
     gcloud scheduler jobs create http my-hourly-job \
       --location us-central1 \
@@ -234,14 +234,14 @@ You can alternatively run the following equivelent `gcloud` command:
       --message-body '{"name": "Scheduler"}' \
       --oidc-service-account-email myserviceaccount@${PROJECT_ID}.iam.gserviceaccount.com
 
-You can confirm that the job was created by checking the Cloud Scheduler section of the Cloud Console, or by listing the active jobs: 
+You can confirm that the job was created by checking the Cloud Scheduler section of the Cloud console, or by listing the active jobs: 
 
     gcloud scheduler jobs list
 
 ### Invoke a Cloud Function from a scheduled job
 
 To test the configurations without having to wait for the next scheduled invocation, you can trigger the scheduled job by clicking **Run Now** on the
-scheduled job listing in the Cloud Console. You can also use the following command: 
+scheduled job listing in the Cloud console. You can also use the following command: 
 
     gcloud scheduler jobs run my-hourly-job
 
@@ -249,7 +249,9 @@ This command return no output of its own.
 
 ## Check success
 
-You can check the Cloud Functions logs on the [**Cloud Logging**](https://console.cloud.google.com/logs/viewer?&resource=cloud_function%2Ffunction_name%2Fhello_world%2Fregion%2Fus-central1) page in the Cloud Console or with the following command: 
+You can check the Cloud Functions logs on the
+[**Cloud Logging**](https://console.cloud.google.com/logs/viewer?&resource=cloud_function%2Ffunction_name%2Fhello_world%2Fregion%2Fus-central1)
+page in the Cloud console or with the following command: 
 
     gcloud functions logs read hello_world
 
@@ -264,12 +266,12 @@ Checking the logs again each hour should show that the scheduled event occurred 
 
 ## Clean up
 
-To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, delete the project created specifically for this tutorial. 
+To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, delete the project created specifically for this
+tutorial. 
 
-1. In the Cloud Console, go to the **Manage resources** page.
+1. In the Cloud console, go to the **Manage resources** page.
 1. In the project list, select the project that you want to delete, and then click **Delete**.
-1. In the dialog, type the project ID and then click **Shut down**.
-
+1. In the dialog, type the project ID, and then click **Shut down**.
 
 ## What's next
 
