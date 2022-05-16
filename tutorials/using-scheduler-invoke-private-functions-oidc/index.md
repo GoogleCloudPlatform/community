@@ -223,7 +223,7 @@ account that you created.
     * **Service account**: `my service account`
 1.  Click **Continue**, and then click **Create**. 
 
-Alternatively, you can run the following equivelent `gcloud` command: 
+Alternatively, you can run the following equivalent `gcloud` command: 
 
     gcloud scheduler jobs create http my-hourly-job \
       --location us-central1 \
