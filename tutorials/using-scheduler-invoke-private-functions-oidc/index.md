@@ -35,7 +35,6 @@ This tutorial uses billable components of Google Cloud, including the following:
 *   [Cloud Functions](https://cloud.google.com/functions)
 *   [Cloud Build](https://cloud.google.com/build)
 *   [Cloud Scheduler](https://cloud.google.com/scheduler)
-*   [App Engine](https://cloud.google.com/appengine/docs/flexible/python)
 
 Use the [Pricing Calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage.
 
@@ -60,18 +59,12 @@ We recommend that you create a new Google Cloud project for this tutorial, so th
             cloudscheduler.googleapis.com \
             cloudfunctions.googleapis.com
 
-1.  Initialize an App Engine environment and choose its region by running the following command and following the prompts:
-
-        gcloud app create --project=[YOUR_PROJECT_ID]
-        
-    Cloud Scheduler uses App Engine cron jobs, so Cloud Scheduler requires App Engine enablement and configuration.
-
 ## Get the source code
 
 The function used in this tutorial prints `Hello, world` in the function logs and returns a formatted message.
 
 This function is called from many different sources, so to ensure that every type of invocation is handled, this example uses the
-[Flask get_data() method](https://flask.palletsprojects.com/en/1.1.x/api/?highlight=get_data#flask.Request.get_data), decoding the data payload manually. If the 
+[Flask `get_data()` method](https://flask.palletsprojects.com/en/1.1.x/api/?highlight=get_data#flask.Request.get_data), decoding the data payload manually. If the 
 data is valid JSON, the function returns a message using the value of the name given. If it is not available, it will default to `World`. If the payload is 
 invalid, an error is returned.
 
@@ -110,13 +103,13 @@ This function can be tested on your local machine by using the [Functions Framew
 
 1.  Install the Function Frameworks package on your machine:
 
-        pip install functions-framework==2.1.3
+        pip install functions-framework==3.0.0
 
 1. Use Functions Framework to target the `hello_world` method in `main.py`: 
 
         functions-framework --target hello_world --debug
 
-    The function will be made available at `http://0.0.0.0:8080`.
+    The function will be made available at a local address ("Running on http://...").
 
 1.  In a new terminal, use `curl` to send POST data to test the function: 
 
@@ -131,7 +124,7 @@ This function can be tested on your local machine by using the [Functions Framew
         * Serving Flask app "hello_world" (lazy loading)
         * Environment: production
         * Debug mode: on
-        * Running on http://0.0.0.0:8080/ (Press CTRL+C to quit)
+        * Running on http://x.x.x.x:8080/ (Press CTRL+C to quit)
         * Restarting with fsevents reloader
         * Debugger is active!
         Hello, local function!
@@ -212,25 +205,34 @@ You can also test this event in the console with `curl` by specifying the author
 [Create a scheduled job](https://cloud.google.com/scheduler/docs/creating#creating_jobs) to invoke the Cloud Function previously created, using the service
 account that you created. 
 
-Based on the use case, you need to ensure that the following settings are configured: 
 
-*   Target: HTTP
-*   URL: the URL of the Cloud Function deployed earlier
-*   HTTP Method: POST
-*   BODY:  `{"name": "Foo"}`
-*   Auth Header: Add OIDC token
-*   Service account: the service account created earlier.
+1.  Go to the Cloud Console and navigate to the [**Cloud Scheduler**](https://console.cloud.google.com/scheduler) page.
+1. Click on **Schedule a job**
+1. In the *Define the schedule* section, enter: 
+    * Name: `my-hourly-job`
+    * Region: `us-central1`
+    * Frequency: `0 * * * *` (hourly)
+    * Timezone: `Australia/Sydney` 
+1. Click **Continue**.
+1. In the *Configure the execution* section, enter:
+    * Target type: `HTTP`
+    * URL: the URL of the Cloud Function deployed earlier (`$FUNCTION_URL`)
+    * HTTP Method: `POST`
+    * Body:  `{"name": "Scheduler"}`
+    * Auth Header: **Add OIDC token**
+    * Service account: `my service account`
+1. Click **Continue**, then **Create**. 
 
-This is an example invocation for an hourly job: 
+You can alternatively run the following equivelent `gcloud` command: 
 
     gcloud scheduler jobs create http my-hourly-job \
-      --description "Call my function hourly" \
+      --location us-central1 \
       --schedule "0 * * * *" \
       --time-zone "Australia/Sydney" \
       --uri "https://${REGION}-${PROJECT_ID}.cloudfunctions.net/hello_world" \
       --http-method POST \
-      --oidc-service-account-email myserviceaccount@${PROJECT_ID}.iam.gserviceaccount.com \
-      --message-body '{"name": "Scheduler"}'
+      --message-body '{"name": "Scheduler"}' \
+      --oidc-service-account-email myserviceaccount@${PROJECT_ID}.iam.gserviceaccount.com
 
 You can confirm that the job was created by checking the Cloud Scheduler section of the Cloud Console, or by listing the active jobs: 
 
@@ -238,7 +240,7 @@ You can confirm that the job was created by checking the Cloud Scheduler section
 
 ### Invoke a Cloud Function from a scheduled job
 
-To test the configurations without having to wait for the next scheduled invocation, you can trigger the scheduled job by clicking **Run Trigger** on the
+To test the configurations without having to wait for the next scheduled invocation, you can trigger the scheduled job by clicking **Run Now** on the
 scheduled job listing in the Cloud Console. You can also use the following command: 
 
     gcloud scheduler jobs run my-hourly-job
