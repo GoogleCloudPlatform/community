@@ -17,7 +17,12 @@ In this tutorial, you deploy two workflows, Cloud Run services to run the workfl
 you use an Eventarc trigger that responds to a Pub/Sub message to a topic. In the second example, you use an Eventarc trigger that
 responds to the creation of a file in a Cloud Storage bucket.
 
-**Note: You can now trigger Workflows directly using Eventarc without Cloud Run. You can read the examples [eventarc-pubsub](https://github.com/GoogleCloudPlatform/eventarc-samples/tree/main/eventarc-workflows-integration/eventarc-pubsub) and [eventarc-storage](https://github.com/GoogleCloudPlatform/eventarc-samples/tree/main/eventarc-workflows-integration/eventarc-storage) for more details. However, this tutorial is still useful if you want to perform additional data transformation and processing in Cloud Run before invoking Workflows.**
+**Important**: You can now trigger Workflows directly using Eventarc without Cloud Run. For details, see the
+[eventarc-pubsub](https://github.com/GoogleCloudPlatform/eventarc-samples/tree/main/eventarc-workflows-integration/eventarc-pubsub)
+and
+[eventarc-storage](https://github.com/GoogleCloudPlatform/eventarc-samples/tree/main/eventarc-workflows-integration/eventarc-storage)
+examples. However, this tutorial is still useful if you want to perform additional data transformation and processing in Cloud Run before invoking
+Workflows.
 
 ## Costs
 
@@ -174,8 +179,11 @@ executes a workflow with the bucket and filename.
           --event-filters="serviceName=storage.googleapis.com" \
           --event-filters="methodName=storage.objects.create" \
           --service-account=${PROJECT_NUMBER}-compute@developer.gserviceaccount.com
-    Note: If you haven't enable `Data Write` logging for Cloud Storage audit logs, you need to [enable audit logs](https://cloud.google.com/logging/docs/audit/configure-data-access#config-console-enable).
-    Also, it may take a few minutes for the trigger to be fully functional.
+          
+    If you haven't enabled `Data Write` logging for Cloud Storage audit logs, you need to
+    [enable audit logs](https://cloud.google.com/logging/docs/audit/configure-data-access#config-console-enable).
+    
+    Creation of the trigger can take a few minutes.
 
 1.  Create a Cloud Storage bucket:
 
