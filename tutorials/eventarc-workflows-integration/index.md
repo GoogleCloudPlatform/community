@@ -17,6 +17,8 @@ In this tutorial, you deploy two workflows, Cloud Run services to run the workfl
 you use an Eventarc trigger that responds to a Pub/Sub message to a topic. In the second example, you use an Eventarc trigger that
 responds to the creation of a file in a Cloud Storage bucket.
 
+**Note: You can now trigger Workflows directly using Eventarc without Cloud Run. You can read the examples [eventarc-pubsub](https://github.com/GoogleCloudPlatform/eventarc-samples/tree/main/eventarc-workflows-integration/eventarc-pubsub) and [eventarc-storage](https://github.com/GoogleCloudPlatform/eventarc-samples/tree/main/eventarc-workflows-integration/eventarc-storage) for more details. However, this tutorial is still useful if you want to perform additional data transformation and processing in Cloud Run before invoking Workflows.**
+
 ## Costs
 
 This tutorial uses billable components of Google Cloud, including the following:
@@ -42,18 +44,28 @@ generate a cost estimate based on your projected usage.
 
         gcloud services enable run.googleapis.com eventarc.googleapis.com pubsub.googleapis.com workflows.googleapis.com
 
+1.  Clone the sample repository:
+
+        git clone https://github.com/GoogleCloudPlatform/eventarc-samples.git
+
+    The sample repository includes the samples for Eventarc.
+
+1.  Go to the directory for this tutorial in the cloned repository:
+
+        cd eventarc-samples/eventarc-workflows-integration/
+
 ## Create a workflow that responds to a Pub/Sub message
 
 In this section, you see how a Pub/Sub message to a topic triggers a Cloud Run service with Eventarc and how the Cloud Run
 service executes a workflow with an HTTP request from Eventarc.
 
 1.  Deploy the workflow defined in the
-    [`eventarc-pubsub/workflow.yaml`](https://github.com/GoogleCloudPlatform/eventarc-samples/tree/main/eventarc-workflows-integration/eventarc-pubsub/workflow.yaml)
+    [`eventarc-pubsub-cloudrun/workflow.yaml`](https://github.com/GoogleCloudPlatform/eventarc-samples/blob/main/eventarc-workflows-integration/eventarc-pubsub-cloudrun/workflow.yaml)
     file:
 
         export WORKFLOW_NAME=workflow-pubsub
         export REGION=us-central1
-        gcloud workflows deploy ${WORKFLOW_NAME} --source=workflow.yaml --location=${REGION}
+        gcloud workflows deploy ${WORKFLOW_NAME} --source=eventarc-pubsub-cloudrun/workflow.yaml --location=${REGION}
     
     This workflow decodes and logs the received Pub/Sub message.
 
@@ -61,7 +73,8 @@ service executes a workflow with an HTTP request from Eventarc.
 
         export PROJECT_ID=$(gcloud config get-value project)
         export SERVICE_NAME=trigger-workflow-pubsub
-        gcloud builds submit --tag gcr.io/${PROJECT_ID}/${SERVICE_NAME} .
+        gcloud builds submit --tag gcr.io/${PROJECT_ID}/${SERVICE_NAME} \
+            ./eventarc-pubsub-cloudrun/trigger-workflow
 
 1.  Deploy a Cloud Run service to execute workflow:
 
@@ -76,7 +89,7 @@ service executes a workflow with an HTTP request from Eventarc.
     This Cloud Run service executes the workflow with the HTTP request.
     
     You can see the source code in the
-    [`trigger-workflow`](https://github.com/GoogleCloudPlatform/eventarc-samples/tree/main/eventarc-workflows-integration/eventarc-pubsub/trigger-workflow)
+    [`trigger-workflow`](https://github.com/GoogleCloudPlatform/eventarc-samples/tree/main/eventarc-workflows-integration/eventarc-pubsub-cloudrun/trigger-workflow)
     file.
 
 1.  Connect a Pub/Sub topic to the Cloud Run service by creating an Eventarc Pub/Sub trigger:
@@ -106,12 +119,13 @@ triggers a Cloud Run service with Eventarc and the Cloud Run service
 executes a workflow with the bucket and filename.
 
 1.  Deploy the workflow defined in the
-    [`eventarc-auditlog-storage/workflow.yaml`](https://github.com/GoogleCloudPlatform/eventarc-samples/tree/main/eventarc-workflows-integration/eventarc-auditlog-storage/workflow.yaml)
+    [`eventarc-auditlog-storage-cloudrun/workflow.yaml`](https://github.com/GoogleCloudPlatform/eventarc-samples/tree/main/eventarc-workflows-integration/eventarc-auditlog-storage-cloudrun/workflow.yaml)
     file:
 
         export WORKFLOW_NAME=workflow-auditlog-storage
         export REGION=us-central1
-        gcloud workflows deploy ${WORKFLOW_NAME} --source=workflow.yaml --location=${REGION}
+        gcloud workflows deploy ${WORKFLOW_NAME} \
+            --source=eventarc-auditlog-storage-cloudrun/workflow.yaml --location=${REGION}
 
     This workflow logs the bucket and filename for the storage event.
 
@@ -119,7 +133,8 @@ executes a workflow with the bucket and filename.
 
         export PROJECT_ID=$(gcloud config get-value project)
         export SERVICE_NAME=trigger-workflow-auditlog-storage
-        gcloud builds submit --tag gcr.io/${PROJECT_ID}/${SERVICE_NAME} .
+        gcloud builds submit --tag gcr.io/${PROJECT_ID}/${SERVICE_NAME} \
+            ./eventarc-auditlog-storage-cloudrun/trigger-workflow
 
 1.  Deploy a Cloud Run service to execute the workflow:
 
@@ -159,6 +174,8 @@ executes a workflow with the bucket and filename.
           --event-filters="serviceName=storage.googleapis.com" \
           --event-filters="methodName=storage.objects.create" \
           --service-account=${PROJECT_NUMBER}-compute@developer.gserviceaccount.com
+    Note: If you haven't enable `Data Write` logging for Cloud Storage audit logs, you need to [enable audit logs](https://cloud.google.com/logging/docs/audit/configure-data-access#config-console-enable).
+    Also, it may take a few minutes for the trigger to be fully functional.
 
 1.  Create a Cloud Storage bucket:
 
