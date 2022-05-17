@@ -180,17 +180,17 @@ executes a workflow with the bucket and filename.
           --event-filters="methodName=storage.objects.create" \
           --service-account=${PROJECT_NUMBER}-compute@developer.gserviceaccount.com
           
-    If you haven't enabled `Data Write` logging for Cloud Storage audit logs, you need to
-    [enable audit logs](https://cloud.google.com/logging/docs/audit/configure-data-access#config-console-enable).
-    
     Creation of the trigger can take a few minutes.
+
+1.  Enable **Data Write** logging for Cloud Storage audit logs. For instructions, see
+    [Enable audit logs](https://cloud.google.com/logging/docs/audit/configure-data-access#config-console-enable).
 
 1.  Create a Cloud Storage bucket:
 
         export BUCKET="$(gcloud config get-value core/project)-eventarc-workflows"
         gsutil mb -l $(gcloud config get-value run/region) gs://${BUCKET}
 
-1.  Create a file in the bucket, which should trigger the workflow:
+1.  Create a file in the bucket, which triggers the workflow:
 
         echo "Hello World" > random.txt
         gsutil cp random.txt gs://${BUCKET}/random.txt
