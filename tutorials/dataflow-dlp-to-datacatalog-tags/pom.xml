@@ -65,7 +65,7 @@
     <json.version>20160810</json.version>
     <junit.jupiter.version>5.5.2</junit.jupiter.version>
     <gson.version>2.7</gson.version>
-    <jackson.version>2.13.1</jackson.version>
+    <jackson.version>2.14</jackson.version>
     <codehaus-jackson.version>1.9.13</codehaus-jackson.version>
     <commons-csv.version>1.5</commons-csv.version>
     <google.cloud.core>2.3.3</google.cloud.core>
