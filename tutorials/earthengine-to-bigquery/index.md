@@ -1,22 +1,22 @@
 ---
 title: Ingest Geospatial Data from Google Earth Engine to BigQuery
-description: Use Cloud Dataflow and Geobeam to ingest geospatial raster data from Google Earth Engine to BigQuery 
+description: Use Cloud Dataflow and Geobeam to ingest geospatial raster data from Google Earth Engine to BigQuery
 author: kannappans, remyw
 tags: Dataflow, Google Earth Engine, Geobeam, BigQuery
 date_published: 2022-03-31
 ---
 
-Authors: Remy Welch, Kannappan Sirchabesan | Cloud Data Engineers | Google  
-Collaborator: Donna Schut | Solutions Manager | Google  
-Collaborator: Travis Webb | Solutions Engineer | Google  
+Authors: Remy Welch, Kannappan Sirchabesan | Cloud Data Engineers | Google
+Collaborator: Donna Schut | Solutions Manager | Google
+Collaborator: Travis Webb | Solutions Engineer | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 Google Earth Engine is a geospatial processing platform powered by Google Cloud that combines a multi-petabyte catalog of satellite imagery and geospatial datasets with planetary-scale analysis capabilities. Earth Engine is used for analyzing forest and water coverage, analyzing land use change, assessing the health of agricultural fields, etc.
 
-[geobeam](https://github.com/GoogleCloudPlatform/dataflow-geobeam) is a Python-based framework that provides a set of Apache Beam classes and utilities that make it easier to process and transform massive amounts of geospatial data using Google Cloud Dataflow. 
+[geobeam](https://github.com/GoogleCloudPlatform/dataflow-geobeam) is a Python-based framework that provides a set of Apache Beam classes and utilities that make it easier to process and transform massive amounts of geospatial data using Google Cloud Dataflow.
 
-This solution uses geobeam to ingest raster TIFF images that have been generated in Earth Engine into BigQuery. 
+This solution uses geobeam to ingest raster TIFF images that have been generated in Earth Engine into BigQuery.
 
 ## Objectives
 
