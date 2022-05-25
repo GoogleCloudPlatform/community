@@ -159,7 +159,7 @@ Set environment variables that you use throughout the tutorial:
 
         gsutil mb -b on gs://$BUCKET_NAME
         
-    For infomation on the `gsutil mb` command, see [the documentation](https://cloud.google.com/storage/docs/gsutil/commands/mb).   
+    For information on the `gsutil mb` command, see [the documentation](https://cloud.google.com/storage/docs/gsutil/commands/mb).   
 
 1.  Upload the build artifacts, which are all static files:
 
@@ -171,7 +171,7 @@ Set environment variables that you use throughout the tutorial:
 
         gsutil web set -m index.html -e index.html gs://$BUCKET_NAME
     
-    For infomation on the `gsutil web set` command, see [the documentation](https://cloud.google.com/storage/docs/gsutil/commands/web#set).
+    For information on the `gsutil web set` command, see [the documentation](https://cloud.google.com/storage/docs/gsutil/commands/web#set).
 
 ### Create a load balancer 
 
@@ -388,7 +388,7 @@ Set environment variables that you use throughout the tutorial:
     Username: `admin`  
     Password: `password`
     
-1.  Try again to open a file hostead in the bucket:
+1.  Try again to open a file hosted in the bucket:
 
     ![static-file](https://storage.googleapis.com/gcp-community/tutorials/securing-gcs-static-website/static-file.png)
 
