@@ -12,8 +12,6 @@ Before you adopt Cloud Bigtable, you might want to evaluate its cost and latency
 
 This guide uses billable components of Google Cloud, including the following:
 
-
-
 * Compute Engine (for running JMeter)
 * Cloud Bigtable
 
@@ -21,8 +19,6 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
 
 
 ## Objectives
-
-
 
 * Determine whether Cloud Bigtable is suitable for a workload, before application code changes.
 * Write a performance test for your workload on Cloud Bigtable using JMeter.
@@ -37,8 +33,6 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
 
 Possible use cases for doing performance tests with JMeter:
 
-
-
 * You want to migrate current Cassandra, HBase, or other NoSQL use cases  to Cloud Bigtable.
 * You want to evaluate performance of a data model and need to ensure that Bigtable scales linearly to meet demand.
 * You want to standardize on Cloud Bigtable for multiple applications.
@@ -48,8 +42,6 @@ Possible use cases for doing performance tests with JMeter:
 ## Limitations
 
 Below are a few limitations with JMeter and testing with Bigtable: 
-
-
 
 * You cannot use JMeter to test non-Java Cloud Bigtable client side libraries. Although, you can bypass the client library using underlying [gRPC](https://cloud.google.com/bigtable/docs/reference/service-apis-overview#grpc) or [REST APIs](https://cloud.google.com/bigtable/docs/reference/service-apis-overview#rest), that is out of scope for this document.
 * JMeter does not allow you to create a shared connection pool used by all the threads with JSR 233 Sampler. Therefore you will be creating one connection per thread in a Thread Group.
@@ -85,8 +77,6 @@ You can increase or decrease the initial cluster size to maintain the recommende
 
 Before you begin writing performance tests, make the following preparations:
 
-
-
 1. Identify top read and write operations. Determine the latency, frequency, and average number of rows returned for each of the operations. This information will also serve as a baseline for the current system.
 2. Determine the Cloud [Bigtable zone](https://cloud.google.com/bigtable/docs/locations) before deployment. You cannot change the location after you create the instance. Ideally, load should be generated from the same region for minimum latency and best performance.
 3. Estimate the range of Cloud Bigtable nodes required for the workload. 
@@ -100,43 +90,30 @@ For this document we will assume an example use case of real time App Install & 
 
 ### High-level schema
 
-enterprise_app_installs:  store record of apps ever available with UUID as app identifier. Lookup by key. 
+enterprise_app_installs: store record of apps ever available with UUID as app identifier. Lookup by key. 
 
-rowkey: 			uuid
+	rowkey: 		uuid
+	cf1:owner		<owner_id>
+	cf1:description		<user description>
+	cf1:app_status		<status_id>
+	cf1:app_category	<app_category>
+	cf1:created_ts		<created_ts>
 
-cf1:owner			&lt;owner_id>
+enterprise_app_event_history: This is to store app activity events. Activity events are captured at key operations like signing, addToCart, checkout etc to collect information about important activities performed by the user (i.e. app install uuid). Along with that timestamp is captured as well which will allow us to filter events based on time when they occurred.
 
-cf1:description		&lt;user description>
-
-cf1:app_status			&lt;status_id>
-
-cf1:app_category		&lt;app_category>
-
-cf1:created_ts			&lt;created_ts>
-
-enterprise_app_event_history:  store app session and activity events. Activity events are captured at least at launch and closure of the app to collect stateful information by UUID as app identifier, timestamp of event, and unique eventId.
-
-rowkey: 			uuid#eventId#timestamp
-
-cf1:event_details		&lt;details_of_app_event>
-
-cf1:memory_usage		&lt;memory_usage_metric>
-
-cf1:cpu_utilization		&lt;cpu_utilization_metric>
-
-cf1:event_ts			&lt;event_ts>
+	rowkey: 		uuid#eventId#timestamp
+	cf1:event_details	<details_of_app_event>
+	cf1:memory_usage	<memory_usage_metric>
+	cf1:cpu_utilization	<cpu_utilization_metric>
+	cf1:event_ts		<event_ts>
 
 
 ### DDL
 
 [Install bigtable CLI tool](https://cloud.google.com/bigtable/docs/cbt-overview) (cbt) if you don’t have one already or create tables using UI.
 
-
-```
-cbt -instance bt-perf createtable enterprise_app_installs "families=cf1:maxversions=10"
-cbt -instance bt-perf createtable enterprise_app_event_history "families=cf1:maxversions=1"
-```
-
+	cbt -instance bt-perf createtable enterprise_app_installs "families=cf1:maxversions=10"
+	cbt -instance bt-perf createtable enterprise_app_event_history "families=cf1:maxversions=1"
 
 
 ## Set up JMeter
@@ -148,28 +125,23 @@ You can use a local workstation for test development, too. Don't use a local wor
 
 ### Installation
 
-
-
 1. Download and install [JMeter](https://jmeter.apache.org/download_jmeter.cgi) 5.3 or higher, which requires Java 8 or higher.
 2. Install [Maven](https://maven.apache.org/install.html), which is used to download Cloud Spanner client libraries.
 3. In a command shell, go to an empty directory, where you will keep JMeter dependencies.
 4. Download the Cloud Bigtable HBase client library and dependencies:
 
-mvn dependency:get -Dartifact=com.google.cloud.bigtable:bigtable-hbase-1.x-shaded:2.0.0 -Dmaven.repo.local=.
+	mvn dependency:get -Dartifact=com.google.cloud.bigtable:bigtable-hbase-1.x-shaded:2.0.0 -Dmaven.repo.local=.
 
 
+5. Move the downloaded JAR files into a folder for JMeter to load in its classpath: 
 
-5. Move the downloaded JAR files into a folder for JMeter to load in its classpath: \
 Linux
 
-		find . -name *.jar -exec mv '{}' . \; \
+	find . -name *.jar -exec mv '{}' . \;
 
+Windows
 
-	Windows
-
-	
-
-		for /r %x in (*.jar) do copy "%x" .
+	for /r %x in (*.jar) do copy "%x" .
 
 
 ### Set up authentication for JMeter
@@ -178,7 +150,7 @@ JMeter uses Cloud Bigtable client libraries to connect. It supports [various aut
 
 In summary, you need to set up gcloud and run the following command to store credentials locally:
 
-	   gcloud auth application-default login
+	gcloud auth application-default login
 
 
 ## JMeter basics
@@ -283,13 +255,12 @@ There are [multiple ways](https://cloud.google.com/bigtable/docs/import-export) 
 
 ### How much data to load
 
-The Bigtable cluster configurations including [storage types](https://cloud.google.com/bigtable/docs/instances-clusters-nodes#storage-types), [application profiles](https://cloud.google.com/bigtable/docs/instances-clusters-nodes#app-profiles), number of [nodes](https://cloud.google.com/bigtable/docs/instances-clusters-nodes#nodes)  and the size of the data set can alter the performance of workload and the test results on the same cluster. Data set size should be picked similar in volume to production data keeping in mind what we are trying to understand about the cluster’s performance.
+The Bigtable cluster configurations including [storage types](https://cloud.google.com/bigtable/docs/instances-clusters-nodes#storage-types), [application profiles](https://cloud.google.com/bigtable/docs/instances-clusters-nodes#app-profiles), number of [nodes](https://cloud.google.com/bigtable/docs/instances-clusters-nodes#nodes)  and the size of the data set can alter the performance of workload and the test results on the same cluster. Data set size should be picked similar in volume to production data keeping in mind what we are trying to understand about the bigtable cluster’s performance.
 
 
 ### How to reset tests
 
-
-### Ideally, you should reset your database to the same seed data for comparison between multiple test executions. You can use backup/restore (or export/import) to initialize each run to the same initial dataset. The latter is better if different configurations are tested.
+Ideally, you should reset your database to the same seed data for comparison between multiple test executions. You can use backup/restore (or export/import) to initialize each run to the same initial dataset. The latter is better if different configurations are tested.
 
 
 ### Using JMeter to mock seed data
@@ -301,8 +272,7 @@ Below is an example Bigtable-Initial-Load.jmx used to load sample schema. You wi
 
 ### **Bigtable-Initial-Load.jmx**
 
-
-### The  Bigtable-Initial-Load.jmx test generates random data in enterprise_app_installs table with the below  given column family.
+The  Bigtable-Initial-Load.jmx test generates random data in enterprise_app_installs table with the below given column family.
 
 
 <table>
@@ -353,10 +323,7 @@ Below is an example Bigtable-Initial-Load.jmx used to load sample schema. You wi
 
 You can run this JMeter test with the following command:
 
-
-```
-jmeter -n -t Bigtable-Initial-Load.jmx -l load-out-c.csv -Jusers=10 -Jiterations=100
-```
+	jmeter -n -t Bigtable-Initial-Load.jmx -l load-out-c.csv -Jusers=100 -Jiterations=1000
 
 
 You can use the  [Key Visualizer tool for Bigtable](https://cloud.google.com/bigtable/docs/keyvis-overview) to generate visual reports for your table. This tool will help you analyze your Bigtable usage patterns. Key Visualizer makes it possible to check whether your usage patterns are causing undesirable results, such as hotspots on specific rows or excessive CPU utilization. 
@@ -365,8 +332,6 @@ Initial load should be done with randomly generated rowkeys. Using monotonically
 
 
 ## Developing performance tests
-
-
 
 * Target to configure performance tests such that they generate transactions per second (TPS) similar to the current database (baseline). Later in the execution phase, increase the number of users (load) to simulate scaling.
 * Test with enough data: \
@@ -437,26 +402,19 @@ Below is the sample JMeter test to simulate the above scenarios.
 #### **Bigtable-Perf-Test.jmx**
 
 
-#### <span style="text-decoration:underline;">Bigtable-Perf-Test.jmx</span> uses a CSV configuration to get UUID rowkey.
+<span style="text-decoration:underline;">Bigtable-Perf-Test.jmx</span> uses a CSV configuration to get UUID rowkey.
 
 The following are the first few lines, for example:
 
-
-```
-bfee72e3-0a6f-4b63-afbd-ce97bd1df68a
-b5c00c8d-33b6-4c7b-add1-0eade16d7d7d
-019bb7ce-9b19-41b7-9c5b-ec3f901069f5
-6ed25e50-d0b2-4d57-9398-7db78d25370c
-f918d20f-049f-4b33-994b-5b22e2927d5f
-81e64859-810a-403f-a690-ee31022a9c88
-414ffce9-341c-49ba-8eaf-5343e64a3976
-e50c4b91-eb49-476f-8c9b-8d800b24a66d
-02e9e364-5b9a-4be7-b39f-fde92e524cfa
-cd21919a-79b6-4c9e-b24c-a3f48dbb732d
-```
+	bfee72e3-0a6f-4b63-afbd-ce97bd1df68a
+	b5c00c8d-33b6-4c7b-add1-0eade16d7d7d
+	019bb7ce-9b19-41b7-9c5b-ec3f901069f5
+	6ed25e50-d0b2-4d57-9398-7db78d25370c
+	f918d20f-049f-4b33-994b-5b22e2927d5f
+	cd21919a-79b6-4c9e-b24c-a3f48dbb732d
 
 
-The above CSV file will be created using <span style="text-decoration:underline;">JMeter Bigtable Loader code</span>
+The above CSV file will be created using JMeter Bigtable Loader.
 
 There are four thread groups with different transactions, as shown in the following screenshot.
 
@@ -468,8 +426,7 @@ There are four thread groups with different transactions, as shown in the follow
 ![alt_text](images/image4.png "image_tooltip")
 
 
-The** <span style="text-decoration:underline;">CSV Read configuration</span> **reads data from a CSV file that is being used in all four thread groups. CSV Data Set Config is used to read and split lines from a file into variables. It's more user-friendly than __CSVRead() and __StringFromFile(). It's great for dealing with a lot of variables, and it's also great for testing with "random" and unique values.
-
+The CSV Read configuration reads data from a CSV file that is being used in all four thread groups. CSV Data Set Config is used to read and split lines from a file into variables. It's more user-friendly than `__CSVRead()` and `__StringFromFile()`. It's great for dealing with a lot of variables, and it's also great for testing with "random" and unique values.
 
 
 <p id="gdcalert5" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image5.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert6">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
@@ -527,8 +484,6 @@ The Bigtable Insert group as shown below uses Groovy script in order to connect 
 
 ### Guidelines for executing the tests, for best results:
 
-
-
 * Run JMeter tests from the command line, not GUI mode.
 * Run each test at least 3 times to even out random differences.
 * Warm up Bigtable before running tests (as in production).
@@ -546,64 +501,30 @@ The Bigtable Insert group as shown below uses Groovy script in order to connect 
 
 ### Run the test:
 
-
-```
-jmeter -n -t bigtable-performance-test.jmx -l load-out-c.csv -Jusers=10 -Jiterations=100
-```
+	jmeter -n -t bigtable-performance-test.jmx -l load-out-c.csv -Jusers=10 -Jiterations=100
 
 
 You can modify the number of users and duration as needed.
 
 The test generates a test-out.csv file with raw statistics. You can use the following command to [create a JMeter report from it](https://jmeter.apache.org/usermanual/generating-dashboard.html#report_only):
 
-
-```
-jmeter -g test-out.csv -o [PATH_TO_OUTPUT_FOLDER]
-```
-
-
+	jmeter -g test-out.csv -o [PATH_TO_OUTPUT_FOLDER]
 
 ### Collecting performance test results
 
 You gather performance metrics after the test execution.
-
-
 
 1. Validate that the test ran according to the requirements defined earlier.
 2. Compare results with your success criteria.
 
 We recommend capturing these performance metrics from Bigtable monitoring rather than the JMeter report. 
 
-Based on the success criteria, following most important metrics are collected using Cloud Monitoring:
+Based on the success criteria, following metrics can be collected from BigTable Monitoring:
+* **CPU Load** : <50% is preferred for latency sensetive apps.
+* **Storage** : <60% of storage utilization is optimal to keep latencies low. Also SSDs is recommended.
+* **Latency at 50th and 99th percentile** 
 
-CPU Load
-
-
-
-<p id="gdcalert10" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image10.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert11">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image10.png "image_tooltip")
-
-
-Latency at 50th and 99th percentile for different types of operations:
-
-
-
-<p id="gdcalert11" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image11.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert12">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image11.png "image_tooltip")
-
-
-
-
-<p id="gdcalert12" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image12.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert13">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image12.png "image_tooltip")
-
-
+Refer [here](https://cloud.google.com/bigtable/docs/performance) for more detials on optimizing performance of BigTable.
 Cloud Bigtable instances can be monitored using [Cloud monitoring](https://cloud.google.com/bigtable/docs/monitoring-instance), various types of metrics can be visualized including CPU utilization, Disk Usage, Latency, etc.
 
 To troubleshoot performance issues, use [Key Visualiser ](https://cloud.google.com/bigtable/docs/keyvis-overview)to analyze Bigtable usage patterns.
