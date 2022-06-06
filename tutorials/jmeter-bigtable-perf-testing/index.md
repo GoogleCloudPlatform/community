@@ -181,19 +181,7 @@ Test plans and thread groups can also have configuration elements such as a CSV 
 
 As shown in the following screenshot within each JMeter test, you need to provide instance parameters, which are used by the bigtable-hbase library to connect to Cloud Bigtable.
 
-JMeter Bigtable Data Generator sample code
-
-[https://paste.googleplex.com/5115278657585152](https://paste.googleplex.com/5115278657585152)
-
-
-
-* Is cluster “bigtable-cluster-id” required in jmx?
-
-Error when running tool
-
-JMeter Bigtable Performance Test sample code
-
-[https://paste.googleplex.com/5634432653328384](https://paste.googleplex.com/5634432653328384)
+![drawing](images/0-instance-config.jpeg)
 
 
 ### Thread groups
@@ -214,45 +202,28 @@ Creating a connection is a resource heavy operation, hence you need to create a 
 
 This thread group gets executed before any other thread groups.
 
-
-
-<p id="gdcalert1" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image1.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert2">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image1.png "image_tooltip")
+![alt_text](images/1-connection.jpeg)
 
 
 Within this thread group create a JSR233 Sampler which creates the connection object one-time and stores it in memory (as btConn property). Later the same object is fetched by the tests to connect to Bigtable.
 
-
-
-<p id="gdcalert2" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image2.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert3">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image2.png "image_tooltip")
+![alt_text](images/2-set-up.jpeg)
 
 
 Sample code as below:
 
 
-```
-import com.google.cloud.bigtable.hbase.BigtableConfiguration;
-import org.apache.hadoop.hbase.client.Connection;
+	import com.google.cloud.bigtable.hbase.BigtableConfiguration;
+	import org.apache.hadoop.hbase.client.Connection;
 
-Connection conn = BigtableConfiguration.connect("${project-id}", "${bigtable-instance-id}");
-OUT.println("Opened Connection:" + conn);
-props.put("btConn", conn);
-```
+	Connection conn = BigtableConfiguration.connect("${project-id}", "${bigtable-instance-id}");
+	OUT.println("Opened Connection:" + conn);
+	props.put("btConn", conn);
 
 
 Similarly, you should also create a tearDown thread group with a sampler to close the connection as shown in screenshot below.
 
-
-
-<p id="gdcalert3" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image3.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert4">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image3.png "image_tooltip")
+![alt_text](images/3-teardown.jpeg)
 
 
 
@@ -428,27 +399,14 @@ The above CSV file will be created using JMeter Bigtable Loader.
 
 There are four thread groups with different transactions, as shown in the following screenshot.
 
-
-
-<p id="gdcalert4" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image4.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert5">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image4.png "image_tooltip")
+![alt_text](images/4-csv-config.jpeg)
 
 
 The CSV Read configuration reads data from a CSV file that is being used in all four thread groups. CSV Data Set Config is used to read and split lines from a file into variables. It's more user-friendly than `__CSVRead()` and `__StringFromFile()`. It's great for dealing with a lot of variables, and it's also great for testing with "random" and unique values.
 
 
-<p id="gdcalert5" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image5.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert6">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
+![alt_text](images/5-csv-confg-detials.jpeg)
 
-
-![alt_text](images/image5.png "image_tooltip")
-
-
-<p id="gdcalert6" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image6.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert7">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image6.png "image_tooltip")
 
 
 All the thread groups are configured to use below parameters which can be passed by command line as well.
@@ -457,36 +415,20 @@ All the thread groups are configured to use below parameters which can be passed
 
 * **Number of Threads (users)**: Configures the number of simultaneous connections to Bigtable cluster. If you want a thread group to run for a given duration, then you can change this property.
 * **Ramp-Up Period (in seconds)**: Time taken by JMeter to ramp-up each thread. In this case, each thread will start 1 second after the previous thread.
-* **Loop Count:** It is the number of times the test needs to be executed.  \
+* **Loop Count:** It is the number of times the test needs to be executed.  
 
 
-   
-
-<p id="gdcalert7" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image7.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert8">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image7.png "image_tooltip")
+![alt_text](images/6-thread-group.jpeg)
 
 
 The Bigtable Insert group as shown below uses Groovy script in order to connect to Bigtable and insert randomly generated values to **enterprise_app_event_history** table
 
-
-
-<p id="gdcalert8" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image8.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert9">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image8.png "image_tooltip")
+![alt_text](images/7-add-event.jpeg)
 
 
 **Randomly generated values**:
 
-
-
-<p id="gdcalert9" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image9.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert10">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image9.png "image_tooltip")
-
+![alt_text](images/8-random-values.jpeg)
 
 
 ## Executing performance test
@@ -542,5 +484,11 @@ To troubleshoot performance issues, use [Key Visualiser ](https://cloud.google.c
 
 ## Cleaning up
 
+To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project:
+
+1.  In the Cloud Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
+2.  In the project list, select the project that you want to delete and click **Delete**.
+3.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
 
 ## What's next
+
