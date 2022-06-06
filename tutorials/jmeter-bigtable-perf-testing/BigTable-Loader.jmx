@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.4.1">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="BigTable Loader" enabled="true">
+      <stringProp name="TestPlan.comments"></stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="project-id" elementType="Argument">
+            <stringProp name="Argument.name">project-id</stringProp>
+            <stringProp name="Argument.value">XXXXXXXXXX</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="bigtable-instance-id" elementType="Argument">
+            <stringProp name="Argument.name">bigtable-instance-id</stringProp>
+            <stringProp name="Argument.value">XXXXXXXXXXX</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="install-id-csv-output-path" elementType="Argument">
+            <stringProp name="Argument.name">install-id-csv-output-path</stringProp>
+            <stringProp name="Argument.value">app-install-ids.csv</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="threads" elementType="Argument">
+            <stringProp name="Argument.name">threads</stringProp>
+            <stringProp name="Argument.value">${__P(threads, 10)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="loops" elementType="Argument">
+            <stringProp name="Argument.name">loops</stringProp>
+            <stringProp name="Argument.value">${__P(loops, 100)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </elementProp>
+      <stringProp name="TestPlan.user_define_classpath">/location/to/my/jars</stringProp>
+    </TestPlan>
+    <hashTree>
+      <SetupThreadGroup guiclass="SetupThreadGroupGui" testclass="SetupThreadGroup" testname="setUp" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">1</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+      </SetupThreadGroup>
+      <hashTree>
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="Create BT connection" enabled="true">
+          <stringProp name="scriptLanguage">groovy</stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="cacheKey">true</stringProp>
+          <stringProp name="script">import com.google.cloud.bigtable.hbase.BigtableConfiguration;
+import org.apache.hadoop.hbase.client.Connection;
+ 
+Connection conn = BigtableConfiguration.connect(&quot;${project-id}&quot;, &quot;${bigtable-instance-id}&quot;);
+ 
+//open file in append mode
+PrintWriter csvWriter = new PrintWriter(new BufferedWriter(new FileWriter(&quot;${install-id-csv-output-path}&quot;, true)));
+ 
+ 
+OUT.println(&quot;Opened Connection:&quot; + conn);
+ 
+props.put(&quot;btConn&quot;, conn);
+props.put(&quot;csvWriter&quot;, csvWriter);</stringProp>
+        </JSR223Sampler>
+        <hashTree/>
+      </hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="BigTable Data Generator" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">${loop}</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">${threads}</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">false</boolProp>
+      </ThreadGroup>
+      <hashTree>
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="Write Installs" enabled="true">
+          <stringProp name="scriptLanguage">groovy</stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="cacheKey">true</stringProp>
+          <stringProp name="script">import org.apache.hadoop.hbase.client.Connection;
+import org.apache.hadoop.hbase.client.Table;
+import org.apache.hadoop.hbase.util.Bytes;
+import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.TableName;
+ 
+ 
+Connection btConn = props.get(&quot;btConn&quot;);
+final Table table = btConn.getTable(TableName.valueOf(Bytes.toBytes(vars.get(&quot;app_installs_table&quot;))));
+ 
+final byte[] COLUMN_FAMILY_NAME = Bytes.toBytes(&quot;cf1&quot;);
+final long timestamp = System.currentTimeMillis();
+ 
+Put put = new Put(Bytes.toBytes(vars.get(&quot;install_id&quot;)));
+ 
+put.addColumn(COLUMN_FAMILY_NAME, Bytes.toBytes(&quot;owner&quot;), timestamp, Bytes.toBytes(vars.get(&quot;owner&quot;)));
+put.addColumn(COLUMN_FAMILY_NAME, Bytes.toBytes(&quot;description&quot;), timestamp, Bytes.toBytes(vars.get(&quot;description&quot;)));
+ 
+put.addColumn(COLUMN_FAMILY_NAME, Bytes.toBytes(&quot;app_status&quot;), timestamp, Bytes.toBytes(vars.get(&quot;app_status&quot;)));
+put.addColumn(COLUMN_FAMILY_NAME, Bytes.toBytes(&quot;app_category&quot;), timestamp, Bytes.toBytes(vars.get(&quot;app_category&quot;)));
+put.addColumn(COLUMN_FAMILY_NAME, Bytes.toBytes(&quot;created_ts&quot;), timestamp, Bytes.toBytes(vars.get(&quot;created_ts&quot;)));
+ 
+table.put(put);
+ 
+SampleResult.setRequestHeaders(put.toString());</stringProp>
+        </JSR223Sampler>
+        <hashTree>
+          <UserParameters guiclass="UserParametersGui" testclass="UserParameters" testname="Install Parameters" enabled="true">
+            <collectionProp name="UserParameters.names">
+              <stringProp name="911405285">app_installs_table</stringProp>
+              <stringProp name="900440639">install_id</stringProp>
+              <stringProp name="106164915">owner</stringProp>
+              <stringProp name="-1724546052">description</stringProp>
+              <stringProp name="-152614564">app_category</stringProp>
+              <stringProp name="1283840976">app_status</stringProp>
+              <stringProp name="1369680694">created_ts</stringProp>
+            </collectionProp>
+            <collectionProp name="UserParameters.thread_values">
+              <collectionProp name="-1005456061">
+                <stringProp name="1124570804">enterprise_app_installs</stringProp>
+                <stringProp name="118040362">${__UUID()}</stringProp>
+                <stringProp name="48049910">${__RandomString(10,abcdefghijklmnopqrstuvwxyz0123456789)}</stringProp>
+                <stringProp name="-1463963655">${__RandomString(40,abcdefghijklmnopqrstuvwxyz0123456789)}</stringProp>
+                <stringProp name="3079651">demo</stringProp>
+                <stringProp name="2524">OK</stringProp>
+                <stringProp name="1275433077">${__RandomDate(,2020-01-01,2021-01-01,,)}</stringProp>
+              </collectionProp>
+            </collectionProp>
+            <boolProp name="UserParameters.per_iteration">false</boolProp>
+          </UserParameters>
+          <hashTree/>
+        </hashTree>
+        <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Write n events" enabled="true">
+          <boolProp name="LoopController.continue_forever">true</boolProp>
+          <stringProp name="LoopController.loops">50</stringProp>
+        </LoopController>
+        <hashTree>
+          <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="Write Events" enabled="true">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="script">import org.apache.hadoop.hbase.client.Connection;
+import org.apache.hadoop.hbase.client.Table;
+import org.apache.hadoop.hbase.util.Bytes;
+import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.TableName;
+ 
+ 
+Connection btConn = props.get(&quot;btConn&quot;);
+final Table table = btConn.getTable(TableName.valueOf(Bytes.toBytes(vars.get(&quot;app_events_table&quot;))));
+ 
+final byte[] COLUMN_FAMILY_NAME = Bytes.toBytes(&quot;cf1&quot;);
+final long timestamp = System.currentTimeMillis();
+ 
+String eventDateTime = vars.get(&quot;event_date&quot;) + &quot;T&quot; + vars.get(&quot;event_time&quot;);
+String eventKey = vars.get(&quot;install_id&quot;) + &quot;#&quot; + vars.get(&quot;event_id&quot;) + &quot;#&quot; + eventDateTime ;
+ 
+Put put = new Put(Bytes.toBytes(eventKey));
+ 
+put.addColumn(COLUMN_FAMILY_NAME, Bytes.toBytes(&quot;event_details&quot;), timestamp, Bytes.toBytes(vars.get(&quot;event_details&quot;)));
+put.addColumn(COLUMN_FAMILY_NAME, Bytes.toBytes(&quot;memory_usage&quot;), timestamp, Bytes.toBytes(vars.get(&quot;memory_usage&quot;)));
+ 
+put.addColumn(COLUMN_FAMILY_NAME, Bytes.toBytes(&quot;cpu_usage&quot;), timestamp, Bytes.toBytes(vars.get(&quot;cpu_usage&quot;)));
+put.addColumn(COLUMN_FAMILY_NAME, Bytes.toBytes(&quot;event_ts&quot;), timestamp, Bytes.toBytes(eventDateTime));
+table.put(put);
+ 
+SampleResult.setRequestHeaders(put.toString());
+</stringProp>
+          </JSR223Sampler>
+          <hashTree>
+            <UserParameters guiclass="UserParametersGui" testclass="UserParameters" testname="Event Parameters" enabled="true">
+              <collectionProp name="UserParameters.names">
+                <stringProp name="1525593734">app_events_table</stringProp>
+                <stringProp name="1661853540">session_id</stringProp>
+                <stringProp name="1942475165">event_details</stringProp>
+                <stringProp name="1034557667">memory_usage</stringProp>
+                <stringProp name="-1628011446">cpu_usage</stringProp>
+                <stringProp name="278118624">event_id</stringProp>
+                <stringProp name="983877171">event_date</stringProp>
+                <stringProp name="984361298">event_time</stringProp>
+              </collectionProp>
+              <collectionProp name="UserParameters.thread_values">
+                <collectionProp name="-1408424785">
+                  <stringProp name="893102323">enterprise_app_event_history</stringProp>
+                  <stringProp name="768150266">${__RandomString(5,abcdefghijklmnopqrstuvwxyz0123456789)}</stringProp>
+                  <stringProp name="-1463963655">${__RandomString(40,abcdefghijklmnopqrstuvwxyz0123456789)}</stringProp>
+                  <stringProp name="169408572">${__Random(10000,10000000)}</stringProp>
+                  <stringProp name="1622422764">${__Random(10,70)}</stringProp>
+                  <stringProp name="-399879248">${__Random(1001,1010)}</stringProp>
+                  <stringProp name="1735392725">${__RandomDate(,2021-01-01,2022-01-01,,)}</stringProp>
+                  <stringProp name="1662348087">${__time(HH:mm:ss.S,)}</stringProp>
+                </collectionProp>
+              </collectionProp>
+              <boolProp name="UserParameters.per_iteration">false</boolProp>
+            </UserParameters>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="write csv" enabled="true">
+          <stringProp name="scriptLanguage">groovy</stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="cacheKey">true</stringProp>
+          <stringProp name="script">PrintWriter csvWriter = props.get(&quot;csvWriter&quot;);
+csvWriter.println(vars.get(&quot;install_id&quot;));</stringProp>
+        </JSR223Sampler>
+        <hashTree/>
+      </hashTree>
+      <PostThreadGroup guiclass="PostThreadGroupGui" testclass="PostThreadGroup" testname="tearDown" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">1</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+      </PostThreadGroup>
+      <hashTree>
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="Close Connection" enabled="true">
+          <stringProp name="scriptLanguage">groovy</stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="cacheKey">true</stringProp>
+          <stringProp name="script">OUT.println(&quot;Closing connection&quot;);
+props.get(&quot;btConn&quot;).close();
+PrintWriter csvWriter = props.get(&quot;csvWriter&quot;);
+csvWriter.flush();
+csvWriter.close();</stringProp>
+        </JSR223Sampler>
+        <hashTree/>
+      </hashTree>
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="false">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <fieldNames>true</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+            <sentBytes>true</sentBytes>
+            <url>true</url>
+            <threadCounts>true</threadCounts>
+            <idleTime>true</idleTime>
+            <connectTime>true</connectTime>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+      <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="Aggregate Report" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <fieldNames>true</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+            <sentBytes>true</sentBytes>
+            <url>true</url>
+            <threadCounts>true</threadCounts>
+            <idleTime>true</idleTime>
+            <connectTime>true</connectTime>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>
