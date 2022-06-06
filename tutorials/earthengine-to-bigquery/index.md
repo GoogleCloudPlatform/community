@@ -1,14 +1,14 @@
 ---
-title: Ingest Geospatial Data from Google Earth Engine to BigQuery
-description: Use Cloud Dataflow and Geobeam to ingest geospatial raster data from Google Earth Engine to BigQuery.
+title: Ingest geospatial data from Google Earth Engine to BigQuery
+description: Use Cloud Dataflow and geobeam to ingest geospatial raster data from Google Earth Engine to BigQuery.
 author: kannappans,remyw
-tags: Dataflow, Google Earth Engine, Geobeam, BigQuery
+tags: Dataflow, Google Earth Engine, geobeam, BigQuery
 date_published: 2022-03-31
 ---
 
-Authors: Remy Welch, Kannappan Sirchabesan | Cloud Data Engineers | Google
-Collaborator: Donna Schut | Solutions Manager | Google
-Collaborator: Travis Webb | Solutions Engineer | Google
+Remy Welch, Kannappan Sirchabesan | Cloud Data Engineers | Google
+Donna Schut | Solutions Manager | Google
+Travis Webb | Solutions Engineer | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
@@ -117,7 +117,7 @@ bucket_name = os.environ['IMAGES_BUCKET']
 # Specify a region in the US (roughly the state of Colorado) to reduce the export time for the sake of example
 colorado = ee.Geometry.Rectangle([-104, 37, -102, 38]);
 
-# Select the first (and only) image from the Cropland image collection for the year 2019, and the cropland band, which gives us the crop type. Currently, Geobeam will only ingest a single band from a GeoTIFF at time.
+# Select the first (and only) image from the Cropland image collection for the year 2019, and the cropland band, which gives us the crop type. Currently, geobeam will only ingest a single band from a GeoTIFF at time.
 image = ee.ImageCollection('USDA/NASS/CDL').filter(ee.Filter.date('2019-01-01', '2019-01-02')).first();
 cropland = image.select('cropland');
 task_config = {
@@ -143,10 +143,10 @@ Get the credentials for running the geobeam job. This is only necessary if you a
 export GOOGLE_APPLICATION_CREDENTIALS="<Path of the keyfile JSON>"
 ```
 
-Run the GeoBeam job to ingest the TIFF file from the Cloud Storage bucket into BigQuery. The job takes about 11 minutes. 
+Run the geobeam job to ingest the TIFF file from the Cloud Storage bucket into BigQuery. The job takes about 11 minutes. 
 Make sure to specify the correct image based on the version of python you are using. If using python 3.8, use the container at gcr.io/dataflow-geobeam/example, if using python 3.7, use gcr.io/dataflow-geobeam/example-py37. 
 
-Geobeam parameters:
+Parameters for geobeam:
 
 **band_column** - the name of the band value, as you specified in the bq table creation statement
 
