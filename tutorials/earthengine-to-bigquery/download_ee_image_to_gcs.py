@@ -4,7 +4,7 @@ import os
 # Initialize the Earth Engine API
 ee.Initialize()
 
-# Retrieve the environment variable of GCS bucket for storing images
+# Retrieve the environment variable of the Cloud Storage bucket for storing images
 bucket_name = os.environ['IMAGES_BUCKET']
 
 # Specify a region in the US (roughly the state of Colorado) to reduce the export time for the sake of example
