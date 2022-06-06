@@ -3,7 +3,7 @@ title: Ingest geospatial data from Google Earth Engine to BigQuery
 description: Use Cloud Dataflow and geobeam to ingest geospatial raster data from Google Earth Engine to BigQuery.
 author: kannappans,remyw
 tags: Dataflow, Google Earth Engine, geobeam, BigQuery
-date_published: 2022-03-31
+date_published: 2022-06-07
 ---
 
 Remy Welch, Kannappan Sirchabesan | Cloud Data Engineers | Google
@@ -81,11 +81,12 @@ You can run all of the commands for this solution in [Cloud Shell](https://cloud
         export BQ_TABLE=tutorial_test
         export SERVICE_ACCOUNT_EMAIL=your_serviceaccount_email
 
-## Create Cloud Storage buckets
-
-1.  Create two buckets:
+1.  Set the working project:
 
         gcloud config set project ${PROJECT_ID}
+        
+1.  Create two Cloud Storage buckets:
+
         gsutil mb gs://${IMAGES_BUCKET}
         gsutil mb gs://${GEOBEAM_BUCKET}
 
@@ -171,7 +172,7 @@ This process takes a couple of minutes.
     Notes for some of the parameters for the geobeam command above:
 
     - Make sure to specify the correct image based on the version of Python that you're using. If you're using python 3.8, use the container at 
-      gcr.io/dataflow-geobeam/example. If you're using Python 3.7, use the container at gcr.io/dataflow-geobeam/example-py37. 
+      `gcr.io/dataflow-geobeam/example`. If you're using Python 3.7, use the container at `gcr.io/dataflow-geobeam/example-py37`. 
 
     - `band_column`: the name of the band value, as you specified in the `bq` table creation statement
 
