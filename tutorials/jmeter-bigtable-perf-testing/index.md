@@ -251,9 +251,9 @@ Sometimes it is not simple to import existing or mocked up data into Cloud Bigta
 Below is an example Bigtable-Initial-Load.jmx used to load sample schema. You will need to update connection parameters as described previously.
 
 
-### **Bigtable-Initial-Load.jmx**
+### **[BigTable-Loader.jmx](./BigTable-Loader.jmx)**
 
-The  Bigtable-Initial-Load.jmx test generates random data in enterprise_app_installs table with the below given column family.
+The  [Bigtable-Initial-Load.jmx](./BigTable-Loader.jmx) test generates random data in enterprise_app_installs table with the below given column family.
 
 
 <table>
@@ -380,10 +380,10 @@ Assume that the following baseline needs to be performance-tested:
 Below is the sample JMeter test to simulate the above scenarios.
 
 
-#### **Bigtable-Perf-Test.jmx**
+#### **[BigTable-Runner.jmx](./BigTable-Loader.jmx)**
 
 
-<span style="text-decoration:underline;">Bigtable-Perf-Test.jmx</span> uses a CSV configuration to get UUID rowkey.
+[Bigtable-Perf-Test.jmx](./BigTable-Runner.jmx) uses a CSV configuration to get UUID rowkey.
 
 The following are the first few lines, for example:
 
