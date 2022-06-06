@@ -27,7 +27,7 @@ This solution uses geobeam to ingest raster TIFF images that have been generated
 
 ## Architecture
 
-![architecture](image/ee2bq_architecture.png)
+![architecture](https://storage.googleapis.com/gcp-community/tutorials/earthengine-to-bigquery/ee2bq_architecture.png)
 
 There are several components to this architecture:
 
@@ -175,19 +175,19 @@ python -m geobeam.examples.crop_geotiff \
 # --service_account_email ${SERVICE_ACCOUNT_EMAIL} \
 You can monitor the progress of the Dataflow job in the Cloud Console. The job graph looks similar to the following image: 
 
-![geobeam graph.](image/geobeam_graph.png)
+![geobeam graph.](https://storage.googleapis.com/gcp-community/tutorials/earthengine-to-bigquery/geobeam_graph.png)
 
 ### Verify the data in BigQuery
 
 When the geobeam job finishes, the data has been ingested into BigQuery. You can verify this in the Cloud Console by looking at the preview of the BigQuery table. The output looks like the following, the `geom` column containing the points of the image as POINT objects with the corresponding latitude and longitude, and the `croptype` column containing the crop type for each point.
 
-![BigQuery data preview.](image/bqdatapreview.png)
+![BigQuery data preview.](https://storage.googleapis.com/gcp-community/tutorials/earthengine-to-bigquery/bqdatapreview.png)
 
 ### Check BigQuery Geo Viz
 
 Check BigQuery Geo Viz to make sure that the images are similar. As you can see, the points are projected in the correct area in the US.
 
-![BigQuery Geo Viz visualization.](image/bqgeoviz.png)
+![BigQuery Geo Viz visualization.](https://storage.googleapis.com/gcp-community/tutorials/earthengine-to-bigquery/bqgeoviz.png)
 
 ## Cleaning up
 
