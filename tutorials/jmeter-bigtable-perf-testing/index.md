@@ -179,7 +179,7 @@ Test plans and thread groups can also have configuration elements such as a CSV 
 
 ### Configuring connection parameters
 
-As shown in the following screenshot, within each JMeter test, you need to provide connection parameters, which are used by the bigtable-hbase library to connect to Cloud Bigtable.
+As shown in the following screenshot within each JMeter test, you need to provide instance parameters, which are used by the bigtable-hbase library to connect to Cloud Bigtable.
 
 JMeter Bigtable Data Generator sample code
 
