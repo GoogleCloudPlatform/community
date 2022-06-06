@@ -333,7 +333,7 @@ The  Bigtable-Initial-Load.jmx test generates random data in enterprise_app_inst
 
 You can run this JMeter test with the following command:
 
-	jmeter -n -t Bigtable-Initial-Load.jmx -l load-out-c.csv -Jusers=100 -Jiterations=1000
+	jmeter -n -t Bigtable-Initial-Load.jmx -l load-out-c.csv -Jthreads=100 -Jloops=1000
 
 
 You can use the  [Key Visualizer tool for Bigtable](https://cloud.google.com/bigtable/docs/keyvis-overview) to generate visual reports for your table. This tool will help you analyze your Bigtable usage patterns. Key Visualizer makes it possible to check whether your usage patterns are causing undesirable results, such as hotspots on specific rows or excessive CPU utilization. 
@@ -511,7 +511,7 @@ The Bigtable Insert group as shown below uses Groovy script in order to connect 
 
 ### Run the test:
 
-	jmeter -n -t bigtable-performance-test.jmx -l load-out-c.csv -Jusers=10 -Jiterations=100
+	jmeter -n -t bigtable-performance-test.jmx -l load-out-c.csv -Jthreads=10 -Jloops=100
 
 
 You can modify the number of users and duration as needed.
