@@ -543,4 +543,10 @@ To avoid incurring charges to your Google Cloud account for the resources used i
 3.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
 
 ## What's next
+* [BigTable Schema design best practices](https://cloud.google.com/bigtable/docs/schema-design)
+* [Eliminate hotspots in Cloud Bigtable](https://cloud.google.com/blog/products/databases/hotspots-and-performance-debugging-in-cloud-bigtable)
+* [Live Migrate from Apache HBase to Cloud Bigtable](https://cloud.google.com/blog/products/databases/migrate-from-apache-hbase-to-cloud-bigtable-with-live-migrations)
+* [How BIG is Cloud Bigtable?](https://cloud.google.com/blog/topics/developers-practitioners/how-big-cloud-bigtable)
+* [Measure Cloud Spanner performance using JMeter](https://cloud.google.com/community/tutorials/jmeter-spanner-performance-test)
+
 
