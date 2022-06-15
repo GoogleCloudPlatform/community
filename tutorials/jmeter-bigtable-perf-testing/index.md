@@ -15,7 +15,7 @@ Shashank Agarwal, Jordan Hambleton, Shubham Chawla | Google
 
 Before you adopt Cloud Bigtable, you might want to evaluate its cost and latency by performance testing. In this tutorial, you will do the performance testing with Cloud Bigtable using JMeter.
 
-[Apache JMeter](https://jmeter.apache.org/) is a popular open source tool for load testing. It includes scriptable samplers in languages, such as Groovy and BeanShell. In this tutorial, you will use the JSR-233 Sampler to simulate load on Cloud Bigtable using the [bigtable-hbase-1.x](https://cloud.google.com/bigtable/docs/hbase-bigtable) client library.
+[Apache JMeter](https://jmeter.apache.org/) is a popular open source tool for load testing. It includes scriptable samplers in languages, such as Groovy and BeanShell. In this tutorial, you will use the JSR-233 Sampler to simulate load on Cloud Bigtable using the [bigtable-hbase-1.x](https://cloud.google.com/bigtable/docs/samples-hbase-java-hello) client library.
 
 
 ## Costs
