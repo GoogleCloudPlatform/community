@@ -77,10 +77,10 @@ props.put(&quot;csvWriter&quot;, csvWriter);</stringProp>
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
-          <stringProp name="LoopController.loops">${loop}</stringProp>
+          <stringProp name="LoopController.loops">${loops}</stringProp>
         </elementProp>
         <stringProp name="ThreadGroup.num_threads">${threads}</stringProp>
-        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">300</stringProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration"></stringProp>
         <stringProp name="ThreadGroup.delay"></stringProp>
@@ -97,25 +97,24 @@ import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.TableName;
- 
- 
+
+
 Connection btConn = props.get(&quot;btConn&quot;);
 final Table table = btConn.getTable(TableName.valueOf(Bytes.toBytes(vars.get(&quot;app_installs_table&quot;))));
- 
+
 final byte[] COLUMN_FAMILY_NAME = Bytes.toBytes(&quot;cf1&quot;);
 final long timestamp = System.currentTimeMillis();
- 
-Put put = new Put(Bytes.toBytes(vars.get(&quot;install_id&quot;)));
- 
+String installKey = vars.get(&quot;app_id&quot;) + &quot;#&quot; + vars.get(&quot;install_id&quot;);
+
+Put put = new Put(Bytes.toBytes(installKey));
 put.addColumn(COLUMN_FAMILY_NAME, Bytes.toBytes(&quot;owner&quot;), timestamp, Bytes.toBytes(vars.get(&quot;owner&quot;)));
 put.addColumn(COLUMN_FAMILY_NAME, Bytes.toBytes(&quot;description&quot;), timestamp, Bytes.toBytes(vars.get(&quot;description&quot;)));
- 
 put.addColumn(COLUMN_FAMILY_NAME, Bytes.toBytes(&quot;app_status&quot;), timestamp, Bytes.toBytes(vars.get(&quot;app_status&quot;)));
 put.addColumn(COLUMN_FAMILY_NAME, Bytes.toBytes(&quot;app_category&quot;), timestamp, Bytes.toBytes(vars.get(&quot;app_category&quot;)));
 put.addColumn(COLUMN_FAMILY_NAME, Bytes.toBytes(&quot;created_ts&quot;), timestamp, Bytes.toBytes(vars.get(&quot;created_ts&quot;)));
- 
+
 table.put(put);
- 
+
 SampleResult.setRequestHeaders(put.toString());</stringProp>
         </JSR223Sampler>
         <hashTree>
@@ -128,9 +127,10 @@ SampleResult.setRequestHeaders(put.toString());</stringProp>
               <stringProp name="-152614564">app_category</stringProp>
               <stringProp name="1283840976">app_status</stringProp>
               <stringProp name="1369680694">created_ts</stringProp>
+              <stringProp name="-1411074055">app_id</stringProp>
             </collectionProp>
             <collectionProp name="UserParameters.thread_values">
-              <collectionProp name="-1005456061">
+              <collectionProp name="-783081587">
                 <stringProp name="1124570804">enterprise_app_installs</stringProp>
                 <stringProp name="118040362">${__UUID()}</stringProp>
                 <stringProp name="48049910">${__RandomString(10,abcdefghijklmnopqrstuvwxyz0123456789)}</stringProp>
@@ -138,6 +138,7 @@ SampleResult.setRequestHeaders(put.toString());</stringProp>
                 <stringProp name="3079651">demo</stringProp>
                 <stringProp name="2524">OK</stringProp>
                 <stringProp name="1275433077">${__RandomDate(,2020-01-01,2021-01-01,,)}</stringProp>
+                <stringProp name="-576358736">${__RandomString(5,0123456789abcdef)}</stringProp>
               </collectionProp>
             </collectionProp>
             <boolProp name="UserParameters.per_iteration">false</boolProp>
@@ -159,28 +160,25 @@ import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.TableName;
- 
- 
+
+
 Connection btConn = props.get(&quot;btConn&quot;);
 final Table table = btConn.getTable(TableName.valueOf(Bytes.toBytes(vars.get(&quot;app_events_table&quot;))));
  
 final byte[] COLUMN_FAMILY_NAME = Bytes.toBytes(&quot;cf1&quot;);
 final long timestamp = System.currentTimeMillis();
- 
+
 String eventDateTime = vars.get(&quot;event_date&quot;) + &quot;T&quot; + vars.get(&quot;event_time&quot;);
 String eventKey = vars.get(&quot;install_id&quot;) + &quot;#&quot; + vars.get(&quot;event_id&quot;) + &quot;#&quot; + eventDateTime ;
- 
+
 Put put = new Put(Bytes.toBytes(eventKey));
- 
 put.addColumn(COLUMN_FAMILY_NAME, Bytes.toBytes(&quot;event_details&quot;), timestamp, Bytes.toBytes(vars.get(&quot;event_details&quot;)));
 put.addColumn(COLUMN_FAMILY_NAME, Bytes.toBytes(&quot;memory_usage&quot;), timestamp, Bytes.toBytes(vars.get(&quot;memory_usage&quot;)));
- 
 put.addColumn(COLUMN_FAMILY_NAME, Bytes.toBytes(&quot;cpu_usage&quot;), timestamp, Bytes.toBytes(vars.get(&quot;cpu_usage&quot;)));
 put.addColumn(COLUMN_FAMILY_NAME, Bytes.toBytes(&quot;event_ts&quot;), timestamp, Bytes.toBytes(eventDateTime));
 table.put(put);
- 
-SampleResult.setRequestHeaders(put.toString());
-</stringProp>
+
+SampleResult.setRequestHeaders(put.toString());</stringProp>
           </JSR223Sampler>
           <hashTree>
             <UserParameters guiclass="UserParametersGui" testclass="UserParameters" testname="Event Parameters" enabled="true">
@@ -217,7 +215,7 @@ SampleResult.setRequestHeaders(put.toString());
           <stringProp name="filename"></stringProp>
           <stringProp name="cacheKey">true</stringProp>
           <stringProp name="script">PrintWriter csvWriter = props.get(&quot;csvWriter&quot;);
-csvWriter.println(vars.get(&quot;install_id&quot;));</stringProp>
+csvWriter.println(vars.get(&quot;app_id&quot;) + &quot;,&quot; + vars.get(&quot;install_id&quot;));</stringProp>
         </JSR223Sampler>
         <hashTree/>
       </hashTree>
@@ -248,7 +246,7 @@ csvWriter.close();</stringProp>
         </JSR223Sampler>
         <hashTree/>
       </hashTree>
-      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="false">
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
         <objProp>
           <name>saveConfig</name>

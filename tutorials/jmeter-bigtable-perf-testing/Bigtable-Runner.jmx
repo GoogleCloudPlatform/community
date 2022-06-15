@@ -28,7 +28,7 @@
             <stringProp name="Argument.value">${__P(threads, 10)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
-          <elementProp name="loop" elementType="Argument">
+          <elementProp name="loops" elementType="Argument">
             <stringProp name="Argument.name">loops</stringProp>
             <stringProp name="Argument.value">${__P(loops, 100)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
@@ -47,7 +47,7 @@
         <boolProp name="recycle">true</boolProp>
         <stringProp name="shareMode">shareMode.all</stringProp>
         <boolProp name="stopThread">false</boolProp>
-        <stringProp name="variableNames">install_id</stringProp>
+        <stringProp name="variableNames">app_id,install_id</stringProp>
       </CSVDataSet>
       <hashTree/>
       <SetupThreadGroup guiclass="SetupThreadGroupGui" testclass="SetupThreadGroup" testname="setUp" enabled="true">
@@ -71,7 +71,7 @@
           <stringProp name="cacheKey">true</stringProp>
           <stringProp name="script">import com.google.cloud.bigtable.hbase.BigtableConfiguration;
 import org.apache.hadoop.hbase.client.Connection;
- 
+
 Connection conn = BigtableConfiguration.connect(&quot;${project-id}&quot;, &quot;${bigtable-instance-id}&quot;);
 OUT.println(&quot;Opened Connection:&quot; + conn);
 props.put(&quot;btConn&quot;, conn);</stringProp>
@@ -82,10 +82,10 @@ props.put(&quot;btConn&quot;, conn);</stringProp>
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
-          <stringProp name="LoopController.loops">${loop}</stringProp>
+          <stringProp name="LoopController.loops">${loops}</stringProp>
         </elementProp>
         <stringProp name="ThreadGroup.num_threads">${threads}</stringProp>
-        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">300</stringProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration"></stringProp>
         <stringProp name="ThreadGroup.delay"></stringProp>
@@ -102,27 +102,23 @@ import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.TableName;
- 
- 
+
+
 Connection btConn = props.get(&quot;btConn&quot;);
 final Table table = btConn.getTable(TableName.valueOf(Bytes.toBytes(vars.get(&quot;app_events_table&quot;))));
- 
+
 final byte[] COLUMN_FAMILY_NAME = Bytes.toBytes(&quot;cf1&quot;);
 final long timestamp = System.currentTimeMillis();
- 
+
 String eventDateTime = vars.get(&quot;event_date&quot;) + &quot;T&quot; + vars.get(&quot;event_time&quot;);
-String eventKey = vars.get(&quot;install_id&quot;) + &quot;#&quot; + vars.get(&quot;event_id&quot;) + &quot;#&quot; + eventDateTime ;
- 
+String eventKey = vars.get(&quot;install_id&quot;) + &quot;#&quot; + vars.get(&quot;event_id&quot;) + &quot;#&quot; + eventDateTime;
+
 Put put = new Put(Bytes.toBytes(eventKey));
- 
 put.addColumn(COLUMN_FAMILY_NAME, Bytes.toBytes(&quot;event_details&quot;), timestamp, Bytes.toBytes(vars.get(&quot;event_details&quot;)));
 put.addColumn(COLUMN_FAMILY_NAME, Bytes.toBytes(&quot;memory_usage&quot;), timestamp, Bytes.toBytes(vars.get(&quot;memory_usage&quot;)));
- 
 put.addColumn(COLUMN_FAMILY_NAME, Bytes.toBytes(&quot;cpu_usage&quot;), timestamp, Bytes.toBytes(vars.get(&quot;cpu_usage&quot;)));
 put.addColumn(COLUMN_FAMILY_NAME, Bytes.toBytes(&quot;event_ts&quot;), timestamp, Bytes.toBytes(eventDateTime));
- 
 SampleResult.setRequestHeaders(put.toString());
- 
 table.put(put);</stringProp>
         </JSR223Sampler>
         <hashTree>
@@ -158,7 +154,7 @@ table.put(put);</stringProp>
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
-          <stringProp name="LoopController.loops">${loop}</stringProp>
+          <stringProp name="LoopController.loops">${loops}</stringProp>
         </elementProp>
         <stringProp name="ThreadGroup.num_threads">${threads}</stringProp>
         <stringProp name="ThreadGroup.ramp_time">1</stringProp>
@@ -178,20 +174,19 @@ import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.TableName;
- 
- 
+
+
 Connection btConn = props.get(&quot;btConn&quot;);
 final Table table = btConn.getTable(TableName.valueOf(Bytes.toBytes(vars.get(&quot;app_installs_table&quot;))));
- 
+
 final byte[] COLUMN_FAMILY_NAME = Bytes.toBytes(&quot;cf1&quot;);
 final long timestamp = System.currentTimeMillis();
- 
-Put put = new Put(Bytes.toBytes(vars.get(&quot;install_id&quot;)));
- 
+String installKey = vars.get(&quot;app_id&quot;) + &quot;#&quot; + vars.get(&quot;install_id&quot;);
+
+Put put = new Put(Bytes.toBytes(installKey));
 put.addColumn(COLUMN_FAMILY_NAME, Bytes.toBytes(&quot;description&quot;), timestamp, Bytes.toBytes(vars.get(&quot;description&quot;)));
- 
 SampleResult.setRequestHeaders(put.toString());
- 
+
 table.put(put);</stringProp>
         </JSR223Sampler>
         <hashTree>
@@ -215,7 +210,7 @@ table.put(put);</stringProp>
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
-          <stringProp name="LoopController.loops">${loop}</stringProp>
+          <stringProp name="LoopController.loops">${loops}</stringProp>
         </elementProp>
         <stringProp name="ThreadGroup.num_threads">${threads}</stringProp>
         <stringProp name="ThreadGroup.ramp_time">1</stringProp>
@@ -233,26 +228,25 @@ table.put(put);</stringProp>
           <stringProp name="script">import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.hbase.TableName;
- 
+
+
 final byte[] COLUMN_FAMILY_NAME = Bytes.toBytes(&quot;cf1&quot;);
 Connection btConn = props.get(&quot;btConn&quot;);
 final Table table = btConn.getTable(TableName.valueOf(Bytes.toBytes(vars.get(&quot;app_installs_table&quot;))));
- 
-String install_id = vars.get(&quot;install_id&quot;);
-Get get = new Get(Bytes.toBytes(install_id));
+
+String installKey = vars.get(&quot;app_id&quot;) + &quot;#&quot; + vars.get(&quot;install_id&quot;);
+Get get = new Get(Bytes.toBytes(installKey));
 Result result = table.get(get);
- 
+
 String description = Bytes.toString(result.getValue(COLUMN_FAMILY_NAME, Bytes.toBytes(&quot;description&quot;)));
 String owner = Bytes.toString(result.getValue(COLUMN_FAMILY_NAME, Bytes.toBytes(&quot;owner&quot;)));
 String status = Bytes.toString(result.getValue(COLUMN_FAMILY_NAME, Bytes.toBytes(&quot;app_status&quot;)));
 String category = Bytes.toString(result.getValue(COLUMN_FAMILY_NAME, Bytes.toBytes(&quot;app_category&quot;)));
- 
-String response = String.format(&quot;install_id: %s \ndescription: %s \nowner: %s \nstatus: %s \ncategory: %s&quot;, install_id, description, owner, status, category);
- 
+
+String response = String.format(&quot;install_id: %s \ndescription: %s \nowner: %s \nstatus: %s \ncategory: %s&quot;, installKey, description, owner, status, category);
+
 SampleResult.setRequestHeaders(get.toString());
-SampleResult.setResponseData(response);
- 
-//OUT.println(result);</stringProp>
+SampleResult.setResponseData(response);</stringProp>
         </JSR223Sampler>
         <hashTree>
           <UserParameters guiclass="UserParametersGui" testclass="UserParameters" testname="Install Parameters" enabled="true">
@@ -283,7 +277,7 @@ SampleResult.setResponseData(response);
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
-          <stringProp name="LoopController.loops">${loop}</stringProp>
+          <stringProp name="LoopController.loops">${loops}</stringProp>
         </elementProp>
         <stringProp name="ThreadGroup.num_threads">${threads}</stringProp>
         <stringProp name="ThreadGroup.ramp_time">1</stringProp>
@@ -301,31 +295,30 @@ SampleResult.setResponseData(response);
           <stringProp name="script">import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.hbase.TableName;
- 
- 
+
+
 Connection btConn = props.get(&quot;btConn&quot;);
 final Table table = btConn.getTable(TableName.valueOf(Bytes.toBytes(vars.get(&quot;app_events_table&quot;))));
- 
+
 final byte[] COLUMN_FAMILY_NAME = Bytes.toBytes(&quot;cf1&quot;);
 final long timestamp = System.currentTimeMillis();
- 
+
 String prefix = vars.get(&quot;install_id&quot;) + &quot;#&quot; + vars.get(&quot;event_id&quot;) + &quot;#&quot;;
-OUT.println(prefix);
+
 Scan scan = new Scan();
 scan.setRowPrefixFilter(Bytes.toBytes(prefix));
 scan.withStartRow(Bytes.toBytes(prefix + vars.get(&quot;start_date&quot;)));
 scan.withStopRow(Bytes.toBytes(prefix + vars.get(&quot;end_date&quot;)));
 scan.setLimit(1);
- 
+
 ResultScanner scanner = table.getScanner(scan);
- 
 StringBuilder sb = new StringBuilder();
 for (Result result = scanner.next(); result != null; result = scanner.next())
-	{
-		sb.append(&quot;Found row : &quot; + result + &quot;\n&quot;);
-	}
+{
+    sb.append(&quot;Found row : &quot; + result + &quot;\n&quot;);
+}
 scanner.close();
- 
+
 SampleResult.setRequestHeaders(scan.toString());
 SampleResult.setResponseData(sb.toString());
 </stringProp>
@@ -376,7 +369,7 @@ props.get(&quot;btConn&quot;).close();</stringProp>
         </JSR223Sampler>
         <hashTree/>
       </hashTree>
-      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="false">
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
         <objProp>
           <name>saveConfig</name>
