@@ -179,7 +179,7 @@ JMeter is a highly configurable tool and has various components from which you c
 
 ### JMeter test plan
 
-JMeter has a hierarchical structure to the tests, with a top node called the [test plan](https://jmeter.apache.org/usermanual/test_plan.html). It consists of one or more thread groups, logic controllers, sample generating controllers, listeners, timers, assertions, and configuration elements. Because a test plan is the top-level configuration element, saving a test plan to disk also saves all nested objects, and the resulting file is saved with a `.jmx` filename extension.
+JMeter has a hierarchical structure to the tests, with a top node called the test plan. It consists of one or more thread groups, logic controllers, sample generating controllers, listeners, timers, assertions, and configuration elements. Because a test plan is the top-level configuration element, saving a test plan to disk also saves all nested objects, and the resulting file is saved with a `.jmx` filename extension.
 
 For simplicity, it's sufficient to have the top-level test plan contain a single thread group, which in turn contains one or more samplers. There can be multiple samplers (and other components) within a thread group; each is executed serially per thread.
 
