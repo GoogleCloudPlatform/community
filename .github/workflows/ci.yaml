@@ -8,20 +8,30 @@ on:
 name: ci
 jobs:
   test:
-    runs-on: [ubuntu-latest, windows-latest, macOS-latest]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: 8
-      - run: npm install
-      - run: npm test
+      runs-on: ubuntu-latest
+      strategy:
+        matrix:
+          node: [ 8, 12, 14, 16 ]
+      name: Node ${{ matrix.node }}
+      steps:
+        - uses: actions/checkout@v3
+        - name: Setup node
+          uses: actions/setup-node@v3
+          with:
+            node-version: ${{ matrix.node }}
+        - run: npm install
+        - run: npm test
   lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: 8
-      - run: npm install
-      - run: npm run lint
+      runs-on: ubuntu-latest
+      strategy:
+        matrix:
+          nodelint: [ 8, 12, 14, 16 ]
+      name: Node ${{ matrix.nodelint }}
+      steps:
+        - uses: actions/checkout@v3
+        - name: Setup node
+          uses: actions/setup-node@v3
+          with:
+            node-version: ${{ matrix.node }}
+        - run: npm install
+        - run: npm run lint
