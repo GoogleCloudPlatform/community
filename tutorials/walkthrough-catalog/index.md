@@ -17,80 +17,6 @@ what additional walkthroughs you'd like to see.
 <table>
 	<tr>
         <td width="250" style="vertical-align: top;" >
-            <h3>App Engine flexible environment quickstart using PHP</h3>
-            <a href="https://console.cloud.google.com/getting-started?tutorial=php_mvms_quickstart" >
-                <img style="border: 1px solid #ccc; min-height: 175px;" src="https://storage.googleapis.com/gcp-community/tutorials/php-mvms-quickstart/tutorial.png" width="300" alt="Open in Cloud Console" />
-            </a> 
-            <p>Learn how to deploy a PHP sample app to App Engine.</p>
-            <ul>
-                <li>App Engine</li><li>PHP</li>
-            </ul>
-        </td>
-        <td width="250" style="vertical-align: top;" >
-            <h3>App Engine flexible environment quickstart using Python</h3>
-            <a href="https://console.cloud.google.com/getting-started?tutorial=python_mvms_quickstart" >
-                <img style="border: 1px solid #ccc; min-height: 175px;" src="https://storage.googleapis.com/gcp-community/tutorials/python-mvms-quickstart/tutorial.png" width="300" alt="Open in Cloud Console" />
-            </a> 
-            <p>Learn how to deploy a Python sample app to App Engine.</p>
-            <ul>
-                <li>App Engine</li><li>Python</li>
-            </ul>
-        </td>
-        <td width="250" style="vertical-align: top;" >
-            <h3>App Engine flexible environment quickstart using Ruby</h3>
-            <a href="https://console.cloud.google.com/getting-started?tutorial=ruby_mvms_quickstart" >
-                <img style="border: 1px solid #ccc; min-height: 175px;" src="https://storage.googleapis.com/gcp-community/tutorials/ruby-mvms-quickstart/tutorial.png" width="300" alt="Open in Cloud Console" />
-            </a> 
-            <p>Learn how to deploy a Ruby sample app to App Engine.</p>
-            <ul>
-                <li>App Engine</li><li>Ruby</li>
-            </ul>
-        </td>
-	</tr>
-	<tr>
-        <td width="250" style="vertical-align: top;" >
-            <h3>App Engine quickstart using Java</h3>
-            <a href="https://console.cloud.google.com/getting-started?tutorial=java_gae_quickstart" >
-                <img style="border: 1px solid #ccc; min-height: 175px;" src="https://storage.googleapis.com/gcp-community/tutorials/java-gae-quickstart/tutorial.png" width="300" alt="Open in Cloud Console" />
-            </a> 
-            <p>Learn how to deploy a Java sample app to App Engine.</p>
-            <ul>
-                <li>App Engine</li><li>Java</li>
-            </ul>
-        </td>
-        <td width="250" style="vertical-align: top;" >
-            <h3>App Engine quickstart using Node.js</h3>
-            <a href="https://console.cloud.google.com/getting-started?tutorial=nodejs_gae_quickstart" >
-                <img style="border: 1px solid #ccc; min-height: 175px;" src="https://storage.googleapis.com/gcp-community/tutorials/nodejs-gae-quickstart/tutorial.png" width="300" alt="Open in Cloud Console" />
-            </a> 
-            <p>Learn how to deploy a Node.js sample app to App Engine.</p>
-            <ul>
-                <li>App Engine</li><li>Node.js</li>
-            </ul>
-        </td>
-        <td width="250" style="vertical-align: top;" >
-            <h3>App Engine quickstart using PHP</h3>
-            <a href="https://console.cloud.google.com/getting-started?tutorial=php_gae_quickstart" >
-                <img style="border: 1px solid #ccc; min-height: 175px;" src="https://storage.googleapis.com/gcp-community/tutorials/php-gae-quickstart/tutorial.png" width="300" alt="Open in Cloud Console" />
-            </a> 
-            <p>Learn how to deploy a PHP sample app to App Engine.</p>
-            <ul>
-                <li>App Engine</li><li>PHP</li>
-            </ul>
-        </td>
-	</tr>
-	<tr>
-        <td width="250" style="vertical-align: top;" >
-            <h3>App Engine quickstart using Python</h3>
-            <a href="https://console.cloud.google.com/getting-started?tutorial=python_gae_quickstart" >
-                <img style="border: 1px solid #ccc; min-height: 175px;" src="https://storage.googleapis.com/gcp-community/tutorials/python-gae-quickstart/tutorial.png" width="300" alt="Open in Cloud Console" />
-            </a> 
-            <p>Learn how to deploy a Python sample app to App Engine.</p>
-            <ul>
-                <li>App Engine</li><li>Python</li>
-            </ul>
-        </td>
-        <td width="250" style="vertical-align: top;" >
             <h3>Cloud Storage quickstart - Create a bucket and upload files</h3>
             <a href="https://console.cloud.google.com/?walkthrough_id=storage__quickstart-basic-tasks" >
                 <img style="border: 1px solid #ccc; min-height: 175px;" src="https://storage.googleapis.com/gcp-community/tutorials/storage-quickstart/tutorial.png" width="300" alt="Open in Cloud Console" />
@@ -110,8 +36,6 @@ what additional walkthroughs you'd like to see.
                 <li>Compute Engine</li><li>MongoDB</li><li>Node.JS</li><li>Firewall</li>
             </ul>
         </td>
-	</tr>
-	<tr>
         <td width="250" style="vertical-align: top;" >
             <h3>Compute Engine quickstart - Create a virtual machine</h3>
             <a href="https://console.cloud.google.com/getting-started?tutorial=bigquery_import_data_from_cloud_storage" >
@@ -122,6 +46,8 @@ what additional walkthroughs you'd like to see.
                 <li>Compute Engine</li>
             </ul>
         </td>
+	</tr>
+	<tr>
         <td width="250" style="vertical-align: top;" >
             <h3>Count words with Dataflow and Java</h3>
             <a href="https://console.cloud.google.com/getting-started?tutorial=java_dataflow_quickstart" >
@@ -142,8 +68,6 @@ what additional walkthroughs you'd like to see.
                 <li>Dataflow</li><li>Python</li>
             </ul>
         </td>
-	</tr>
-	<tr>
         <td width="250" style="vertical-align: top;" >
             <h3>Google Kubernetes Engine quickstart - Deploy a sample application to a cluster</h3>
             <a href="https://console.cloud.google.com/getting-started?tutorial=gke_quickstart" >
@@ -154,6 +78,8 @@ what additional walkthroughs you'd like to see.
                 <li>Kubernetes</li>
             </ul>
         </td>
+	</tr>
+	<tr>
         <td width="250" style="vertical-align: top;" >
             <h3>Google Kubernetes Engine quickstart - Create a cluster in Autopilot mode</h3>
             <a href="https://console.cloud.google.com/getting-started?tutorial=gke_autopilot" >
@@ -174,8 +100,6 @@ what additional walkthroughs you'd like to see.
                 <li>Cloud Storage</li><li>BigQuery</li>
             </ul>
         </td>
-	</tr>
-	<tr>
         <td width="250" style="vertical-align: top;" >
             <h3>Introduction to IoT Core</h3>
             <a href="https://console.cloud.google.com/getting-started?tutorial=iot_core_quickstart" >
@@ -186,6 +110,8 @@ what additional walkthroughs you'd like to see.
                 <li>Cloud IoT</li>
             </ul>
         </td>
+	</tr>
+	<tr>
         <td width="250" style="vertical-align: top;" >
             <h3>Label images with the Cloud Vision API</h3>
             <a href="https://console.cloud.google.com/getting-started?tutorial=python_vision_quickstart" >
@@ -206,8 +132,6 @@ what additional walkthroughs you'd like to see.
                 <li>Cloud SQL</li>
             </ul>
         </td>
-	</tr>
-	<tr>
         <td width="250" style="vertical-align: top;" >
             <h3>Use Pub/Sub to send and receive real-time messages</h3>
             <a href="https://console.cloud.google.com/getting-started?tutorial=pubsub_quickstart" >
@@ -218,5 +142,5 @@ what additional walkthroughs you'd like to see.
                 <li>Pub/Sub</li>
             </ul>
         </td>
-
+    </tr>
 </table>
