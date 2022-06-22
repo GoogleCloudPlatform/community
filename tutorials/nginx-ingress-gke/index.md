@@ -11,7 +11,9 @@ Ameer Abbas | Solutions Architect | Google
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This guide explains how to deploy the
-[NGINX Ingress Controller](https://github.com/kubernetes/ingress-nginx) on Google Kubernetes Engine. This tutorial shows examples of public and private GKE clusters.
+[NGINX Ingress Controller](https://github.com/kubernetes/ingress-nginx) on Google Kubernetes Engine.
+
+This tutorial shows examples of public and private GKE clusters.
 
 In Kubernetes,
 [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/)
@@ -83,7 +85,7 @@ generate a cost estimate based on your projected usage.
 
 ## Set up your environment
 
-### Creating a public GKE cluster
+### Create a public GKE cluster
 
 1.  [Open a new Cloud Shell session.](https://console.cloud.google.com/?cloudshell=true)
 
@@ -94,7 +96,7 @@ generate a cost estimate based on your projected usage.
           --enable-ip-alias \
           --num-nodes=2
 
-### Creating a private GKE cluster
+### Create a private GKE cluster
 
 In order to provide external connectivity to GKE private clusters, you need to create a [Cloud NAT gateway](https://cloud.google.com/nat/docs/overview).
 
