@@ -383,8 +383,8 @@ From Cloud Shell, run the following commands:
 
 1.  Delete the Google Kubernetes Engine clusters:
 
-        gcloud container clusters delete gke-public
-        gcloud container clusters delete gke-private
+        gcloud container clusters delete gke-public --zone=us-central1-f
+        gcloud container clusters delete gke-private --zone=us-east1-b
 
 1.  Delete the `ingress_resource.yaml` file:
 
