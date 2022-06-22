@@ -124,6 +124,14 @@ In order to provide external connectivity to GKE private clusters, you need to c
 
     > Note that the Cloud Shell public IP address may change if your session is interrupted and you open a new Cloud Shell session.
 
+1.  Create a firewall rule that allows Pod-to-Pod and Pod-to-API server communication.
+
+        gcloud compute firewall-rules create all-pods-and-master-ipv4-cidrs \
+            --network default \
+            --allow all \
+            --direction INGRESS \
+            --source-ranges 10.0.0.0/8,172.16.2.0/28
+
 1.  Create a private GKE cluster.
 
         gcloud container clusters create gke-private \
