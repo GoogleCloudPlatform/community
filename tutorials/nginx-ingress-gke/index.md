@@ -103,16 +103,6 @@ In order to provide external connectivity to GKE private clusters, you need to c
         gcloud compute addresses create us-east1-nat-ip \
             --region=us-east1
 
-1.  Store the IP address and name of the IP address in variables.
-
-        export US_EAST1_NAT_IP_ADDR=$(gcloud compute addresses describe us-east1-nat-ip \
-            --region=us-east1 \
-            --format='value(address)')
-
-        export US_EAST1_NAT_IP_NAME=$(gcloud compute addresses describe us-east1-nat-ip \
-            --region=us-east1 \
-            --format='value(name)')
-
 1.  Create Cloud NAT gateway for the private GKE cluster.
 
         gcloud compute routers create rtr-us-east1 \
@@ -122,7 +112,7 @@ In order to provide external connectivity to GKE private clusters, you need to c
         gcloud compute routers nats create nat-gw-us-east1 \
             --router=rtr-us-east1 \
             --region us-east1 \
-            --nat-external-ip-pool=${US_EAST1_NAT_IP_NAME} \
+            --nat-external-ip-pool=us-east1-nat-ip \
             --nat-all-subnet-ip-ranges \
             --enable-logging
 
