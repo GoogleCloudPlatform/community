@@ -87,10 +87,11 @@ generate a cost estimate based on your projected usage.
 
 1.  [Open a new Cloud Shell session.](https://console.cloud.google.com/?cloudshell=true)
 
-1.  Set your project's default Compute Engine zone and create a Google Kubernetes Engine cluster:
+1.  Create a public Google Kubernetes Engine cluster:
 
         gcloud container clusters create gke-public \
           --zone=us-central1-f \
+          --enable-ip-alias \
           --num-nodes=2
 
 ### Creating a private GKE cluster
