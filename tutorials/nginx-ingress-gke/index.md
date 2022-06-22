@@ -382,19 +382,10 @@ From Cloud Shell, run the following commands:
         service "hello-app" deleted
         deployment.extensions "hello-app" deleted
 
-1.  Delete the Google Kubernetes Engine cluster:
+1.  Delete the Google Kubernetes Engine clusters:
 
-        gcloud container clusters delete nginx-tutorial
-
-    You should see the following:
-
-        The following clusters will be deleted.
-        - [nginx-tutorial] in [us-central1-f]
-
-            Do you want to continue (Y/n)?  y
-
-            Deleting cluster nginx-tutorial...done.
-            Deleted [https://container.googleapis.com/v1/projects/ameer-1/zones/us-central1-f/clusters/nginx-tutorial].
+        gcloud container clusters delete gke-public
+        gcloud container clusters delete gke-private
 
 1.  Delete the `ingress_resource.yaml` file:
 
