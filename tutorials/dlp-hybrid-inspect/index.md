@@ -102,6 +102,10 @@ Reminder: If you want to see detailed findings or run analysis on findings, we r
 
 ## Build
 
+1.  Ensure that Git and Maven are installed:
+
+        sudo apt-get install git maven
+        
 1.  Clone the source repository for this tutorial:
 
         git clone https://github.com/GoogleCloudPlatform/community.git
