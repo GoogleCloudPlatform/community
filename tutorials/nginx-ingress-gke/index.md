@@ -96,14 +96,14 @@ generate a cost estimate based on your projected usage.
 
 ### Creating a private GKE cluster
 
-In order to provide external connectivity to GKE private clusters, you need to create a [Cloud NAT Gateway](https://cloud.google.com/nat/docs/overview).
+In order to provide external connectivity to GKE private clusters, you need to create a [Cloud NAT gateway](https://cloud.google.com/nat/docs/overview).
 
-1.  Create and reserve an external IP address for the NAT Gateway.
+1.  Create and reserve an external IP address for the NAT gateway:
 
         gcloud compute addresses create us-east1-nat-ip \
             --region=us-east1
 
-1.  Create Cloud NAT gateway for the private GKE cluster.
+1.  Create a Cloud NAT gateway for the private GKE cluster:
 
         gcloud compute routers create rtr-us-east1 \
             --network=default \
@@ -116,15 +116,16 @@ In order to provide external connectivity to GKE private clusters, you need to c
             --nat-all-subnet-ip-ranges \
             --enable-logging
 
-    For private GKE clusters with private API server endpoint, you must specify an authorized list of source IP addresses from where you will be accessing the private GKE cluster. In this tutorial, you use Cloud Shell.
+    For private GKE clusters with private API server endpoint, you must specify an authorized list of source IP addresses from where you will be
+    accessing the private GKE cluster. In this tutorial, you use Cloud Shell.
 
-1.  Get the public IP address of your Cloud Shell session.
+1.  Get the public IP address of your Cloud Shell session:
 
         export CLOUDSHELL_IP=$(dig +short myip.opendns.com @resolver1.opendns.com)
 
-    > Note that the Cloud Shell public IP address may change if your session is interrupted and you open a new Cloud Shell session.
+    **Note:** The Cloud Shell public IP address might change if your session is interrupted and you open a new Cloud Shell session.
 
-1.  Create a firewall rule that allows Pod-to-Pod and Pod-to-API server communication.
+1.  Create a firewall rule that allows Pod-to-Pod and Pod-to-API server communication:
 
         gcloud compute firewall-rules create all-pods-and-master-ipv4-cidrs \
             --network default \
@@ -132,7 +133,7 @@ In order to provide external connectivity to GKE private clusters, you need to c
             --direction INGRESS \
             --source-ranges 10.0.0.0/8,172.16.2.0/28
 
-1.  Create a private GKE cluster.
+1.  Create a private GKE cluster:
 
         gcloud container clusters create gke-private \
             --zone=us-east1-b \
@@ -143,18 +144,19 @@ In order to provide external connectivity to GKE private clusters, you need to c
             --enable-master-authorized-networks \
             --master-authorized-networks $CLOUDSHELL_IP/32
 
-## Accessing clusters
+## Connect to the clusters
 
-1.  Connect to both clusters to generate entries in the kubeconfig file.
+1.  Connect to both clusters to generate entries in the kubeconfig file:
 
         gcloud container clusters get-credentials gke-public --zone us-central1-f
         gcloud container clusters get-credentials gke-private --zone us-east1-b
 
-    You use the kubeconfig file to authenticate to clusters by creating a user and context for each cluster. After you generate entries in the kubeconfig file, you can quickly switch context between clusters.
+    You use the kubeconfig file to authenticate to clusters by creating a user and context for each cluster. After you generate entries in the
+    kubeconfig file, you can quickly switch context between clusters.
 
 ## Verify Helm in Cloud Shell
 
-The following steps are identical for both public and private GKE cluster.
+The following steps are identical for both the public and private GKE cluster.
 Ensure that you are using the correct cluster context before proceeding.
 
 Helm is a tool that streamlines installing and managing Kubernetes applications and resources. Think of it like
