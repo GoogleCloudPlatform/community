@@ -12,7 +12,7 @@ jobs:
       strategy:
         matrix:
           node: [ 8, 12, 14, 16 ]
-          os: [macos-latest, ubuntu-latest, windows-latest]
+          os: [macos-latest, ubuntu-latest]
       name: Node ${{ matrix.node }} Run On ${{ matrix.os }}
       steps:
         - uses: actions/checkout@v3
@@ -27,7 +27,7 @@ jobs:
       strategy:
         matrix:
           nodelint: [ 8, 12, 14, 16 ]
-          oslint: [macos-latest, ubuntu-latest, ubuntu-latest]
+          oslint: [macos-latest, ubuntu-latest]
       name: Node ${{ matrix.nodelint }} Run On ${{ matrix.oslint }}
       steps:
         - uses: actions/checkout@v3
