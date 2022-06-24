@@ -5,23 +5,35 @@ on:
   pull_request:
   schedule:
     - cron:  '0 7 * * *'
-name: ci
+name: Continuous Integration
 jobs:
   test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: 8
-      - run: npm install
-      - run: npm test
+      runs-on: ${{ matrix.os }}
+      strategy:
+        matrix:
+          node: [ 8, 12, 14, 16 ]
+          os: [macos-latest, ubuntu-latest]
+      name: Node ${{ matrix.node }} Run On ${{ matrix.os }}
+      steps:
+        - uses: actions/checkout@v3
+        - name: Setup node
+          uses: actions/setup-node@v3
+          with:
+            node-version: ${{ matrix.node }}
+        - run: npm install
+        - run: npm test
   lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: 8
-      - run: npm install
-      - run: npm run lint
+      runs-on: ${{ matrix.oslint }}
+      strategy:
+        matrix:
+          nodelint: [ 8, 12, 14, 16 ]
+          oslint: [macos-latest, ubuntu-latest]
+      name: Node ${{ matrix.nodelint }} Run On ${{ matrix.oslint }}
+      steps:
+        - uses: actions/checkout@v3
+        - name: Setup node
+          uses: actions/setup-node@v3
+          with:
+            node-version: ${{ matrix.node }}
+        - run: npm install
+        - run: npm run lint
