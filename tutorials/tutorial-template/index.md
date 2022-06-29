@@ -74,7 +74,7 @@ This tutorial assumes that you're using the Microsoft Windows operating system.
 
 1.  Create an account with the BigQuery free tier. See
     [this video from Google](https://www.youtube.com/watch?v=w4mzE--sprY&list=PLIivdWyY5sqI6Jd0SbqviEgoA853EvDsq&index=2) for detailed instructions.
-1.  Create a Google Cloud project in the [Cloud Console](https://console.cloud.google.com/).
+1.  Create a Google Cloud project in the [Cloud console](https://console.cloud.google.com/).
 1.  Install [DBeaver Community for Windows](https://dbeaver.io/download/).
 
 ## Tutorial body
@@ -115,7 +115,7 @@ Deleting a project has the following consequences:
 
 To delete a project, do the following:
 
-1.  In the Cloud Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
+1.  In the Cloud console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
 1.  In the project list, select the project you want to delete and click **Delete**.
 1.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
 

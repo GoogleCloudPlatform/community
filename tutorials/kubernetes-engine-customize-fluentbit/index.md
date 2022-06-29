@@ -56,9 +56,9 @@ In this section, you define variables that control where elements of the infrast
 
 1.  Set the variables used by this tutorial:
 
-        region=us-east1
-        zone=${region}-b
-        project_id=[YOUR_PROJECT_ID]
+        export region=us-east1
+        export zone=${region}-b
+        export project_id=[YOUR_PROJECT_ID]
         
     This tutorial uses the region `us-east-1`. If you change the region, make sure that the zone values reference your region.
 
@@ -89,8 +89,8 @@ In this section, you define variables that control where elements of the infrast
 
 ## Deploying the test logger application
 
-By default, the sample application that you deploy continuously emits random logging statements. The Docker container it uses is available at
-`gcr.io/cloud-solutions-images/test-logger`, and its source code is included in the `test-logger` subdirectory.
+By default, the sample application that you deploy continuously emits random logging statements. The Docker container is
+built from the source code under the `test-logger` subdirectory.
 
 1.  Build the `test-logger` container image:
 

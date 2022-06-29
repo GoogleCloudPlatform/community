@@ -237,7 +237,7 @@ Next, you manage an LED light connected to the gateway through IoT Core configur
 1.  Click **Update Config** at the top of the page.
 1.  In the configuration text area, enter `ON` or `OFF` to toggle the LED state.
 
-    ![udpate config](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-gateways-rpi/update-config.png)
+    ![update config](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-gateways-rpi/update-config.png)
 
     These are preconfigured valid states that the LED will respond to, defined in `led-light.py`. Sending configuration 
     updates from the IoT Core console toggles the LED device through the gateway device.

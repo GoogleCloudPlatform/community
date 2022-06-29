@@ -11,10 +11,10 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.21.2",
     "firebase-admin": "^5.11.0",
     "firebase-functions": "^1.1.0",
-    "googleapis": "^27.0.0",
+    "googleapis": "^39.1.0",
     "typed-rest-client": "^1.0.7"
   },
   "devDependencies": {
