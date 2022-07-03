@@ -24,6 +24,8 @@ The equipment used in the creation of this guide is as follows:
 The topology outlined by this guide is a basic site-to-site IPsec VPN tunnel
 configuration using the referenced device:
 
+![Topology](https://github.com/yinghli/community/blob/master/tutorials/using-cloud-vpn-with-strongswan-IPv6/overview.png)
+
 # Configuring a dynamic (BGP) IPsec VPN tunnel with strongSwan and BIRD
 
 In this example, a dynamic BGP-based VPN uses a VTI interface. This guide is based
@@ -71,7 +73,7 @@ IPv4 BGP sessions between the two peers and exchange both IPv4 and IPv6 unicast 
 |Parameter|Value|Description|
 |---------|-----------|-----|
 |Name|`ipv6cr`|Name of the cloud router.|
-|Description| `IPv4/IPv6 Dual stack`|Description of the cloud router.|
+|Description| `Support IPv4/IPv6`|Description of the cloud router.|
 |Network|`ipv6internal`|The Google Cloud network the cloud router attaches to. This is the network that manages route information.|
 |Region|`asia-east1`|The home region of the cloud router. Make sure the cloud router is in the same region as the subnetworks it is connecting to.|
 |Google ASN|`65001`|The Autonomous System Number assigned to the cloud router. Use any unused private ASN (64512 - 65534, 4200000000 – 4294967294).|
@@ -201,7 +203,7 @@ After Loopback infterface setup, `ip addr` show as below.
 
         }
 
-`next hop address` must change to IPv6 address, which assigned by Cloud VPN BGP Session. 
+In IPv6 address family configuration, `next hop address` must change to IPv6 address, which assigned by Cloud VPN BGP Session. 
 
 **Step 2**: Disable automatic routes in strongSwan
 
