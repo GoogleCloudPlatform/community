@@ -1,6 +1,6 @@
 ---
-title: How to set up a VPN between strongSwan and Cloud VPN with IPv6
-description: Learn how to build a site-to-site IPsec VPN between strongSwan and Cloud VPN.
+title: Using strongSwan and Cloud VPN to setup IPsec tunnel carrying IPv6 traffic
+description: Build a site-to-site IPsec VPN between strongSwan and Cloud VPN with IPv4 BGP session, carrying on IPv6 traffic. 
 author: yinghli
 tags: Compute Engine, Cloud VPN, strongSwan, BIRD
 date_published: 2022-07-03
