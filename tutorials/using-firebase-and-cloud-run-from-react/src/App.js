@@ -64,6 +64,7 @@ export default class App extends React.Component {
           name: user.displayName
         })
       };
+      /*global fetch:false*/
       fetch(apiEndpoint, request)
         .then((res) => res.json())
         .then((data) => this.setState({ message: data.message }));
@@ -75,7 +76,7 @@ export default class App extends React.Component {
     waitMessage.then(callBackend);
   }
 
-  render() {
+  render () {
     const loginImageURL = process.env.PUBLIC_URL + '/btn_google_signin_light_normal_web.png';
     let element = null;
 
@@ -86,7 +87,7 @@ export default class App extends React.Component {
         <div>
           <button onClick={() => signOut(auth)}>Logout</button>
           <h1>Welcome {displayName}!</h1>
-          <img style={{ margin: '10px' }} alt='Profile icon' src={photoURL}/>
+          <img style={{ margin: '10px' }} alt='Profile icon' src={photoURL} />
           <button onClick={this.handleGetMessage}>Get message from the backend API</button>
           <p>message: {this.state.message}</p>
         </div>
