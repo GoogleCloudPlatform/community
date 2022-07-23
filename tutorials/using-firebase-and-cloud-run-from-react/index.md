@@ -1,6 +1,7 @@
 ---
 title: Use Firebase and Cloud Run from React web application
-description: Learn about using Firebase and Cloud Run from React web application
+description: Learn about using Firebase and Cloud Run from React web
+application.
 author: enakai00
 tags: Firebase, Cloud Run, React, Front-end
 date_published: 2022-XX-XX

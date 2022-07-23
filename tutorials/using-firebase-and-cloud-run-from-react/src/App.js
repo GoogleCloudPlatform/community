@@ -15,8 +15,8 @@
  */
 
 import React from 'react';
-import { onAuthStateChanged, signOut } from "firebase/auth";
-import { projectId, auth, signInWithGoogle } from "./Firebase";
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { projectId, auth, signInWithGoogle } from './Firebase';
 
 
 export default class App extends React.Component {
@@ -28,7 +28,7 @@ export default class App extends React.Component {
 
     this.state = {
       loginUser: null,
-      message: "no message"
+      message: 'no message'
     };
   }
 
@@ -40,7 +40,7 @@ export default class App extends React.Component {
       // Logout
       this.setState({
         loginUser: null,
-        message: "no message"
+        message: 'no message'
       });
     }
   }
@@ -51,15 +51,15 @@ export default class App extends React.Component {
 
   getMessage() {
     const callBackend = async () => {
-      const baseURL = "https://" + projectId + ".web.app";
-      const apiEndpoint = baseURL + "/hello-world-service/api/v1/hello";
+      const baseURL = 'https://' + projectId + '.web.app';
+      const apiEndpoint = baseURL + '/hello-world-service/api/v1/hello';
       const user = auth.currentUser;
       const token = await user.getIdToken();
-      const request = {  
-        method: "POST",
+      const request = {
+        method: 'POST',
         headers: {
-          "Authorization": "Bearer " + token,
-          "Content-Type": "application/json",
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           name: user.displayName,
@@ -70,14 +70,14 @@ export default class App extends React.Component {
         .then((data) => this.setState({message: data.message}));
     };
     const waitMessage = new Promise(resolve => {
-      this.setState({message: "Wait..."});
+      this.setState({message: 'Wait...'});
       resolve();
     });
     waitMessage.then(callBackend);
   }
 
   render() {
-    const loginImageURL = process.env.PUBLIC_URL + "/btn_google_signin_light_normal_web.png";
+    const loginImageURL = process.env.PUBLIC_URL + '/btn_google_signin_light_normal_web.png';
     var element;
 
     if (this.state.loginUser) {

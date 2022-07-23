@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { initializeApp } from 'firebase/app';
+import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
 // Replace with your firebase config parameters
 const firebaseConfig = {
-  apiKey: "your-API-key",
-  authDomain: "example-project.firebaseapp.com",
-  projectId: "example-project",
-  storageBucket: "example-project.appspot.com",
-  messagingSenderId: "000000000000",
-  appId: "1:000000000000:web:0000000000000000000000"
+  apiKey: 'your-API-key',
+  authDomain: 'example-project.firebaseapp.com',
+  projectId: 'example-project",
+  storageBucket: 'example-project.appspot.com',
+  messagingSenderId: '000000000000',
+  appId: '1:000000000000:web:0000000000000000000000'
 };
 
 const app = initializeApp(firebaseConfig);
@@ -33,7 +33,7 @@ const provider = new GoogleAuthProvider();
 
 export const signInWithGoogle = () => {
   signInWithPopup(auth, provider)
-    .catch((error) => {console.log(error)})
+    .catch((error) => { console.log(error); });
 };
 
 export const projectId = firebaseConfig.projectId;
