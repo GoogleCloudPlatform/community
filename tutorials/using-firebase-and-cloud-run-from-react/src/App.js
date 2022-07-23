@@ -64,7 +64,7 @@ export default class App extends React.Component {
           name: user.displayName
         })
       };
-      /*global fetch:false*/
+      /* global fetch:false */
       fetch(apiEndpoint, request)
         .then((res) => res.json())
         .then((data) => this.setState({ message: data.message }));
