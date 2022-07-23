@@ -21,7 +21,7 @@ import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 const firebaseConfig = {
   apiKey: 'your-API-key',
   authDomain: 'example-project.firebaseapp.com',
-  projectId: 'example-project",
+  projectId: 'example-project',
   storageBucket: 'example-project.appspot.com',
   messagingSenderId: '000000000000',
   appId: '1:000000000000:web:0000000000000000000000'
