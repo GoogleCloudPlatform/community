@@ -23,7 +23,7 @@ export default class App extends React.Component {
     super(props);
 
     this.userAuthHandler = this.userAuthHandler.bind(this);
-    this.getMessage = this.getMessage.bind(this);
+    this.handleGetMessage = this.handleGetMessage.bind(this);
 
     this.state = {
       loginUser: null,
@@ -64,7 +64,7 @@ export default class App extends React.Component {
           name: user.displayName
         })
       };
-      /* global fetch:false */
+      /* global fetch */
       fetch(apiEndpoint, request)
         .then((res) => res.json())
         .then((data) => this.setState({ message: data.message }));
