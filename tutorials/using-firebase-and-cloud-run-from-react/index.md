@@ -52,7 +52,7 @@ Before you begin this tutorial, you'll need the following:
     * Take a copy of the Firebase configuration (contents of the variable `const firebaseConfig`) shown on the screen.
     * Click **Next** twice and click **Continue to console** to finish the registration process.
 3. Enable the "Google" sign-in provider from **Build** -> **Authentication** menu.
-    * Clock **Get started**
+    * Click **Get started**
     * Click **Google** button from **Additional providers**
     * Move **Enable** slider to enable it.
     * Select **Project support email**
