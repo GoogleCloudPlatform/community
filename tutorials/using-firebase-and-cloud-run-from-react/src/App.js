@@ -83,20 +83,20 @@ export default class App extends React.Component {
       const displayName = auth.currentUser.displayName;
       const photoURL = auth.currentUser.photoURL;
       element = (
-        <>
+        <div>
           <button onClick={() => signOut(auth)}>Logout</button>
           <h1>Welcome {displayName}!</h1>
           <img style={{ margin: '10px' }} alt='Profile icon' src={photoURL}/>
           <button onClick={this.handleGetMessage}>Get message from the backend API</button>
           <p>message: {this.state.message}</p>
-        </>
+        </div>
       );
     } else {
       element = (
-        <>
+        <div>
           <input type='image' alt='Sign in with Google'
             onClick={signInWithGoogle} src={loginImageURL} />
-        </>
+        </div>
       );
     }
 
