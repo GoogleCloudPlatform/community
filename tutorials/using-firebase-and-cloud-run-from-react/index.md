@@ -113,14 +113,15 @@ Before you begin this tutorial, you'll need the following:
 1.  Run the following commands.
 
         npm install -g firebase-tools
+        firebase use $PROJECT_ID
         firebase init hosting
 
     * Answer the questions as below:
 
-        ? What do you want to use as your public directory? (public) build
-        ? Configure as a single-page app (rewrite all urls to /index.html)? N
-        ? Set up automatic builds and deploys with GitHub? N
-        ? File build/index.html already exists. Overwrite? N
+            ? What do you want to use as your public directory? (public) build
+            ? Configure as a single-page app (rewrite all urls to /index.html)? N
+            ? Set up automatic builds and deploys with GitHub? N
+            ? File build/index.html already exists. Overwrite? N
 
 2.  Modify `firebase.json` as below to configure the URL rewrites.
 
@@ -154,7 +155,6 @@ hosting can act as a proxy gateway to the backend services running on Cloud Run.
 
 3.  Run the following command.
 
-        firebase use $PROJECT_ID
         firebase deploy
 
 Now you see the **Hosting URL** in the output. Open the URL with your browser to test the application.
