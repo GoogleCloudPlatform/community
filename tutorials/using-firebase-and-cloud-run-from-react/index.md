@@ -63,7 +63,7 @@ Before you begin this tutorial, you'll need the following:
 
 1.  Run the following commands.
 
-        cd $REPO
+        cd $REPO/backend-example
         gcloud builds submit --tag gcr.io/$PROJECT_ID/hello-world-service
         gcloud run deploy hello-world-service \
           --image gcr.io/$PROJECT_ID/hello-world-service \
