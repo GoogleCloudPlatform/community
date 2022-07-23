@@ -1,0 +1,4 @@
+Flask==1.1.4
+gunicorn==19.10.0
+firebase-admin==3.2.1
+structlog==20.1.0
