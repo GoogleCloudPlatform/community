@@ -1,0 +1,62 @@
+kubectl describe daemonset fluentbit-gke -n gke-system
+Name:           fluentbit-gke
+Selector:       k8s-app=fluentbit-gke
+Node-Selector:  kubernetes.io/os=linux
+Labels:         k8s-app=fluentbit-gke
+Annotations:    deprecated.daemonset.template.generation: 1
+Desired Number of Nodes Scheduled: 2
+Current Number of Nodes Scheduled: 2
+Number of Nodes Scheduled with Up-to-date Pods: 2
+Number of Nodes Scheduled with Available Pods: 2
+Number of Nodes Misscheduled: 0
+Pods Status:  2 Running / 0 Waiting / 0 Succeeded / 0 Failed
+Pod Template:
+  Labels:           k8s-app=fluentbit-gke
+  Service Account:  fluentbit-gke
+  Containers:
+   gcp-token-minter:
+    Image:      us.gcr.io/gke-multi-cloud-release/gke-addon-sidecar:gke_multicloud.gke_multicloud_images_20220317_1445_RC00
+    Port:       <none>
+    Host Port:  <none>
+    Command:
+      /app/cloud/kubernetes/multicloud/addonsidecar/gke_addon_sidecar
+      run-metadata-server
+      --http_server=localhost:29681
+      --ksa_name=gke-telemetry-agent
+      --ksa_namespace=gke-system
+      --token_audience=awestlake.svc.id.goog
+      --gcp_project_id=awestlake
+      --gcp_sts_audience=identitynamespace:awestlake.svc.id.goog://gkemulticloud.googleapis.com/projects/169086134706/locations/us-east4/awsClusters/aws-cluster-wx
+    Environment:
+      HTTPS_PROXY:  <set to the key 'HTTPS_PROXY' in secret 'proxy-config'>  Optional: false
+      NO_PROXY:     <set to the key 'NO_PROXY' in secret 'proxy-config'>     Optional: false
+    Mounts:         <none>
+   fluentbit-gke:
+    Image:      us.gcr.io/gke-multi-cloud-release/fluent-bit:v1.8.12-gke.2
+    Port:       29020/TCP
+    Host Port:  0/TCP
+    Limits:
+      memory:  250Mi
+    Requests:
+      cpu:     50m
+      memory:  50Mi
+    Environment:
+      METADATA_SERVER:  http://127.0.0.1:29681
+      NODE_NAME:         (v1:spec.nodeName)
+      HTTP_PROXY:       <set to the key 'HTTPS_PROXY' in secret 'proxy-config'>  Optional: false
+      HTTPS_PROXY:      <set to the key 'HTTPS_PROXY' in secret 'proxy-config'>  Optional: false
+      NO_PROXY:         <set to the key 'NO_PROXY' in secret 'proxy-config'>     Optional: false
+    Mounts:
+      /fluent-bit/etc/ from fluentbit-gke-config (rw)
+      /var/log from varlog (rw)
+  Volumes:
+   varlog:
+    Type:          HostPath (bare host directory volume)
+    Path:          /var/log
+    HostPathType:  
+   fluentbit-gke-config:
+    Type:               ConfigMap (a volume populated by a ConfigMap)
+    Name:               fluentbit-gke-config
+    Optional:           false
+  Priority Class Name:  system-node-critical
+Events:                 <none>

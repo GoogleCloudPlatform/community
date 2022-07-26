@@ -1,0 +1,278 @@
+# Log Forwarder (Fluent Bit) configuration map.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluentbit-gke-user-config
+  namespace: gke-system
+  labels:
+    k8s-app: fluentbit-gke-user
+data:
+  # Configuration files for service, input, filter, and output plugins.
+  # ======================================================
+  fluent-bit.conf: |
+    [SERVICE]
+        # https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/configuration-file#config_section
+        Flush         1
+        Log_Level     info
+        # New dns resolver switch was added in v1.9 which is still unstable. Configuring to use legacy one until dns resolver is stable.
+        dns.resolver  legacy
+        Daemon        off
+        Parsers_File  parsers.conf
+        HTTP_Server   On
+        HTTP_Listen   127.0.0.1
+        HTTP_Port     29020
+        # https://docs.fluentbit.io/manual/configuration/buffering
+        storage.path               /var/log/fluent-bit-user-buffers/
+        storage.sync               normal
+        storage.checksum           off
+        storage.backlog.mem_limit  50M
+    @INCLUDE input-containers.conf
+    @INCLUDE output-stackdriver.conf
+    @INCLUDE replace_info.lua
+  input-containers.conf: |
+    [INPUT]
+        # https://docs.fluentbit.io/manual/input/tail
+        # https://docs.fluentbit.io/manual/pipeline/filters/kubernetes#workflow-of-tail-kubernetes-filter
+        Name               tail
+        Tag                k8s_application.<namespace_name>.<pod_name>.<container_name>
+        Tag_Regex          var.log.containers.(?<pod_name>[a-z0-9](?:[-a-z0-9]*[a-z0-9])?(?:\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*)_(?<namespace_name>[^_]+)_(?<container_name>.+)-(?<docker_id>[a-z0-9]{64})\.log$
+        Path               /var/log/containers/*.log
+        Exclude_Path       *_kube-system_*.log,*_gke-connect_*.log,*_gke-system_*.log
+        DB                 /var/log/fluent-bit-user-k8s-container-application.db
+        Buffer_Chunk_Size  512KB
+        Buffer_Max_Size    2MB
+        Rotate_Wait        30
+        # Limit of memory that Tail plugin can use when appending data to the engine.
+        Mem_Buf_Limit      50MB
+        Skip_Long_Lines    On
+        Refresh_Interval   5
+        storage.type       filesystem
+        Read_from_Head     True
+    [FILTER]
+        # https://docs.fluentbit.io/manual/pipeline/filters/modify
+        Name          modify
+        Match         k8s_application*
+        Hard_rename   log message
+    # Parses the workload log lines and tries parsers one after another.
+    # cri,glog and json are applied in order until one succeeds.
+    [FILTER]
+        Name         parser
+        Match        k8s_application*
+        Key_Name     message
+        Reserve_Data True
+        Parser       cri
+        Parser       appglog
+        Parser       json
+    [FILTER]
+        # https://docs.fluentbit.io/manual/pipeline/filters/modify
+        Name         modify
+        Match        k8s_application*
+        Copy         level severity
+    [FILTER]
+        # https://docs.fluentbit.io/manual/pipeline/filters/modify
+        Name         modify
+        Match        k8s_application*
+        Condition    Key_value_equals stream stdout
+        Add          severity I
+    [FILTER]
+        # https://docs.fluentbit.io/manual/pipeline/filters/modify
+        Name         modify
+        Match        k8s_application*
+        Condition    Key_value_equals stream stderr
+        Add          severity E
+    [FILTER]
+        Name                lua
+        Match               k8s_application.*
+        # lua script to redact sensitive data in log messages
+        script              replace_info.lua
+        call                replace_sensitive_info
+        ### end sample log scrubbing
+  replace_info.lua: |
+        function replace_sensitive_info(tag, timestamp, record)
+          -- mask social security number
+          record["log"] = string.gsub(record["log"], "%d%d%d%-+%d%d%-+%d%d%d%d", "xxx-xx-xxxx")
+          -- mask credit card number
+          record["log"] = string.gsub(record["log"], "%d%d%d%d *%d%d%d%d *%d%d%d%d *%d%d%d%d", "xxxx xxxx xxxx xxxx")
+          -- mask email address
+          record["log"] = string.gsub(record["log"], "[%w+%.%-_]+@[%w+%.%-_]+%.%a%a+", "user@email.tld")
+          return 1, timestamp, record
+        end
+  output-stackdriver.conf: |
+    [OUTPUT]
+        # https://docs.fluentbit.io/manual/pipeline/outputs/stackdriver
+        Name                        stackdriver
+        Match                       k8s_application.*
+        Resource                    k8s_container
+        k8s_cluster_name            awsClusters/aws-cluster-wx
+        k8s_cluster_location        us-west1
+        # Custom RegEx for matching the fields in the local_resource_id
+        # https://github.com/fluent/fluent-bit/pull/3200
+        custom_k8s_regex            ^(?<namespace_name>[^_.]+)\.(?<pod_name>[a-z0-9](?:[-a-z0-9]*[a-z0-9])?(?:\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*)\.(?<container_name>[^.]+)$
+        Severity_key                severity
+        tag_prefix                  k8s_application
+        # https://docs.fluentbit.io/manual/administration/buffering-and-storage#output-section-configuration
+        storage.total_limit_size    1G
+        # https://docs.fluentbit.io/manual/administration/scheduling-and-retries#configuring-retries
+        # Total retry time wil be 2^14 seconds ~= 4.5 hours which will makes offline buffer limit as 4.5 hours
+        Retry_Limit               14
+  parsers.conf: |
+    [PARSER]
+        Name    k8s-container-custom-tag
+        Format  regex
+        Regex   ^(?<namespace_name>[^_.]+)\.(?<pod_name>[a-z0-9](?:[-a-z0-9]*[a-z0-9])?(?:\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*)\.(?<container_name>[^.]+)$
+    [PARSER]
+        # https://rubular.com/r/Vn30bO78GlkvyB
+        Name        cri
+        Format      regex
+        # The timestamp is described in https://www.rfc-editor.org/rfc/rfc3339#section-5.6
+        Regex       ^(?<time>[0-9]{4}-[0-9]{2}-[0-9]{2}[Tt ][0-9]{2}:[0-9]{2}:[0-9]{2}(?:\.[0-9]+)?(?:[Zz]|[+-][0-9]{2}:[0-9]{2})) (?<stream>stdout|stderr) (?<logtag>[^ ]*) (?<message>.*)$
+        Time_Key    time
+        Time_Format %Y-%m-%dT%H:%M:%S.%L%z
+    [PARSER]
+        # https://docs.fluentbit.io/manual/parser/json
+        Name        network-log
+        Format      json
+        Time_Key    timestamp
+        Time_Format %Y-%m-%dT%H:%M:%S.%L%z
+    [PARSER]
+        # https://docs.fluentbit.io/manual/parser/json
+        Name        gke-metrics-agent
+        Format      json
+        Time_Key    ts
+        Time_Format %s.%L
+    [PARSER]
+        Name        containerd
+        Format      regex
+        Regex       ^(time="(?<time>.+)" )?level=(?<severity>\w+) (?<message>.+)$
+    [PARSER]
+        # https://github.com/golang/glog/blob/master/glog.go
+        Name        glog
+        Format      regex
+        Regex       ^((?<severity>\w)\d{4} [^\s]*\s+\d+\s+(?<source_file>[^ \]]+)\:(?<source_line>\d+)\]\s)?"?(?<message>.*)"?$
+    [PARSER]
+        # https://docs.fluentbit.io/manual/pipeline/parsers/logfmt
+        Name        logfmt
+        Format      logfmt
+    [PARSER]
+        Name        fluentbit
+        Format      regex
+        Regex       ^\[[\s\/:0-9]+\] \[\s*(?<severity>\w+)] (?<message>.*)$
+    [PARSER]
+        Name        node-cache
+        Format      regex
+        Regex       ^([\s:\/0-9]+)?\[\s*(?<severity>\w+)] (?<message>.*)$
+    [PARSER]
+        # https://docs.fluentbit.io/manual/parser/json
+        Name        json
+        Format      json
+    [PARSER]
+        # https://github.com/golang/glog/blob/master/glog.go
+        # glog parser used by workload logging.
+        Name        appglog
+        Format      regex
+        Regex       ^(?<severity>\w)(?<time>\d{4} [^\s]*)\s+(?<pid>\d+)\s+(?<source_file>[^ \]]+)\:(?<source_line>\d+)\]\s(?<message>.*)$
+        Time_Key    time
+        Time_Format %m%d %H:%M:%S.%L%z
+---
+# Log Forwarder (Fluent Bit) DaemonSet to tail log files.
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fluentbit-gke-user
+  namespace: gke-system
+  labels:
+    k8s-app: fluentbit-gke-user
+spec:
+  selector:
+    matchLabels:
+      k8s-app: fluentbit-gke-user
+  template:
+    metadata:
+      labels:
+        k8s-app: fluentbit-gke-user
+    spec:
+      nodeSelector:
+        kubernetes.io/os: linux
+      containers:
+      - name: gcp-token-minter
+        image: us.gcr.io/gke-multi-cloud-release/gke-addon-sidecar:gke_multicloud.gke_multicloud_images_20220317_1445_RC00
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: HTTPS_PROXY
+          valueFrom:
+            secretKeyRef:
+              key: HTTPS_PROXY
+              name: proxy-config
+        - name: NO_PROXY
+          valueFrom:
+            secretKeyRef:
+              key: NO_PROXY
+              name: proxy-config
+        command:
+        - /app/cloud/kubernetes/multicloud/addonsidecar/gke_addon_sidecar
+        - run-metadata-server
+        - --http_server=localhost:29681
+        - --ksa_name=gke-telemetry-agent
+        - --ksa_namespace=gke-system
+        - --token_audience=awestlake.svc.id.goog
+        - --gcp_project_id=awestlake
+        - --gcp_sts_audience=identitynamespace:awestlake.svc.id.goog://gkemulticloud.googleapis.com/projects/169086134706/locations/us-east4/awsClusters/aws-cluster-wx
+      - name: fluentbit-gke-user
+        image: us.gcr.io/gke-multi-cloud-release/fluent-bit:v1.8.12-gke.2
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 29020
+        resources:
+          requests:
+            cpu: 50m
+            memory: 50Mi
+          limits:
+            memory: 250Mi
+        env:
+        - name: METADATA_SERVER
+          value: http://127.0.0.1:29681
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: spec.nodeName
+        - name: HTTP_PROXY
+          valueFrom:
+            secretKeyRef:
+              key: HTTPS_PROXY
+              name: proxy-config
+        - name: HTTPS_PROXY
+          valueFrom:
+            secretKeyRef:
+              key: HTTPS_PROXY
+              name: proxy-config
+        - name: NO_PROXY
+          valueFrom:
+            secretKeyRef:
+              key: NO_PROXY
+              name: proxy-config
+        volumeMounts:
+        - name: varlog
+          mountPath: /var/log
+        - name: fluentbit-gke-user-config
+          mountPath: /fluent-bit/etc/
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      serviceAccountName: fluentbit-gke
+      terminationGracePeriodSeconds: 60
+      tolerations:
+      - operator: "Exists"
+        effect: "NoExecute"
+      - operator: "Exists"
+        effect: "NoSchedule"
+      volumes:
+      - name: varlog
+        hostPath:
+          path: /var/log
+      - name: fluentbit-gke-user-config
+        configMap:
+          name: fluentbit-gke-user-config
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate
