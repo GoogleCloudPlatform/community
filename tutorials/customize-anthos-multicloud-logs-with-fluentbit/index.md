@@ -37,11 +37,11 @@ Unless otherwise noted, you enter all commands for this tutorial in Cloud Shell.
 
 ## Before you begin
 
-1.  Create an Anthos on AWS/Azure cluster with user logs turned off.
+1.  [Create a cluster](https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/create-cluster) with Anthos on AWS/Azure with user logs turned off.
 
 ## Setup
 
-In this section, you define variables that control where elements of the infrastructure are deployed.
+To set up your environment, complete the following.
 
 1.  [Open Cloud Shell](https://console.cloud.google.com/?cloudshell=true).
 
@@ -73,7 +73,12 @@ In this section, you define variables that control where elements of the infrast
 
         cd community/tutorials/kubernetes-engine-customize-fluentbit
     
-    Stay in this directory for the duration of the tutorial.    
+    Stay in this directory for the duration of the tutorial.   
+
+1. [Create a service account](https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/private-registry#create_a_service_account) and
+[save the key to your cluster](https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/private-registry#save_the_key_to_your_cluster).
+    This allows your Anthos on AWS/Azure cluster to access Artifact Registry,
+    where you store your sample application container image. 
 
 ## Prepare and deploy the test logger application
 
@@ -123,7 +128,7 @@ To prepare the test logger sample application, complete the following.
 
         docker push [REGION]-docker.pkg.dev/${project_id}/test-logger/test-logger:v1
 
-        Replace [REGION].
+    Replace [REGION].
 
 1.  Update the deployment file using the `envsubst` command. This will add the
     `PROJECT_ID` variable you set earlier to a
@@ -132,7 +137,7 @@ To prepare the test logger sample application, complete the following.
 
         envsubst < kubernetes/test-logger.yaml > kubernetes/test-logger-deploy.yaml
 
-1.  Add your service account key secret, which you created above, to end of the
+1.  Add your service account key secret, which you created above, to the end of the
     `kubernetes/test-logger-deploy.yaml` deployment file underneath the
     `spec:` subheading. The indentation should be equal to the `containers:` line. 
 
@@ -275,18 +280,18 @@ on {{product_name_short}} so you won't be billed for them in the future.
 
 1. Delete the Fluent Bit DaemonSet:
 
-      kubectl delete -f kubernetes/fluentbit-daemonset.yaml
+        kubectl delete -f kubernetes/fluentbit-daemonset.yaml
 
 
 1. Delete the Fluentd configuration:
 
-      kubectl delete -f kubernetes/fluentd-configmap.yaml
+         kubectl delete -f kubernetes/fluentd-configmap.yaml
 
 
 1. Delete the `test-logger` application:
 
 
-      kubectl delete -f test-logger-deploy.yaml
+         kubectl delete -f test-logger-deploy.yaml
 
 
 ## What's next
