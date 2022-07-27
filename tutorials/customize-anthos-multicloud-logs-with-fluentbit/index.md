@@ -39,15 +39,15 @@ You will be charged for the following:
 * Your Anthos Multi-Cloud cluster
 * Cloud Logging
 
-See (Cloud Logging pricing)[https://cloud.google.com/stackdriver/pricing]
+See [Cloud Logging pricing](https://cloud.google.com/stackdriver/pricing)
 for more information.
 
 ## Before you begin
 
-1.  [Create an Anthos on AWS cluster](https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/create-cluster)
-    or
-    [Create an Anthos on Azure cluster](https://cloud.google.com/anthos/clusters/docs/multi-cloud/azure/how-to/create-cluster).
-    Create the cluster with user logs turned off.
+1.  [Create a cluster](https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/create-cluster)
+    with Anthos on AWS or
+    [Create an cluster](https://cloud.google.com/anthos/clusters/docs/multi-cloud/azure/how-to/create-cluster)
+    with Anthos on Azure. Create the cluster with user logs turned off.
 
 1.  [Configure and authenticate Docker](https://cloud.google.com/container-registry/docs/advanced-authentication#gcloud-helper).
 
@@ -90,8 +90,8 @@ To set up your environment, complete the following:
         export zone=${region}-b
         export project_id=[YOUR_PROJECT_ID]
         
-   This tutorial uses the region `us-east-1`. If you change the region,
-   make sure that the zone values reference your region.
+    This tutorial uses the region `us-east-1`. If you change the region,
+    make sure that the zone values reference your region.
 
 1.  Set the default zone and project ID so that you don't have to specify these
     values in every subsequent command:
@@ -109,9 +109,8 @@ you deploy later customizes these logs.
 
 In this tutorial, you
 [Use a private image registry](https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to-private-registry)
-and store your container image in Artifact Registry. You upload the container image to
-a registry so that your Anthos on AWS/Azure cluster can access it.
-Then, you deploy the application to your cluster.
+and store your container image in Artifact Registry. Then, you deploy the
+application to your cluster.
 
 ### Prepare the test logger application
 
@@ -130,6 +129,12 @@ To prepare the test logger sample application, complete the following:
 
     Replace `[REGION]` with the Google Cloud region you want to create
     your repository in.
+
+    To see a list of available locations, run the following command:
+
+
+        gcloud artifacts locations list
+  
 
 1.  Tag the container before pushing it to the registry:
 
@@ -305,7 +310,7 @@ In this section, you change `kubernetes/fluentbit-daemonset.yaml` to mount the `
 
         kubectl rollout status ds/fluent-bit --namespace=logging
 
-    When it completes, you should see the follwoing message:
+    When it completes, you should see the following message:
 
         daemon set "fluent-bit" successfully rolled out
 
@@ -336,7 +341,7 @@ so you won't be billed for them in the future.
 1. Delete the `test-logger` application:
 
 
-         kubectl delete -f test-logger-deploy.yaml
+         kubectl delete -f kubernetes/test-logger-deploy.yaml
 
 
 ## What's next
