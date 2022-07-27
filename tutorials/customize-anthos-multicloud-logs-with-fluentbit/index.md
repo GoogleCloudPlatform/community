@@ -13,7 +13,7 @@ This tutorial describes how to use [Fluent Bit](https://fluentbit.io/)
 to customize your Cloud Logging logs for an
 [Anthos Multi-Cloud](https://cloud.google.com/anthos/clusters/docs/multi-cloud)
 cluster. In this document, you learn how to host your own configurable Fluent Bit
-daemonset to send logs to Cloud Logging, instead of selecting the Cloud
+DaemonSet to send logs to Cloud Logging, instead of selecting the Cloud
 Logging option when creating the cluster.
 
 Unlike user logs, Fluent Bit allows you to customize your logs.
@@ -26,8 +26,8 @@ Enter all commands for this tutorial in Cloud Shell.
 
 ## Objectives 
 
-* Deploy your own Fluent Bit DaemonSet on an Anthos cluster on AWS or Azure,
-  configured to log data to [Cloud Logging](https://cloud.google.com/logging).
+* Deploy your own Fluent Bit DaemonSet on an Anthos cluster on AWS or Azure that
+  is configured to log data to [Cloud Logging](https://cloud.google.com/logging).
 * Customize GKE logging to remove sensitive data from the Cloud Logging logs.
 
 ## Costs
@@ -49,6 +49,9 @@ for more information.
     [Create an cluster](https://cloud.google.com/anthos/clusters/docs/multi-cloud/azure/how-to/create-cluster)
     with Anthos on Azure. Create the cluster with user logs turned off.
 
+1.  [Authorize Cloud Logging / Cloud Monitoring](https://cloud.devsite.corp.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/create-cluster#telemetry-agent-auth)
+    for your cluster.
+
 1.  [Configure and authenticate Docker](https://cloud.google.com/container-registry/docs/advanced-authentication#gcloud-helper).
 
 1.  [Create a service account](https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/private-registry#create_a_service_account) 
@@ -69,14 +72,14 @@ To set up your environment, complete the following:
 
 1.  Clone the [sample Git repository](https://github.com/GoogleCloudPlatform/community.git):
 
-        git clone https://github.com/GoogleCloudPlatform/community.git
+        git clone <!-- TODO: replace sample repository Github link -->
 
     This sample repository includes manifest files that will create the following:
  
     * A `test-logger` sample application
     * A Fluent Bit DaemonSet
 
-    <!-- TODO: replace sample repository Github link -->
+    <!-- TODO: replace sample repository path -->
 
 1.  Go to the directory for this tutorial in the cloned repository:
 
@@ -90,6 +93,8 @@ To set up your environment, complete the following:
         export zone=${region}-b
         export project_id=[YOUR_PROJECT_ID]
         
+    Replace [YOUR_PROJECT_ID] with the name of your Google Cloud project.
+   
     This tutorial uses the region `us-east-1`. If you change the region,
     make sure that the zone values reference your region.
 
@@ -179,7 +184,7 @@ To prepare the test logger sample application, complete the following:
         spec:
         containers:
             - name: test-logger
-            image: gcr.io/awestlake/test-logger
+            image: gcr.io/[PROJECT_ID]/test-logger
         imagePullSecrets:
          - name: [SECRET_NAME]
 
