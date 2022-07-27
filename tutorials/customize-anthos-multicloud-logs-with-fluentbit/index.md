@@ -47,7 +47,11 @@ for more information.
 1.  [Create a cluster](https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/create-cluster)
     with Anthos on AWS or
     [Create an cluster](https://cloud.google.com/anthos/clusters/docs/multi-cloud/azure/how-to/create-cluster)
-    with Anthos on Azure. Create the cluster with user logs turned off.
+    with Anthos on Azure. Create the cluster with user logs turned off. If
+    you already have an existing cluster, update it turn logging off.
+
+1. [Authorize Cloud Logging / Cloud Monitoring](https://cloud.devsite.corp.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/create-cluster#telemetry-agent-auth)
+    for your cluster.
 
 1.  [Configure and authenticate Docker](https://cloud.google.com/container-registry/docs/advanced-authentication#gcloud-helper).
 
