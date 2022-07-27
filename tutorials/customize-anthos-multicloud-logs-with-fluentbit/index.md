@@ -47,8 +47,7 @@ for more information.
 1.  [Create a cluster](https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/create-cluster)
     with Anthos on AWS or
     [Create an cluster](https://cloud.google.com/anthos/clusters/docs/multi-cloud/azure/how-to/create-cluster)
-    with Anthos on Azure. Create the cluster with user logs turned off. If
-    you already have an existing cluster, update it turn logging off.
+    with Anthos on Azure.
 
 1. [Authorize Cloud Logging / Cloud Monitoring](https://cloud.devsite.corp.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/create-cluster#telemetry-agent-auth)
     for your cluster.
@@ -105,6 +104,15 @@ To set up your environment, complete the following:
         gcloud config set compute/zone ${zone}
         gcloud config set project ${project_id}   
 
+
+## Update your cluster to turn Cloud Logging user logs off
+
+Disabling user logs means that you will not duplicate logging efforts and 
+will not be charged twice for logs. 
+
+1. To turn off user logs and keep only system logs, run the following command:
+
+        gcloud alpha container aws clusters update --logging=SYSTEM
 
 ## Prepare and deploy the test logger application
 
