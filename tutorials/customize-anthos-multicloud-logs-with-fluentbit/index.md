@@ -49,9 +49,6 @@ for more information.
     [Create an cluster](https://cloud.google.com/anthos/clusters/docs/multi-cloud/azure/how-to/create-cluster)
     with Anthos on Azure. Create the cluster with user logs turned off.
 
-1.  [Authorize Cloud Logging / Cloud Monitoring](https://cloud.devsite.corp.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/create-cluster#telemetry-agent-auth)
-    for your cluster.
-
 1.  [Configure and authenticate Docker](https://cloud.google.com/container-registry/docs/advanced-authentication#gcloud-helper).
 
 1.  [Create a service account](https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/private-registry#create_a_service_account) 
@@ -91,9 +88,9 @@ To set up your environment, complete the following:
 
         export region=us-east1
         export zone=${region}-b
-        export project_id=[YOUR_PROJECT_ID]
+        export project_id=[PROJECT_ID]
         
-    Replace [YOUR_PROJECT_ID] with the name of your Google Cloud project.
+    Replace `[PROJECT_ID]` with the name of your Google Cloud project.
    
     This tutorial uses the region `us-east-1`. If you change the region,
     make sure that the zone values reference your region.
