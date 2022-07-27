@@ -6,44 +6,84 @@ author: amandawestlake
 tags: logging, stackdriver, gke, fluent-bit
 date_published: 2021-07-26
 ---
-
 Amanda Westlake | Technical Writer Intern | Google
-
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-This tutorial describes how to use [Fluent Bit](https://fluentbit.io/)
-to customize your Cloud Logging logs for an Anthos on AWS/Azure cluster.
-In this tutorial, you learn how to host your own configurable Fluent Bit
-daemonset to send logs to Cloud Logging, instead of selecting the Cloud
-Logging option when creating the cluster, which does not allow configuration of
-the Fluent Bit daemon.
 
-Unlike user logs, Fluent Bit allows you to customize
-logs. Fluent Bit can also be used with specific applications or namespaces, as opposed
-user logs which can only be used with all applications running on a cluster. 
+This tutorial describes how to use [Fluent Bit](https://fluentbit.io/)
+to customize your Cloud Logging logs for an
+[Anthos Multi-Cloud](https://cloud.google.com/anthos/clusters/docs/multi-cloud)
+cluster. In this document, you learn how to host your own configurable Fluent Bit
+daemonset to send logs to Cloud Logging, instead of selecting the Cloud
+Logging option when creating the cluster.
+
+Unlike user logs, Fluent Bit allows you to customize your logs.
+Fluent Bit can also be used with specific applications or namespaces, as opposed
+to user logs which can only be used with all applications running on a cluster. 
 
 This tutorial applies to Linux nodes only.
 
-Unless otherwise noted, you enter all commands for this tutorial in Cloud Shell.
+Enter all commands for this tutorial in Cloud Shell.
 
 ## Objectives 
 
-+   Deploy your own Fluent Bit daemonset on an Anthos on AWS/Azure cluster,
-    configured to log data to [Cloud Logging](https://cloud.google.com/logging).
-+   Customize GKE logging to remove sensitive data from the Cloud Logging logs.
+* Deploy your own Fluent Bit DaemonSet on an Anthos cluster on AWS or Azure,
+  configured to log data to [Cloud Logging](https://cloud.google.com/logging).
+* Customize GKE logging to remove sensitive data from the Cloud Logging logs.
 
 ## Costs
 
+This tutorial uses billable components of Google Cloud. 
+
+You will be charged for the following:
+
+* Your Anthos Multi-Cloud cluster
+* Cloud Logging
+
+See (Cloud Logging pricing)[https://cloud.google.com/stackdriver/pricing]
+for more information.
 
 ## Before you begin
 
-1.  [Create a cluster](https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/create-cluster) with Anthos on AWS/Azure with user logs turned off.
+1.  [Create an Anthos on AWS cluster](https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/create-cluster)
+    or
+    [Create an Anthos on Azure cluster](https://cloud.google.com/anthos/clusters/docs/multi-cloud/azure/how-to/create-cluster).
+    Create the cluster with user logs turned off.
+
+1.  [Configure and authenticate Docker](https://cloud.google.com/container-registry/docs/advanced-authentication#gcloud-helper).
+
+1.  [Create a service account](https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/private-registry#create_a_service_account) 
+    and
+    [save the key to your cluster](https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/private-registry#save_the_key_to_your_cluster)
+    as a Kubernetes secret.
+    This allows your Anthos Multi-Cloud cluster to access Artifact Registry,
+    where you store your sample application container image.
+
+    Make a note of the name of your service account key secret. You'll
+    need it later.
 
 ## Setup
 
-To set up your environment, complete the following.
+To set up your environment, complete the following:
 
 1.  [Open Cloud Shell](https://console.cloud.google.com/?cloudshell=true).
+
+1.  Clone the [sample Git repository](https://github.com/GoogleCloudPlatform/community.git):
+
+        git clone https://github.com/GoogleCloudPlatform/community.git
+
+    This sample repository includes manifest files that will create the following:
+ 
+    * A `test-logger` sample application
+    * A Fluent Bit DaemonSet
+
+    <!-- TODO: replace sample repository Github link -->
+
+1.  Go to the directory for this tutorial in the cloned repository:
+
+        <!-- cd TODO: Replace sample repository Github link -->
+    
+    Stay in this directory for the duration of the tutorial.
 
 1.  Set the variables used by this tutorial:
 
@@ -51,40 +91,22 @@ To set up your environment, complete the following.
         export zone=${region}-b
         export project_id=[YOUR_PROJECT_ID]
         
-    This tutorial uses the region `us-east-1`. If you change the region,
-    make sure that the zone values reference your region.
+   This tutorial uses the region `us-east-1`. If you change the region,
+   make sure that the zone values reference your region.
 
 1.  Set the default zone and project ID so that you don't have to specify these
     values in every subsequent command:
 
         gcloud config set compute/zone ${zone}
-        gcloud config set project ${project_id}
+        gcloud config set project ${project_id}   
 
-1.  Clone the sample Git repository:
-
-        git clone https://github.com/GoogleCloudPlatform/community.git
-
-    This sample repository includes manifest files that will create the following:
-
-    * A `test-logger` sample application
-    * A Fluent Bit DaemonSet
-
-1.  Go to the directory for this tutorial in the cloned repository:
-
-        cd community/tutorials/kubernetes-engine-customize-fluentbit
-    
-    Stay in this directory for the duration of the tutorial.   
-
-1. [Create a service account](https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/private-registry#create_a_service_account) and
-[save the key to your cluster](https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/private-registry#save_the_key_to_your_cluster).
-    This allows your Anthos on AWS/Azure cluster to access Artifact Registry,
-    where you store your sample application container image. 
 
 ## Prepare and deploy the test logger application
 
 Deploy the `test-logger` sample application, which is built from the source
 code in the `test-logger` subdirectory. By default, this application
-continuously emits random logging statements.
+continuously emits random logging statements. The Fluent Bit Daemonset
+you deploy later customizes these logs.
 
 In this tutorial, you
 [Use a private image registry](https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to-private-registry)
@@ -92,10 +114,9 @@ and store your container image in Artifact Registry. You upload the container im
 a registry so that your Anthos on AWS/Azure cluster can access it.
 Then, you deploy the application to your cluster.
 
+### Prepare the test logger application
 
-### Prepare the test-logger application
-
-To prepare the test logger sample application, complete the following.
+To prepare the test logger sample application, complete the following:
 
 1.  Build the `test-logger` container image:
 
@@ -108,62 +129,62 @@ To prepare the test logger sample application, complete the following.
                 --location=[REGION] \
                 --description="Docker repository"
 
-    Replace [REGION] with the Google Cloud region you want to create
+    Replace `[REGION]` with the Google Cloud region you want to create
     your repository in.
 
 1.  Tag the container before pushing it to the registry:
 
         docker tag test-logger [REGION]-docker.pkg.dev/${project_id}/test-logger-repo/test-logger:v1
 
-    Replace [REGION].
+    Replace `[REGION]`.
 
 1.  Configure the Docker command-line tool to authenticate to
     Artifact Registry.
 
         gcloud auth configure-docker [REGION]-docker.pkg.dev
 
-    Replace [REGION].
+    Replace `[REGION]`.
 
-1.  Push the container image:
+1.  Push the container image to the registry:
 
         docker push [REGION]-docker.pkg.dev/${project_id}/test-logger/test-logger:v1
 
-    Replace [REGION].
+    Replace `[REGION]`.
 
-1.  Update the deployment file using the `envsubst` command. This will add the
+1.  Update the deployment file using the `envsubst` command. This adds the
     `PROJECT_ID` variable you set earlier to a
     `test-logger-deploy.yaml` configuration file:
 
-
         envsubst < kubernetes/test-logger.yaml > kubernetes/test-logger-deploy.yaml
 
-1.  Add your service account key secret, which you created above, to the end of the
-    `kubernetes/test-logger-deploy.yaml` deployment file underneath the
-    `spec:` subheading. The indentation should be equal to the `containers:` line. 
+1.  Add the service account key secret that you created above to the end of the
+    `kubernetes/test-logger-deploy.yaml` deployment file. It should go under the
+    `spec:` subheading, and the indentation should be equal to the
+    `containers:` line. 
 
     Add the following text to the manifest file:
 
         imagePullSecrets:
-         - name: {{"<var>SECRET_NAME</var>"}}
+         - name: [SECRET_NAME]
 
-    Replace `{{"<var>SECRET_NAME</var>"}}` with the name of your service 
+    Replace `[SECRET_NAME]` with the name of your service 
     account key secret.
 
-     The file should now contain the following:
+    The file should now contain the following:
 
         spec:
         containers:
             - name: test-logger
             image: gcr.io/awestlake/test-logger
         imagePullSecrets:
-         - name: gcr-secret 
+         - name: [SECRET_NAME]
 
 ### Deploy the test logger application
 
 To deploy the sample application and check that it is working, 
-complete the following.
+complete the following:
 
-1.  Deploy the `test-logger` application:
+1.  Deploy the `test-logger` sample application:
 
         kubectl apply -f kubernetes/test-logger-deploy.yaml
 
@@ -171,20 +192,24 @@ complete the following.
 
         kubectl get pods
 
-1.  Repeat this command until the output looks like the following, with all three `test-logger` pods running:
+1.  Repeat this command until the output looks like the following, with all three `test-logger` pods   
+    running:
 
         NAME                           READY   STATUS    RESTARTS   AGE
         test-logger-58f7bfdb89-4d2b5   1/1     Running   0          28s
         test-logger-58f7bfdb89-qrlbl   1/1     Running   0          28s
         test-logger-58f7bfdb89-xfrkx   1/1     Running   0          28s
 
-## Deploy the Fluent Bit daemonset to your cluster
+## Deploy the Fluent Bit DaemonSet to your cluster
 
-In this section, you configure and deploy your Fluent Bit daemonset.
+In this section, you configure and deploy your Fluent Bit DaemonSet.
 
-Because you turned on system-only logging, a GKE-managed Fluentd daemonset is deployed that is responsible for system logging. The Kubernetes manifests for 
-Fluent Bit that you deploy in this procedure are versions of the ones available from the Fluent Bit site for
-[logging using Cloud Logging](https://docs.fluentbit.io/manual/installation/kubernetes/) and
+Because you turned on system-only logging, a GKE-managed Fluent DaemonSet is
+deployed that is responsible for system logging. The Kubernetes manifests for 
+Fluent Bit that you deploy in this procedure are versions of the ones available
+from the Fluent Bit site for
+[logging using Cloud Logging](https://docs.fluentbit.io/manual/installation/kubernetes/)
+and
 [watching changes to Docker log files](https://kubernetes.io/docs/concepts/cluster-administration/logging/).
 
 1.  Create the service account and the cluster role in a new `logging` namespace:
@@ -195,15 +220,15 @@ Fluent Bit that you deploy in this procedure are versions of the ones available 
 
         kubectl apply -f kubernetes/fluentbit-configmap.yaml
 
-1.  Deploy the Fluent Bit daemonset:
+1.  Deploy the Fluent Bit DaemonSet:
 
         kubectl apply -f kubernetes/fluentbit-daemonset.yaml
 
-1.  Check that the Fluent Bit pods have started:
+1.  View the status of the Fluent Bit pods:
 
         kubectl get pods --namespace=logging
 
-1.  If they're running, you see output like the following:
+1.  Repeat this command until the output looks like the following, with all three `test-logger` pods running:
 
         NAME               READY   STATUS    RESTARTS   AGE
         fluent-bit-246wz   1/1     Running   0          26s
@@ -221,24 +246,42 @@ Fluent Bit that you deploy in this procedure are versions of the ones available 
     
 1.  Select **Run Query**, a button on the top right.
 
-1.  In the **Logs field explorer**, select **test-logger** for **CONTAINER_NAME**. After you add the `log` field to the summary line, you should see logs similar
+1.  In the **Logs field explorer**, select **test-logger** for **CONTAINER_NAME**.
+    After you add the `log` field to the summary line, you should see logs similar
     to the following:
 
     ![fluentbit-filter-before](https://storage.googleapis.com/gcp-community/tutorials/kubernetes-engine-customize-fluentbit/fluentbit-filter-before.png)
 
+    You have now deployed the Fluent Bit DaemonSet.
+
 ## Filter information from the log file
 
-In this section, you configure Fluent Bit to filter certain data so that it is not logged. For this tutorial, you filter out Social Security numbers, credit
-card numbers, and email addresses. To make this update, you change the daemonset to use a different ConfigMap that contains these filters. You use Kubernetes
+In this section, you configure Fluent Bit to filter certain data so that it is
+not logged. For this tutorial, you filter out Social Security numbers, credit
+card numbers, and email addresses. To make this update, you change the DaemonSet
+to use a different ConfigMap that contains these filters. You use Kubernetes
 rolling updates feature and preserve the old version of the ConfigMap.
 
 1.  Open the
     [`kubernetes/fluentbit-configmap.yaml`](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/kubernetes-engine-customize-fluentbit/kubernetes/fluentbit-configmap.yaml) file in an editor.
-1.  Uncomment the lines after `### sample log scrubbing filters` and before `### end sample log scrubbing filters`.
-1.  Change the name of the ConfigMap from `fluent-bit-config` to `fluent-bit-config-filtered` by editing the `metadata.name` field.
+
+1.  Uncomment the lines after `### sample log scrubbing filters` and before
+    `### end sample log scrubbing filters`.
+
+1.  Change the name of the ConfigMap from `fluent-bit-config` to
+    `fluent-bit-config-filtered` by editing the `metadata.name` field.
+
+    Edit the portion of the file above so it looks like this:
+
+
+        name: fluentbit-gcp-config-filtered
+        namespace: kube-system
+        labels:
+          k8s-app: fluentbit-gcp-custom
+
 1.  Save and close the file.
 
-## Update the Fluent Bit daemonset to use the new configuration
+## Update the Fluent Bit DaemonSet to use the new configuration
 
 In this section, you change `kubernetes/fluentbit-daemonset.yaml` to mount the `fluent-bit-config-filtered` ConfigMap instead of the
 `fluent-bit-config` ConfigMap.
@@ -255,7 +298,7 @@ In this section, you change `kubernetes/fluentbit-daemonset.yaml` to mount the `
 
         kubectl apply -f kubernetes/fluentbit-configmap.yaml
 
-1.  Roll out the new version of the daemonset:
+1.  Roll out the new version of the DaemonSet:
         
         kubectl apply -f kubernetes/fluentbit-daemonset.yaml
 
@@ -273,19 +316,22 @@ In this section, you change `kubernetes/fluentbit-daemonset.yaml` to mount the `
 
     ![fluentbit-filter-after](https://storage.googleapis.com/gcp-community/tutorials/kubernetes-engine-customize-fluentbit/fluentbit-filter-after.png)
 
+    You have now used the Fluent Bit DaemonSet to customize your Cloud Logging
+    logs.
+
 ## Clean up
 
 After you've finished the tutorial, clean up the resources you created
-on {{product_name_short}} so you won't be billed for them in the future.
+so you won't be billed for them in the future.
 
 1. Delete the Fluent Bit DaemonSet:
 
         kubectl delete -f kubernetes/fluentbit-daemonset.yaml
 
 
-1. Delete the Fluentd configuration:
+1. Delete the Fluent Bit configuration:
 
-         kubectl delete -f kubernetes/fluentd-configmap.yaml
+         kubectl delete -f kubernetes/fluentbit-configmap.yaml
 
 
 1. Delete the `test-logger` application:
@@ -295,3 +341,7 @@ on {{product_name_short}} so you won't be billed for them in the future.
 
 
 ## What's next
+
+* Review [Fluent Bit](https://docs.fluentbit.io/manual/) documentation in more
+  detail.
+* Read more about [Cloud Logging](https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/cloud-logging) with Anthos Multi-Cloud.
