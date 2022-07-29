@@ -222,7 +222,7 @@ complete the following:
 
 In this section, you configure and deploy your Fluent Bit DaemonSet.
 
-Because you turned on system-only logging, a GKE-managed Fluent DaemonSet is
+Because you turned on system-only logging, a GKE-managed Fluentd DaemonSet is
 deployed that is responsible for system logging. The Kubernetes manifests for 
 Fluent Bit that you deploy in this procedure are versions of the ones available
 from the Fluent Bit site for
@@ -230,9 +230,33 @@ from the Fluent Bit site for
 and
 [watching changes to Docker log files](https://kubernetes.io/docs/concepts/cluster-administration/logging/).
 
-1.  Create the service account and the cluster role in a new `logging` namespace:
+
+### Prepare and deploy the FluentBit ConfigMap and Daemonset
+
+To deploy the Fluent Bit ConfigMap and DaemonSet, complete the following:
+
+1.  Create a new namespace called `logging-systen`.
+
+        kubectl create namespace logging-system
+
+1. Add an IAM policy binding to your project's service account.
+
+        gcloud projects add-iam-policy-binding [PROJECT_ID] \
+        --member="serviceAccount:[PROJECT_ID].svc.id.goog[logging-system/user-telemetry-agent]" \
+        --role=roles/gkemulticloud.telemetryWriter
+
+    Replace [PROJECT_ID] with the name of your Google Cloud project.
+
+1.  
+
+        kubectl get secret proxy-config --namespace=gke-system -o yaml \
+        | sed 's/namespace: .*/namespace: logging-system/' | kubectl apply -f -
+
+1.  Create the service account and the cluster role in the new `logging-system`
+    namespace:
 
         kubectl apply -f ./kubernetes/fluentbit-rbac.yaml
+
 
 1.  Deploy the Fluent Bit configuration:
 
@@ -241,6 +265,12 @@ and
 1.  Deploy the Fluent Bit DaemonSet:
 
         kubectl apply -f kubernetes/fluentbit-daemonset.yaml
+
+
+### Confirm that the DaemonSet has been deployed correctly
+
+To confirm that your FluentBit ConfigMap and DaemonSet are working correctly
+and sending lgos to Cloud Logging, complete the following:
 
 1.  View the status of the Fluent Bit pods:
 
