@@ -30,11 +30,12 @@ This tutorial applies to Linux nodes only.
 
 ## Costs
 
-This tutorial uses billable components of Google Cloud. 
+This tutorial uses billable components of Google Cloud.
 
 You will be charged for the following:
 
 * Your Anthos Multi-Cloud cluster
+* Storage in Artifact Registry
 * Cloud Logging
 
 See [Cloud Logging pricing](https://cloud.google.com/stackdriver/pricing)
@@ -65,8 +66,6 @@ for more information.
 ## Setup
 
 To set up your environment, complete the following:
-
-1.  [Open Cloud Shell](https://console.cloud.google.com/?cloudshell=true).
 
 1.  Clone the [sample Git repository](https://github.com/GoogleCloudPlatform/anthos-samples.git):
 
@@ -143,7 +142,6 @@ To prepare the test logger sample application, complete the following:
     To see a list of available locations, run the following command:
 
         gcloud artifacts locations list
-  
 
 1.  Tag the container before pushing it to the registry:
 
@@ -217,14 +215,11 @@ complete the following:
 
 In this section, you configure and deploy your Fluent Bit DaemonSet.
 
-Because you turned on system-only logging, a GKE-managed Fluentd DaemonSet is
-deployed that is responsible for system logging. The Kubernetes manifests for 
-Fluent Bit that you deploy in this procedure are versions of the ones available
-from the Fluent Bit site for
+The Kubernetes manifests for Fluent Bit that you deploy in this procedure are
+versions of the ones available from the Fluent Bit site for
 [logging using Cloud Logging](https://docs.fluentbit.io/manual/installation/kubernetes/)
 and
 [watching changes to Docker log files](https://kubernetes.io/docs/concepts/cluster-administration/logging/).
-
 
 ### Prepare and deploy the FluentBit ConfigMap and Daemonset
 
@@ -234,23 +229,16 @@ To deploy the Fluent Bit ConfigMap and DaemonSet, complete the following:
 
         kubectl create namespace logging-system
 
-1. Add an IAM policy binding to your project's service account.
-
-        gcloud projects add-iam-policy-binding [PROJECT_ID] \
-        --member="serviceAccount:[PROJECT_ID].svc.id.goog[logging-system/user-telemetry-agent]" \
-        --role=roles/gkemulticloud.telemetryWriter
-
-    Replace [PROJECT_ID] with the name of your Google Cloud project.
-
-1.  
-
-        kubectl get secret proxy-config --namespace=gke-system -o yaml \
-        | sed 's/namespace: .*/namespace: logging-system/' | kubectl apply -f -
-
 1.  Create the service account and the cluster role in the new `logging-system`
     namespace:
 
         kubectl apply -f ./kubernetes/fluentbit-rbac.yaml
+
+1.  Take the proxy-config Kubernetes secret from the built-in
+    `gke-system` namespace, and apply it to the `logging-system` namespace:
+
+        kubectl get secret proxy-config --namespace=gke-system -o yaml \
+        | sed 's/namespace: .*/namespace: logging-system/' | kubectl apply -f -
 
 1.  Deploy the Fluent Bit configuration:
 
@@ -328,9 +316,11 @@ the `fluent-bit-config-filtered` ConfigMap instead of the
 `fluent-bit-config` ConfigMap.
 
 1.  Open the
-    [`kubernetes/fluentbit-daemonset.yaml`](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/kubernetes-engine-customize-fluentbit/kubernetes/fluentbit-daemonset.yaml) file in an editor.
+    [`kubernetes/fluentbit-daemonset.yaml`](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/kubernetes-engine-customize-fluentbit/kubernetes/fluentbit-daemonset.yaml)
+    file in an editor.
 
-1.  Change the name of the ConfigMap from `fluent-bit-config` to `fluent-bit-config-filtered` by editing the `configMap.name` field:
+1.  Change the name of the ConfigMap from `fluent-bit-config` to
+`fluent-bit-config-filtered` by editing the `configMap.name` field:
 
         - name: fluent-bit-etc
         configMap:
@@ -376,8 +366,11 @@ so you won't be billed for them in the future.
         kubectl delete -f kubernetes/fluentbit-configmap.yaml
 
 
-1. Delete the `test-logger` application:
+1. Delete the service account and cluster role:
 
+        kubectl delete -f kubernetes/fluentbit-rbac.yaml
+
+1. Delete the `test-logger` application:
 
         kubectl delete -f kubernetes/test-logger-deploy.yaml
 
