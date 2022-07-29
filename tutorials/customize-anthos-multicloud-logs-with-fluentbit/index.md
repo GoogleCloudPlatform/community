@@ -13,8 +13,8 @@ This tutorial describes how to use [Fluent Bit](https://fluentbit.io/)
 to customize your Cloud Logging logs for an
 [Anthos Multi-Cloud](https://cloud.google.com/anthos/clusters/docs/multi-cloud)
 cluster. In this document, you learn how to host your own configurable Fluent Bit
-DaemonSet to send logs to Cloud Logging, instead of utilizing default workload logs
-with your cluster.
+DaemonSet to send logs to [Cloud Logging](http://cloud.google.com/logging),
+instead of utilizing default workload logs.
 
 Unlike default workload logs, Fluent Bit allows you to customize your logs.
 Fluent Bit can also be used with specific applications or namespaces, as opposed
@@ -22,14 +22,11 @@ to workload logs which can only be used with all applications running on a clust
 
 This tutorial applies to Linux nodes only.
 
-Enter all commands for this tutorial in Cloud Shell.
-
 ## Objectives 
 
-* Deploy your own Fluent Bit DaemonSet on an Anthos cluster on AWS or Azure that
-  is configured to log data to [Cloud Logging](https://cloud.google.com/logging).
+* Deploy a Fluent Bit DaemonSet on an Anthos Multi-Cloud cluster.
 * Use the Fluent Bit Daemonset to remove sensitive data from
-  the Cloud Logging logs.
+  Cloud Logging logs.
 
 ## Costs
 
