@@ -1,5 +1,0 @@
-Flask
-apache_beam
-google_apitools
-google-api-python-client
-gunicorn
