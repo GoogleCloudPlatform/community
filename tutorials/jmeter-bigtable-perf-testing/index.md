@@ -1,9 +1,9 @@
 ---
 title: Measure Cloud Bigtable performance using JMeter
-description: Evaluate Cloud BigTable for custom workloads using the JMeter.
+description: Evaluate Cloud Bigtable for custom workloads using JMeter.
 author: shashank-google,shubhamgoogle,jhambleton
 tags: bigtable, hbase, evaluation, migration, performance test, jmeter
-date_published: 2022-06-15
+date_published: 2022-08-01
 ---
 
 Shashank Agarwal, Jordan Hambleton, Shubham Chawla | Google
@@ -11,11 +11,15 @@ Shashank Agarwal, Jordan Hambleton, Shubham Chawla | Google
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 
-[Cloud Bigtable](https://cloud.google.com/bigtable) is a fully managed, scalable NoSQL database as service for large analytical and operational workloads with up to 99.999% availability.
+[Cloud Bigtable](https://cloud.google.com/bigtable) is a fully managed, scalable NoSQL database as a service for large analytical and operational 
+workloads with up to 99.999% availability.
 
-Before you adopt Cloud Bigtable, you might want to evaluate its cost and latency by performance testing. In this tutorial, you will do the performance testing with Cloud Bigtable using JMeter.
+Before you adopt Cloud Bigtable, you might want to evaluate its cost and latency through performance testing. In this tutorial, you use JMeter to test
+the performance of Cloud Bigtable.
 
-[Apache JMeter](https://jmeter.apache.org/) is a popular open source tool for load testing. It includes scriptable samplers in languages, such as Groovy and BeanShell. In this tutorial, you will use the JSR-233 Sampler to simulate load on Cloud Bigtable using the [bigtable-hbase-1.x](https://cloud.google.com/bigtable/docs/samples-hbase-java-hello) client library.
+[Apache JMeter](https://jmeter.apache.org/) is a popular open source tool for load testing. It includes scriptable samplers in languages such as Groovy
+and BeanShell. In this tutorial, you use the JSR233 Sampler to simulate load on Cloud Bigtable using the
+[bigtable-hbase-1.x](https://cloud.google.com/bigtable/docs/samples-hbase-java-hello) client library.
 
 
 ## Costs
