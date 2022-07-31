@@ -190,7 +190,7 @@ Test plans and thread groups can also have configuration elements such as a CSV 
 
 As shown in the following screenshot within each JMeter test, you need to provide instance parameters, which are used by the bigtable-hbase library to connect to Cloud Bigtable.
 
-![drawing](images/0-instance-config.jpeg)
+![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-bigtable-perf-testing/0-instance-config.jpeg)
 
 
 ### Thread groups
@@ -211,12 +211,12 @@ Creating a connection is a resource heavy operation, hence you need to create a 
 
 This thread group gets executed before any other thread groups.
 
-![alt_text](images/1-connection.jpeg)
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/jmeter-bigtable-perf-testing/1-connection.jpeg)
 
 
 Within this thread group create a JSR233 Sampler which creates the connection object one-time and stores it in memory (as btConn property). Later the same object is fetched by the tests to connect to Bigtable.
 
-![alt_text](images/2-set-up.jpeg)
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/jmeter-bigtable-perf-testing/2-set-up.jpeg)
 
 
 Sample code as below:
@@ -232,8 +232,7 @@ Sample code as below:
 
 Similarly, you should also create a tearDown thread group with a sampler to close the connection as shown in screenshot below.
 
-![alt_text](images/3-teardown.jpeg)
-
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/jmeter-bigtable-perf-testing/3-teardown.jpeg)
 
 
 ## Loading initial data into Cloud Bigtable
@@ -449,14 +448,12 @@ The above CSV file will be created using JMeter Bigtable Loader.
 
 There are four thread groups with different transactions, as shown in the following screenshot.
 
-![alt_text](images/4-csv-config.jpeg)
-
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/jmeter-bigtable-perf-testing/4-csv-config.jpeg)
 
 The CSV Read configuration reads data from a CSV file that is being used in all four thread groups. CSV Data Set Config is used to read and split lines from a file into variables. It's more user-friendly than `__CSVRead()` and `__StringFromFile()`. It's great for dealing with a lot of variables, and it's also great for testing with "random" and unique values.
 
 
-![alt_text](images/5-csv-confg-detials.jpeg)
-
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/jmeter-bigtable-perf-testing/5-csv-confg-detials.jpeg)
 
 
 All the thread groups are configured to use below parameters which can be passed by command line as well (ie. `-Jthreads=10`).
@@ -468,17 +465,16 @@ All the thread groups are configured to use below parameters which can be passed
 * **Loop Count:** It is the number of times the test needs to be executed.  
 
 
-![alt_text](images/6-thread-group.jpeg)
-
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/jmeter-bigtable-perf-testing/6-thread-group.jpeg)
 
 The Bigtable Insert group as shown below uses Groovy script in order to connect to Bigtable and insert randomly generated values to **enterprise_app_event_history** table.
 
-![alt_text](images/7-add-event.jpeg)
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/jmeter-bigtable-perf-testing/7-add-event.jpeg)
 
 
 **Randomly generated values**:
 
-![alt_text](images/8-random-values.jpeg)
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/jmeter-bigtable-perf-testing/8-random-values.jpeg)
 
 
 ## Executing performance test
