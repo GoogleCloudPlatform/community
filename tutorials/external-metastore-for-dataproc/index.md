@@ -1,25 +1,34 @@
 ---
 title: Using external Apache Hive metastore with Cloud Dataproc
-description: Describes how to deploy an external Hive metastore service in High Availability mode for Cloud Dataproc.
+description: Learn how to deploy an external Hive metastore service in High Availability mode for Cloud Dataproc.
 author: anantdamle
 tags: Dataproc, Hive, Apache Hadoop, CloudSQL, high availability, data analytics
-date_published: 2022-02-07
+date_published: 2022-08-01
 ---
 Anant Damle | Solutions Architect | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
+Google Cloud [Dataproc](https://cloud.google.com/dataproc) provides managed Hadoop clusters, which—along with
+[Dataproc Metastore](https://cloud.google.com/dataproc-metastore/docs) for managed Hive Metastore—allows developers and enterprises to use ephemeral 
+clusters without losing the flexibility of using Hive and the related ecosystem.
 
-Google Cloud [Dataproc](https://cloud.google.com/dataproc) service provides a managed Hadoop clusters, which along with [Dataproc Metastore](https://cloud.google.com/dataproc-metastore/docs) for managed Hive Metastore allows developers and enterprises to use ephemeral clusters without loosing flexibility of using Hive and related ecosystem.
+Hive is a popular open source data warehouse system built on [Apache Hadoop](https://hadoop.apache.org/). Hive offers a SQL-like query language,
+[HiveQL](https://wikipedia.org/wiki/Apache_Hive#HiveQL), which is used to analyze large, structured datasets. The Hive metastore holds metadata about 
+Hive tables, such as their schema and location. MySQL is commonly used as a backend for the Hive metastore. Cloud SQL makes it easy to set up, maintain,
+manage, and administer your relational databases on Google Cloud.
 
-Hive is a popular open source data warehouse system built on [Apache Hadoop](https://hadoop.apache.org/). Hive offers a SQL-like query language called [HiveQL](https://wikipedia.org/wiki/Apache_Hive#HiveQL), which is used to analyze large, structured datasets. The Hive metastore holds metadata about Hive tables, such as their schema and location. MySQL is commonly used as a backend for the Hive metastore, Cloud SQL makes it easy to set up, maintain, manage, and administer your relational databases on Google Cloud.
+Dataproc is a fast, easy-to-use, fully managed service on Google Cloud for running [Apache Spark](https://spark.apache.org/) and
+[Apache Hadoop](https://hadoop.apache.org/) workloads in a simple, cost-efficient way. Even though Dataproc clusters can remain stateless, we recommend
+making the Hive table data persistent in Cloud Storage and the Hive metastore in MySQL on Cloud SQL.
 
-Dataproc is a fast, easy-to-use, fully managed service on Google Cloud for running [Apache Spark](https://spark.apache.org/) and [Apache Hadoop](https://hadoop.apache.org/) workloads in a simple, cost-efficient way. Even though Dataproc clusters can remain stateless, we recommend persisting the Hive table data in Cloud Storage and the Hive metastore in MySQL on Cloud SQL.
+This document builds on the multi-regional architecture concept described in the companion document on
+[using Apache Hive on Dataproc](https://cloud.google.com/architecture/using-apache-hive-on-cloud-dataproc#considerations_for_multi-regional_architectures)
+when the [Dataproc Metastore](https://cloud.google.com/dataproc-metastore/docs) service is unavailble.
 
-This document builds on the multi-regional architecture concept described in the companion architecture on [using Apache Hive on Dataproc](https://cloud.google.com/architecture/using-apache-hive-on-cloud-dataproc#considerations_for_multi-regional_architectures) when [Dataproc Metastore](https://cloud.google.com/dataproc-metastore/docs) service is unavailble.
-
-This document is intended for a technical audience whose responsibilities include data processing, or data analytics. This document assumes that you're familiar with data processing without the need to be an expert. This document assumes some familiarity with shell scripts and basic knowledge of Google Cloud, Hadoop and Hive.
-
+This document is intended for a technical audience whose responsibilities include data processing or data analytics. This document assumes that you're 
+familiar with data processing without the need to be an expert. This document assumes some familiarity with shell scripts and basic knowledge of Google
+Cloud, Hadoop, and Hive.
 
 ## Objectives
 
