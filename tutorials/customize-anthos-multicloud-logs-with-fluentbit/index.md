@@ -2,23 +2,23 @@
 title: Customize Anthos Multi-Cloud logs with Fluent Bit
 description: Learn how to customize Cloud Logging logs with Fluent Bit for Anthos on AWS and Azure
 author: amandawestlake
-tags: logging, stackdriver, gke, fluent-bit
+tags: logging, stackdriver, gke, fluent-bit, cloud logging, Anthos on AWS, Anthos on Azure
 date_published: 2021-07-27
 ---
 Amanda Westlake | Technical Writer Intern | Google
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-
 This tutorial describes how to use [Fluent Bit](https://fluentbit.io/)
 to customize your Cloud Logging logs for an
 [Anthos Multi-Cloud](https://cloud.google.com/anthos/clusters/docs/multi-cloud)
 cluster. In this document, you learn how to host your own configurable Fluent Bit
-DaemonSet to send logs to [Cloud Logging](http://cloud.google.com/logging),
+DaemonSet to send logs to [Cloud Logging](http://cloud.google.com/logging)
 instead of utilizing default workload logs.
 
 Unlike default workload logs, Fluent Bit allows you to customize your logs.
-Fluent Bit can also be used with specific applications or namespaces, as opposed
-to workload logs which can only be used with all applications running on a cluster. 
+Fluent Bit can also be used with specific workloads and namespaces, as opposed
+to workload logs which can only be used with all applications running on a
+cluster. 
 
 This tutorial applies to Linux nodes only.
 
@@ -48,7 +48,7 @@ for more information.
     [Create an cluster](https://cloud.google.com/anthos/clusters/docs/multi-cloud/azure/how-to/create-cluster)
     with Anthos on Azure.
 
-1. [Authorize Cloud Logging / Cloud Monitoring](https://cloud.devsite.corp.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/create-cluster#telemetry-agent-auth)
+1.  [Authorize Cloud Logging / Cloud Monitoring](https://cloud.devsite.corp.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/create-cluster#telemetry-agent-auth)
     for your cluster.
 
 1.  [Configure and authenticate Docker](https://cloud.google.com/container-registry/docs/advanced-authentication#gcloud-helper).
@@ -83,22 +83,27 @@ To set up your environment, complete the following:
     
     Stay in this directory for the duration of the tutorial.
 
-1.  Set the variables used by this tutorial:
+1.  Set the environment variables used by this tutorial:
 
-        export region=us-east4
-        export zone=${region}-b
-        export project_id=[PROJECT_ID]
-        
-    Replace `[PROJECT_ID]` with the name of your Google Cloud project.
-   
-    This tutorial uses the region `us-east4`. If you change the region,
-    make sure that the zone values reference your region.
+        export REGION=[REGION]
+        export PROJECT_ID=[PROJECT_ID]
+        export PROJECT_NUMBER=[PROJECT_NUMBER]
+        export CLUSTER_NAME=[CLUSTER_NAME]
+        export CLUSTER_TYPE=[CLUSTER_TYPE]
+    
+    Replace the following:
+    * REGION, the Google Cloud region your cluster is located in
+    * PROJECT_ID, the name of your Google Cloud project
+    * PROJECT_NUMBER, the numerical unique identiifier associated with your
+      Google Cloud project
+    * CLUSTER_NAME, the name of your Anthos Multi-Cloud cluster
+    * CLUSTER_TYPE, either `awsClusters` or `azureClusters`
 
 ## Update your cluster to turn Cloud Logging user logs off
 
 Update your cluster so it uses only system logs and not workload logs. Disabling
-workload logs means that you will not duplicate logging efforts and 
-will not be charged twice for workload.
+workload logs means that you will not produce two sets of logs when using
+the Fluent Bit DaemonSet.
 
 1. To turn off workload logs on your cluster, run the following command:
 
@@ -129,6 +134,13 @@ To prepare the test logger sample application, complete the following:
 
         docker build -t test-logger test-logger
 
+1.  Configure the Docker command-line tool to authenticate to
+    Artifact Registry.
+
+        gcloud auth configure-docker [REGION]-docker.pkg.dev
+
+    Replace `[REGION]`.
+
 1.  Create a repository named `test-logger-repo` in Artifact Registry:
 
         gcloud artifacts repositories create test-logger-repo \
@@ -145,25 +157,18 @@ To prepare the test logger sample application, complete the following:
 
 1.  Tag the container before pushing it to the registry:
 
-        docker tag test-logger [REGION]-docker.pkg.dev/${project_id}/test-logger-repo/test-logger:v1
-
-    Replace `[REGION]`.
-
-1.  Configure the Docker command-line tool to authenticate to
-    Artifact Registry.
-
-        gcloud auth configure-docker [REGION]-docker.pkg.dev
+        docker tag test-logger [REGION]-docker.pkg.dev/${PROJECT_ID}/test-logger-repo/test-logger:v1
 
     Replace `[REGION]`.
 
 1.  Push the container image to the registry:
 
-        docker push [REGION]-docker.pkg.dev/${project_id}/test-logger/test-logger:v1
+        docker push [REGION]-docker.pkg.dev/${PROJECT_ID}/test-logger/test-logger:v1
 
     Replace `[REGION]`.
 
 1.  Update the deployment file using the `envsubst` command. This adds the
-    `PROJECT_ID` variable you set earlier to a
+    variables you set earlier to a
     `test-logger-deploy.yaml` configuration file:
 
         envsubst < kubernetes/test-logger.yaml > kubernetes/test-logger-deploy.yaml
@@ -203,8 +208,8 @@ complete the following:
 
         kubectl get pods
 
-1.  Repeat this command until the output looks like the following, with all three `test-logger` pods   
-    running:
+1.  Repeat this command until the output looks like the following, with all
+    three `test-logger` pods running:
 
         NAME                           READY   STATUS    RESTARTS   AGE
         test-logger-58f7bfdb89-4d2b5   1/1     Running   0          28s
@@ -225,12 +230,8 @@ and
 
 To deploy the Fluent Bit ConfigMap and DaemonSet, complete the following:
 
-1.  Create a new namespace called `logging-systen`.
-
-        kubectl create namespace logging-system
-
-1.  Create the service account and the cluster role in the new `logging-system`
-    namespace:
+1.  Create a namespace called `logging-system`, a service account, and the
+    a cluster role:
 
         kubectl apply -f ./kubernetes/fluentbit-rbac.yaml
 
@@ -240,13 +241,20 @@ To deploy the Fluent Bit ConfigMap and DaemonSet, complete the following:
         kubectl get secret proxy-config --namespace=gke-system -o yaml \
         | sed 's/namespace: .*/namespace: logging-system/' | kubectl apply -f -
 
+1.  Replace variables in `kubernetes/fluentbit-configmap.yaml` and
+    `kubernetes/fluentbit-daemonset.yaml` with the environment variables you
+    set above.
+
+        envsubst < kubernetes/fluentbit-configmap-deploy.yaml > kubernetes/fluentbit-configmap-deploy.yaml
+        envsubst < kubernetes/fluentbit-daemonset-deploy.yaml > kubernetes/fluentbit-daemonset-deploy.yaml
+
 1.  Deploy the Fluent Bit configuration:
 
-        kubectl apply -f kubernetes/fluentbit-configmap.yaml
+        kubectl apply -f kubernetes/fluentbit-configmap-deploy.yaml
 
 1.  Deploy the Fluent Bit DaemonSet:
 
-        kubectl apply -f kubernetes/fluentbit-daemonset.yaml
+        kubectl apply -f kubernetes/fluentbit-daemonset-deploy.yaml
 
 
 ### Confirm that the DaemonSet has been deployed correctly
