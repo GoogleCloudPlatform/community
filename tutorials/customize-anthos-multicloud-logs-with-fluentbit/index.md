@@ -92,12 +92,12 @@ To set up your environment, complete the following:
         export CLUSTER_TYPE=[CLUSTER_TYPE]
     
     Replace the following:
-    * REGION, the Google Cloud region your cluster is located in
-    * PROJECT_ID, the name of your Google Cloud project
-    * PROJECT_NUMBER, the numerical unique identiifier associated with your
+    * `REGION`, the Google Cloud region your cluster is located in
+    * `PROJECT_ID`, the name of your Google Cloud project
+    * `PROJECT_NUMBER`, the numerical unique identifier associated with your
       Google Cloud project
-    * CLUSTER_NAME, the name of your Anthos Multi-Cloud cluster
-    * CLUSTER_TYPE, either `awsClusters` or `azureClusters`
+    * `CLUSTER_NAME`, the name of your Anthos Multi-Cloud cluster
+    * `CLUSTER_TYPE`, either `awsClusters` or `azureClusters`
 
 ## Update your cluster to turn Cloud Logging user logs off
 
@@ -374,7 +374,7 @@ so you won't be billed for them in the future.
         kubectl delete -f kubernetes/fluentbit-configmap.yaml
 
 
-1. Delete the service account and cluster role:
+1. Delete the namespace, service account, and cluster role:
 
         kubectl delete -f kubernetes/fluentbit-rbac.yaml
 
