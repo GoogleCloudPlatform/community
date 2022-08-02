@@ -76,7 +76,7 @@ To set up your environment, complete the following:
 
 1.  In the cloned repository, navigate to the correct directory:
 
-        cd anthos-multi-cloud/customize-logs-fluentbit
+        cd anthos-samples/anthos-multi-cloud/customize-logs-fluentbit
     
     Stay in this directory for the duration of the tutorial.
 
@@ -107,10 +107,11 @@ the Fluent Bit DaemonSet.
 
 1. To turn off workload logs on your cluster, run the following command:
 
-        gcloud alpha container aws clusters update [CLUSTER_NAME] \
+        gcloud alpha container [CLUSTER_CLOUD] clusters update [CLUSTER_NAME] \
             --location=[REGION] --logging=SYSTEM
     
     Replace the following:
+    * `CLUSTER_CLOUD`, the cloud your cluster runs in, either `aws` or `azure`
     * `CLUSTER_NAME`, the name of your Anthos Multi-Cloud cluster
     * `REGION`, the Google Cloud region your cluster is located in
 
