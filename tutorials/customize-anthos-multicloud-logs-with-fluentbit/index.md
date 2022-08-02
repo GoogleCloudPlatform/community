@@ -55,7 +55,7 @@ for more information.
 
 1.  To authenticate to Artifact Registry, [Create a service account](https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/private-registry#create_a_service_account) 
     and
-    [save the key to your cluster](https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/private-registry#save_the_key_to_your_cluster)
+    [Save the key to your cluster](https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/private-registry#save_the_key_to_your_cluster)
     as a Kubernetes secret.
 
     Make a note of the name of your service account key secret. You'll
