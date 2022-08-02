@@ -11,8 +11,8 @@ Amanda Westlake | Technical Writer Intern | Google
 This tutorial describes how to use [Fluent Bit](https://fluentbit.io/)
 to customize your Cloud Logging logs for an
 [Anthos Multi-Cloud](https://cloud.google.com/anthos/clusters/docs/multi-cloud)
-cluster. In this document, you learn how to host your own configurable Fluent Bit
-DaemonSet to send logs to [Cloud Logging](http://cloud.google.com/logging)
+cluster. In this document, you learn how to host your own configurable Fluent
+Bit DaemonSet to send logs to [Cloud Logging](http://cloud.google.com/logging)
 instead of utilizing default workload logs.
 
 Unlike default workload logs, Fluent Bit allows you to customize your logs.
@@ -48,7 +48,7 @@ for more information.
     [Create an cluster](https://cloud.google.com/anthos/clusters/docs/multi-cloud/azure/how-to/create-cluster)
     with Anthos on Azure.
 
-1.  [Authorize Cloud Logging / Cloud Monitoring](https://cloud.devsite.corp.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/create-cluster#telemetry-agent-auth)
+1.  [Authorize Cloud Logging / Cloud Monitoring](https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/create-cluster#telemetry-agent-auth)
     for your cluster.
 
 1.  [Configure and authenticate Docker](https://cloud.google.com/container-registry/docs/advanced-authentication#gcloud-helper).
@@ -77,9 +77,9 @@ To set up your environment, complete the following:
     * A Fluent Bit DaemonSet
 
 1.  In the cloned repository, navigate to the
-    `customize-cloud-logging-logs-fluentbit` directory:
+    `anthos-multicloud-fluentbit` directory:
 
-        cd customize-cloud-logging-logs-fluentbit
+        cd anthos-multicloud-fluentbit
     
     Stay in this directory for the duration of the tutorial.
 
@@ -99,8 +99,8 @@ To set up your environment, complete the following:
       Google Cloud project
     * `CLUSTER_NAME`, the name of your Anthos Multi-Cloud cluster
     * `CLUSTER_TYPE`, either `awsClusters` or `azureClusters`
-    * `SECRET_NAME`, the Kubernetes secret with your service account key that
-      you created above
+    * `SECRET_NAME`, the Kubernetes secret that contains the service account
+      key you created above
 
 ## Update your cluster to turn Cloud Logging user logs off
 
@@ -176,8 +176,8 @@ To prepare the test logger sample application, complete the following:
 
         envsubst < kubernetes/test-logger.yaml > kubernetes/test-logger-deploy.yaml
 
-    If you created your AR repository in a different region than your cluster,
-    make sure the region in `test-logger-deploy.yaml` is correct.
+    If you created your Artifact Registry repository in a different region than
+    your cluster, make sure the region in `test-logger-deploy.yaml` is correct.
 
 ### Deploy the test logger application
 
@@ -229,8 +229,8 @@ To deploy the Fluent Bit ConfigMap and DaemonSet, complete the following:
     `kubernetes/fluentbit-daemonset.yaml` with the environment variables you
     set above.
 
-        envsubst < kubernetes/fluentbit-configmap-deploy.yaml > kubernetes/fluentbit-configmap-deploy.yaml
-        envsubst < kubernetes/fluentbit-daemonset-deploy.yaml > kubernetes/fluentbit-daemonset-deploy.yaml
+        envsubst < kubernetes/fluentbit-configmap.yaml > kubernetes/fluentbit-configmap-deploy.yaml
+        envsubst < kubernetes/fluentbit-daemonset.yaml > kubernetes/fluentbit-daemonset-deploy.yaml
 
 1.  Deploy the Fluent Bit configuration:
 
@@ -267,8 +267,7 @@ and sending lgos to Cloud Logging, complete the following:
 1.  Select **Run Query**, a button on the top right.
 
 1.  In the **Logs field explorer**, select **test-logger** for **CONTAINER_NAME**.
-    After you add the `log` field to the summary line, you should see logs similar
-    to the following:
+    You should see logs similar to the following:
 
     ![fluentbit-filter-before](https://storage.googleapis.com/gcp-community/tutorials/kubernetes-engine-customize-fluentbit/fluentbit-filter-before.png)
 
@@ -278,13 +277,11 @@ and sending lgos to Cloud Logging, complete the following:
 
 In this section, you configure Fluent Bit to filter certain data so that it is
 not logged. For this tutorial, you filter out Social Security numbers, credit
-card numbers, and email addresses. To make this update, you change the DaemonSet
-to use a different ConfigMap that contains these filters. You use Kubernetes
+card numbers, and email addresses. To do this, you change the DaemonSet
+to use a different ConfigMap that contains these filters. You use the Kubernetes
 rolling updates feature and preserve the old version of the ConfigMap.
 
 1.  Open the `kubernetes/fluentbit-configmap-deploy.yaml`file in an editor.
-
-<!-- TODO: Change above link -->
 
 1.  Uncomment the lines after `### Sample log scrubbing filters` and before
     `### End sample log scrubbing filters`.
@@ -304,15 +301,15 @@ rolling updates feature and preserve the old version of the ConfigMap.
 ## Update the Fluent Bit DaemonSet to use the new configuration
 
 In this section, you change `kubernetes/fluentbit-daemonset-deploy.yaml` to mount
-the `fluent-bit-config-filtered` ConfigMap instead of the
-`fluent-bit-config` ConfigMap.
+the `fluentbit-user-config-filtered` ConfigMap instead of the
+`fluentbit-user-config` ConfigMap.
 
 1.  Open the`kubernetes/fluentbit-daemonset-deploy.yaml` file in an editor.
 
-1.  Change the name of the ConfigMap from `fluent-bit-config` to
-`fluent-bit-config-filtered` by editing the `configMap.name` field:
+1.  Change the name of the ConfigMap from `fluentbit-user-config` to
+`fluentbit-user-config-filtered` by editing the `configMap.name` field:
 
-        - name: fluentbit-user-config
+        - name: fluentbit-user-config-filtered
         configMap:
             name: fluentbit-user-config-filtered
 
@@ -330,7 +327,7 @@ the `fluent-bit-config-filtered` ConfigMap instead of the
 
     When it completes, you should see the following message:
 
-        daemon set "fluent-bit" successfully rolled out
+        daemon set "fluentbit-user" successfully rolled out
 
 1.  When the rollout is complete, refresh the Cloud Logging logs and make sure
     that the Social Security number, credit card number, and email address data
