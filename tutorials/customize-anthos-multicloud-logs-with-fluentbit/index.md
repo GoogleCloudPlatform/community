@@ -307,11 +307,19 @@ the `fluentbit-user-config-filtered` ConfigMap instead of the
 1.  Open the`kubernetes/fluentbit-daemonset-deploy.yaml` file in an editor.
 
 1.  Change the name of the ConfigMap from `fluentbit-user-config` to
-`fluentbit-user-config-filtered` by editing the `configMap.name` field:
+    `fluentbit-user-config-filtered` by editing the `configMap.name` field.
+    The file should now contain the following:
 
         - name: fluentbit-user-config-filtered
         configMap:
             name: fluentbit-user-config-filtered
+
+1.  Change the name of the `fluentbit-user-config` volumeMount to 
+    `fluentbit-user-config-filtered`. The file should now contain the
+    following:
+
+        - name: fluentbit-user-config-filtered
+        mountPath: /fluent-bit/etc/
 
 1.  Deploy the new version of the ConfigMap to your cluster:
 
