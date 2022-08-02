@@ -175,8 +175,7 @@ To prepare the test logger sample application, complete the following:
         envsubst < kubernetes/test-logger.yaml > kubernetes/test-logger-deploy.yaml
 
     If you created your Artifact Registry repository in a different region than
-    your cluster, change the region in `test-logger-deploy.yaml` so you can
-    access the correct repository.
+    your cluster, change the region in `test-logger-deploy.yaml` to match.
 
 ### Deploy the test logger application
 
