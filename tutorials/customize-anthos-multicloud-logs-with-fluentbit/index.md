@@ -109,7 +109,7 @@ the Fluent Bit DaemonSet.
 1. To turn off workload logs on your cluster, run the following command:
 
         gcloud alpha container aws clusters update [CLUSTER_NAME] \
-        --location=[REGION] --logging=SYSTEM
+            --location=[REGION] --logging=SYSTEM
     
     Replace the following:
     * `CLUSTER_NAME`, the name of your Anthos Multi-Cloud cluster
@@ -222,7 +222,7 @@ To deploy the Fluent Bit ConfigMap and DaemonSet, complete the following:
     `gke-system` namespace, and apply it to the `logging-system` namespace:
 
         kubectl get secret proxy-config --namespace=gke-system -o yaml \
-        | sed 's/namespace: .*/namespace: logging-system/' | kubectl apply -f -
+            | sed 's/namespace: .*/namespace: logging-system/' | kubectl apply -f -
 
 1.  Replace variables in `kubernetes/fluentbit-configmap.yaml` and
     `kubernetes/fluentbit-daemonset.yaml` with the environment variables you
