@@ -57,8 +57,6 @@ for more information.
     and
     [save the key to your cluster](https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/private-registry#save_the_key_to_your_cluster)
     as a Kubernetes secret.
-    This allows your Anthos Multi-Cloud cluster to access Artifact Registry,
-    where you store your sample application container image.
 
     Make a note of the name of your service account key secret. You'll
     need it later.
@@ -158,7 +156,7 @@ To prepare the test logger sample application, complete the following:
 
         gcloud artifacts locations list
 
-1.  Tag the container before pushing it to the registry:
+1.  Tag the container image:
 
         docker tag test-logger [REGION]-docker.pkg.dev/${PROJECT_ID}/test-logger-repo/test-logger:v1
 
@@ -177,7 +175,8 @@ To prepare the test logger sample application, complete the following:
         envsubst < kubernetes/test-logger.yaml > kubernetes/test-logger-deploy.yaml
 
     If you created your Artifact Registry repository in a different region than
-    your cluster, make sure the region in `test-logger-deploy.yaml` is correct.
+    your cluster, change the region in `test-logger-deploy.yaml` so you can
+    access the correct repository.
 
 ### Deploy the test logger application
 
@@ -244,7 +243,7 @@ To deploy the Fluent Bit ConfigMap and DaemonSet, complete the following:
 ### Confirm that the DaemonSet has been deployed correctly
 
 To confirm that your FluentBit ConfigMap and DaemonSet are working correctly
-and sending lgos to Cloud Logging, complete the following:
+and sending logs to Cloud Logging, complete the following:
 
 1.  View the status of the Fluent Bit pods:
 
@@ -307,16 +306,15 @@ the `fluentbit-user-config-filtered` ConfigMap instead of the
 1.  Open the`kubernetes/fluentbit-daemonset-deploy.yaml` file in an editor.
 
 1.  Change the name of the ConfigMap from `fluentbit-user-config` to
-    `fluentbit-user-config-filtered` by editing the `configMap.name` field.
-    The file should now contain the following:
+    `fluentbit-user-config-filtered` by editing the `configMap.name` field so
+    it looks like this:
 
         - name: fluentbit-user-config-filtered
         configMap:
             name: fluentbit-user-config-filtered
 
 1.  Change the name of the `fluentbit-user-config` volumeMount to 
-    `fluentbit-user-config-filtered`. The file should now contain the
-    following:
+    `fluentbit-user-config-filtered` so it looks like this:
 
         - name: fluentbit-user-config-filtered
         mountPath: /fluent-bit/etc/
