@@ -53,7 +53,7 @@ for more information.
 
 1.  [Configure and authenticate Docker](https://cloud.google.com/container-registry/docs/advanced-authentication#gcloud-helper).
 
-1.  [Create a service account](https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/private-registry#create_a_service_account) 
+1.  To authenticate to Artifact Registry, [Create a service account](https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/private-registry#create_a_service_account) 
     and
     [save the key to your cluster](https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/private-registry#save_the_key_to_your_cluster)
     as a Kubernetes secret.
