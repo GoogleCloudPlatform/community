@@ -74,7 +74,7 @@ To set up your environment, complete the following:
     * A `test-logger` sample application
     * A Fluent Bit DaemonSet
 
-1.  In the cloned repository, navigate to the correct directory:
+1.  Navigate to the correct directory in the cloned repository:
 
         cd anthos-samples/anthos-multi-cloud/customize-logs-fluentbit
     
