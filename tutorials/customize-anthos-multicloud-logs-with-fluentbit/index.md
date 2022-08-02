@@ -74,10 +74,9 @@ To set up your environment, complete the following:
     * A `test-logger` sample application
     * A Fluent Bit DaemonSet
 
-1.  In the cloned repository, navigate to the
-    `anthos-multicloud-fluentbit` directory:
+1.  In the cloned repository, navigate to the correct directory:
 
-        cd anthos-multicloud-fluentbit
+        cd anthos-multi-cloud/customize-logs-fluentbit
     
     Stay in this directory for the duration of the tutorial.
 
@@ -313,7 +312,7 @@ the `fluentbit-user-config-filtered` ConfigMap instead of the
             name: fluentbit-user-config-filtered
 
 1.  Change the name of the `fluentbit-user-config` volumeMount to 
-    `fluentbit-user-config-filtered` so it looks like this:
+    `fluentbit-user-config-filtered`. It should look like this:
 
         - name: fluentbit-user-config-filtered
         mountPath: /fluent-bit/etc/
