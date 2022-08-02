@@ -230,6 +230,10 @@ To deploy the Fluent Bit ConfigMap and DaemonSet, complete the following:
         envsubst < kubernetes/fluentbit-configmap.yaml > kubernetes/fluentbit-configmap-deploy.yaml
         envsubst < kubernetes/fluentbit-daemonset.yaml > kubernetes/fluentbit-daemonset-deploy.yaml
 
+    Note: If your cluster is not running in the United States, change the `us`
+    in `us.gcr.io/gke-multi-cloud-release/gke-addon-sidecar:gke_multicloud.gke_multicloud_images_20220317_1445_RC00`
+    to `asia` or `eu` to match your cluster's region.
+
 1.  Deploy the Fluent Bit configuration:
 
         kubectl apply -f kubernetes/fluentbit-configmap-deploy.yaml
