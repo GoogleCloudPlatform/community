@@ -10,17 +10,17 @@
         <collectionProp name="Arguments.arguments">
           <elementProp name="project-id" elementType="Argument">
             <stringProp name="Argument.name">project-id</stringProp>
-            <stringProp name="Argument.value">project-1081763</stringProp>
+            <stringProp name="Argument.value">XXXXXXXXXXX</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="instance-id" elementType="Argument">
             <stringProp name="Argument.name">instance-id</stringProp>
-            <stringProp name="Argument.value">perf-test</stringProp>
+            <stringProp name="Argument.value">XXXXXXXXXXX</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
-          <elementProp name="install-id-csv-output-path" elementType="Argument">
-            <stringProp name="Argument.name">install-id-csv-output-path</stringProp>
-            <stringProp name="Argument.value">app-install-ids.csv</stringProp>
+          <elementProp name="db" elementType="Argument">
+            <stringProp name="Argument.name">db</stringProp>
+            <stringProp name="Argument.value">XXXXXXXXXXX</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="threads" elementType="Argument">
@@ -33,18 +33,13 @@
             <stringProp name="Argument.value">${__P(loops, 5)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
-          <elementProp name="db" elementType="Argument">
-            <stringProp name="Argument.name">db</stringProp>
-            <stringProp name="Argument.value">test-db</stringProp>
-            <stringProp name="Argument.metadata">=</stringProp>
-          </elementProp>
         </collectionProp>
       </elementProp>
-      <stringProp name="TestPlan.user_define_classpath">/usr/local/google/home/shivamsomani/Downloads/jmeter-test/spanner-jar</stringProp>
+      <stringProp name="TestPlan.user_define_classpath">path/to/spanner-jar</stringProp>
     </TestPlan>
     <hashTree>
       <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set Config" enabled="true">
-        <stringProp name="filename">/usr/local/google/home/shivamsomani/Downloads/jmeter-test/singer_and_album_ids.csv</stringProp>
+        <stringProp name="filename">/path/to/csv/singer_and_album_ids.csv</stringProp>
         <stringProp name="fileEncoding">UTF-8</stringProp>
         <stringProp name="variableNames">singerid,albumid,trackid</stringProp>
         <boolProp name="ignoreFirstLine">true</boolProp>
@@ -176,7 +171,7 @@ dbClient.write(mutations);</stringProp>
               <stringProp name="-477469889">album_count</stringProp>
             </collectionProp>
             <collectionProp name="UserParameters.thread_values">
-              <collectionProp name="1780001731">
+              <collectionProp name="-839407398">
                 <stringProp name="118040362">${__UUID()}</stringProp>
                 <stringProp name="-1194545551">${__RandomString(10,abcdefghijklmnopqrstuvwxyz)}</stringProp>
                 <stringProp name="-1194545551">${__RandomString(10,abcdefghijklmnopqrstuvwxyz)}</stringProp>
@@ -305,7 +300,7 @@ List&lt;Mutation&gt; mutations = new ArrayList&lt;&gt;();
           <stringProp name="LoopController.loops">${loops}</stringProp>
         </elementProp>
         <stringProp name="ThreadGroup.num_threads">${threads}</stringProp>
-        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">300</stringProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration"></stringProp>
         <stringProp name="ThreadGroup.delay"></stringProp>
@@ -362,7 +357,7 @@ dbClient.readWriteTransaction()
           <stringProp name="LoopController.loops">${loops}</stringProp>
         </elementProp>
         <stringProp name="ThreadGroup.num_threads">${threads}</stringProp>
-        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">300</stringProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration"></stringProp>
         <stringProp name="ThreadGroup.delay"></stringProp>
@@ -407,10 +402,10 @@ dbClient.readWriteTransaction()
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
-          <stringProp name="LoopController.loops">1</stringProp>
+          <stringProp name="LoopController.loops">${loops}</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">1</stringProp>
-        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <stringProp name="ThreadGroup.num_threads">${threads}</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">300</stringProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration"></stringProp>
         <stringProp name="ThreadGroup.delay"></stringProp>
@@ -457,10 +452,10 @@ dbClient.readWriteTransaction()
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
-          <stringProp name="LoopController.loops">1</stringProp>
+          <stringProp name="LoopController.loops">${loops}</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">1</stringProp>
-        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <stringProp name="ThreadGroup.num_threads">${threads}</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">300</stringProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration"></stringProp>
         <stringProp name="ThreadGroup.delay"></stringProp>
@@ -498,7 +493,7 @@ OUT.printf(&quot;Result: %s\n\n&quot;, row.getString(0));
           <stringProp name="LoopController.loops">${loops}</stringProp>
         </elementProp>
         <stringProp name="ThreadGroup.num_threads">${threads}</stringProp>
-        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">300</stringProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration"></stringProp>
         <stringProp name="ThreadGroup.delay"></stringProp>

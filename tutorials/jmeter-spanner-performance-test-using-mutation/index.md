@@ -143,7 +143,7 @@ be shared with child nodes.
 As shown in the following screenshot, within each JMeter test, you need to provide connection parameters, which are used by the Java Client
 library to connect to Cloud Spanner.
 
-![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/01_Connection_Params.png)
+![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test-using-mutation/01_Connection_Params.png)
 
 * `project-id`: Google Cloud project ID
 * `instance-id`: Cloud Spanner instance ID
@@ -155,41 +155,47 @@ testing from JMeter graphical user interface.
 * `threads`: Number of parallel threads per thread group, increasing stress on target.
 * `loops`: Number of times each thread should loop, extending duration of tests.
 
-### JDBC connection configuration
-
-The parameters listed above are used for the JDBC connection configuration.
-
-For a complete list of JDBC properties, see the 
-[JdbcDriver documentation](https://javadoc.io/doc/com.google.cloud/google-cloud-spanner-jdbc/latest/com/google/cloud/spanner/jdbc/JdbcDriver.html).
-
-![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/02_JDBC_Connection_Params.png)
-
-The connection pool variable (`conn_pool`) is used by JDBC samplers to obtain a connection. The JDBC connection URL is as follows:
-
-    jdbc:cloudspanner:/projects/${project_id}/instances/${instance}/databases/${db}?minSessions=${connections};maxSessions=${connections};numChannels=${grpc_channel}
-
-You can use [additional configurations](https://cloud.google.com/spanner/docs/use-oss-jdbc#session_management_statements) such as
-`READ_ONLY_STALENESS` as needed.
-
 ### Thread groups
 
-A thread group represents a group of users, and the number of threads you assign a thread group is equivalent to the
-number of users that you want querying Cloud Spanner.
+[Thread group](https://jmeter.apache.org/usermanual/test_plan.html#thread_group) represents a test case containing a collection of samplers, each sampler is executed sequentially. It can be configured with a number of parallel threads (aka users) for that test.
 
-The following screnshot shows an example thread group configuration:
+Within the thread group samplers are added which will call spanner.
 
-![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/03_thread_groups.png)
 
-If you want a thread group to run for a given duration, then you can change the beahvior as shown in the following screenshot:
+### JSR223 request sampler
 
-![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/04_thread_groups_2.png)
+JMeter does not have a built-in Spanner compatible sampler. Therefore you need to write custom code in Groovy / Java using JSR223 sampler, to interact with Spanner.
 
-### JDBC request sampler
 
-![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/05_jdbc_sampler.png)
+### Connection configuration
 
-You can send SQL queries with the JDBC Sampler. Using Prepared Select or Prepared Update is recommended, because
-it has [better performance](https://cloud.google.com/spanner/docs/sql-best-practices#query-parameters) on Cloud Spanner.
+Creating a connection is a resource heavy operation, hence you need to create a connection pool one time and cache the connection object in-memory. To do this you should use a special component called “setUp Thread Group” as shown in the screenshot below. 
+
+This thread group gets executed before any other thread groups.
+
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test-using-mutation/02_SetUp_Thread.png)
+
+
+Within this thread group create a JSR233 Sampler which creates the connection object one-time and stores it in memory (as dbClient property). Later the same object is fetched by the tests to connect to Spanner.
+
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test-using-mutation/03_Connection_setUp_thread.png)
+
+
+Sample code as below:
+
+
+	 // Instantiates a client
+    	SpannerOptions options = SpannerOptions.newBuilder().build();
+    	Spanner spanner = options.getService();
+
+	DatabaseClient dbClient = spanner.getDatabaseClient(DatabaseId.of(projectId, instanceId, databaseId));
+	props.put("spanner",spanner);
+    	props.put("dbClient",dbClient);
+
+
+Similarly, you should also create a tearDown thread group with a sampler to close the connection as shown in screenshot below.
+
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test-using-mutation/04_Teardown_Thread.png)
 
 ### Listeners
 
@@ -232,16 +238,16 @@ Sometimes it is not simple to import existing data into Cloud Spanner. Mock data
 Below is an example `Spanner-Initial-Load.jmx` used to load sample schema. You will need to update 
 connection parameters as described previously.
 
-#### Spanner-Initial-Load.jmx
+#### Spanner-Init-Load.jmx
 
-The [Spanner-Initial-Load.jmx](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/jmeter-spanner-performance-test/Spanner-Initial-Load.jmx) 
+The [Spanner-Init-Load.jmx](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/jmeter-spanner-performance-test-using-mutation/Spanner-Init-Load.jmx) 
 test generates random data hierarchically into `Singer`, `Album`, and `Song` tables. Each singer gets a
 random number of albums between 0 and 20. Similarly, 0-15 songs per album are generated. Parallel threads (users)
 are used to insert data concurrently.
 
 You can run this JMeter test with the following command:
 
-    jmeter -n -t Spanner-Initial-Load.jmx -l load-out.csv -Jusers=1000 -Jiterations=1000
+    jmeter -n -t Spanner-Init-Load.jmx -l load-out.csv -Jusers=1000 -Jiterations=1000
 
 Watch the [CPU utilization](https://cloud.google.com/spanner/docs/cpu-utilization#recommended-max) of Cloud
 Spanner. Increase the number of nodes and JMeter’s parallel threads (users) to increase the data generation rate. Increase the
@@ -290,52 +296,49 @@ Assume that the following baseline needs to be performance-tested:
 
 | Sno | Transactions | Baseline TPS |
 | --- | ------------ | ------------ |
-| 1. | `select AlbumTitle from Albums where SingerId = ? and AlbumTitle like ?` | 7000 |
-| 2. | `select SingerId, AlbumId, TrackId, SongName from Songs where SingerId = ? and AlbumId = ? order by SongName` | 5000 |
-| 3. | `update Singers set SingerInfo = ? where SingerId = ?` | 1000 |
+| 1. | Spanner Insert using Mutation |  |
+| 2. | Spanner Insert using DML |  |
+| 3. | Spanner Update using Mutation |  |
+| 4. | Spanner Update using DML |  |
+| 5. | Spanner Read using Parallel Read |  |
+| 6. | Spanner Scan using Read API |  |
 
 Below is the sample JMeter test to simulate the above load. You will need to update connection parameters as discussed previously.
 
 #### Spanner-Perf-Test.jmx
 
-[Spanner-Perf-Test.jmx](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/jmeter-spanner-performance-test/Spanner-Perf-Test.jmx) 
-uses a CSV configuration to get `SingerId` and `AlbumId` parameters.
+[Spanner-Performance-Test-Plan.jmx](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/jmeter-spanner-performance-test-using-mutation/Spanner-Performance-Test-Plan.jmx) 
+uses a CSV configuration to get `SingerId`, `AlbumId` and `TrackId` parameters.
 
 The following are the first few lines, for example:
 
-    "singerid","albumid"
-    "0002aad0-30e9-4eae-b1a0-952ebec9de76","328e1b6f-a449-42d1-bc8b-3d6ba2615d2f"
-    "0002aad0-30e9-4eae-b1a0-952ebec9de76","43b1011e-d40d-480b-96a2-247636fc7c96"
-    "0002aad0-30e9-4eae-b1a0-952ebec9de76","5c64c8f2-0fad-4fe7-9c3a-6e5925e3cbcd"
+    "singerid","albumid","trackid"
+    "0002aad0-30e9-4eae-b1a0-952ebec9de76","328e1b6f-a449-42d1-bc8b-3d6ba2615d2f","0002aad0-30e9-4eae-43b1011e"
+    "0002aad0-30e9-4eae-b1a0-952ebec9de76","43b1011e-d40d-480b-96a2-247636fc7c96","0002aad0-30e9-4eae-5c64c8f2"
+    "0002aad0-30e9-4eae-b1a0-952ebec9de76","5c64c8f2-0fad-4fe7-9c3a-6e5925e3cbcd","0002aad0-30e9-4eae-328e1b6f"
 
 This CSV can be created using a SQL query such as the following, which randomly selects data from the album table:
 
-    SELECT SingerId,AlbumId FROM Albums TABLESAMPLE BERNOULLI (0.1 PERCENT) limit 10000;
+    SELECT SingerId,AlbumId,TrackId FROM Songs TABLESAMPLE BERNOULLI (0.1 PERCENT) limit 10000;
 
 There are three thread groups with the transaction as defined previously, as shown in the following screenshot:
 
-![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/06_test-ss-1.png)
+![drawing](https://storage.googleapis.com/c/tutorials/jmeter-spanner-performance-test-using-mutation/05_Perf_Test_tg.png)
 
-The CSV Read configuration reads data from a CSV file that is being used in all three thread groups. All three
-thread groups are very similar. The following screenshot shows the Search Albums thread group.
+The CSV Read configuration reads data from a CSV file that is being used in all three thread groups.
 
-![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/07_test-ss-2.png)
+![drawing](https://storage.googleapis.com/c/tutorials/jmeter-spanner-performance-test-using-mutation/06_CSV_Config.png) 
 
-It is configured to use users and duration parameters, which can be passed by command line. It contains one JDBC
-Sampler Search Album, which depends on User Parameters and Timer.
+All other thread groups are very similar uses Java Client Library for Spanner Interaction. The following screenshot shows the Insert thread group.
 
-![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/08_test-ss-3.png)
+![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test-using-mutation/07_Insert_TG.png)
 
-The Search Album JDBC sampler as shown above triggers an SQL query as shown in screenshot above. It populates query parameters using 
-variable as follows:
+It is configured to use threads and loops parameters, which can be passed by command line. It contains JSR-223 Sampler, 
+which depends on User Parameters and [writes data to tables using Mutation](https://cloud.google.com/spanner/docs/modify-mutation-api#insert-new-roles).
 
-`${singerid} -- obtained from CSV Read`  
-`${title} -- obtained from User Parameters`
+Random User Parameters:
 
-A timer is configured to throttle load to meet the requirement. It needs to be supplied with transactions 
-per minute, so 7000 TPS * 60 = 420,000 transactions per minute.
-
-![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/09_test-ss-4.png)
+![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test-using-mutation/08_Insert_Random_Parameters.png)
 
 ## Executing performance test
 
@@ -363,7 +366,7 @@ Guidelines for executing the tests, for best results:
 
 Run the test:
 
-    jmeter -n -t Spanner-Perf-Test.jmx -l test-out.csv -Jusers=100 -Jduration=900
+    jmeter -n -t Spanner-Performance-Test-Plan.jmx -l test-out.csv -Jthreads=10 -Jloops=100
 
 You can modify the number of users and duration as needed.
 
@@ -392,41 +395,6 @@ Based on the success criteria, the most important metrics are the following:
 The Spanner monitoring dashboard provides this information aggregated at the minute level.  
 For custom dashboards or metrics that are not available in standard dashboards, you can
 use the [Metrics Explorer](https://cloud.google.com/spanner/docs/monitoring-cloud#create-charts).
-
-**Operations per second**
-
-The Spanner dashboard provides information about the read and write operations running on the Spanner instance.
-For example, the following chart shows a total TPS of 43744 per second for the selected duration.
-
-![alt_text](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/10_results-ss-1.png)
-
-**Latency**
-
-An example of read and write operations latency at 50th and 99th percentile is captured in the following chart.
-
-![alt_text](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/11_results-ss-2.png)
-
-*Latency metrics have been redacted in the preceding screen shot.*
-
-**Note:** You can also get 95th percentile latency from [Cloud Monitoring](https://cloud.google.com/spanner/docs/monitoring-cloud)
-
-You can use [introspection tools](https://cloud.google.com/spanner/docs/introspection) to investigate issues
-with your database. Use query statistics to know which queries are expensive, run frequently, or scan a lot of data.
-
-Sometimes writes can be competing and can result in higher latency. You can check
-the [lock statistics](https://cloud.google.com/spanner/docs/introspection/lock-statistics) to get clarity on wait time
-and higher latency and apply
-[best practices](https://cloud.google.com/spanner/docs/introspection/lock-statistics#applying_best_practices_to_reduce_lock_contention)
-to reduce the lock time.
-
-**CPU utilization**
-
-This metric is important for understanding whether the cluster is under-utilized or over-utilized.
-
-![alt_text](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/12_results-ss-3.png)
-
-This information can be used to further optimize the cluster size. For details, see
-[Investigating high CPU utilization](https://cloud.google.com/spanner/docs/introspection/investigate-cpu-utilization).
 
 ## Cleaning up
 

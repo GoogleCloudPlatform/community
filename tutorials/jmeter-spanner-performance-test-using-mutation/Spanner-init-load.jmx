@@ -52,7 +52,7 @@
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
       </SetupThreadGroup>
       <hashTree>
-        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="Create BT connection" enabled="true">
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="Create Spanner connection" enabled="true">
           <stringProp name="scriptLanguage">groovy</stringProp>
           <stringProp name="parameters"></stringProp>
           <stringProp name="filename"></stringProp>
@@ -63,28 +63,21 @@ import com.google.cloud.spanner.DatabaseId;
 import com.google.cloud.spanner.Spanner;
 import com.google.cloud.spanner.SpannerOptions;
 
-/**
- * A quick start code for Cloud Spanner. It demonstrates how to setup the Cloud Spanner client and
- * execute a simple query using it against an existing database.
- */
+// Instantiates a client
+SpannerOptions options = SpannerOptions.newBuilder().build();
+Spanner spanner = options.getService();
 
-    // Instantiates a client
-    SpannerOptions options = SpannerOptions.newBuilder().build();
-    Spanner spanner = options.getService();
+// Name of your instance &amp; database.
+String instanceId = vars.get(&quot;instance-id&quot;);
+String databaseId = vars.get(&quot;db&quot;);
+String projectId = vars.get(&quot;project-id&quot;);
 
-    // Name of your instance &amp; database.
-    String instanceId = vars.get(&quot;instance-id&quot;);
-    String databaseId = vars.get(&quot;db&quot;);
-    String projectId = vars.get(&quot;project-id&quot;);
-    try {
-      // Creates a database client
-      DatabaseClient dbClient =
-          spanner.getDatabaseClient(DatabaseId.of(projectId, instanceId, databaseId));
-    
-    } finally{
-    		props.put(&quot;spanner&quot;,spanner);
-    		props.put(&quot;dbClient&quot;,dbClient);
-    	}</stringProp>
+// Creates a database client
+DatabaseClient dbClient = spanner.getDatabaseClient(DatabaseId.of(projectId, instanceId, databaseId));
+
+props.put(&quot;spanner&quot;,spanner);
+props.put(&quot;dbClient&quot;,dbClient);
+</stringProp>
         </JSR223Sampler>
         <hashTree/>
       </hashTree>
@@ -156,11 +149,11 @@ dbClient.write(mutations);</stringProp>
               <stringProp name="-477469889">album_count</stringProp>
             </collectionProp>
             <collectionProp name="UserParameters.thread_values">
-              <collectionProp name="-1022299063">
+              <collectionProp name="-1096124671">
                 <stringProp name="118040362">${__UUID()}</stringProp>
                 <stringProp name="-1194545551">${__RandomString(10,abcdefghijklmnopqrstuvwxyz)}</stringProp>
                 <stringProp name="-1194545551">${__RandomString(10,abcdefghijklmnopqrstuvwxyz)}</stringProp>
-                <stringProp name="-1226766110">${__Random(0,15)}</stringProp>
+                <stringProp name="-1226741124">${__Random(0,20)}</stringProp>
               </collectionProp>
             </collectionProp>
             <boolProp name="UserParameters.per_iteration">false</boolProp>
