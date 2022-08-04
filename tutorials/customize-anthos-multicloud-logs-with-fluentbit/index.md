@@ -1,6 +1,6 @@
 ---
 title: Customize Anthos Multi-Cloud logs with Fluent Bit
-description: Learn how to customize Cloud Logging logs with Fluent Bit for Anthos on AWS and Azure
+description: Learn how to customize Cloud Logging logs with Fluent Bit for Anthos on AWS and Azure.
 author: amandawestlake
 tags: logging, stackdriver, gke, fluent-bit, cloud logging, Anthos on AWS, Anthos on Azure
 date_published: 2022-08-02
