@@ -143,7 +143,7 @@ be shared with child nodes.
 As shown in the following screenshot, within each JMeter test, you need to provide connection parameters, which are used by the Java Client
 library to connect to Cloud Spanner.
 
-![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test-using-mutation/01_Connection_Params.png)
+![drawing](images/01_Connection_Params.png)
 
 * `project-id`: Google Cloud project ID
 * `instance-id`: Cloud Spanner instance ID
@@ -173,12 +173,12 @@ Creating a connection is a resource heavy operation, hence you need to create a 
 
 This thread group gets executed before any other thread groups.
 
-![alt_text](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test-using-mutation/02_SetUp_Thread.png)
+![alt_text](images/02_SetUp_Thread.png)
 
 
 Within this thread group create a JSR233 Sampler which creates the connection object one-time and stores it in memory (as dbClient property). Later the same object is fetched by the tests to connect to Spanner.
 
-![alt_text](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test-using-mutation/03_Connection_setUp_thread.png)
+![alt_text](images/03_Connection_setUp_thread.png)
 
 
 Sample code as below:
@@ -195,7 +195,7 @@ Sample code as below:
 
 Similarly, you should also create a tearDown thread group with a sampler to close the connection as shown in screenshot below.
 
-![alt_text](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test-using-mutation/04_Teardown_Thread.png)
+![alt_text](images/04_Teardown_Thread.png)
 
 ### Listeners
 
@@ -323,7 +323,7 @@ This CSV can be created using a SQL query such as the following, which randomly 
 
 There are three thread groups with the transaction as defined previously, as shown in the following screenshot:
 
-![drawing](https://storage.googleapis.com/c/tutorials/jmeter-spanner-performance-test-using-mutation/05_Perf_Test_tg.png)
+![drawing](images/05_Perf_Test_tg.png)
 
 The CSV Read configuration reads data from a CSV file that is being used in all three thread groups.
 
@@ -331,14 +331,14 @@ The CSV Read configuration reads data from a CSV file that is being used in all 
 
 All other thread groups are very similar uses Java Client Library for Spanner Interaction. The following screenshot shows the Insert thread group.
 
-![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test-using-mutation/07_Insert_TG.png)
+![drawing](images/07_Insert_TG.png)
 
 It is configured to use threads and loops parameters, which can be passed by command line. It contains JSR-223 Sampler, 
 which depends on User Parameters and [writes data to tables using Mutation](https://cloud.google.com/spanner/docs/modify-mutation-api#insert-new-roles).
 
 Random User Parameters:
 
-![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test-using-mutation/08_Insert_Random_Parameters.png)
+![drawing](images/08_Insert_Random_Parameters.png)
 
 ## Executing performance test
 
