@@ -17,11 +17,11 @@ date_published: YYYY-mm-dd
     + The template contains placeholders for things like the vendor and 
       product name. These are also enclosed in brackets—for example, 
       every place you see `<vendor-name>` and `<product-name>`, 
-      substitute approriate names.
+      substitute appropriate names.
     + After you've made appropriate updates, _remove_ bracketed content.
     + Remove these instructions.
     + Because this is a template for a variety of setups, it might contain
-      content that isn't releavent to your scenario. Remove (or update)
+      content that isn't relevant to your scenario. Remove (or update)
       any sections that don't apply to you.
 1. Fork the [GoogleCloudPlatform/community/](https://github.com/GoogleCloudPlatform/community/) repo.
 4. In your fork, add a new folder named `/tutorials/[YOUR_TUTORIAL]`. For the
