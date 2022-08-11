@@ -5,6 +5,8 @@ BIGQUERY_DATASET = "$BIGQUERY_DATASET"
 BIGQUERY_TABLE = "$BIGQUERY_TABLE"
 
 # Add/Update the queries for your metrics
+# IMPORTANT: to guarantee successfully retriving data, please use a time window greater than 5 minutes
+
 MQL_QUERYS = {
 "instance/cpu/utilization":
 """
