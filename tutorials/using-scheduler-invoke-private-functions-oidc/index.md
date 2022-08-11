@@ -177,8 +177,8 @@ unauthenticated access is disallowed:
 
 ### Test the function
 
-After the function is deployed, it can be tested. Since the request must be authenticated, the most straightforward way of testing this function is in the Cloud
-Console. 
+After the function is deployed, it can be tested. Since the request must be authenticated, the most straightforward way of testing this function
+is in the Cloud console. 
 
 1.  Go to the Cloud console and navigate to the [**Cloud Functions**](https://console.cloud.google.com/functions) page.
 1.  Find the [`hello_world` function](https://console.cloud.google.com/functions/details/us-central1/hello_world), and click the
@@ -207,7 +207,7 @@ account that you created.
 
 
 1.  In the Cloud console, go to the [**Cloud Scheduler**](https://console.cloud.google.com/scheduler) page.
-1.  Click **Schedule a job**
+1.  Click **Schedule a job**.
 1.  In the **Define the schedule** section, enter the following: 
     * **Name**: `my-hourly-job`
     * **Region**: `us-central1`
@@ -223,7 +223,7 @@ account that you created.
     * **Service account**: `my service account`
 1.  Click **Continue**, and then click **Create**. 
 
-Alternatively, you can run the following equivelent `gcloud` command: 
+Alternatively, you can run the following equivalent `gcloud` command: 
 
     gcloud scheduler jobs create http my-hourly-job \
       --location us-central1 \
