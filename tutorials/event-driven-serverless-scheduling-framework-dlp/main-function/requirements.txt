@@ -1,6 +1,0 @@
-# Function dependencies, for example:
-# package>=version
-
-google-cloud-dlp
-google-cloud-pubsub
-google-cloud-storage

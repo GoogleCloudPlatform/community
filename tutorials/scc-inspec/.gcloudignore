@@ -1,6 +1,0 @@
-# ignore everthing in the .gitignore file
-#!include:.gitignore
-
-.git
-.gcloudignore
-.gitignore
