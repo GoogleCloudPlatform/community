@@ -24,6 +24,8 @@ This document demonstrates JMeter performance tests using an example Cloud Spann
 [parallel reads (partitioned selects)](https://cloud.google.com/spanner/docs/reads#read_data_in_parallel)
 using JDBC Sampler. 
 
+**Note:** This is continuation of [previous article](https://cloud.google.com/community/tutorials/jmeter-spanner-performance-test) regarding Spanner Performance tests using JMeter via JDBC and DMLs.
+
 ## Costs
 
 This guide uses billable components of Google Cloud, including the following:
@@ -77,7 +79,34 @@ Before you begin writing performance tests, make the following preparations
 4. [Request quota](https://cloud.google.com/spanner/quotas#increasing_your_quotas) so that you have enough surplus quota for
    Cloud Spanner nodes on a given region or multi-region. Changes in quota can take up to 1 business day. Although it depends on
    workload, asking for a quota of 100 nodes for a performance test can be reasonable.
-5. [Creating a Cloud Spanner schema](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/jmeter-spanner-performance-test/index.md#creating-a-cloud-spanner-schema)
+5. Creating [schema](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/jmeter-spanner-performance-test/index.md#creating-a-cloud-spanner-schema) for Cloud Spanner. 
+
+## Creating a Cloud Spanner schema
+This example uses the database `Singers`, which is created with the following schema:
+
+    CREATE TABLE Singers (
+      SingerId   STRING(36) NOT NULL,
+      FirstName  STRING(1024),
+      LastName   STRING(1024),
+      SingerInfo BYTES(MAX),
+    ) PRIMARY KEY (SingerId);
+    
+    CREATE TABLE Albums (
+      SingerId     STRING(36) NOT NULL,
+      AlbumId      STRING(36) NOT NULL,
+      AlbumTitle   STRING(MAX),
+    ) PRIMARY KEY (SingerId, AlbumId),
+      INTERLEAVE IN PARENT Singers ON DELETE CASCADE;
+    
+    CREATE TABLE Songs (
+      SingerId     STRING(36) NOT NULL,
+      AlbumId      STRING(36) NOT NULL,
+      TrackId      STRING(36) NOT NULL,
+      SongName     STRING(MAX),
+    ) PRIMARY KEY (SingerId, AlbumId, TrackId),
+      INTERLEAVE IN PARENT Albums ON DELETE CASCADE;
+
+Refer [previous article](https://cloud.google.com/community/tutorials/jmeter-spanner-performance-test) for more details on schema designing. 
 
 ## Set up JMeter
 
@@ -121,22 +150,8 @@ In summary, you need to set up `gcloud` and run the following command to store c
 ## JMeter basics
 
 JMeter is a highly configurable tool and has various components from which you can choose. This section provides
-a basic overview of how to create a JMeter test along with some minimal configurations that you can use as a base for your tests.
-
-### JMeter test plan
-
-JMeter has a hierarchical structure to the tests, with a top node
-called the [*test plan*](https://jmeter.apache.org/usermanual/test_plan.html). It consists of one or more thread groups, logic
-controllers, sample generating controllers, listeners, timers, assertions, and configuration elements. Because a test plan
-is the top-level configuration element, saving a test plan to disk also saves all nested objects, and the resulting
-file is saved with a `.jmx` filename extension.
-
-For simplicity, it's sufficient to have the top-level test plan contain a single thread group, which in turn contains
-one or more samplers. There can be multiple samplers (and other components) within a thread group; each is
-executed serially per thread.
-
-Test plans and thread groups can also have configuration elements such as a JDBC connection or CSV data reader. Configurations can
-be shared with child nodes.
+a basic overview of how to create a JMeter test along with some minimal configurations that you can use as a base for your tests. 
+Also, it shows how to configure sample jmeter test linked below.
 
 ### Configuring connection parameters
 
@@ -210,26 +225,8 @@ We recommend running tests in command-line mode, which generates HTML reports wi
 Before you start doing performance tests, you need to initialize the database with seed data. We recommend that you
 load the volume of rows in each table, representative of current production data size.
 
-Typically, you can use Dataflow jobs
-for [importing data from non-Cloud Spanner databases](https://cloud.google.com/spanner/docs/import-non-spanner).
-
-However, sometimes you can't do that because of schema changes with Cloud Spanner. An alternative is to
-mock seed data using JMeter.
-
-### How much data to load
-
-Data loading prepares Cloud Spanner to create splits (shards) and distribute different nodes as leaders for each split.
-For details, see [Database splits](https://cloud.google.com/spanner/docs/schema-and-data-model#database-splits).
-
-The volume of data depends on the SQL queries for which you want to do performance tests. The main focus is to load those tables that
-will be used by read or write queries. Ideally, the test data should be similar in volume to production data. In addition, data might
-need to be modified to fit into a potentially modified Cloud Spanner schema.
-
-### How to reset tests
-
-Ideally, you should reset your database to the same seed data for comparison between multiple test executions. You can
-use backup/restore (or export/import) to initialize each run to the same initial dataset. The latter is better if
-different configurations are tested.
+Refer [previous article](https://cloud.google.com/community/tutorials/jmeter-spanner-performance-test) for more details on this topic. 
+For simplicity we will mock seed data using JMeter itself.
 
 ### Using JMeter to mock seed data
 
@@ -240,7 +237,7 @@ connection parameters as described previously.
 
 #### Spanner-Init-Load.jmx
 
-The [Spanner-Init-Load.jmx](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/jmeter-spanner-performance-test-using-mutation/Spanner-Init-Load.jmx) 
+Download [Spanner-Init-Load.jmx here](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/jmeter-spanner-performance-test-using-mutation/Spanner-Init-Load.jmx) 
 test generates random data hierarchically into `Singer`, `Album`, and `Song` tables. Each singer gets a
 random number of albums between 0 and 20. Similarly, 0-15 songs per album are generated. Parallel threads (users)
 are used to insert data concurrently.
@@ -258,39 +255,8 @@ hotspots and cause a lengthy delay in populating the database.
 
 ## Developing performance tests
 
-Guidelines for developing performance tests:
 
--  Target to configure performance tests such that they generate transactions per second (TPS) similar to the current
-   database (baseline). Later in the execution phase, increase the number of users (load) to simulate scaling.
--  Prefer to have only one transaction per thread group. This will allow you to throttle load for that transaction
-   independent of other transactions. A transaction could be composed of single or multiple sql queries.
-   For example, it is fine to have just a single select/insert/update query in a thread group, if that compares evenly
-   with a transaction in your current database (baseline).
--  Determine the transactions per second (TPS) in the current database (baseline) for each DML operation and throttle
-   load accordingly. In other words, sometimes even with one user in the thread group, there is far higher TPS than
-   baseline. If so, then use [timers](https://jmeter.apache.org/usermanual/component_reference.html#timers) to introduce
-   delay, as needed to tone down the TPS close to baseline.
--  Use [parameterized queries](https://cloud.google.com/spanner/docs/sql-best-practices#query-parameters) for better
-   performance.
--  [Tune SQL queries](https://cloud.google.com/spanner/docs/query-syntax) by adding relevant hints as needed.
-    -  Cloud Spanner interface in the Cloud Console can lead to longer query execution time, especially when result size is large.
-       You can use [gcloud](https://cloud.google.com/sdk/gcloud/reference/spanner/databases/execute-sql)
-       or [Spanner CLI](https://github.com/cloudspannerecosystem/spanner-cli) as alternatives to time SQL queries
-       accurately.
-    -  Use [query execution plans](https://cloud.google.com/spanner/docs/query-execution-plans) to identify query
-       bottlenecks and tune them accordingly.
-    -  [Add indexes](https://cloud.google.com/spanner/docs/secondary-indexes) as needed to improve performance of select
-       queries.
-    -  Use [FORCE_INDEX hint](https://cloud.google.com/spanner/docs/query-syntax#table-hints) for all queries as it can
-       take upto a few days before the query optimizer starts to automatically utilize the new index.
-    -  Use GROUPBY_SCAN_OPTIMIZATION to make queries with GROUP BY faster.
-    -  Use [join hints](https://cloud.google.com/spanner/docs/query-syntax#join-hints) to optimize join performance, as
-       needed.
--  If needed, export query parameter values into a CSV file. Then
-   use [CSV Data Set Config](https://jmeter.apache.org/usermanual/component_reference.html#CSV_Data_Set_Config) in JMeter to
-   supply parameters from the CSV file.
-
-### Sample JMeter test for Singers schema
+### Example JMeter test-bed for the target database
 
 Assume that the following baseline needs to be performance-tested:
 
@@ -303,11 +269,12 @@ Assume that the following baseline needs to be performance-tested:
 | 5. | Spanner Read using Parallel Read |  |
 | 6. | Spanner Scan using Read API |  |
 
-Below is the sample JMeter test to simulate the above load. You will need to update connection parameters as discussed previously.
+Below is the sample JMeter test to simulate the above load. 
+You will need to update connection parameters as discussed previously.
 
 #### Spanner-Perf-Test.jmx
 
-[Spanner-Performance-Test-Plan.jmx](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/jmeter-spanner-performance-test-using-mutation/Spanner-Performance-Test-Plan.jmx) 
+Download [Spanner-Performance-Test-Plan.jmx here](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/jmeter-spanner-performance-test-using-mutation/Spanner-Performance-Test-Plan.jmx) 
 uses a CSV configuration to get `SingerId`, `AlbumId` and `TrackId` parameters.
 
 The following are the first few lines, for example:
@@ -342,26 +309,6 @@ Random User Parameters:
 
 ## Executing performance test
 
-Guidelines for executing the tests, for best results:
-
--  Execute tests from the same Cloud Spanner region for a regional spanner and “leader” region for multi-region Cloud
-   Spanner instances.
--  Run JMeter tests from the command line, not GUI mode.
--  Run each test at least 3 times to even out random differences.
--  Warm up Cloud Spanner before running tests (as in production).
--  Run tests for long enough such that TPS is stable. It depends on the workload, for example
-   having at least a 15 minute test can ensure that enough ramp-up time is available.
--  Generate load on Cloud Spanner, because scaling Cloud Spanner can take some time to stabilize.
--  Ensure that the client machine running JMeter has enough resources. JMeter is a CPU-intensive process.
--  Increase JMeter’s [jvm heap size](https://www.blazemeter.com/blog/9-easy-solutions-jmeter-load-test-%E2%80%9Cout-memory%E2%80%9D-failure), if needed.
--  Run multiple JMeter instances in parallel, or use [remote testing](https://jmeter.apache.org/usermanual/remote-test.html) for horizontal scaling of JMeter.   
-   Often, a single instance of JMeter is not able to produce enough load on a multi-node Cloud Spanner instance.
--  Ensure that Cloud Spanner is above the [recommended CPU threshold](https://cloud.google.com/spanner/docs/cpu-utilization#recommended-max):
-   65% for regional and 45% for multi regional.
--  Plan for long-running tests (2 hours or more) to verify sustained performance. This is because Cloud Spanner can
-   start [system tasks](https://cloud.google.com/spanner/docs/cpu-utilization#task-priority), which may have performance
-   impact.
-
 ### Sample test execution
 
 Run the test:
@@ -382,9 +329,7 @@ You gather performance metrics after the test execution.
 1. Validate that the test ran according to the requirements defined earlier.
 2. Compare results with your success criteria.
 
-We recommend capturing these performance metrics from Spanner monitoring rather than the JMeter report. JMeter provides this
-information with added latency for each query execution depending on how busy the VM has been, so it's not
-the true measure of Spanner response time.
+We recommend capturing these performance metrics from Spanner monitoring rather than the JMeter report. 
 
 Based on the success criteria, the most important metrics are the following:
 
@@ -406,9 +351,9 @@ To avoid incurring charges to your Google Cloud account for the resources used i
 
 ## What's next
 
+- [Measure Cloud Spanner performance using JMeter via JDBC](https://cloud.google.com/community/tutorials/jmeter-spanner-performance-test)
 - [Cloud Spanner schema and data model](https://cloud.google.com/spanner/docs/schema-and-data-model)
 - [Schema design best practices](https://cloud.google.com/spanner/docs/schema-design)
 - [Demystifying Cloud Spanner multi-region configurations](https://cloud.google.com/blog/topics/developers-practitioners/demystifying-cloud-spanner-multi-region-configurations)
 - [Introspection tools](https://cloud.google.com/spanner/docs/introspection)
-- [Handling auto-incrementing keys data migration](https://cloud.google.com/community/tutorials/db-migration-spanner-handle-increasing-pks)
 - Try out other Google Cloud features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
