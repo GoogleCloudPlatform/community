@@ -150,7 +150,7 @@ The sample code for this tutorial is in this
         --region ${REGION} \
         --range 10.128.0.0/28
 
-### Create a Redis cache instance & add it to the private DNS zone
+### Create a Redis instance & register it in the private DNS zone
     gcloud redis instances create example-redis --size=1 \
         --region=${REGION} --network=${VPC_NAME}
    
@@ -170,7 +170,7 @@ The sample code for this tutorial is in this
 
 ### Create the deployment YAML files based on the Kubernetes manifest
 
-The application uses a YAML based [manifest file]((https://github.com/GoogleCloudPlatform/microservices-demo/blob/main/release/kubernetes-manifests.yaml)) to deploy on Kubernetes.
+The application uses a YAML [manifest file](https://github.com/GoogleCloudPlatform/microservices-demo/blob/main/release/kubernetes-manifests.yaml) to deploy on Kubernetes.
 
 The following is a snippet used to deploy the `emailservice`:
 
@@ -233,7 +233,7 @@ spec:
 
 We want to extract related information and use it to deploy the Cloud Run services.
 
-To same some manual work, you can run the Python script [get_svc.py](./get_svc.py) under this directory using the steps below:
+To save some manual work, you can run the Python script [get_svc.py](./get_svc.py) under this directory using the steps below:
 
     python3 -mvenv venv
     source venv/bin/activate
