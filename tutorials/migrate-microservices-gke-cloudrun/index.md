@@ -12,7 +12,7 @@ Xiang Shen | Solutions Architect | Google
 
 [Online Boutique](https://onlineboutique.dev/) is a cloud-native microservices demo application. The application is a web-based e-commerce app where users can browse items, add them to the cart, and purchase them. It consists of 11 containerized microservices that are designed to run on Kubernetes. For more information, please read its original [GitHub repo](https://github.com/GoogleCloudPlatform/microservices-demo). 
 
-This document describes the steps to migrate the application from Kubernetes to Cloud Run.
+This document describes the steps to migrate the application from Kubernetes to Cloud Run. If you prefer a more automated way, you can use the typescript code [here](https://github.com/shenxiang-demo/microservices-demo/tree/pulumi-cloudrun-one-ilb/serverless).
 
 The following diagram shows the high-level architecture of this solution:
 
@@ -23,7 +23,8 @@ The following diagram shows the high-level architecture of this solution:
 
 - Minimize code changes to lower the migration effort
 - Ensure the internal microservices are private and keep the network traffic inside the Google network
-- Use the managed service Memorystore(Redis) for the caching
+- Use the managed service Memorystore(Redis) for caching
+- Use a Cloud DNS private zone for service discovery
 
 ## Costs
 
@@ -65,8 +66,8 @@ Shell, so that you don't need to install these packages locally.
 
 ### Get the sample code
 
-The sample code for this tutorial is in the
-[Google Cloud Community GitHub repository](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/metrics-export-with-mql).
+The sample code for this tutorial is in this
+[Community GitHub repository](https://github.com/shenxiang-demo/community/blob/migrate-microsvc-gke-cloudrun/tutorials/migrate-microservices-gke-cloudrun).
 
 1.  Clone the repository:
 
@@ -266,14 +267,13 @@ spec:
         - containerPort:  8080
           name: h2c
         env: [{'name': 'DISABLE_TRACING', 'value': '1'}, {'name': 'DISABLE_PROFILER', 'value': '1'}]
-        resources: {'requests': {'cpu': '100m', 'memory': '64Mi'}, 'limits': {'cpu': '200m', 'memory': '128Mi'}}
 ```
 
 ### Deploy the Cloud Run services
 
     for i in output/*; do gcloud run services replace $i --async; done
 
-Use the following command or go to the console to verify the services have been deployed successfully:
+Use the following command or go to [the Cloud Run console](https://console.cloud.google.com/run) to verify the services have been deployed successfully and the URLs exist:
 
     gcloud run services list
 
@@ -321,7 +321,7 @@ If you don't have `envsubst` installed, you can open the `url-map-template.py` f
         --load-balancing-scheme=INTERNAL_MANAGED \
         --network=${VPC_NAME} \
         --subnet=example-lb-subnet \
-        --address=10.1.2.99 \
+        --address=${LB_IP} \
         --target-http-proxy=example-target-proxy \
         --target-http-proxy-region=${REGION} \
         --region=${REGION} \

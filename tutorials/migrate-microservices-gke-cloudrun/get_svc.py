@@ -32,7 +32,6 @@ spec:
         - containerPort:  $container_port
           $h2c
         env: $env_vars
-        resources: $resources
 '''
 template_obj = Template(template_str)
 
@@ -59,23 +58,22 @@ with urllib.request.urlopen(req) as resp:
             and name_val != 'loadgenerator'
                 and name_val != 'redis-cart'):
             if name_val == 'frontend':
-              ingress_val = 'all'
-              h2c_val = ''
+                ingress_val = 'all'
+                h2c_val = ''
             else:
-              ingress_val = 'internal'
-              h2c_val = 'name: h2c'
+                ingress_val = 'internal'
+                h2c_val = 'name: h2c'
 
             container = doc['spec']['template']['spec']['containers'][0]
             image_val = container['image']
             container_port_val = container['ports'][0]['containerPort']
             env_vars_val = [get_add_val(v)
                             for v in container['env'] if v['name'] != 'PORT']
-            resources_val = container['resources']
 
             final_yaml = template_obj.substitute(name=name_val, connector=connector_val,
                                                  ingress=ingress_val, h2c=h2c_val,
                                                  image=image_val, container_port=container_port_val,
-                                                 env_vars=env_vars_val, resources=resources_val)
+                                                 env_vars=env_vars_val)
 
             with open(f"{output_dir}/{name_val}.yaml", "w") as f:
                 f.write(final_yaml)

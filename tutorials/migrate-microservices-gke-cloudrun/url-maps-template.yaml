@@ -1,0 +1,41 @@
+defaultUrlRedirect:
+  pathRedirect: /
+hostRules:
+- hosts:
+  - microservice.example.com:80
+  pathMatcher: microservice-allpaths
+kind: compute#urlMap
+name: example-url-maps
+pathMatchers:
+- defaultUrlRedirect:
+    pathRedirect: /
+  name: microservice-allpaths
+  pathRules:
+  - paths:
+    - /hipstershop.CartService/*
+    service: https://www.googleapis.com/compute/v1/projects/${PROJECT_ID}/regions/${REGION}/backendServices/cartservice-backend-svc
+  - paths:
+    - /hipstershop.CurrencyService/*
+    service: https://www.googleapis.com/compute/v1/projects/${PROJECT_ID}/regions/${REGION}/backendServices/currencyservice-backend-svc
+  - paths:
+    - /hipstershop.ProductCatalogService/*
+    service: https://www.googleapis.com/compute/v1/projects/${PROJECT_ID}/regions/${REGION}/backendServices/productcatalogservice-backend-svc
+  - paths:
+    - /hipstershop.RecommendationService/*
+    service: https://www.googleapis.com/compute/v1/projects/${PROJECT_ID}/regions/${REGION}/backendServices/recommendationservice-backend-svc
+  - paths:
+    - /hipstershop.ShippingService/*
+    service: https://www.googleapis.com/compute/v1/projects/${PROJECT_ID}/regions/${REGION}/backendServices/shippingservice-backend-svc
+  - paths:
+    - /hipstershop.CheckoutService/*
+    service: https://www.googleapis.com/compute/v1/projects/${PROJECT_ID}/regions/${REGION}/backendServices/checkoutservice-backend-svc
+  - paths:
+    - /hipstershop.AdService/*
+    service: https://www.googleapis.com/compute/v1/projects/${PROJECT_ID}/regions/${REGION}/backendServices/adservice-backend-svc
+  - paths:
+    - /hipstershop.EmailService/*
+    service: https://www.googleapis.com/compute/v1/projects/${PROJECT_ID}/regions/${REGION}/backendServices/emailservice-backend-svc
+  - paths:
+    - /hipstershop.PaymentService/*
+    service: https://www.googleapis.com/compute/v1/projects/${PROJECT_ID}/regions/${REGION}/backendServices/paymentservice-backend-svc
+region: https://www.googleapis.com/compute/v1/projects/${PROJECT_ID}/regions/${REGION}
