@@ -282,7 +282,7 @@ card numbers, and email addresses. To do this, you change the DaemonSet
 to use a different ConfigMap that contains these filters. You use the Kubernetes
 rolling updates feature and preserve the old version of the ConfigMap.
 
-1.  Open the `kubernetes/fluentbit-configmap-deploy.yaml`file in an editor.
+1.  Open the `kubernetes/fluentbit-configmap-deploy.yaml` file in an editor.
 
 1.  Uncomment the lines after `### Sample log scrubbing filters` and before
     `### End sample log scrubbing filters`.
@@ -301,11 +301,11 @@ rolling updates feature and preserve the old version of the ConfigMap.
 
 ## Update the Fluent Bit DaemonSet to use the new configuration
 
-In this section, you change `kubernetes/fluentbit-daemonset-deploy.yaml` to mount
+In this section, you change the `kubernetes/fluentbit-daemonset-deploy.yaml` file to mount
 the `fluentbit-user-config-filtered` ConfigMap instead of the
 `fluentbit-user-config` ConfigMap.
 
-1.  Open the`kubernetes/fluentbit-daemonset-deploy.yaml` file in an editor.
+1.  Open the `kubernetes/fluentbit-daemonset-deploy.yaml` file in an editor.
 
 1.  Change the name of the ConfigMap from `fluentbit-user-config` to
     `fluentbit-user-config-filtered` by editing the `configMap.name` field so
