@@ -14,11 +14,11 @@ to customize your Cloud Logging logs for an
 [Anthos Multi-Cloud](https://cloud.google.com/anthos/clusters/docs/multi-cloud)
 cluster. In this document, you learn how to host your own configurable Fluent
 Bit DaemonSet to send logs to [Cloud Logging](http://cloud.google.com/logging)
-instead of utilizing default workload logs.
+instead of using default workload logs.
 
 Unlike default workload logs, Fluent Bit allows you to customize your logs.
 Fluent Bit can also be used with specific workloads and namespaces, as opposed
-to workload logs which can only be used with all applications running on a
+to workload logs, which can only be used with all applications running on a
 cluster. 
 
 This tutorial applies to Linux nodes only.
@@ -46,7 +46,7 @@ for more information.
 
 1.  [Create a cluster](https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/create-cluster)
     with Anthos on AWS or
-    [Create an cluster](https://cloud.google.com/anthos/clusters/docs/multi-cloud/azure/how-to/create-cluster)
+    [Create a cluster](https://cloud.google.com/anthos/clusters/docs/multi-cloud/azure/how-to/create-cluster)
     with Anthos on Azure.
 
 1.  [Authorize Cloud Logging / Cloud Monitoring](https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/create-cluster#telemetry-agent-auth)
@@ -54,9 +54,9 @@ for more information.
 
 1.  [Configure and authenticate Docker](https://cloud.google.com/container-registry/docs/advanced-authentication#gcloud-helper).
 
-1.  To authenticate to Artifact Registry, [Create a service account](https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/private-registry#create_a_service_account) 
+1.  To authenticate to Artifact Registry, [create a service account](https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/private-registry#create_a_service_account) 
     and
-    [Save the key to your cluster](https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/private-registry#save_the_key_to_your_cluster)
+    [save the key to your cluster](https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/private-registry#save_the_key_to_your_cluster)
     as a Kubernetes secret.
 
     Make a note of the name of your service account key secret. You'll
@@ -64,9 +64,9 @@ for more information.
 
 ## Setup
 
-To set up your environment, complete the following:
+To set up your environment, do the following:
 
-1.  Clone the [sample Git repository](https://github.com/GoogleCloudPlatform/anthos-samples.git):
+1.  Clone the [sample repository](https://github.com/GoogleCloudPlatform/anthos-samples.git):
 
         git clone https://github.com/GoogleCloudPlatform/anthos-samples.git
 
@@ -75,7 +75,7 @@ To set up your environment, complete the following:
     * A `test-logger` sample application
     * A Fluent Bit DaemonSet
 
-1.  Navigate to the correct directory in the cloned repository:
+1.  Go to the correct directory in the cloned repository:
 
         cd anthos-samples/anthos-multi-cloud/customize-logs-fluentbit
     
@@ -92,9 +92,9 @@ To set up your environment, complete the following:
     
     Replace the following:
     * `REGION`, the Google Cloud region your cluster is located in
-    * `PROJECT_ID`, the name of your Google Cloud project
+    * `PROJECT_ID`, the ID of your Google Cloud project
     * `PROJECT_NUMBER`, the numerical unique identifier associated with your
-      Google Cloud project
+       Google Cloud project
     * `CLUSTER_NAME`, the name of your Anthos Multi-Cloud cluster
     * `CLUSTER_TYPE`, either `awsClusters` or `azureClusters`
     * `SECRET_NAME`, the Kubernetes secret that contains the service account
@@ -106,7 +106,7 @@ Update your cluster so it uses only system logs and not workload logs. Disabling
 workload logs means that you will not produce two sets of logs when using
 the Fluent Bit DaemonSet.
 
-1. To turn off workload logs on your cluster, run the following command:
+1.  To turn off workload logs on your cluster, run the following command:
 
         gcloud alpha container [CLUSTER_CLOUD] clusters update [CLUSTER_NAME] \
             --location=[REGION] --logging=SYSTEM
@@ -124,13 +124,13 @@ continuously emits random logging statements. The Fluent Bit Daemonset
 you deploy later customizes these logs.
 
 In this tutorial, you
-[Use a private image registry](https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/private-registry)
+[use a private image registry](https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/private-registry)
 and store your container image in Artifact Registry. Then, you deploy the
 application to your cluster.
 
 ### Prepare the test logger application
 
-To prepare the test logger sample application, complete the following:
+To prepare the test logger sample application, do the following:
 
 1.  Build the `test-logger` container image:
 
@@ -176,7 +176,7 @@ To prepare the test logger sample application, complete the following:
         envsubst < kubernetes/test-logger.yaml > kubernetes/test-logger-deploy.yaml
 
     If you created your Artifact Registry repository in a different region than
-    your cluster, change the region in `test-logger-deploy.yaml` to match.
+    your cluster, change the region in the `test-logger-deploy.yaml` file to match.
 
 ### Deploy the test logger application
 
