@@ -181,7 +181,7 @@ To prepare the test logger sample application, do the following:
 ### Deploy the test logger application
 
 To deploy the sample application and check that it is working, 
-complete the following:
+do the following:
 
 1.  Deploy the `test-logger` sample application:
 
@@ -211,7 +211,7 @@ and
 
 ### Prepare and deploy the FluentBit ConfigMap and Daemonset
 
-To deploy the Fluent Bit ConfigMap and DaemonSet, complete the following:
+To deploy the Fluent Bit ConfigMap and DaemonSet, do the following:
 
 1.  Create a namespace called `logging-system`, a service account, and a
     cluster role:
@@ -224,14 +224,14 @@ To deploy the Fluent Bit ConfigMap and DaemonSet, complete the following:
         kubectl get secret proxy-config --namespace=gke-system -o yaml \
             | sed 's/namespace: .*/namespace: logging-system/' | kubectl apply -f -
 
-1.  Replace variables in `kubernetes/fluentbit-configmap.yaml` and
-    `kubernetes/fluentbit-daemonset.yaml` with the environment variables you
+1.  Replace variables in the `kubernetes/fluentbit-configmap.yaml` and
+    `kubernetes/fluentbit-daemonset.yaml` files with the environment variables you
     set above.
 
         envsubst < kubernetes/fluentbit-configmap.yaml > kubernetes/fluentbit-configmap-deploy.yaml
         envsubst < kubernetes/fluentbit-daemonset.yaml > kubernetes/fluentbit-daemonset-deploy.yaml
 
-    **Note:** If your cluster is not running in the United States, change the `us`
+    If your cluster is not running in the United States, change the `us`
     in `us.gcr.io/gke-multi-cloud-release/gke-addon-sidecar:gke_multicloud.gke_multicloud_images_20220317_1445_RC00`
     to `asia` or `eu` to match your cluster's region.
 
@@ -247,7 +247,7 @@ To deploy the Fluent Bit ConfigMap and DaemonSet, complete the following:
 ### Confirm that the DaemonSet has been deployed correctly
 
 To confirm that your FluentBit ConfigMap and DaemonSet are working correctly
-and sending logs to Cloud Logging, complete the following:
+and sending logs to Cloud Logging, do the following:
 
 1.  View the status of the Fluent Bit pods:
 
@@ -260,11 +260,9 @@ and sending logs to Cloud Logging, complete the following:
         fluentbit-user-4fv84   2/2     Running   0          16s
         fluentbit-user-xt6hq   2/2     Running   0          16s
 
-1.  Verify that you're seeing logs in Cloud Logging. In the
-    [Google Cloud console](http://console.cloud.google.com), on the left-hand
-    side, scroll down to the **Operations** subheading and select
-    **Logging** > **Logs Explorer**. On this page, click the **Resource**
-    list dropdown menu to the right of the search bar, then select
+1.  In the Cloud console, go to the [Logs Explorer page](https://console.cloud.google.com/logs/query).
+
+1.  Click **Resource** to the right of the search bar, and select
     **Kubernetes Container** as a resource type.
     
 1.  Select **Run Query**, a button on the top right.
@@ -274,7 +272,7 @@ and sending logs to Cloud Logging, complete the following:
 
     ![fluentbit-filter-before](https://storage.googleapis.com/gcp-community/tutorials/kubernetes-engine-customize-fluentbit/fluentbit-filter-before.png)
 
-    You have now deployed the Fluent Bit DaemonSet.
+    The Fluent Bit DaemonSet is deployed.
 
 ## Filter information from the log file
 
