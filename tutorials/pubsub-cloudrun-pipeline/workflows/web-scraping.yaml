@@ -1,0 +1,146 @@
+main:
+  params: [input]
+  steps:
+    - init:
+        assign:
+          - projectId: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
+          - jobExecutionSpannerInstance: ${input.jobExecutionSpannerInstance}
+          - jobExecutionSpannerDatabase: ${input.jobExecutionSpannerDatabase}
+          - executionId: ${sys.get_env("GOOGLE_CLOUD_WORKFLOW_EXECUTION_ID")}
+          - storageBucket: ${input.storageBucket}
+          - pageToken: null
+          - jobExecutionStartSql: ${"insert into web_scraping.job_executions (jobExecutionId, jobExecutionStartTimestamp) SELECT '" + executionId + "',current_timestamp"}
+          - inputRecordsSqlLimitClause: ${input.inputRecordsSqlLimitClause}
+          - inputRecordsSql: ${"SELECT id, '" + executionId + "' as jobExecutionId FROM `web_scraping.input_records` " + inputRecordsSqlLimitClause }
+          - bigQueryExportSql: ${"EXPORT DATA OPTIONS ( uri = 'gs://" + storageBucket + "/input-records/" + executionId + "/*.json', format = 'JSON', overwrite = true) AS ( " + inputRecordsSql + "); "} 
+          - getJobStatusUrl: ${input.getJobStatusUrl}
+    - upsertJobExecutionStartEntry:
+        call: upsertJobSessionEntry
+        args:
+          projectId: ${projectId}
+          jobExecutionSpannerInstance: ${jobExecutionSpannerInstance}
+          jobExecutionSpannerDatabase: ${jobExecutionSpannerDatabase}
+          jobExecutionId: '${executionId}'
+          fieldName: '${"jobExecutionStartTimestamp"}'
+          fieldValue: '${getSysNowString()}'
+    # Export from BQ to GCS (EventArc + Cloud Run will load the exported files to PubSub)
+    - runBigQueryExport:
+        call: googleapis.bigquery.v2.jobs.query
+        args:
+          projectId: ${projectId}
+          body:
+            useLegacySql: false
+            query: ${bigQueryExportSql} 
+        result: query
+    - getBigQueryExportJob:
+        call: googleapis.bigquery.v2.jobs.get
+        args:
+          projectId: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
+          jobId: ${query.jobReference.jobId}
+        result: exportJobResult
+    # Update the input record count
+    # # Warning: Cloud Spanner may abandon session after 1 hour
+    # TODO: Do these in Cloud Run instead
+    - upsertJobExecutionInputIdCount:
+        steps:
+          - assignInputIdCount:
+              assign:
+                - inputIdCount: '${exportJobResult.statistics.query.exportDataStatistics.rowCount}'
+          - upsertJobSessionEntry:
+              call: upsertJobSessionEntry
+              args:
+                projectId: ${projectId}
+                jobExecutionSpannerInstance: ${jobExecutionSpannerInstance}
+                jobExecutionSpannerDatabase: ${jobExecutionSpannerDatabase}
+                jobExecutionId: '${executionId}'
+                fieldName: '${"inputIdCount"}'
+                #fieldValue: '${exportJobResult.statistics.query.exportDataStatistics.rowCount}'
+                fieldValue: '${inputIdCount}'
+    - checkJobStatus:
+        try:
+          call: http.get
+          args:
+            url: '${getJobStatusUrl + "/job/" + executionId}'
+            auth:
+              type: OIDC
+              audience: '${getJobStatusUrl +"/job/"}'
+          result: jobStatusResponseBody
+        retry: ${http.default_retry}
+    - checkIfDone:
+        switch:
+          # if the scraping is incomplete (based on the inputIdCount)
+          #- condition: ${jobStatusResponseBody.body.isComplete != true}
+          - condition: ${jobStatusResponseBody.body.totalDistinctOutputCount < int(inputIdCount)}
+            steps:
+              - logProgress:
+                  call: sys.log
+                  args:
+                    data: '${"Processed "+string(jobStatusResponseBody.body.totalDistinctOutputCount)+" out of "+inputIdCount+" record(s)."}'
+              - wait:
+                  call: sys.sleep
+                  args:
+                    seconds: 5
+                  # goes back to the previous checkJobStatus step
+                  next: checkJobStatus
+          # if the scraping is complete
+          #- condition: ${jobStatusResponseBody.body.isComplete == true}
+          - condition: ${jobStatusResponseBody.body.totalDistinctOutputCount >= int(inputIdCount)}
+            steps:
+              - logProgressFinal:
+                  call: sys.log
+                  args:
+                    data: '${"Processed "+string(jobStatusResponseBody.body.totalDistinctOutputCount)+" out of "+inputIdCount+" record(s)."}'
+    - upsertJobExecutionEndTimestamp:
+        call: upsertJobSessionEntry
+        args:
+          projectId: ${projectId}
+          jobExecutionSpannerInstance: ${jobExecutionSpannerInstance}
+          jobExecutionSpannerDatabase: ${jobExecutionSpannerDatabase}
+          jobExecutionId: '${executionId}'
+          fieldName: '${"jobExecutionEndTimestamp"}'
+          fieldValue: '${getSysNowString()}'
+
+
+# Subworkflow for upserting the job session entry.  Only one field at a time (other than the jobExecutionId itself)
+# Warning: Cloud Spanner may abandon session after 1 hour. That's why the session is opened and closed for each update just in case.
+# TODO retry policies
+# TODO implement in Cloud Run instead
+upsertJobSessionEntry:
+  params: [projectId,jobExecutionSpannerInstance,jobExecutionSpannerDatabase,jobExecutionId,fieldName,fieldValue]
+  steps:
+    - createJobExecutionSpannerSession:
+        call: googleapis.spanner.v1.projects.instances.databases.sessions.create
+        args:
+          database: ${"projects/"+projectId+"/instances/"+jobExecutionSpannerInstance+"/databases/"+jobExecutionSpannerDatabase}
+        result: spannerSession
+    - writeJobExecutionStartEntry:
+        call: googleapis.spanner.v1.projects.instances.databases.sessions.commit
+        args:
+          session: ${spannerSession.name}
+          body:
+            mutations:
+              - insertOrUpdate:
+                  table: job_executions
+                  columns:
+                    - [ 'jobExecutionId', '${fieldName}' ]
+                  values:
+                    - [ '${jobExecutionId}', '${fieldValue}' ]
+            singleUseTransaction:
+              readWrite: {}
+    - deleteJobExecutionSpannerSession:
+        call: googleapis.spanner.v1.projects.instances.databases.sessions.delete
+        args:
+          name: ${spannerSession.name}
+
+
+# Subworkflow for getting the current time in string format
+getSysNowString:
+  #params: [input]
+  steps:
+    - callSysNowAndTimeFormat:
+        call: time.format
+        args:
+          seconds: ${sys.now()}
+        result: sysNowString
+    - returnOutput:
+        return: '${sysNowString}'
