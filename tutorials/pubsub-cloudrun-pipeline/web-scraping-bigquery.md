@@ -6,8 +6,6 @@ Web scraping from a list of input IDs from a BigQuery table to another BigQuery 
 
 ```bash
 
-# PROJECT_ID=kyl-alto-web-scrape-359204
-
 # Get the current project id
 PROJECT_ID=$(gcloud config get-value project)
 echo PROJECT_ID=$PROJECT_ID
@@ -16,7 +14,6 @@ echo PROJECT_ID=$PROJECT_ID
 PROJECT_NUMBER=$(gcloud projects describe ${PROJECT_ID} --format="value(project_number)")
 echo PROJECT_NUMBER=$PROJECT_NUMBER
 
-NETWORK="default"
 REGION="us-central1"
 REGIONS=( $REGION )
 
@@ -109,6 +106,7 @@ export GCS_BUCKET="${PROJECT_ID}-${REGION}"
 WORKFLOW="web-scraping"
 SCHEDULER="web-scraping-scheduler"
 
+# URL pattern to be scraped.  The ID of each record will be substituted using Python's string format
 export URL_PATTERN="https://get-product.endpoints.kyl-alto-ecommerce-site-358914.cloud.goog/product/{}"
 
 ```
@@ -119,6 +117,7 @@ export URL_PATTERN="https://get-product.endpoints.kyl-alto-ecommerce-site-358914
 gcloud services enable workflows.googleapis.com spanner.googleapis.com pubsub.googleapis.com artifactregistry.googleapis.com cloudbuild.googleapis.com run.googleapis.com eventarc.googleapis.com cloudscheduler.googleapis.com
 
 gcloud artifacts repositories create cloud-run-source-deploy --repository-format=docker --location=$REGION
+
 ```
 
 ## Create PubSub Topics, GCS bucket and BQ tables
@@ -137,6 +136,8 @@ gcloud pubsub topics create $OUTPUT_RECORDS_PUBSUB_TOPIC \
         --message-encoding="JSON" \
         --schema="${OUTPUT_RECORDS_PUBSUB_TOPIC}-schema"
 
+# TODO the service account is not created until there's an attempt to create a subscription
+# Need to investigate how to force the creation
 # permissions for BQ subscription
 gcloud projects add-iam-policy-binding ${PROJECT_ID} --member="serviceAccount:service-$PROJECT_NUMBER@gcp-sa-pubsub.iam.gserviceaccount.com" --role="roles/bigquery.dataEditor"
 gcloud projects add-iam-policy-binding ${PROJECT_ID} --member="serviceAccount:service-$PROJECT_NUMBER@gcp-sa-pubsub.iam.gserviceaccount.com" --role="roles/bigquery.metadataViewer"
@@ -163,54 +164,68 @@ do
     --write-metadata
 done
 
+
+# 
+# create the BQ dataset and table for the input records
+bq mk $BQ_DATASET
+
+
+bq load --source_format=CSV -F "|" $PROJECT_ID:${BQ_DATASET}.$BQ_INPUT_RECORDS_TABLE sample-data/input_records.txt "id"
+
+bq mk --schema "
+id:string
+" \
+-t \
+$BQ_DATASET."$BQ_INPUT_RECORDS_TABLE"
+
 # create the BQ table and subscription for the output records
 
 # bq rm -t -f $BQ_DATASET.$BQ_OUTPUT_RECORDS_TABLE
 # awaiting for fix on BQ float types
-bq mk --schema "
-subscription_name:string
-,message_id:string
-,publish_time:timestamp
-,data:string
-,attributes:string
-,jobExecutionId:string
-,scrapeDate:string
-,scrapeTimestamp:string
-,skuId:string
-,sellerCount:integer
-,mfgNumber:string
-,productTitle:string
-,bbWinner:string
-,bbPrice:float
-,shipCost:float
-,siteChoice:string
-,fba:string
-,brand:string
-,productUrl:string
-,productCustomerReviews:integer
-,productStarRating:float
-,productDimensions:string
-,itemWeight:string
-,shipWeight:string
-,itemNumber:string
-,skuCreationDate:string
-,returnsPolicy:string
-,currentlyUnavailable:string
-,r1Number:integer
-,r1Cat:string
-,r2Number:integer
-,r2Cat:string
-,r3Number:integer
-,r3Cat:string
-,r4Number:integer
-,r4Cat:string
-" \
--t \
---clustering_fields message_id \
---time_partitioning_field publish_time \
---time_partitioning_type DAY \
-$BQ_DATASET."$BQ_OUTPUT_RECORDS_TABLE"
-#--time_partitioning_expiration 315619200 \
+# bq mk --schema "
+# subscription_name:string
+# ,message_id:string
+# ,publish_time:timestamp
+# ,data:string
+# ,attributes:string
+# ,jobExecutionId:string
+# ,scrapeDate:string
+# ,scrapeTimestamp:string
+# ,skuId:string
+# ,sellerCount:integer
+# ,mfgNumber:string
+# ,productTitle:string
+# ,bbWinner:string
+# ,bbPrice:float
+# ,shipCost:float
+# ,siteChoice:string
+# ,fba:string
+# ,brand:string
+# ,productUrl:string
+# ,productCustomerReviews:integer
+# ,productStarRating:float
+# ,productDimensions:string
+# ,itemWeight:string
+# ,shipWeight:string
+# ,itemNumber:string
+# ,skuCreationDate:string
+# ,returnsPolicy:string
+# ,currentlyUnavailable:string
+# ,r1Number:integer
+# ,r1Cat:string
+# ,r2Number:integer
+# ,r2Cat:string
+# ,r3Number:integer
+# ,r3Cat:string
+# ,r4Number:integer
+# ,r4Cat:string
+# " \
+# -t \
+# --clustering_fields message_id \
+# --time_partitioning_field publish_time \
+# --time_partitioning_type DAY \
+# $BQ_DATASET."$BQ_OUTPUT_RECORDS_TABLE"
+# #--time_partitioning_expiration 315619200 \
 
 # TODO using string for now until float is supported
 bq mk --schema "
