@@ -269,7 +269,7 @@ def main():
             parse_command_line_args().gateway_id)
 
     gateway_state.mqtt_bridge_hostname = args.mqtt_bridge_hostname
-    gateway_state.mqtt_bridge_port = args.mqtt_bridge_hostname
+    gateway_state.mqtt_bridge_port = args.mqtt_bridge_port
 
     client = get_client(
         args.project_id, args.cloud_region, args.registry_id, args.gateway_id,
