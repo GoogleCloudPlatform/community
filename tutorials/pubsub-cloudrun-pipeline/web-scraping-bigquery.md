@@ -2,6 +2,15 @@
 
 Web scraping from a list of input IDs from a BigQuery table to another BigQuery table storing the results.
 
+## Git
+
+```bash
+git clone https://github.com/kylgoog/GoogleCloudPlatform-community.git
+cd GoogleCloudPlatform-community/
+git checkout pubsub-cloudrun-pipeline
+cd tutorials/pubsub-cloudrun-pipeline/
+```
+
 ## Variables
 
 ```bash
@@ -40,6 +49,11 @@ CLOUD_RUN_SERVICE_LOAD="load-records-to-pubsub"
 CLOUD_RUN_SERVICE_PROCESS="scrape"
 CLOUD_RUN_SERVICE_GET="get-job-status"
 CLOUD_RUN_MIN_INSTANCES="0"
+
+# Qwiklabs limits
+CLOUD_RUN_SERVICE_LOAD_MAX_INSTANCES="1"
+CLOUD_RUN_SERVICE_PROCESS_MAX_INSTANCES="10"
+CLOUD_RUN_SERVICE_GET_MAX_INSTANCES="1"
 
 BQ_DATASET="web_scraping"
 BQ_INPUT_RECORDS_TABLE="input_records"
@@ -169,14 +183,9 @@ done
 # create the BQ dataset and table for the input records
 bq mk $BQ_DATASET
 
-
+# load sample data
 bq load --source_format=CSV -F "|" $PROJECT_ID:${BQ_DATASET}.$BQ_INPUT_RECORDS_TABLE sample-data/input_records.txt "id"
 
-bq mk --schema "
-id:string
-" \
--t \
-$BQ_DATASET."$BQ_INPUT_RECORDS_TABLE"
 
 # create the BQ table and subscription for the output records
 
@@ -338,7 +347,8 @@ gcloud spanner databases create $SPANNER_DATABASE --instance=$SPANNER_INSTANCE
 
 gcloud spanner databases ddl update $SPANNER_DATABASE --instance=$SPANNER_INSTANCE --ddl="${SPANNER_DDL_TRANSACTIONS}"
 
-# create connection for federated query
+# Optional - create connection for federated query
+gcloud services enable bigqueryconnection.googleapis.com
 bq mk --connection \
   --connection_type='CLOUD_SPANNER' \
   --properties="{\"database\":\"projects/$PROJECT_ID/instances/$SPANNER_INSTANCE/databases/$SPANNER_DATABASE\"}" \
@@ -379,13 +389,14 @@ gsutil iam ch serviceAccount:${CLOUD_RUN_SERVICE_LOAD}-sa@$PROJECT_ID.iam.gservi
 gcloud pubsub topics add-iam-policy-binding "${INPUT_RECORDS_PUBSUB_TOPIC}" --member "serviceAccount:${CLOUD_RUN_SERVICE_LOAD}-sa@${PROJECT_ID}.iam.gserviceaccount.com" --role roles/pubsub.publisher --project ${PROJECT_ID}
 
 # Cloud Run ingress can stay internal
-gcloud run deploy $CLOUD_RUN_SERVICE_LOAD --source=$CLOUD_RUN_SERVICE_LOAD/ --platform managed --region $REGION --set-env-vars INPUT_RECORDS_PUBSUB_TOPIC="$INPUT_RECORDS_PUBSUB_TOPIC" --ingress=internal --no-allow-unauthenticated --service-account="${CLOUD_RUN_SERVICE_LOAD}-sa@${PROJECT_ID}.iam.gserviceaccount.com"  --min-instances="$CLOUD_RUN_MIN_INSTANCES" --cpu-throttling --timeout=3600
+gcloud run deploy $CLOUD_RUN_SERVICE_LOAD --source=$CLOUD_RUN_SERVICE_LOAD/ --platform managed --region $REGION --set-env-vars INPUT_RECORDS_PUBSUB_TOPIC="$INPUT_RECORDS_PUBSUB_TOPIC" --ingress=internal --no-allow-unauthenticated --service-account="${CLOUD_RUN_SERVICE_LOAD}-sa@${PROJECT_ID}.iam.gserviceaccount.com"  --min-instances="$CLOUD_RUN_MIN_INSTANCES" --max-instances="$CLOUD_RUN_SERVICE_LOAD_MAX_INSTANCES" --timeout=3600
 # --no-cpu-throttling
 
 gcloud iam service-accounts create "${CLOUD_RUN_SERVICE_LOAD}-trigger"
 gcloud run services add-iam-policy-binding ${CLOUD_RUN_SERVICE_LOAD} --region=$REGION \
   --member="serviceAccount:${CLOUD_RUN_SERVICE_LOAD}-trigger@${PROJECT_ID}.iam.gserviceaccount.com" \
   --role='roles/run.invoker'
+gcloud projects add-iam-policy-binding ${PROJECT_ID} --member="serviceAccount:${CLOUD_RUN_SERVICE_LOAD}-trigger@${PROJECT_ID}.iam.gserviceaccount.com"  --role="roles/eventarc.eventReceiver"
 
 # does not support path pattern
 gcloud eventarc triggers create ${CLOUD_RUN_SERVICE_LOAD}-trigger \
@@ -437,7 +448,10 @@ gcloud iam service-accounts create "${CLOUD_RUN_SERVICE_PROCESS}-sa"
 gcloud pubsub topics add-iam-policy-binding "${OUTPUT_RECORDS_PUBSUB_TOPIC}" --member "serviceAccount:${CLOUD_RUN_SERVICE_PROCESS}-sa@${PROJECT_ID}.iam.gserviceaccount.com" --role roles/pubsub.publisher --project ${PROJECT_ID}
 
 # Cloud Run ingress can stay internal
-gcloud beta run deploy $CLOUD_RUN_SERVICE_PROCESS --source=$CLOUD_RUN_SERVICE_PROCESS/ --platform managed --region $REGION --set-env-vars OUTPUT_RECORDS_PUBSUB_TOPIC="$OUTPUT_RECORDS_PUBSUB_TOPIC",URL_PATTERN="${URL_PATTERN}" --ingress=internal --no-allow-unauthenticated --service-account="${CLOUD_RUN_SERVICE_PROCESS}-sa@${PROJECT_ID}.iam.gserviceaccount.com"  --min-instances="$CLOUD_RUN_MIN_INSTANCES" --cpu-throttling --concurrency=1 --max-instances=4000 --memory=256Mi --cpu=0.25 --execution-environment="gen1"
+gcloud run deploy $CLOUD_RUN_SERVICE_PROCESS --source=$CLOUD_RUN_SERVICE_PROCESS/ --platform managed --region $REGION --set-env-vars OUTPUT_RECORDS_PUBSUB_TOPIC="$OUTPUT_RECORDS_PUBSUB_TOPIC",URL_PATTERN="${URL_PATTERN}" --ingress=internal --no-allow-unauthenticated --service-account="${CLOUD_RUN_SERVICE_PROCESS}-sa@${PROJECT_ID}.iam.gserviceaccount.com"  --min-instances="$CLOUD_RUN_MIN_INSTANCES" --concurrency=1 --max-instances=4000 --memory=256Mi --cpu=0.25 --execution-environment="gen1"
+# Qwiklabs
+# ERROR: (gcloud.beta.run.deploy) You may not have more than 32 total max instances in your project.
+# gcloud beta run deploy $CLOUD_RUN_SERVICE_PROCESS --source=$CLOUD_RUN_SERVICE_PROCESS/ --platform managed --region $REGION --set-env-vars OUTPUT_RECORDS_PUBSUB_TOPIC="$OUTPUT_RECORDS_PUBSUB_TOPIC",URL_PATTERN="${URL_PATTERN}" --ingress=internal --no-allow-unauthenticated --service-account="${CLOUD_RUN_SERVICE_PROCESS}-sa@${PROJECT_ID}.iam.gserviceaccount.com"  --min-instances="$CLOUD_RUN_MIN_INSTANCES" --max-instances="$CLOUD_RUN_SERVICE_PROCESS_MAX_INSTANCES" --concurrency=1 --memory=256Mi --cpu=0.25 --execution-environment="gen1"
 #--execution-environment="gen2" #gen2 min cpu is 1
 # --no-cpu-throttling
 
@@ -484,8 +498,8 @@ gcloud projects add-iam-policy-binding ${PROJECT_ID} --member="serviceAccount:${
 gcloud spanner instances add-iam-policy-binding $SPANNER_INSTANCE --member="serviceAccount:${CLOUD_RUN_SERVICE_GET}-sa@$PROJECT_ID.iam.gserviceaccount.com" --role="roles/spanner.databaseUser"
 
 # Cloud Run ingress can stay internal
-gcloud beta run deploy $CLOUD_RUN_SERVICE_GET --source=$CLOUD_RUN_SERVICE_GET/ --platform managed --region $REGION  --ingress=internal --no-allow-unauthenticated --service-account="${CLOUD_RUN_SERVICE_GET}-sa@${PROJECT_ID}.iam.gserviceaccount.com"  --min-instances="$CLOUD_RUN_MIN_INSTANCES" --cpu-throttling 
-#gcloud beta run deploy $CLOUD_RUN_SERVICE_GET --source=$CLOUD_RUN_SERVICE_GET/ --platform managed --region $REGION --set-env-vars SPANNER_BQ_CONNECTION="$SPANNER_BQ_CONNECTION" --ingress=internal --no-allow-unauthenticated --service-account="${CLOUD_RUN_SERVICE_GET}-sa@${PROJECT_ID}.iam.gserviceaccount.com"  --min-instances="$CLOUD_RUN_MIN_INSTANCES" --cpu-throttling 
+gcloud run deploy $CLOUD_RUN_SERVICE_GET --source=$CLOUD_RUN_SERVICE_GET/ --platform managed --region $REGION  --ingress=internal --no-allow-unauthenticated --service-account="${CLOUD_RUN_SERVICE_GET}-sa@${PROJECT_ID}.iam.gserviceaccount.com"  --min-instances="$CLOUD_RUN_MIN_INSTANCES" --max-instances="$CLOUD_RUN_SERVICE_GET_MAX_INSTANCES"
+# --cpu-throttling 
 #--execution-environment="gen2" #gen2 min cpu is 1
 # --no-cpu-throttling
 
@@ -519,7 +533,7 @@ gcloud workflows deploy $WORKFLOW --location=$REGION --source=workflows/web-scra
 
 
 # use the scheduler command below
-gcloud workflows run $WORKFLOW --location=$REGION --data='{"storageBucket":"'$GCS_BUCKET'","jobExecutionSpannerInstance":"'$SPANNER_INSTANCE'","jobExecutionSpannerDatabase":"'$SPANNER_DATABASE'","inputRecordsSqlLimitClause":"","getJobStatusUrl":"'$CLOUD_RUN_SERVICE_GET_URL'"}'
+# gcloud workflows run $WORKFLOW --location=$REGION --data='{"storageBucket":"'$GCS_BUCKET'","jobExecutionSpannerInstance":"'$SPANNER_INSTANCE'","jobExecutionSpannerDatabase":"'$SPANNER_DATABASE'","inputRecordsSqlLimitClause":"","getJobStatusUrl":"'$CLOUD_RUN_SERVICE_GET_URL'"}'
 # "inputRecordsSqlLimitClause":"LIMIT 10"
 ```
 
