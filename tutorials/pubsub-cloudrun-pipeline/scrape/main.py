@@ -150,7 +150,9 @@ def index():
 
 
 if __name__ == "__main__":
+    # for local dev (listening on port 8080)
     if len(sys.argv) == 1:
         app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
+    # for local dev to simplify invoke the process function
     elif len(sys.argv) >= 2:
         process(sys.argv[1])
