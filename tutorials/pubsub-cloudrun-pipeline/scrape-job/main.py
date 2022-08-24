@@ -14,12 +14,11 @@
 
 import os, sys
 
-from flask import Flask, request
-from cloudevents.http import from_http
 from datetime import datetime
 import google.auth
 import json
 from google.cloud import pubsub_v1 as pubsub
+from google.cloud import bigquery
 import base64
 from google.api_core.exceptions import NotFound
 import urllib.request
@@ -30,7 +29,6 @@ credentials, project_id = google.auth.default()
 pubsub_topic=os.getenv("OUTPUT_RECORDS_PUBSUB_TOPIC")
 url_pattern=os.getenv("URL_PATTERN")
 
-app = Flask(__name__)
 
 def is_decimal(n):
     try:
@@ -62,9 +60,8 @@ def getInBetweenStringAsInteger(stringToSearch, startString, endString):
     else:
         return 0
 
-def process(input_record_string):
+def process(input_record):
 
-    input_record=json.loads(input_record_string)
     url = url_pattern.format(input_record["id"])
 
     # scrape
@@ -108,7 +105,7 @@ def process(input_record_string):
     output_record["r3Cat"]=getInBetweenString(html_source,"r3Cat: ","<")
     output_record["r4Number"]=getInBetweenStringAsInteger(html_source,"r4Number: ","<")
     output_record["r4Cat"]=getInBetweenString(html_source,"r4Cat: ","<")
-    print(json.dumps(output_record))
+    #print(json.dumps(output_record))
 
     #PubSub
     client = pubsub.PublisherClient()
@@ -116,7 +113,7 @@ def process(input_record_string):
     try:
         # Encode the data according to the message serialization type.
         data_str = json.dumps(output_record)
-        print(f"Preparing a JSON-encoded message:\n{data_str}")
+        #print(f"Preparing a JSON-encoded message:\n{data_str}")
         data = data_str.encode("utf-8")
 
         future = client.publish(topic_path, data)
@@ -127,32 +124,54 @@ def process(input_record_string):
 
     return
 
+def fetch_and_process_records():
 
-@app.route('/', methods=['POST'])
-def index():
+    # in a real Cloud Run Jobs environment,
+    # For each task, this will be set to a unique value between 0 and the number of tasks minus 1.
+    cloud_run_task_index=os.getenv("CLOUD_RUN_TASK_INDEX",default=0)
+    cloud_run_task_count=os.getenv("CLOUD_RUN_TASK_COUNT",default=10000)
+    job_execution_id=os.getenv("CLOUD_RUN_EXECUTION",default="cloud-run-jobs-local-test")
+    print(f"cloud_run_task_index={cloud_run_task_index} cloud_run_task_count={cloud_run_task_count}")
 
 
-    # create a CloudEvent
-    event = from_http(request.headers, request.get_data())
-    print(f"event={event}")
-    #print(
-        #f"Found {event['id']} from {event['source']} {event['subject']} with type "
-        #f"{event['type']} and specversion {event['specversion']}"
-    #)
+    #https://cloud.google.com/bigquery/docs/paging-results#page_through_query_results
+    # Construct a BigQuery client object.
+    client = bigquery.Client()
+    query_job = client.query(
+         f"""
+         SELECT id FROM `web_scraping.input_records` where mod(abs(FARM_FINGERPRINT(id)),@cloud_run_task_count) = @cloud_run_task_index
+         """
+         ,job_config=bigquery.QueryJobConfig(
+             query_parameters=[
+                 bigquery.ScalarQueryParameter("cloud_run_task_index", "INTEGER", cloud_run_task_index),
+                 bigquery.ScalarQueryParameter("cloud_run_task_count", "INTEGER", cloud_run_task_count),
+             ]
+         )
+    )
+    query_job.result()
+    # Get the destination table for the query results.
+    #
+    # All queries write to a destination table. If a destination table is not
+    # specified, the BigQuery populates it with a reference to a temporary
+    # anonymous table after the query completes.
+    destination = query_job.destination
 
-    # Data access is handled via `.data` member
-    record=base64.b64decode(event.data['message']['data']).decode('utf-8').strip()
-    #print(f"Found {raw_record}")
+    # Get the schema (and other properties) for the destination table.
+    #
+    # A schema is useful for converting from BigQuery types to Python types.
+    destination = client.get_table(destination)
 
-    # process
-    process(record)
-    return (f"Processed", 200)
-
+    # Download rows.
+    #
+    # The client library automatically handles pagination.
+    #print("The query data:")
+    rows = client.list_rows(destination)
+    for row in rows:
+        #print("id={}".format(row["id"]))
+        process({
+            "id": row["id"],
+            "jobExecutionId": job_execution_id,
+        })
 
 if __name__ == "__main__":
-    # for local dev (listening on port 8080)
-    if len(sys.argv) == 1:
-        app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
-    # for local dev to simplify invoke the process function
-    elif len(sys.argv) >= 2:
-        process(sys.argv[1])
+    fetch_and_process_records()

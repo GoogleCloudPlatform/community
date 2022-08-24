@@ -2,16 +2,25 @@
 
 Web scraping from a list of input IDs from a BigQuery table to another BigQuery table storing the results.
 
-## Git
+This takes around 20 min for straight copy-and-paste.
+
+## Get the sample code and data
+
+The sample code and data for this lab can be found on this GitHub repository. Use these commands to clone into your Cloud Shell environment.
 
 ```bash
 git clone https://github.com/kylgoog/GoogleCloudPlatform-community.git
 cd GoogleCloudPlatform-community/
 git checkout pubsub-cloudrun-pipeline
 cd tutorials/pubsub-cloudrun-pipeline/
+ 
 ```
 
-## Variables
+The commands throughout the lab assume you will be staying in this directory.
+
+## Assign variables
+
+These are the variables to be used for the commands throughout the lab. If your Cloud Shell session is disconnected for any reason, you can safely re-run these variable assignments, and resume from where you have left off.
 
 ```bash
 
@@ -62,13 +71,44 @@ BQ_DATASET_REGION="us"
 BQ_OUTPUT_RECORDS_TABLE="output_records"
 BQ_PUBSUB_ARCHIVE_DATASET="pubsub_archive"
 
-
 # PubSub
 export INPUT_RECORDS_PUBSUB_TOPIC="input-records-topic"
 export OUTPUT_RECORDS_PUBSUB_TOPIC="output-records-topic"
 
-# PubSub Output Records Schema
-# TODO - BQ Subscription doesn't support any Avro logical data types yet (e.g. timestamp, decimal)
+# GCS
+export GCS_BUCKET="${PROJECT_ID}-${REGION}"
+
+WORKFLOW="web-scraping"
+SCHEDULER="web-scraping-scheduler"
+
+# URL pattern to be scraped.  The ID of each record will be substituted using Python's string format
+export URL_PATTERN="https://get-product.endpoints.kyl-alto-ecommerce-site-358914.cloud.goog/product/{}"
+  
+
+CLOUD_RUN_JOB_SCRAPE="scrape-job"
+```
+
+## Set up the project
+
+Enable the APIs, and create the repository for Cloud Run to deploy from source code.
+
+```bash
+# enable APIs
+gcloud services enable workflows.googleapis.com spanner.googleapis.com pubsub.googleapis.com artifactregistry.googleapis.com cloudbuild.googleapis.com run.googleapis.com eventarc.googleapis.com cloudscheduler.googleapis.com
+
+# create the Artifact Registry repository for Cloud Run to deploy from source code
+gcloud artifacts repositories create cloud-run-source-deploy --repository-format=docker --location=$REGION
+  
+```
+
+## Create PubSub topics and the archival tables
+
+Define the PubSub Topic Schema for the output records.
+
+```bash
+
+# PubSub Output Records Schema - mostly string and integer fields
+# TODO - BQ Subscription doesn't support Avro logical data types yet (e.g. timestamp, decimal)
 # null field support is also insufficient https://stackoverflow.com/questions/72046941/is-there-a-way-to-make-google-cloud-pub-sub-schema-fields-optional
 OUTPUT_RECORDS_PUBSUB_TOPIC_SCHEMA='
 {
@@ -112,29 +152,10 @@ OUTPUT_RECORDS_PUBSUB_TOPIC_SCHEMA='
 # { "name" : "bbPrice", "type" : "float" },
 # { "name" : "shipCost", "type" : "float" },
 # { "name" : "productStarRating", "type" : "float" },
-
-
-# GCS
-export GCS_BUCKET="${PROJECT_ID}-${REGION}"
-
-WORKFLOW="web-scraping"
-SCHEDULER="web-scraping-scheduler"
-
-# URL pattern to be scraped.  The ID of each record will be substituted using Python's string format
-export URL_PATTERN="https://get-product.endpoints.kyl-alto-ecommerce-site-358914.cloud.goog/product/{}"
-
+ 
 ```
 
-## Project Setup
-
-```bash
-gcloud services enable workflows.googleapis.com spanner.googleapis.com pubsub.googleapis.com artifactregistry.googleapis.com cloudbuild.googleapis.com run.googleapis.com eventarc.googleapis.com cloudscheduler.googleapis.com
-
-gcloud artifacts repositories create cloud-run-source-deploy --repository-format=docker --location=$REGION
-
-```
-
-## Create PubSub Topics, GCS bucket and BQ tables
+Create the PubSub topics and the corresponding archival tables.
 
 ```bash
 
@@ -150,11 +171,7 @@ gcloud pubsub topics create $OUTPUT_RECORDS_PUBSUB_TOPIC \
         --message-encoding="JSON" \
         --schema="${OUTPUT_RECORDS_PUBSUB_TOPIC}-schema"
 
-# TODO the service account is not created until there's an attempt to create a subscription
-# Need to investigate how to force the creation
-# permissions for BQ subscription
-gcloud projects add-iam-policy-binding ${PROJECT_ID} --member="serviceAccount:service-$PROJECT_NUMBER@gcp-sa-pubsub.iam.gserviceaccount.com" --role="roles/bigquery.dataEditor"
-gcloud projects add-iam-policy-binding ${PROJECT_ID} --member="serviceAccount:service-$PROJECT_NUMBER@gcp-sa-pubsub.iam.gserviceaccount.com" --role="roles/bigquery.metadataViewer"
+
 
 # create the BQ tables and subscription for archiving
 bq mk $BQ_PUBSUB_ARCHIVE_DATASET
@@ -171,20 +188,39 @@ do
     $BQ_PUBSUB_ARCHIVE_DATASET."$ARCHIVE_TABLE"
     #--time_partitioning_expiration 315619200 \
 
+done
+ 
+# permissions for BQ subscription
+# TODO It seems the pubsub service account is not created until there's an attempt to create a subscription
+# As of now, if the pubsub service account doesn't exist yet, run the next block (creating the subscription), which would result in error, and then come back here and grant the permissions, and then create the subscriptions again
+gcloud projects add-iam-policy-binding ${PROJECT_ID} --member="serviceAccount:service-$PROJECT_NUMBER@gcp-sa-pubsub.iam.gserviceaccount.com" --role="roles/bigquery.dataEditor"
+gcloud projects add-iam-policy-binding ${PROJECT_ID} --member="serviceAccount:service-$PROJECT_NUMBER@gcp-sa-pubsub.iam.gserviceaccount.com" --role="roles/bigquery.metadataViewer"
+
+# create the BQ tables and subscription for archiving
+for TOPIC in $INPUT_RECORDS_PUBSUB_TOPIC $OUTPUT_RECORDS_PUBSUB_TOPIC
+do
+    ARCHIVE_TABLE="${TOPIC//-/_}_archive"
+
     # gcloud pubsub subscriptions delete ${TOPIC}-archive
     gcloud pubsub subscriptions create ${TOPIC}-archive \
     --topic=$TOPIC \
     --bigquery-table=$PROJECT_ID:$BQ_PUBSUB_ARCHIVE_DATASET."$ARCHIVE_TABLE" \
     --write-metadata
 done
+ 
+ 
+```
 
+## Create the BQ tables for input and output records
 
-# 
+```bash
+
 # create the BQ dataset and table for the input records
 bq mk $BQ_DATASET
 
 # load sample data
-bq load --source_format=CSV -F "|" $PROJECT_ID:${BQ_DATASET}.$BQ_INPUT_RECORDS_TABLE sample-data/input_records.txt "id"
+# bq rm -t -f $BQ_DATASET.$BQ_INPUT_RECORDS_TABLE
+bq load --source_format=CSV -F "|" ${BQ_DATASET}.$BQ_INPUT_RECORDS_TABLE sample-data/input_records.txt "id"
 
 
 # create the BQ table and subscription for the output records
@@ -290,6 +326,11 @@ gcloud pubsub subscriptions create ${OUTPUT_RECORDS_PUBSUB_TOPIC}-bigquery \
     --drop-unknown-fields \
     --write-metadata
 
+```
+
+## Create the GCS bucket
+
+```bash
 
 # GCS bucket
 gsutil mb -l ${REGION} gs://$GCS_BUCKET
@@ -338,7 +379,7 @@ gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:${GC
 
 ```
 
-## Create job metadata tables (Cloud Spanner)
+## Create the job metadata table (Cloud Spanner)
 
 ```bash
 
@@ -360,7 +401,7 @@ bq mk --connection \
 
 ```
 
-## Service - load-records-to-pubsub
+## Deploy Cloud Run service - load-records-to-pubsub
 
 ```bash
 # Local Development
@@ -372,13 +413,6 @@ pip install -r $CLOUD_RUN_SERVICE_LOAD/requirements.txt
 # run this to test via browser
 # gunicorn --bind :8080 --workers 1 --threads 8 --timeout 0 main:app --chdir $CLOUD_RUN_SERVICE_LOAD --reload
 # run this to test the individual function
-# python3 $CLOUD_RUN_SERVICE_UPSERT/main.py '{"Table":"Results","Url":"https://www.amazon.com/dp/B00367ZH2U/"}'
-python3 $CLOUD_RUN_SERVICE_LOAD/main.py "kyl-alto-web-scrape-359204-us-central1" "input-records/ed83c289-fd12-47ec-9006-792a31c981c3/000000000000.json"
-
-# Build the docker image and tag it for Container Registry
-#docker build -t web-scraping:0.1 .
-#docker run -it web-scraping:0.1 bash
-#python3 main.py '{"Table":"Results","Url":"https://www.amazon.com/McKesson-Confiderm-Powder-MEDIUM-14-1382/dp/B01ETFG640"}'
 python3 $CLOUD_RUN_SERVICE_LOAD/main.py "kyl-alto-web-scrape-359204-us-central1" "input-records/ed83c289-fd12-47ec-9006-792a31c981c3/000000000000.json"
 
 gcloud iam service-accounts create "${CLOUD_RUN_SERVICE_LOAD}-sa"
@@ -398,7 +432,7 @@ gcloud run services add-iam-policy-binding ${CLOUD_RUN_SERVICE_LOAD} --region=$R
   --role='roles/run.invoker'
 gcloud projects add-iam-policy-binding ${PROJECT_ID} --member="serviceAccount:${CLOUD_RUN_SERVICE_LOAD}-trigger@${PROJECT_ID}.iam.gserviceaccount.com"  --role="roles/eventarc.eventReceiver"
 
-# does not support path pattern
+# Note: Direct Events approach does not support path pattern
 gcloud eventarc triggers create ${CLOUD_RUN_SERVICE_LOAD}-trigger \
      --location=$REGION \
      --destination-run-service=${CLOUD_RUN_SERVICE_LOAD} \
@@ -426,7 +460,7 @@ gcloud pubsub subscriptions update $(gcloud eventarc triggers describe ${CLOUD_R
 
 ```
 
-## Service - scrape
+## Deploy Cloud Run service - scrape
 
 ```bash
 # Local Development
@@ -438,7 +472,7 @@ pip install -r $CLOUD_RUN_SERVICE_PROCESS/requirements.txt
 # run this to test via browser
 # gunicorn --bind :8080 --workers 1 --threads 8 --timeout 0 main:app --chdir $CLOUD_RUN_SERVICE_LOAD --reload
 # run this to test the individual function
-# python3 $CLOUD_RUN_SERVICE_PROCESS/main.py '{"id":"000003b7-4f08-4bc7-b286-9f68ed1df546","jobExecutionId":"d42dc9ce-f3d8-4fa2-966d-964c16efe572"}'
+# python3 $CLOUD_RUN_SERVICE_PROCESS/main.py '{"id":"000003b7-4f08-4bc7-b286-9f68ed1df999","jobExecutionId":"d42dc9ce-f3d8-4fa2-966d-964c16efe572"}'
 
 
 gcloud iam service-accounts create "${CLOUD_RUN_SERVICE_PROCESS}-sa"
@@ -448,7 +482,7 @@ gcloud iam service-accounts create "${CLOUD_RUN_SERVICE_PROCESS}-sa"
 gcloud pubsub topics add-iam-policy-binding "${OUTPUT_RECORDS_PUBSUB_TOPIC}" --member "serviceAccount:${CLOUD_RUN_SERVICE_PROCESS}-sa@${PROJECT_ID}.iam.gserviceaccount.com" --role roles/pubsub.publisher --project ${PROJECT_ID}
 
 # Cloud Run ingress can stay internal
-gcloud run deploy $CLOUD_RUN_SERVICE_PROCESS --source=$CLOUD_RUN_SERVICE_PROCESS/ --platform managed --region $REGION --set-env-vars OUTPUT_RECORDS_PUBSUB_TOPIC="$OUTPUT_RECORDS_PUBSUB_TOPIC",URL_PATTERN="${URL_PATTERN}" --ingress=internal --no-allow-unauthenticated --service-account="${CLOUD_RUN_SERVICE_PROCESS}-sa@${PROJECT_ID}.iam.gserviceaccount.com"  --min-instances="$CLOUD_RUN_MIN_INSTANCES" --concurrency=1 --max-instances=4000 --memory=256Mi --cpu=0.25 --execution-environment="gen1"
+gcloud beta run deploy $CLOUD_RUN_SERVICE_PROCESS --source=$CLOUD_RUN_SERVICE_PROCESS/ --platform managed --region $REGION --set-env-vars OUTPUT_RECORDS_PUBSUB_TOPIC="$OUTPUT_RECORDS_PUBSUB_TOPIC",URL_PATTERN="${URL_PATTERN}" --ingress=internal --no-allow-unauthenticated --service-account="${CLOUD_RUN_SERVICE_PROCESS}-sa@${PROJECT_ID}.iam.gserviceaccount.com"  --min-instances="$CLOUD_RUN_MIN_INSTANCES" --max-instances="$CLOUD_RUN_SERVICE_PROCESS_MAX_INSTANCES" --concurrency=1 --max-instances=4000 --memory=256Mi --cpu=0.25 --execution-environment="gen1"
 # Qwiklabs
 # ERROR: (gcloud.beta.run.deploy) You may not have more than 32 total max instances in your project.
 # gcloud beta run deploy $CLOUD_RUN_SERVICE_PROCESS --source=$CLOUD_RUN_SERVICE_PROCESS/ --platform managed --region $REGION --set-env-vars OUTPUT_RECORDS_PUBSUB_TOPIC="$OUTPUT_RECORDS_PUBSUB_TOPIC",URL_PATTERN="${URL_PATTERN}" --ingress=internal --no-allow-unauthenticated --service-account="${CLOUD_RUN_SERVICE_PROCESS}-sa@${PROJECT_ID}.iam.gserviceaccount.com"  --min-instances="$CLOUD_RUN_MIN_INSTANCES" --max-instances="$CLOUD_RUN_SERVICE_PROCESS_MAX_INSTANCES" --concurrency=1 --memory=256Mi --cpu=0.25 --execution-environment="gen1"
@@ -474,7 +508,7 @@ gcloud pubsub subscriptions update $(gcloud eventarc triggers describe ${CLOUD_R
 
 ```
 
-## Service - get job status
+## Deploy Cloud Run service - get job status
 
 ```bash
 # Local Development
@@ -511,7 +545,7 @@ echo CLOUD_RUN_SERVICE_GET_URL=$CLOUD_RUN_SERVICE_GET_URL
 
 ```
 
-## Cloud Workflow
+## Create the workflow
 
 ```bash
 
@@ -532,12 +566,12 @@ gcloud run services add-iam-policy-binding ${CLOUD_RUN_SERVICE_GET} --region=$RE
 gcloud workflows deploy $WORKFLOW --location=$REGION --source=workflows/web-scraping.yaml --service-account=${WORKFLOW}-sa@$PROJECT_ID.iam.gserviceaccount.com
 
 
-# use the scheduler command below
+# To manually run the workflow
 # gcloud workflows run $WORKFLOW --location=$REGION --data='{"storageBucket":"'$GCS_BUCKET'","jobExecutionSpannerInstance":"'$SPANNER_INSTANCE'","jobExecutionSpannerDatabase":"'$SPANNER_DATABASE'","inputRecordsSqlLimitClause":"","getJobStatusUrl":"'$CLOUD_RUN_SERVICE_GET_URL'"}'
 # "inputRecordsSqlLimitClause":"LIMIT 10"
 ```
 
-## Scheduler
+## Create the Scheduler
 
 ```bash
 
@@ -562,6 +596,137 @@ print(json.dumps({'argument':json.dumps(output)}))
     --message-body-from-file=/dev/stdin \
     --oauth-service-account-email="${SCHEDULER}-sa@${PROJECT_ID}.iam.gserviceaccount.com"
     
+```
+
+## Run the scheduler job manually
+
+```bash
+    
 gcloud scheduler jobs run ${SCHEDULER} --location=$REGION
+
+```
+
+## Optional - BQML Unsupervised Anomaly Detection - Training
+
+Took 17min for 47k time series.
+
+```bash
+
+BQML_TRAINING_SQL='select skuId,scrapeDate,bbPrice
+ from (select skuId,safe_cast(scrapeDate as date) scrapeDate, round(safe_cast(bbPrice as numeric),2) bbPrice,
+row_number() OVER (partition by skuId,safe_cast(scrapeDate as date) order by safe_cast(scrapeTimestamp as timestamp) desc) as rn
+ from `web_scraping.output_records`
+) where rn=1 
+and scrapeDate <=date_sub(current_date, interval 1 day)
+and scrapeDate >=date_sub(current_date, interval 6 day)'
+
+#DETECT_ANOMALY_SQL="SELECT * FROM ML.DETECT_ANOMALIES(MODEL `transactions.transaction_quantity_arima_plus_model`, STRUCT(0.99 AS anomaly_prob_threshold)) where is_anomaly=true;"
+
+CREATE_MODEL_SQL="CREATE OR REPLACE MODEL ${BQ_DATASET}.bbPrice_arima_plus_model
+OPTIONS(
+  MODEL_TYPE='ARIMA_PLUS',
+  TIME_SERIES_ID_COL='skuId',
+  TIME_SERIES_TIMESTAMP_COL='scrapeDate',
+  TIME_SERIES_DATA_COL='bbPrice',
+  DATA_FREQUENCY='DAILY'
+) AS
+${BQML_TRAINING_SQL}"
+#HOLIDAY_REGION='US' 
+
+bq query --use_legacy_sql=false "$CREATE_MODEL_SQL"
+
+
+```
+
+## Check for anomalies
+
+```SQL
+
+-- modify a record in Spanner
+SELECT
+  *
+FROM
+  Products
+order by skuid limit 1 offset 46999;
+
+-- run job
+
+-- On training data
+
+SELECT skuId,scrapeDate
+,bbPrice
+,anomaly_probability
+,is_anomaly
+ FROM ML.DETECT_ANOMALIES(MODEL `web_scraping.bbPrice_arima_plus_model`, 
+STRUCT(0.95 AS anomaly_prob_threshold)) 
+where is_anomaly=true and skuId='00d6e4a3-859d-4417-8a9e-8e27576a55f7'
+;
+
+WITH
+  new_data AS (
+SELECT skuId
+,scrapeDate
+,bbPrice
+FROM 
+(select * from (
+SELECT skuId,safe_cast(scrapeDate as date) scrapeDate, safe_cast(bbPrice as numeric) bbPrice,row_number() OVER (partition by skuId,safe_cast(scrapeDate as date) order by safe_cast(scrapeTimestamp as timestamp) desc) as rn
+FROM `web_scraping.output_records` 
+) where rn=1 
+--and skuId='050cff1b-8328-4b68-88b0-feeadfed625c'
+and scrapeDate =current_date
+) 
+  )
+SELECT skuId,
+scrapeDate
+,bbPrice
+,anomaly_probability
+,lower_bound
+,upper_bound
+,is_anomaly
+ FROM ML.DETECT_ANOMALIES(MODEL `web_scraping.bbPrice_arima_plus_model`, 
+STRUCT(0.90 AS anomaly_prob_threshold),(select * from new_data)) 
+--order by skuId,scrapeDate
+where is_anomaly=true and not (bbPrice = round(lower_bound,2) and bbPrice = round(upper_bound,2))
+;
+
+
+```
+
+## Cloud Run Jobs approach
+
+```bash
+# Local Development
+mkdir -p ~/.venv
+virtualenv ~/.venv/$CLOUD_RUN_JOB_SCRAPE
+source ~/.venv/$CLOUD_RUN_JOB_SCRAPE/bin/activate
+pip install -r $CLOUD_RUN_JOB_SCRAPE/requirements.txt
+
+
+python3 $CLOUD_RUN_JOB_SCRAPE/main.py 
+
+
+#gcloud builds submit ${CLOUD_RUN_JOB_SCRAPE}/ --pack image=gcr.io/$PROJECT_ID/${CLOUD_RUN_JOB_SCRAPE}
+gcloud builds submit ${CLOUD_RUN_JOB_SCRAPE}/ --pack image=${REGION}-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/${CLOUD_RUN_JOB_SCRAPE}
+
+
+gcloud iam service-accounts create "${CLOUD_RUN_JOB_SCRAPE}-sa"
+
+gcloud pubsub topics add-iam-policy-binding "${OUTPUT_RECORDS_PUBSUB_TOPIC}" --member "serviceAccount:${CLOUD_RUN_JOB_SCRAPE}-sa@${PROJECT_ID}.iam.gserviceaccount.com" --role "roles/pubsub.publisher" --project ${PROJECT_ID}
+gcloud projects add-iam-policy-binding ${PROJECT_ID} --member="serviceAccount:${CLOUD_RUN_JOB_SCRAPE}-sa@$PROJECT_ID.iam.gserviceaccount.com" --role="roles/bigquery.jobUser"
+gcloud projects add-iam-policy-binding ${PROJECT_ID} --member="serviceAccount:${CLOUD_RUN_JOB_SCRAPE}-sa@$PROJECT_ID.iam.gserviceaccount.com" --role="roles/bigquery.dataEditor"
+
+
+# gcloud beta run jobs delete ${CLOUD_RUN_JOB_SCRAPE} --region=$REGION
+gcloud beta run jobs create ${CLOUD_RUN_JOB_SCRAPE} \
+    --region=$REGION \
+    --image="${REGION}-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/${CLOUD_RUN_JOB_SCRAPE}" \
+    --service-account="${CLOUD_RUN_JOB_SCRAPE}-sa@${PROJECT_ID}.iam.gserviceaccount.com" \
+    --tasks="1000" \
+    --set-env-vars OUTPUT_RECORDS_PUBSUB_TOPIC="$OUTPUT_RECORDS_PUBSUB_TOPIC",URL_PATTERN="${URL_PATTERN}" \
+    --max-retries=5
+
+
+gcloud beta run jobs execute ${CLOUD_RUN_JOB_SCRAPE} --region=$REGION
+
 
 ```
