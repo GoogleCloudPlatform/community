@@ -18,7 +18,7 @@ what additional walkthroughs you'd like to see.
 	<tr>
         <td width="250" style="vertical-align: top;" >
             <h3>Cloud Storage quickstart - Create a bucket and upload files</h3>
-            <a href="https://console.cloud.google.com/?walkthrough_id=storage__quickstart-basic-tasks" >
+            <a href="https://console.cloud.google.com/?walkthrough_id=storage--quickstart-basic-tasks" >
                 <img style="border: 1px solid #ccc; min-height: 175px;" src="https://storage.googleapis.com/gcp-community/tutorials/storage-quickstart/tutorial.png" width="300" alt="Open in Cloud Console" />
             </a> 
             <p>Learn how to store objects in Cloud Storage.</p>
