@@ -11,7 +11,7 @@ Bruno Patrocinio | Customer Engineer | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-This tutorial describes how to deploy open-source commeting platform, [Coral Talk](https://docs.coralproject.net/)  on Google Cloud Platform using managed services.
+This tutorial describes how to deploy an open-source commenting platform, [Coral Talk](https://docs.coralproject.net/)  on Google Cloud Platform using managed services.
 
 The diagram below shows the general flow: 
 ![architecture](images/architecture.png)
@@ -32,6 +32,7 @@ This tutorial assumes that you know the basics of the following products and ser
 ## Objectives
 
 * Learn how to create and deploy services using `gcloud` commands.
+* Show how to deploy an application with Cloud Run and Memory Store
 
 ## Costs
 
@@ -62,27 +63,33 @@ You can create a new one, or you can select a project that you have already crea
 
     [ENABLE BILLING](https://support.google.com/cloud/answer/6293499#enable-billing)
 
-3. Enable the Cloud Run and Container Registry APIs. For details, see [ENABLING APIs](https://cloud.google.com/apis/docs/getting-started#enabling_apis).
+3. Enable the Cloud Run and Artifact Registry APIs. For details, see [ENABLING APIs](https://cloud.google.com/apis/docs/getting-started#enabling_apis).
    
-4. Add role *Container Registry Service Agent* in service account `[project-id]-compute@developer.gserviceaccount.com`
+4. Add role *Artifact Registry Service Agent* in service account `[project-id]-compute@developer.gserviceaccount.com`
 
 
 ## Detailed steps
 
 
-### Download images and upload to Google Container Registry
+### Download images and upload to Google Artifact Registry
+
+#### 1.Artifact Registry
+```
+gcloud artifacts repositories create coral-demo     --repository-format=docker --location=us-central1
+gcloud auth configure-docker us-central1-docker.pkg.dev
+```
 
 #### 1. Mongo
 ```
 docker pull mongo:4.2
-docker tag mongo:4.2 gcr.io/{my-project}/mongo
-docker push gcr.io/{my-project}/mongo
+docker tag mongo:4.2 us-central1-docker.pkg.dev/{my-project}/coral-talk/mongo
+docker push us-central1-docker.pkg.dev/{my-project}/coral-talk/mongo
 ```
 #### 2. Coral Talk 
 ```
 docker pull coralproject/talk:6
-docker tag coralproject/talk:6 gcr.io/{my-project}/talk
-docker push gcr.io/{my-project}/talk
+docker tag coralproject/talk:6 us-central1-docker.pkg.dev/{my-project}/coral-talk/talk
+docker push us-central1-docker.pkg.dev/{my-project}/coral-talk/talk
 ```
 
 ### Create VPC Network
@@ -120,14 +127,14 @@ gcloud compute instances create-with-container instance-1 \
 --project=my-project --zone=us-central1-a --machine-type=f1-micro \
 --network-interface=subnet=talk-subnet-poc,no-address \
 --service-account={my-project}-compute@developer.gserviceaccount.com \
---boot-disk-size=10GB --container-image=gcr.io/{my-project}/mongo \
+--boot-disk-size=10GB --container-image=us-central1-docker.pkg.dev/{my-project}/coral-talk/mongo \
 --container-restart-policy=always
 ```
 
 ### Create Coral Talk Service in Cloud Run
 ```
 gcloud run deploy coralproject \
---image=gcr.io/{my-project}/coralproject \
+--image=us-central1-docker.pkg.dev/{my-project}/coral-talk/talk \
 --concurrency=80 \
 --platform=managed \
 --region=us-central1 \
@@ -138,7 +145,7 @@ gcloud run deploy coralproject \
 - Add VPC Connector
   
 ### Access service url to config Coral Talkl
-And all done :D
+You've successfully deployed the Mongo and Coral Talk docker containers to Registry, configured your serverless instances to connect directly to your Virtual Private Cloud network, configured a Memorystore Redist instance, and set up a VM using the Mongo container, and deployed Coral Talk Service to Cloud Run.
 
 ## Cleaning up
 
