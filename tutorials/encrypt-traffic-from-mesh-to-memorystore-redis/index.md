@@ -240,7 +240,7 @@ Inject the Istio/ASM sidecar proxies in the Online Boutique `Namespace`:
 kubectl label namespace ${NAMESPACE} istio-injection=enabled
 ```
 
-Wait for ASM to be properly installed on your cluster, FIXME:
+Wait for ASM to be properly installed on your cluster. Run this command below until you see the field `servicemesh.controlPlaneManagement.details[].code` with the value `REVISION_READY`:
 ```
 gcloud container fleet mesh describe
 ```
