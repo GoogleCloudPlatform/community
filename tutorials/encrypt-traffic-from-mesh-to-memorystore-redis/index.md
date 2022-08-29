@@ -12,7 +12,9 @@ Mathieu Benoit | DevRel Engineer | Google
 
 Anthos Service Mesh (ASM), a managed Istio implementation, can [improve your security posture](https://cloud.google.com/service-mesh/docs/security/anthos-service-mesh-security-best-practices) for your Kubernetes clusters and your apps. Istio aims to bring [as much value to users out of the box](https://istio.io/latest/blog/2021/zero-config-istio/) without any configuration at all. ASM, on top of that, simplifies all the management of both the control plane and the data plane and the integration with monitoring and logging. Without any compromise, your apps in your Mesh will benefit from advanced features like traffic encryption, logging, tracing, etc. without updating the code of your apps.
 
-In this article, we will show how easy and seamless it is to encrypt traffic from any apps in your Mesh to Memorystore (redis).
+In this article, we will show how easy and seamless it is to encrypt traffic from the Online Boutique sample apps to Memorystore (redis) by leveraging Anthos Service Mesh (ASM).
+
+![Architecture overview.](https://storage.googleapis.com/gcp-community/tutorials/encrypt-traffic-from-mesh-to-memorystore-redis/architecture.png)
 
 ## Objectives
 
@@ -46,7 +48,7 @@ This guide assumes that you have owner IAM permissions for your Google Cloud pro
 
 Initialize the common variables used throughout this tutorial:
 ```
-PROJECT_ID=FIXME
+PROJECT_ID=FIXME-WITH-YOUR-PROJECT-ID
 REGION=us-east4
 ZONE=us-east4-a
 PROJECT_NUMBER=$(gcloud projects describe ${PROJECT_ID} --format='get(projectNumber)')
