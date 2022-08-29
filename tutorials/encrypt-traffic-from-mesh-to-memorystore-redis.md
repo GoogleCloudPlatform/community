@@ -1,6 +1,6 @@
 ---
 title: Seamlessly encrypt traffic from any apps in your Mesh to Memorystore (redis)
-description: Use Anthos Service Mesh to seamlessly encrypt traffic between any apps and Memorystore (redis)
+description: Use Anthos Service Mesh to seamlessly encrypt traffic between any apps and Memorystore (redis).
 author: mathieu-benoit
 tags: istio, service-mesh, kubernetes, gke, redis, memorystore, security, asm
 date_published: 2022-08-29
