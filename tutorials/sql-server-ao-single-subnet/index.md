@@ -271,7 +271,7 @@ an existing database for the availability group.
            ROLE = ALL, 
            AUTHENTICATION = WINDOWS NEGOTIATE,
            ENCRYPTION = REQUIRED ALGORITHM AES
-        );”
+        );"
 
         osql -S node-2 -E -Q "CREATE ENDPOINT [aodns-hadr] 
             STATE=STARTED
@@ -280,7 +280,7 @@ an existing database for the availability group.
            ROLE = ALL, 
            AUTHENTICATION = WINDOWS NEGOTIATE,
            ENCRYPTION = REQUIRED ALGORITHM AES
-        );”
+        );"
 
 1.  Create the availability group:
 
@@ -297,17 +297,17 @@ an existing database for the availability group.
             AVAILABILITY_MODE = SYNCHRONOUS_COMMIT,   
             BACKUP_PRIORITY = 50,   
             SECONDARY_ROLE(ALLOW_CONNECTIONS = NO),   
-            SEEDING_MODE = AUTOMATIC);”
+            SEEDING_MODE = AUTOMATIC);"
 
 1.  Join secondary node `node-2` to the availability group:
 
         osql -S node-2 -E -Q "ALTER AVAILABILITY GROUP [sql-ag] JOIN"
-        osql -S node-2 -E -Q "ALTER AVAILABILITY GROUP [sql-ag] GRANT CREATE ANY DATABASE”
+        osql -S node-2 -E -Q "ALTER AVAILABILITY GROUP [sql-ag] GRANT CREATE ANY DATABASE"
 
 1.  Create the availability group listener:
 
         osql -S node-1 -E -Q “USE [master] ALTER AVAILABILITY GROUP [sql-ag] 
-        ADD LISTENER N'sql-listner' (WITH IP ((N'10.128.0.20', N'255.255.252.0')) , PORT=1433);”
+        ADD LISTENER N'sql-listner' (WITH IP ((N'10.128.0.20', N'255.255.252.0')) , PORT=1433);"
 
     The listener must be created with an unused IP address before creating the internal load balancer. Later, the same IP address is allocated to the 
     internal load balancer. If SQL Server detects that the IP address is already in use, then this command to create the listener fails.
