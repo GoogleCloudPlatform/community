@@ -4,10 +4,6 @@ Web scraping from a list of input IDs from a BigQuery table to another BigQuery 
 
 This takes around 20 min for straight copy-and-paste.
 
-TODO
-bq subscription expiry (to never)
-bq subscription - try using push service account
-
 ## Get the sample code and data
 
 The sample code and data for this lab can be found on this GitHub repository. Use these commands to clone into your Cloud Shell environment.
@@ -161,7 +157,7 @@ OUTPUT_RECORDS_PUBSUB_TOPIC_SCHEMA='
  
 ```
 
-Create the PubSub topics and the corresponding archival tables.
+## Create the PubSub topics and the corresponding archival tables.
 
 ```bash
 
@@ -199,6 +195,10 @@ done
 # permissions for BQ subscription
 # TODO It seems the pubsub service account is not created until there's an attempt to create a subscription
 # As of now, if the pubsub service account doesn't exist yet, run the next block (creating the subscription), which would result in error, and then come back here and grant the permissions, and then create the subscriptions again
+# create the Google-managed service account
+gcloud beta services identity create --service="pubsub.googleapis.com"
+# grant it the required permissions
+# https://cloud.google.com/pubsub/docs/create-subscription#subscription
 gcloud projects add-iam-policy-binding ${PROJECT_ID} --member="serviceAccount:service-$PROJECT_NUMBER@gcp-sa-pubsub.iam.gserviceaccount.com" --role="roles/bigquery.dataEditor"
 gcloud projects add-iam-policy-binding ${PROJECT_ID} --member="serviceAccount:service-$PROJECT_NUMBER@gcp-sa-pubsub.iam.gserviceaccount.com" --role="roles/bigquery.metadataViewer"
 
