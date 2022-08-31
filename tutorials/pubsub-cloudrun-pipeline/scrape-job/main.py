@@ -139,7 +139,7 @@ def fetch_and_process_records():
     client = bigquery.Client()
     query_job = client.query(
          f"""
-         SELECT id FROM `web_scraping.input_records` where mod(abs(FARM_FINGERPRINT(id)),@cloud_run_task_count) = @cloud_run_task_index
+         SELECT id FROM `web_scraping.input_records` where mod(FARM_FINGERPRINT(id),@cloud_run_task_count) = @cloud_run_task_index
          """
          ,job_config=bigquery.QueryJobConfig(
              query_parameters=[

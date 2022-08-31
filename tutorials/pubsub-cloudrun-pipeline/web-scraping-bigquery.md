@@ -4,6 +4,10 @@ Web scraping from a list of input IDs from a BigQuery table to another BigQuery 
 
 This takes around 20 min for straight copy-and-paste.
 
+TODO
+bq subscription expiry (to never)
+bq subscription - try using push service account
+
 ## Get the sample code and data
 
 The sample code and data for this lab can be found on this GitHub repository. Use these commands to clone into your Cloud Shell environment.
@@ -84,8 +88,10 @@ SCHEDULER="web-scraping-scheduler"
 # URL pattern to be scraped.  The ID of each record will be substituted using Python's string format
 export URL_PATTERN="https://get-product.endpoints.kyl-alto-ecommerce-site-358914.cloud.goog/product/{}"
   
-
+# alternate architecture
 CLOUD_RUN_JOB_SCRAPE="scrape-job"
+JOB_SCHEDULER="web-scraping-job-scheduler"
+
 ```
 
 ## Set up the project
@@ -205,7 +211,8 @@ do
     gcloud pubsub subscriptions create ${TOPIC}-archive \
     --topic=$TOPIC \
     --bigquery-table=$PROJECT_ID:$BQ_PUBSUB_ARCHIVE_DATASET."$ARCHIVE_TABLE" \
-    --write-metadata
+    --write-metadata \
+    --expiration-period="never"
 done
  
  
@@ -324,7 +331,8 @@ gcloud pubsub subscriptions create ${OUTPUT_RECORDS_PUBSUB_TOPIC}-bigquery \
     --bigquery-table=$PROJECT_ID:$BQ_DATASET."$BQ_OUTPUT_RECORDS_TABLE" \
     --use-topic-schema \
     --drop-unknown-fields \
-    --write-metadata
+    --write-metadata \
+    --expiration-period="never"
 
 ```
 
@@ -662,6 +670,8 @@ STRUCT(0.95 AS anomaly_prob_threshold))
 where is_anomaly=true and skuId='00d6e4a3-859d-4417-8a9e-8e27576a55f7'
 ;
 
+-- find anomalies from incoming data
+
 WITH
   new_data AS (
 SELECT skuId
@@ -725,8 +735,24 @@ gcloud beta run jobs create ${CLOUD_RUN_JOB_SCRAPE} \
     --set-env-vars OUTPUT_RECORDS_PUBSUB_TOPIC="$OUTPUT_RECORDS_PUBSUB_TOPIC",URL_PATTERN="${URL_PATTERN}" \
     --max-retries=5
 
-
 gcloud beta run jobs execute ${CLOUD_RUN_JOB_SCRAPE} --region=$REGION
 
+# Cloud Scheduler
+gcloud iam service-accounts create ${JOB_SCHEDULER}-sa
+
+gcloud beta run jobs add-iam-policy-binding ${CLOUD_RUN_JOB_SCRAPE} --region=$REGION \
+  --member="serviceAccount:${JOB_SCHEDULER}-sa@${PROJECT_ID}.iam.gserviceaccount.com" \
+  --role='roles/run.invoker'
+
+# gcloud scheduler jobs delete ${JOB_SCHEDULER} --location="$REGION" --quiet
+gcloud scheduler jobs create http $JOB_SCHEDULER \
+  --location $REGION \
+  --schedule='30 6 * * *' \
+  --time-zone="America/New_York" \
+  --uri="https://${REGION}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${PROJECT_ID}/jobs/${CLOUD_RUN_JOB_SCRAPE}:run" \
+  --http-method POST \
+  --oauth-service-account-email="${JOB_SCHEDULER}-sa@${PROJECT_ID}.iam.gserviceaccount.com"
+
+gcloud scheduler jobs run ${JOB_SCHEDULER} --location=$REGION
 
 ```
