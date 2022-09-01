@@ -33,7 +33,7 @@ steps:
 ## Before you begin
 
 This tutorial assumes you already have a Google Cloud account and
-have completed the Cloud Storage [quickstart documentation](https://cloud.google.com/storage/docs/quickstarts).
+have completed the Cloud Storage [quickstart documentation](https://cloud.google.com/storage/docs/introduction#quickstarts).
 
 You also need to have a licensed copy of JFrog Artifactory Enterprise Edition.
 v4.6 or later, and have completed the Artifactory [installation procedure](https://www.jfrog.com/confluence/display/RTF/Installing+Artifactory).
@@ -50,7 +50,7 @@ to generate a cost estimate based on your projected production usage.
 ### Step 1: Ready Cloud Storage
 
 Acquire the keys necessary for Cloud Storage and Artifactory interoperability,
-and create a Cloud Storage [Bucket](https://cloud.google.com/storage/docs/key-terms#buckets)
+and create a Cloud Storage [Bucket](https://cloud.google.com/storage/docs/buckets)
 to hold your binary repository data.
 
 #### Acquire interoperable storage access keys
