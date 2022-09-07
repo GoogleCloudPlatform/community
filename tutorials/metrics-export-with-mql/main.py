@@ -16,6 +16,7 @@ import logging
 import io
 import json
 import base64
+import re
 import config
 import requests
 import subprocess
@@ -24,14 +25,6 @@ from datetime import datetime
 from google.cloud import bigquery
 
 token = None
-GAUGE = "GAUGE"
-DELTA = "DELTA"
-CUMULATIVE = "CUMULATIVE"
-
-BOOL = "BOOL"
-INT64 = "INT64"
-DOUBLE = "DOUBLE"
-STRING = "STRING"
 DISTRIBUTION = "DISTRIBUTION"
 
 METADATA_URL = "http://metadata.google.internal/computeMetadata/v1/"
@@ -62,8 +55,8 @@ def get_access_token_from_gcloud(force=False):
     return token
 
 
-def get_mql_result(token, query):
-    q = f'{{"query": "{query}"}}'
+def get_mql_result(token, query, pageToken):
+    q = f'{{"query":"{query}", "pageToken":"{pageToken}"}}' if pageToken else f'{{"query": "{query}"}}'
 
     headers = {"Content-Type": "application/json",
                "Authorization": f"Bearer {token}"}
@@ -94,7 +87,10 @@ def build_rows(metric, data):
                         {"key": v1, "value": ""})
             for i in range(len(labelValues)):
                 for v2 in labelValues[i].values():
-                    labels[i]["value"] = v2
+                    if type(v2) is bool:
+                        labels[i]["value"] = str(v2)
+                    else:
+                        labels[i]["value"] = v2
 
             point_descriptors = []
             for j in range(len(pointDescriptors)):
@@ -221,12 +217,16 @@ def write_to_bigquery(rows_to_insert):
 
 def save_to_bq(token):
     for metric, query in config.MQL_QUERYS.items():
-        result = get_mql_result(token, query)
-        if result.get("timeSeriesDescriptor"):
-            row = build_rows(metric, result)
-            write_to_bigquery(row)
-        else:
-            print("No data retrieved")
+        pageToken = ""
+        while (True):
+            result = get_mql_result(token, query, pageToken)
+            if result.get("timeSeriesDescriptor"):
+                row = build_rows(metric, result)
+                write_to_bigquery(row)
+            pageToken = result.get("nextPageToken")
+            if not pageToken:
+                print("No more data retrieved")
+                break
 
 def export_metric_data(event, context):
     """Background Cloud Function to be triggered by Pub/Sub.
