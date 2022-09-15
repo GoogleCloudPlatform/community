@@ -26,6 +26,7 @@ import urllib.parse
 import re
 
 credentials, project_id = google.auth.default()
+print(f"credentials.signer_email={credentials.signer_email}")
 pubsub_topic=os.getenv("OUTPUT_RECORDS_PUBSUB_TOPIC")
 url_pattern=os.getenv("URL_PATTERN")
 
