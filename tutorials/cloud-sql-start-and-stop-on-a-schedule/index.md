@@ -1,6 +1,6 @@
 ---
 title: Start and Stop Cloud SQL Instances on a Schedule using Cloud Workflows
-description: This guide shows how to automatically start and stop Cloud SQL instances based on a schedule.  This is achieved using Cloud Scheduler -> Cloud Workflows -> Cloud SQL Admin API.
+description: This guide shows how to automatically start and stop Cloud SQL instances based on a schedule.  This is achieved using Cloud Scheduler, Cloud Workflows and Cloud SQL Admin API.
 author: kylgoog
 tags: cloud-sql,cloud-workflows,cloud-scheduler
 date_published: 2022-09-15
