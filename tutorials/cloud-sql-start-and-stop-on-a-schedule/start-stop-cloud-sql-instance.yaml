@@ -1,0 +1,20 @@
+main:
+  params: [input]
+  steps:
+    - init:
+        assign:
+          - projectId: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
+          - cloudSqlInstance: ${input.cloudSqlInstance}
+          - activationPolicyMap:
+              "START": "ALWAYS"
+              "STOP": "NEVER"
+          - activationPolicy: ${map.get(activationPolicyMap,input.action)}
+    # https://cloud.google.com/workflows/docs/reference/googleapis/sqladmin/v1/instances/patch
+    - startOrStopCloudSqlInstance:
+        call: googleapis.sqladmin.v1.instances.patch
+        args:
+          project: ${projectId}
+          instance: ${cloudSqlInstance}
+          body:
+            settings:
+              activationPolicy: ${activationPolicy}
