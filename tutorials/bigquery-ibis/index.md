@@ -64,7 +64,7 @@ conda install ibis-framework ibis-bigquery
 Use the `connect()` function to authenticate with BigQuery and set the
 default dataset for queries.
 
-[embedmd]:# (ibis_bigquery.py /^.*START bigquery_ibis_connect.*/ /END bigquery_ibis_connect]/)
+[embedmd]:# (ibis_bigquery_sample.py /^.*START bigquery_ibis_connect.*/ /END bigquery_ibis_connect]/)
 ```py
 import ibis
 import ibis_bigquery
@@ -86,7 +86,7 @@ Overflow questions with answers, grouped by year.
 The first step in building most Ibis expressions is to choose a table to
 query. Select the `bigquery-public-data.stackoverflow.post_questions` table.
 
-[embedmd]:# (ibis_bigquery.py /^.*START bigquery_ibis_table.*/ /END bigquery_ibis_table]/)
+[embedmd]:# (ibis_bigquery_sample.py /^.*START bigquery_ibis_table.*/ /END bigquery_ibis_table]/)
 ```py
 table = conn.table('posts_questions')
 print(table)
@@ -117,7 +117,7 @@ print(table)
 Ibis fetches the table from BigQuery so that is can do validations as you
 construct the expression. It throws an error if the table doesn't exist.
 
-[embedmd]:# (ibis_bigquery.py /^.*START bigquery_ibis_table_not_exist.*/ /END bigquery_ibis_table_not_exist]/)
+[embedmd]:# (ibis_bigquery_sample.py /^.*START bigquery_ibis_table_not_exist.*/ /END bigquery_ibis_table_not_exist]/)
 ```py
 try:
     doesnt_exist = conn.table('doesnt_exist')
@@ -128,7 +128,7 @@ except Exception as exp:
 
 Pass in the `database` parameter to use tables in other projects.
 
-[embedmd]:# (ibis_bigquery.py /^.*START bigquery_ibis_table_cross_project.*/ /END bigquery_ibis_table_cross_project]/)
+[embedmd]:# (ibis_bigquery_sample.py /^.*START bigquery_ibis_table_cross_project.*/ /END bigquery_ibis_table_cross_project]/)
 ```py
 reddit_posts_table = conn.table('2018_05', database='fh-bigquery.reddit_posts')
 ```
@@ -140,7 +140,7 @@ queries. Select just the `creation_date` and `answer_count` columns from the
 `post_questions` table, because only these are needed to count the percentage
 of answered questions per year.
 
-[embedmd]:# (ibis_bigquery.py /^.*START bigquery_ibis_projection.*/ /END bigquery_ibis_projection]/)
+[embedmd]:# (ibis_bigquery_sample.py /^.*START bigquery_ibis_projection.*/ /END bigquery_ibis_projection]/)
 ```py
 projection = table['creation_date', 'answer_count']
 ```
@@ -151,7 +151,7 @@ Call a function on the column to build an expression graph that transforms
 the original column. For example, to extract the year from the created date,
 call the [`year()` timestamp method](https://ibis-project.org/api/expressions/timestamps).
 
-[embedmd]:# (ibis_bigquery.py /^.*START bigquery_ibis_transform_timestamp.*/ /END bigquery_ibis_transform_timestamp]/)
+[embedmd]:# (ibis_bigquery_sample.py /^.*START bigquery_ibis_transform_timestamp.*/ /END bigquery_ibis_transform_timestamp]/)
 ```py
 projection = projection.mutate(year=projection.creation_date.year())
 ```
@@ -159,7 +159,7 @@ projection = projection.mutate(year=projection.creation_date.year())
 Use a comparison operator on the the `answer_count` method to transform it
 into a Boolean that indicates if the question has any answers.
 
-[embedmd]:# (ibis_bigquery.py /^.*START bigquery_ibis_transform_integer.*/ /END bigquery_ibis_transform_integer]/)
+[embedmd]:# (ibis_bigquery_sample.py /^.*START bigquery_ibis_transform_integer.*/ /END bigquery_ibis_transform_integer]/)
 ```py
 has_answer_boolean = projection.answer_count > 0
 ```
@@ -169,7 +169,7 @@ method](https://ibis-project.org/api/expressions/numeric/#ibis.expr.types.logica
 to convert from a Boolean back to an integer, because you'll be adding this
 transformed column to construct the percentage.
 
-[embedmd]:# (ibis_bigquery.py /^.*START bigquery_ibis_transform_boolean.*/ /END bigquery_ibis_transform_boolean]/)
+[embedmd]:# (ibis_bigquery_sample.py /^.*START bigquery_ibis_transform_boolean.*/ /END bigquery_ibis_transform_boolean]/)
 ```py
 has_answer_int = has_answer_boolean.ifelse(1, 0)
 ```
@@ -179,7 +179,7 @@ expression contains schema information, Ibis throws an error if you use a
 function that doesn't apply to the column's type. For example, it raises an
 exception if you try to use a string method on an integer column.
 
-[embedmd]:# (ibis_bigquery.py /^.*START bigquery_ibis_type_error.*/ /END bigquery_ibis_type_error]/)
+[embedmd]:# (ibis_bigquery_sample.py /^.*START bigquery_ibis_type_error.*/ /END bigquery_ibis_type_error]/)
 ```py
 try:
     table.answer_count.upper()
@@ -193,7 +193,7 @@ except AttributeError as exp:
 Use the [column methods](https://ibis-project.org/api/expressions/generic/#ibis.expr.types.generic.ColumnExpr-methods) `count()` and
 `sum()` to calculate the percentage of questions answered.
 
-[embedmd]:# (ibis_bigquery.py /^.*START bigquery_ibis_aggregate.*/ /END bigquery_ibis_aggregate]/)
+[embedmd]:# (ibis_bigquery_sample.py /^.*START bigquery_ibis_aggregate.*/ /END bigquery_ibis_aggregate]/)
 ```py
 total_questions = projection.count()
 percentage_answered = has_answer_int.mean() * 100
@@ -206,7 +206,7 @@ Use the
 method to combine the aggregations together and group by the year column
 expression.
 
-[embedmd]:# (ibis_bigquery.py /^.*START bigquery_ibis_group_by.*/ /END bigquery_ibis_group_by]/)
+[embedmd]:# (ibis_bigquery_sample.py /^.*START bigquery_ibis_group_by.*/ /END bigquery_ibis_group_by]/)
 ```py
 expression = projection.groupby('year').aggregate(
     total_questions=total_questions,
@@ -219,7 +219,7 @@ expression = projection.groupby('year').aggregate(
 Call the `execute()` method on the expression to run the query with BigQuery.
 Ibis executes the query and then returns the results as a Pandas DataFrame.
 
-[embedmd]:# (ibis_bigquery.py /^.*START bigquery_ibis_execute.*/ /END bigquery_ibis_execute]/)
+[embedmd]:# (ibis_bigquery_sample.py /^.*START bigquery_ibis_execute.*/ /END bigquery_ibis_execute]/)
 ```py
 print(expression.execute())
 #     year  total_questions  percentage_answered
@@ -239,7 +239,7 @@ print(expression.execute())
 If you are curious what SQL code Ibis executed for this query, use the
 `compile()` method on the expression.
 
-[embedmd]:# (ibis_bigquery.py /^.*START bigquery_ibis_compile.*/ /END bigquery_ibis_compile]/)
+[embedmd]:# (ibis_bigquery_sample.py /^.*START bigquery_ibis_compile.*/ /END bigquery_ibis_compile]/)
 ```py
 print(expression.compile())
 # SELECT `year`, count(*) AS `total_questions`,
@@ -264,13 +264,15 @@ Ibis supports user defined functions in BigQuery by compiling Python
 code into JavaScript. This means that you can write UDFs for BigQuery in
 Python!
 
-[embedmd]:# (ibis_bigquery.py /^.*START bigquery_ibis_udf.*/ /END bigquery_ibis_udf]/)
+[embedmd]:# (ibis_bigquery_sample.py /^.*START bigquery_ibis_udf.*/ /END bigquery_ibis_udf]/)
 ```py
-@ibis.bigquery.udf(['double'], 'double')
+import ibis.expr.datatypes as dt
+
+@ibis_bigquery.udf(['double'], dt.double())
 def example_udf(value):
     return value + 1.0
 
-test_column = ibis.literal(1, type='double')
+test_column = ibis.literal(1, type=dt.double())
 expression = example_udf(test_column)
 
 print(conn.execute(expression))
@@ -284,7 +286,7 @@ See the [Table methods](https://ibis-project.org/api/expressions/tables)
 reference for links to the various join methods. Read the [joins section in the guide for SQL programmers](https://ibis-project.org/ibis-for-sql-programmers/#joins)
 for examples.
 
-[embedmd]:# (ibis_bigquery.py /^.*START bigquery_ibis_joins.*/ /END bigquery_ibis_joins]/)
+[embedmd]:# (ibis_bigquery_sample.py /^.*START bigquery_ibis_joins.*/ /END bigquery_ibis_joins]/)
 ```py
 edu_table = conn.table(
     'international_education',
