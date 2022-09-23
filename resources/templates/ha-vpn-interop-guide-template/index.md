@@ -18,7 +18,7 @@ date_published: YYYY-mm-dd
     + The template contains placeholders for things like the vendor and 
       product name. These are also enclosed in brackets—for example, 
       every place you see `<vendor-name>` and `<product-name>`, 
-      substitute approriate names.
+      substitute appropriate names.
     + After you've made appropriate updates, _remove_ content in angle brackets.
     + Remove these instructions.
     + Because this is a template for a variety of setups, it might contain

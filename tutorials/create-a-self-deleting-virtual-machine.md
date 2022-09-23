@@ -214,7 +214,7 @@ instead, see the next section.
 1.  Click **Management, security, disks, networking, sole tenancy** at the bottom
     of the form to open more sections of the form.
 
-1.  Copy the statup script from the "Preparation" section in this tutorial, and 
+1.  Copy the startup script from the "Preparation" section in this tutorial, and 
     paste the script into the **Startup script** field in the **Automation**
     section of the form.
    
