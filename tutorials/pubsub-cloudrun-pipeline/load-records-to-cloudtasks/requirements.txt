@@ -1,5 +1,0 @@
-Flask
-gunicorn
-cloudevents
-google-cloud-tasks
-google-auth
