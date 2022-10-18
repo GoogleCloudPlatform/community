@@ -132,14 +132,16 @@ print(expression.compile())
 
 # print('\nExecuting UDF query:')
 # [START bigquery_ibis_udf]
-# @ibis.bigquery.udf(['double'], 'double')
-# def example_udf(value):
-#     return value + 1.0
-#
-# test_column = ibis.literal(1, type='double')
-# expression = example_udf(test_column)
-#
-# print(conn.execute(expression))
+import ibis.expr.datatypes as dt
+
+@ibis_bigquery.udf(['double'], dt.double())
+def example_udf(value):
+    return value + 1.0
+
+test_column = ibis.literal(1, type=dt.double())
+expression = example_udf(test_column)
+
+print(conn.execute(expression))
 # [END bigquery_ibis_udf]
 
 print('\nExecuting join query:')
