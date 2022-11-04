@@ -30,7 +30,7 @@ resource "google_compute_region_network_endpoint_group" "cloud_run_neg" {
 
 module "lb-http" {
   source  = "GoogleCloudPlatform/lb-http/google//modules/serverless_negs"
-  version = "~> 5.1"
+  version = "~> 6.3"
   name    = "tf-cr-lb"
   project = data.google_project.project.project_id
 
