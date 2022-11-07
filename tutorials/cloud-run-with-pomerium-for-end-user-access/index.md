@@ -188,7 +188,7 @@ Here are the domain mappings set up:
 ### Direct access
 
 Verify that you can't access the main application directly by visiting
-[`https://hello-direct.cloudrun.pomerium.com`](https://hello-direct.cloudrun.pomerium.com).
+`https://hello-direct.cloudrun.pomerium.com`.
 
 ![Hello Direct Access](https://storage.googleapis.com/gcp-community/tutorials/cloud-run-with-pomerium-for-end-user-access/hello-direct.png)
 
@@ -196,7 +196,7 @@ You should see a 403 error, because you don't have the proper credentials.
 
 ### Authenticated access
 
-1.  Go to [`https://hello.cloudrun.pomerium.com`](https://hello.cloudrun.pomerium.com).
+1.  Go to `https://hello.cloudrun.pomerium.com`.
 
     You should see a sign-in page:
     
@@ -212,7 +212,7 @@ You should see a 403 error, because you don't have the proper credentials.
 
 If your target application is not running on Google Cloud, you can also perform your own header validation.
 
-1.  Go to [`https://httpbin.cloudrun.pomerium.com`](https://httpbin.cloudrun.pomerium.com/headers).
+1.  Go to `https://httpbin.cloudrun.pomerium.com`.
 
     You should see your identity header set:
 

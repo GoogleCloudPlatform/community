@@ -70,7 +70,7 @@ a cost estimate based on your projected production usage.
   work on other Pi models as well, but this has not been verified.
 - Raspberry Pi case (optional but recommended)
 - Raspberry Pi power supply, rated at 2.5A or more
-- MicroSD card for Raspbian OS. Minimum 8GB card recommended
+- MicroSD card for Raspberry Pi OS Lite. Minimum 8GB card recommended
 - [Raspberry Pi Sense HAT][sensehat] add-on board
 - [Arduino Uno Genuino][arduinouno] or 100% compatible microcontroller
 - Two (recommended) analog sensors for the Arduino. In this tutorial we use a
@@ -99,10 +99,10 @@ with the quickstart.
 
 ## Raspberry Pi installation and configuration
 
-###  Raspbian OS installation and configuration
+###  Raspberry Pi OS Lite installation and configuration
 
 1.  Follow the instructions [here][raspbian] to download the latest
-    [Raspbian Lite OS image][raspbianimg], and write it on your MicroSD card.
+    Raspberry Pi OS Lite, and write it on your MicroSD card.
     All the steps in this tutorial run in console mode on the Pi, or over SSH to
     the Pi.
 1.  Insert your Pi into the Pi case.
@@ -113,7 +113,7 @@ with the quickstart.
 1.  Optionally, if you use Ethernet connectivity, connect your ethernet cable to
     the Pi.
 1.  Connect the Pi power supply to the wall socket and to the Pi, to boot up
-    Raspbian OS.
+    Raspberry Pi OS Lite.
 1.  Login to the Pi with the initial username: `pi` and password: `raspberry`
 1.  Execute raspi-config as the superuser with:
 
@@ -136,7 +136,7 @@ with the quickstart.
     **I2 Change Timezone** and use the menu options to find your geographic
     region and country. Setting the timezone is important because Google IoT
     Core requires client devices' system clocks to be within 10 minutes of real
-    time. Raspbian uses global NTP time servers to synchronize the clock.
+    time. Raspberry Pi OS Lite uses global NTP time servers to synchronize the clock.
 1.  Optionally, select: **4 Localisation options** then
     **I3 Change Keyboard Layout** to match your layout. If you are not sure,
     select: **Generic 105-key (Intl) PC**, then **English (US)**, then **The
@@ -207,12 +207,11 @@ with the quickstart.
 
     to check your internet connectivity.
 
-1.  Upgrade the Raspbian packages to latest versions with:
+1.  Upgrade the Raspberry Pi OS Lite packages to latest versions with:
 
         sudo apt-get update && sudo apt-get upgrade -y
 
 [raspbian]: https://www.raspberrypi.org/documentation/installation/installing-images/README.md
-[raspbianimg]: https://www.raspberrypi.org/downloads/raspbian/
 
 ### Install Cloud SDK and dependencies for Pi Sense HAT
 

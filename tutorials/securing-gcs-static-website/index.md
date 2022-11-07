@@ -73,7 +73,7 @@ To make cleanup easiest, you may want to create a new project for this tutorial,
 To complete this tutorial, you need a domain that you own or manage. If you don't yet have a domain, there are many services through which you can register a
 domain, such as [Google Domains](https://domains.google.com/). This tutorial uses the domain `democloud.info`.
 
-1.  [Select or create a Google Cloud project.](https://cloud.console.google.com/projectselector2/home/dashboard)
+1.  [Select or create a Google Cloud project.](https://console.cloud.google.com/projectselector2/home/dashboard)
 
 1.  [Enable billing for your project.](https://support.google.com/cloud/answer/6293499#enable-billing)
 
@@ -159,7 +159,7 @@ Set environment variables that you use throughout the tutorial:
 
         gsutil mb -b on gs://$BUCKET_NAME
         
-    For infomation on the `gsutil mb` command, see [the documentation](https://cloud.google.com/storage/docs/gsutil/commands/mb).   
+    For information on the `gsutil mb` command, see [the documentation](https://cloud.google.com/storage/docs/gsutil/commands/mb).   
 
 1.  Upload the build artifacts, which are all static files:
 
@@ -171,7 +171,7 @@ Set environment variables that you use throughout the tutorial:
 
         gsutil web set -m index.html -e index.html gs://$BUCKET_NAME
     
-    For infomation on the `gsutil web set` command, see [the documentation](https://cloud.google.com/storage/docs/gsutil/commands/web#set).
+    For information on the `gsutil web set` command, see [the documentation](https://cloud.google.com/storage/docs/gsutil/commands/web#set).
 
 ### Create a load balancer 
 
@@ -388,7 +388,7 @@ Set environment variables that you use throughout the tutorial:
     Username: `admin`  
     Password: `password`
     
-1.  Try again to open a file hostead in the bucket:
+1.  Try again to open a file hosted in the bucket:
 
     ![static-file](https://storage.googleapis.com/gcp-community/tutorials/securing-gcs-static-website/static-file.png)
 

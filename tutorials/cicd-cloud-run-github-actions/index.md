@@ -215,7 +215,7 @@ In GitHub, you need to set up a secrets environment in your repository, with the
 -   `GCP_APP_NAME` is your app name.
 -   `GCP_EMAIL` is the email from the service account you created, which should look like this:
     `$ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com`
--   `GPC_CREDENTIALS` is the content from the `key.json` file that you just created.
+-   `GCP_CREDENTIALS` is the content from the `key.json` file that you just created.
 
 For example, your settings should look something like this:
 
@@ -257,9 +257,9 @@ Create a `GCP-Deploy.yml` file and copy this content into it:
             steps:
 
             - name: Login
-              uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+              uses: google-github-actions/setup-gcloud@v0
               with:
-                GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+                project_id: ${{ secrets.GCP_PROJECT_ID }}
                 service_account_email: ${{ secrets.GCP_EMAIL }}
                 service_account_key: ${{ secrets.GCP_CREDENTIALS }}
 

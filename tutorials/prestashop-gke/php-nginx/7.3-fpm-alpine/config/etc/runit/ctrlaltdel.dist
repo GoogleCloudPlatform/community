@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+set -eu
+
+echo 'System is going down in 5 seconds...' | wall
+sleep 5
+

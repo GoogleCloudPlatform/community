@@ -302,6 +302,9 @@ the Cloud build to respond to changes in the GitHub repository to test and run y
 
 1.  In the **Build configuration** section, select **Cloud Build configuration file**.
 
+1.  In the **Cloud Build configuration file location** field, specify the file location
+    as `cloudbuild.yaml` after the `/`.
+
 1.  In the **Advanced** section, click **Add variable** and add your environment variables such as `ProjectID`, `ServiceAccountEmail`, `Region`,    
     and `SourceDatabucket`. Use the following naming standard, which refers to variables created in previous sections:
 

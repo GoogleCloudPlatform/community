@@ -33,7 +33,7 @@ classified as sensitive.
 This document demonstrates a reference implementation of tokenizing structured data through two tasks: _sampling and identification_, followed by
 _bulk tokenization_ using symmetric encryption to tokenize data using envelope encryption.
 
-In a [companion document](https://cloud.google.com/community/tutorials/auto-data-tokenize), the solution described in the current document is extended to use 
+In a [companion document](https://cloud.google.com/community/tutorials/auto-bigquery-tokenize), the solution described in the current document is extended to use 
 BigQuery tables as a data source, instead of using files as input.
 
 This document is intended for a technical audience whose responsibilities include data security, data processing, or data analytics. This document assumes that 
@@ -252,13 +252,6 @@ page in the Cloud Console.
         --member="serviceAccount:${DLP_RUNNER_SERVICE_ACCOUNT_EMAIL}" \
         --role=roles/dataflow.worker
 
-1.  Create and download the credential file of the service account to allow calling Google Cloud services with this
-    service account's credentials:
-
-        gcloud iam service-accounts keys create \
-        service-account-key.json \
-        --iam-account="${DLP_RUNNER_SERVICE_ACCOUNT_EMAIL}"
-
 ### Create the key encryption key (KEK)
 
 The data is encrypted using a data encryption key (DEK). You use [envelope encryption](https://cloud.google.com/kms/docs/envelope-encryption) to encrypt 
@@ -284,7 +277,6 @@ the DEK using a key encryption key (KEK) in [Cloud KMS](https://cloud.google.com
         tinkey create-keyset \
         --master-key-uri="${MAIN_KMS_KEY_URI}" \
         --key-template=AES256_SIV \
-        --credential="service-account-key.json" \
         --out="${WRAPPED_KEY_FILE}" \
         --out-format=json
 
@@ -304,9 +296,9 @@ You can use your own file datasets or copy the included demonstration dataset (`
 
 You need to compile all of the modules to build executables for deploying the sample-and-identify and tokenize pipelines.
 
-     mvn clean generate-sources compile package
+     ./gradlew buildNeeded shadowJar
 
-**Tip**: To skip running the tests, you can add the `-Dmaven.test.skip=true` flag.
+**Tip**: To skip running the tests, you can add the `-x test` flag.
 
 ## Using the sample-and-identify pipeline
 
@@ -451,8 +443,10 @@ To avoid incurring charges to your Google Cloud account for the resources used i
 
 ## What's next
 
+* Watch the YouTube video to understand the code:
+[Level Up - Automatically tokenize sensitive data with DLP and Dataflow](https://www.youtube.com/watch?v=S6fYkWvUBDo).
 * Read the companion document about a similar solution that uses BigQuery tables or queries as input:
-[Automatically tokenize sensitive BigQuery data with Cloud Data Loss Prevention, Cloud Key Management Service, and Dataflow] (https://cloud.google.com/community/tutorials/auto-bigquery-tokenize).
+[Automatically tokenize sensitive BigQuery data with Cloud Data Loss Prevention, Cloud Key Management Service, and Dataflow](https://cloud.google.com/community/tutorials/auto-bigquery-tokenize).
 * Learn more about [Cloud DLP](https://cloud.google.com/dlp).
 * Learn more about [Cloud KMS](https://cloud.google.com/kms).
 * Learn about [inspecting storage and databases for sensitive data](https://cloud.google.com/dlp/docs/inspecting-storage).

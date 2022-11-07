@@ -16,6 +16,7 @@ import logging
 import io
 import json
 import base64
+import re
 import config
 import requests
 import subprocess
@@ -24,14 +25,6 @@ from datetime import datetime
 from google.cloud import bigquery
 
 token = None
-GAUGE = "GAUGE"
-DELTA = "DELTA"
-CUMULATIVE = "CUMULATIVE"
-
-BOOL = "BOOL"
-INT64 = "INT64"
-DOUBLE = "DOUBLE"
-STRING = "STRING"
 DISTRIBUTION = "DISTRIBUTION"
 
 METADATA_URL = "http://metadata.google.internal/computeMetadata/v1/"
@@ -39,18 +32,16 @@ METADATA_HEADERS = {"Metadata-Flavor": "Google"}
 SERVICE_ACCOUNT = "default"
 
 
-def get_access_token_from_meta_data(force=False):
-    global token
-    if token is None or force:
-        url = '{}instance/service-accounts/{}/token'.format(
-            METADATA_URL, SERVICE_ACCOUNT)
+def get_access_token_from_meta_data():
+    url = '{}instance/service-accounts/{}/token'.format(
+        METADATA_URL, SERVICE_ACCOUNT)
 
-        # Request an access token from the metadata server.
-        r = requests.get(url, headers=METADATA_HEADERS)
-        r.raise_for_status()
+    # Request an access token from the metadata server.
+    r = requests.get(url, headers=METADATA_HEADERS)
+    r.raise_for_status()
 
-        # Extract the access token from the response.
-        token = r.json()['access_token']
+    # Extract the access token from the response.
+    token = r.json()['access_token']
     return token
 
 
@@ -64,8 +55,8 @@ def get_access_token_from_gcloud(force=False):
     return token
 
 
-def get_mql_result(token, query):
-    q = f'{{"query": "{query}"}}'
+def get_mql_result(token, query, pageToken):
+    q = f'{{"query":"{query}", "pageToken":"{pageToken}"}}' if pageToken else f'{{"query": "{query}"}}'
 
     headers = {"Content-Type": "application/json",
                "Authorization": f"Bearer {token}"}
@@ -79,62 +70,66 @@ def build_rows(metric, data):
     """
     logging.debug("build_row")
     rows = []
-    timeseries = data["timeSeriesData"][0]
 
     labelDescriptors = data["timeSeriesDescriptor"]["labelDescriptors"]
     pointDescriptors = data["timeSeriesDescriptor"]["pointDescriptors"]
-    labelValues = timeseries["labelValues"]
-    pointData = timeseries["pointData"]
 
-    # handle >= 1 points, potentially > 1 returned from Monitoring API call
-    for point_idx in range(len(pointData)):
-        labels = []
-        for i in range(len(labelDescriptors)):
-            for v1 in labelDescriptors[i].values():
-                labels.append(
-                    {"key": v1, "value": ""})
-        for i in range(len(labelValues)):
-            for v2 in labelValues[i].values():
-                labels[i]["value"] = v2
+    for timeseries in data["timeSeriesData"]:
+        labelValues = timeseries["labelValues"]
+        pointData = timeseries["pointData"]
 
-        point_descriptors = []
-        for j in range(len(pointDescriptors)):
-            for k, v in pointDescriptors[j].items():
-                point_descriptors.append({"key": k, "value": v})
+        # handle >= 1 points, potentially > 1 returned from Monitoring API call
+        for point_idx in range(len(pointData)):
+            labels = []
+            for i in range(len(labelDescriptors)):
+                for v1 in labelDescriptors[i].values():
+                    labels.append(
+                        {"key": v1, "value": ""})
+            for i in range(len(labelValues)):
+                for v2 in labelValues[i].values():
+                    if type(v2) is bool:
+                        labels[i]["value"] = str(v2)
+                    else:
+                        labels[i]["value"] = v2
 
-        row = {
-            "timeSeriesDescriptor": {
-                "pointDescriptors": point_descriptors,
-                "labels": labels,
+            point_descriptors = []
+            for j in range(len(pointDescriptors)):
+                for k, v in pointDescriptors[j].items():
+                    point_descriptors.append({"key": k, "value": v})
+
+            row = {
+                "timeSeriesDescriptor": {
+                    "pointDescriptors": point_descriptors,
+                    "labels": labels,
+                }
             }
-        }
 
-        interval = {
-            "start_time": pointData[point_idx]["timeInterval"]["startTime"],
-            "end_time": pointData[point_idx]["timeInterval"]["endTime"]
-        }
+            interval = {
+                "start_time": pointData[point_idx]["timeInterval"]["startTime"],
+                "end_time": pointData[point_idx]["timeInterval"]["endTime"]
+            }
 
-        # map the API value types to the BigQuery value types
-        value_type = pointDescriptors[0]["valueType"]
-        bigquery_value_type_index = config.BQ_VALUE_MAP[value_type]
-        api_value_type_index = config.API_VALUE_MAP[value_type]
-        value_type_label = {}
+            # map the API value types to the BigQuery value types
+            value_type = pointDescriptors[0]["valueType"]
+            bigquery_value_type_index = config.BQ_VALUE_MAP[value_type]
+            api_value_type_index = config.API_VALUE_MAP[value_type]
+            value_type_label = {}
 
-        value = timeseries["pointData"][point_idx]["values"][0][api_value_type_index]
+            value = timeseries["pointData"][point_idx]["values"][0][api_value_type_index]
 
-        if value_type == DISTRIBUTION:
-            value_type_label[bigquery_value_type_index] = build_distribution_value(
-                value)
-        else:
-            value_type_label[bigquery_value_type_index] = value
+            if value_type == DISTRIBUTION:
+                value_type_label[bigquery_value_type_index] = build_distribution_value(
+                    value)
+            else:
+                value_type_label[bigquery_value_type_index] = value
 
-        point = {
-            "timeInterval": interval,
-            "values": value_type_label
-        }
-        row["pointData"] = point
-        row["metricName"] = metric
-        rows.append(row)
+            point = {
+                "timeInterval": interval,
+                "values": value_type_label
+            }
+            row["pointData"] = point
+            row["metricName"] = metric
+            rows.append(row)
 
     return rows
 
@@ -222,12 +217,16 @@ def write_to_bigquery(rows_to_insert):
 
 def save_to_bq(token):
     for metric, query in config.MQL_QUERYS.items():
-        result = get_mql_result(token, query)
-        if result["timeSeriesDescriptor"]:
-            row = build_rows(metric, result)
-            write_to_bigquery(row)
-        else:
-            print("No data retrieved")
+        pageToken = ""
+        while (True):
+            result = get_mql_result(token, query, pageToken)
+            if result.get("timeSeriesDescriptor"):
+                row = build_rows(metric, result)
+                write_to_bigquery(row)
+            pageToken = result.get("nextPageToken")
+            if not pageToken:
+                print("No more data retrieved")
+                break
 
 def export_metric_data(event, context):
     """Background Cloud Function to be triggered by Pub/Sub.

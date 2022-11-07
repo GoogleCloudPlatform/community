@@ -173,7 +173,7 @@ procedures.
 
 #### Select a Google Cloud project name
 
-+   [Open the Cloud Console](https://console.google.com) and at the top of the page, 
++   [Open the Cloud Console](https://console.cloud.google.com) and, at the top of the page, 
     select the Google Cloud project you want to use.
 
     **Note**: Make sure that you use the same Google Cloud project for all of the Google Cloud
@@ -182,7 +182,7 @@ procedures.
 #### Create a custom VPC network and subnet
 
 1. In the Cloud Console,
-[go to the VPC Networks page](https://pantheon.corp.google.com/networking/networks/list).
+[go to the VPC Networks page](https://console.cloud.google.com/networking/networks/list).
 1. Click **Create VPC network**.
 1. For **Name**, enter a name such as `vpn-vendor-test-network`. Remember
 this name for later.
@@ -201,7 +201,7 @@ takes about a minute for this network and its subnet to appear.
 #### Create the Google Cloud external IP address
 
 1.  In the Cloud Console,
-[go to the External IP addresses page](https://pantheon.corp.google.com/networking/addresses/list).
+[go to the External IP addresses page](https://console.cloud.google.com/networking/addresses/list).
 1. Click **Reserve Static Address**.
 1. Populate the following fields for the Cloud VPN address:
 

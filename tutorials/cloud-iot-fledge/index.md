@@ -29,7 +29,7 @@ This tutorial requires that you use the Debian Buster version of the Raspberry
 Pi software because it uses packages built for that version of Linux.
 
 1.  Download a Raspbian Buster image from the
-    [Raspbian downloads page](https://www.raspberrypi.org/downloads/raspbian/).
+    [Raspbian downloads page](https://www.raspberrypi.org/software/operating-systems/).
 
 1.  Extract the image that you downloaded, which creates a file with a name that ends
     in `.img`.

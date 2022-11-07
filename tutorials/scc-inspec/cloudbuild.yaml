@@ -1,0 +1,27 @@
+steps:
+
+# execute the InSpec profile in the local inspec/ dir
+- id: 'Run InSpec'
+  name: chef/inspec:latest
+  dir: inspec
+  entrypoint: '/bin/sh'
+  args:
+    - '-c'
+    - |
+      inspec exec . \
+      --target gcp:// --input project_id=${PROJECT_ID} \
+      --reporter cli json:reports/inspec_report_${BUILD_ID}.json \
+      --chef-license accept || touch fail.marker
+
+# copy the JSON report to the named bucket
+- id: 'Store Reports'
+  name: gcr.io/cloud-builders/gsutil
+  dir: inspec
+  args:
+    - cp
+    - reports/*.json
+    - gs://${_REPORTS_BUCKET}
+
+substitutions:
+  # supply at runtime, InSpec reports uploaded to this bucket
+  _REPORTS_BUCKET: ''

@@ -129,7 +129,7 @@ code:
 
 ### Create a Cloud Storage bucket
 
-1.  Open the [Cloud Storage console](https://console.developers.google.com/storage).
+1.  Open the [Cloud Storage console](https://console.cloud.google.com/storage).
 1.  Create a Cloud Storage bucket.
 
     ![Storage](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-rtdp/create_storage.png)
@@ -164,14 +164,14 @@ will create the corresponding resources in later steps.
 In this section, you create a topic in Pub/Sub and configure IoT
 Core to receive data from MQTT clients.
 
-1.  Open the [Pub/Sub console](https://console.developers.google.com/cloudpubsub)
+1.  Open the [Pub/Sub console](https://console.cloud.google.com/cloudpubsub)
 1.  In the left navigation menu, click the **Topics** menu.
 1.  Click **Create a topic**. In the **Name** box, enter the topic name that you
     assigned earlier to the environment variable, and then click **Create**.
 
     ![topic](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-rtdp/create_topic.png)
 
-1.  Open the [IoT Core console](https://console.developers.google.com/iot).
+1.  Open the [IoT Core console](https://console.cloud.google.com/iot).
 1.  Click **Create device registry**.
 1.  In the **Registry ID** box, type **myregistry**. Select a Google Cloud region close
     to you, and select the Pub/Sub topic that you just created.
@@ -212,7 +212,7 @@ In this section, you insert threshold values for each of the devices, registered
     deactivate
     ```
 
-1. Open the [Datastore console](https://console.developers.google.com/datastore).
+1. Open the [Datastore console](https://console.cloud.google.com/datastore).
 1. Confirm that the device entities have been created with the corresponding threshold temperature value:
 
     ![data_store_confirm](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-rtdp/view_ds.png)
@@ -241,7 +241,7 @@ exceeded, an error is logged.
         eventTrigger:
         ...
 
-1.  Open the [Cloud Functions console](https://console.developers.google.com/functions).
+1.  Open the [Cloud Functions console](https://console.cloud.google.com/functions).
 1.  Confirm that you created a function:
 
     ![function_confirm](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-rtdp/create_cf.png)
@@ -269,7 +269,7 @@ data that is retrieved from Pub/Sub and loads it into a BigQuery table.
         [INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ cloud-iot-rtdp ---
         ...
 
-1.  Open the [Dataflow console](https://console.developer.google.com/dataflow).
+1.  Open the [Dataflow console](https://console.cloud.google.com/dataflow).
 1.  Confirm that a streaming job is running:
 
     ![stream_confirm](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-rtdp/create_df.png)
@@ -297,7 +297,7 @@ coordinates and then submits it to IoT Core.
         [INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ cloud-iot-rtdp ---
         ...
 
-1.  Open the [Cloud Functions console](https://console.developers.google.com/functions).
+1.  Open the [Cloud Functions console](https://console.cloud.google.com/functions).
 1.  To confirm that a function is processing data, click the **More options** icon
     on the right side of your function, and then click **View logs**:
 
@@ -307,13 +307,13 @@ coordinates and then submits it to IoT Core.
 
     ![logs](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-rtdp/view_logs.png)
 
-1.  Open the [Dataflow console](https://console.developers.google.com/dataflow).
+1.  Open the [Dataflow console](https://console.cloud.google.com/dataflow).
 1.  To confirm that a streaming Dataflow job is processing data, click the
     job ID:
 
     ![view_df](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-rtdp/view_df.png)
 
-1.  Open [BigQuery](https://bigquery.cloud.google.com/).
+1.  Open [BigQuery](https://console.cloud.google.com/bigquery).
 1.  Click the **Compose Query** button to open the query editor.
 1.  To confirm that the temperature data is stored in a BigQuery table, run the
     following query in the editor:
@@ -331,7 +331,7 @@ coordinates and then submits it to IoT Core.
 
 Temperature measurements that are above the configured threshold for each device
 are logged as errors by Cloud Functions. You can view and analyse these in the
-[Error console](https://console.developers.google.com/errors).
+[Error console](https://console.cloud.google.com/errors).
 
 To active the error notifications, follow the documentation on [Error reporting notifications](https://cloud.google.com/error-reporting/docs/notifications).
 

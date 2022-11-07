@@ -27,7 +27,7 @@ directory on GitHub.
 
 1.  This tutorial requires a Google Cloud project.
     [Create a new Google Cloud project](https://cloud.google.com/resource-manager/docs/creating-managing-projects)
-    or open an exisitng project in the [Cloud Console](https://console.cloud.google.com/cloud-resource-manager).
+    or open an existing project in the [Cloud Console](https://console.cloud.google.com/cloud-resource-manager).
 
 1.  You use the Cloud Shell command-line interface in the Cloud Console to run commands in this tutorial. Open Cloud Shell
     by clicking the **Activate Cloud Shell** button in the navigation bar in the upper-right corner of the Cloud Console.
@@ -96,7 +96,9 @@ and the response is decoded, giving the key in plain text.
 
     secrets = secretmanager.SecretManagerServiceClient()
 
-    ALPHA_VANTAGE_KEY = secrets.access_secret_version("projects/"+PROJECT_ID+"/secrets/alpha-vantage-key/versions/1").payload.data.decode("utf-8")
+    ALPHA_VANTAGE_KEY = secrets.access_secret_version(request={"name": "projects/"+PROJECT_ID+"/secrets/alpha-vantage-key/versions/1"}).payload.data.decode("utf-8")
+
+
 
 The following excerpt creates an endpoint called `/api/v1/symbol` and uses the
 [Alpha Vantage Python library](https://github.com/RomelTorres/alpha_vantage) to look up the stock symbol and give

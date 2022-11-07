@@ -33,6 +33,7 @@ import com.google.cloud.datacatalog.v1beta1.Tag;
 import com.google.cloud.datacatalog.v1beta1.TagTemplate;
 import com.google.cloud.datacatalog.v1beta1.TagTemplateField;
 import com.google.cloud.dlp.v2.DlpServiceClient;
+import com.google.common.base.Throwables;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.privacy.dlp.v2.ContentItem;
@@ -46,11 +47,7 @@ import com.google.privacy.dlp.v2.Value;
 import com.google.type.Date;
 import com.simba.googlebigquery.jdbc42.DataSource;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.Statement;
+import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -286,9 +283,7 @@ public class DlpDataCatalogTagsTutorial {
                   "`" + " limit " + limitMax;
         }
 
-        Statement stmt = connInside.createStatement();
-        ResultSet rs;
-        rs = stmt.executeQuery(sqlQuery);
+        ResultSet rs = queryTable(currentDatabaseName, currentTable, sqlQuery, connInside);
         ResultSetMetaData rsmd = rs.getMetaData();
         int columnsNumber = rsmd.getColumnCount();
         String headerNames = "";
@@ -426,6 +421,44 @@ public class DlpDataCatalogTagsTutorial {
                 + Thread.currentThread().getName());
       }
     };
+  }
+
+  private static ResultSet queryTable(String databaseName,
+                                      String tableName,
+                                      String sqlQuery,
+                                      Connection connection) throws SQLException {
+    Statement stmt = connection.createStatement();
+    try {
+      return stmt.executeQuery(sqlQuery);
+    } catch (SQLException exp) {
+      // We have to handle query errors, when BigQuery tables require partition filters
+      if(Throwables.getRootCause(exp).getMessage().contains("partition")){
+        if (VERBOSE_OUTPUT) {
+          System.out.print(
+                  ">> Query failed, table contains partition filter ["
+                          + databaseName
+                          + "]["
+                          + tableName
+                          + "]");
+        }
+        ResultSet rs = BigQueryPartitionHelper.queryWithPartition(
+                databaseName, tableName, sqlQuery, connection);
+
+        if (rs != null){
+          return rs;
+        }
+
+        if (VERBOSE_OUTPUT) {
+          System.out.print(
+                  ">> Unable to build partition filter ["
+                          + databaseName
+                          + "]["
+                          + tableName
+                          + "]");
+        }
+      }
+      throw exp;
+    }
   }
 
   // this method returns rows that are under the max bytes and cell count for a DLP request.

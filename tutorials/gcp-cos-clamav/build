@@ -1,6 +1,6 @@
 # This script automates the build and publication of the docker image
-DOCKER_REPO=YOUR_REPO_HERE
-HOSTNAME=docker.io
+DOCKER_REPO="gcr.io/${DEVSHELL_PROJECT_ID}"
 docker build -t clamav .
-docker tag clamav $HOSTNAME/$DOCKER_REPO/clamav:latest
-docker push $HOSTNAME/$DOCKER_REPO/clamav
+docker tag clamav $DOCKER_REPO/clamav
+docker push $DOCKER_REPO/clamav
+

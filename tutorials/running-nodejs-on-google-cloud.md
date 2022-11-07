@@ -115,7 +115,7 @@ or compute infrastructure. Google manages your Node.js application for you.
 
 ### Node.js on App Engine standard environment
 
-The Node.js runtime in the [App Engine stanard environment][gae-standard] runs
+The Node.js runtime in the [App Engine standard environment][gae-standard] runs
 within containers inside of secure sandboxes and can balance load by automatically
 scaling. At any time, your application can be running on one or many
 instances with requests being spread across all of them. Each instance includes a

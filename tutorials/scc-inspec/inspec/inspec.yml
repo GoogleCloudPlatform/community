@@ -1,0 +1,19 @@
+name: "InSpec testing profile"
+
+supports:
+  - platform: gcp
+
+depends:
+  - name: inspec-gcp-helpers
+    url: https://github.com/GoogleCloudPlatform/inspec-gcp-helpers/archive/v1.0.7.tar.gz
+
+inputs:
+- name: project_id
+  required: true
+  description: 'The Google Cloud project identifier.'
+  type: String
+- name: bucket_ignore_pattern
+  required: false
+  description: 'Buckets matching this pattern will not be validated'
+  type: Regexp
+  value: appspot.com$|_cloudbuild$

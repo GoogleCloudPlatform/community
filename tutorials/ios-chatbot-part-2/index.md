@@ -16,9 +16,9 @@ In [Part 1](https://cloud.google.com/community/tutorials/ios-chatbot) of this se
 
 In API.AI, [webhook](https://docs.api.ai/docs/webhook) integrations allow you to pass information from a matched intent into a web service and get a result from it. Read on to learn how to request parade information from Cloud Functions.
 
-1.  Go to [Cloud Console](console.cloud.google.com). Log in with your own account and create a new project.
+1.  Go to the [Cloud Console](https://console.cloud.google.com). Log in with your own account and create a new project.
 
-1.  Once you've created a new project, navigate to that project.
+1.  Go to that project.
 
 1.  Enable the Cloud Functions API.
 

@@ -2,7 +2,7 @@
 
 const Firestore = require('@google-cloud/firestore');
 
-const PROJECTID = 'cloud-functions-firestore';
+const PROJECTID = '[REPLACE-WITH-YOUR-PROJECT-ID]';
 const COLLECTION_NAME = 'cloud-functions-firestore';
 
 const firestore = new Firestore({

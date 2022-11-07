@@ -38,7 +38,7 @@ be used for the demo.
 The [dev2dev/ folder](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/iot-device-to-device/dev2dev)
 of the tutorial contains an example Cloud Function that contains the
 `getClient` and `setDeviceConfig` functions from the
-[NodeJS manager sample](https://github.com/GoogleCloudPlatform/nodejs-docs-samples/tree/master/iot/manager).
+[NodeJS manager sample](https://github.com/googleapis/nodejs-iot/tree/master/samples/manager).
 
 Note that application default credentials are used to authorize the client:
 
@@ -132,7 +132,7 @@ device provided in the sample.
 
 ##  Connect your virtual device
 
-The virtual device is based on the [NodeJS MQTT device sample](https://github.com/GoogleCloudPlatform/nodejs-docs-samples/tree/master/iot/mqtt_example)
+The virtual device is based on the [NodeJS MQTT device sample](https://github.com/googleapis/nodejs-iot/tree/master/samples/mqtt_example)
 with two small differences: the telemetry message that is sent is updated and
 the handler for receieving messages is different.
 

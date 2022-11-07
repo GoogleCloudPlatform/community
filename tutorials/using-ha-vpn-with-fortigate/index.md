@@ -619,7 +619,7 @@ through the VPN tunnel.
 ## Troubleshooting IPSec on Fortigate
 
 For troubleshooting information, see
-the [Foritgate VPN troubleshooting guide](https://cookbook.fortinet.com/ipsec-vpn-troubleshooting).
+the [Foritgate VPN troubleshooting guide](https://docs.fortinet.com/).
 
 ## Reference documentation
 

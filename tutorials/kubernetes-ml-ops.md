@@ -41,7 +41,7 @@ a simple Python ML model scoring REST API in the `api.py` module and a Dockerfil
 
     py-flask-ml-rest-api/
      | Dockerfile
-     | api.py ## Needs to be altered according to your requirenment and ML model
+     | api.py ## Needs to be altered according to your requirements and ML model
 
 ### Defining the Flask service in the `api.py` module
 

@@ -66,7 +66,7 @@ WORKDIR /opt/app
 # NodeJS is used for Webpack builds of Phoenix assets.
 # Hex and Rebar are needed to get and build dependencies.
 RUN apk update \
-    && apk --no-cache --update add nodejs nodejs-npm \
+    && apk --no-cache --update add nodejs npm \
     && mix local.rebar --force \
     && mix local.hex --force
 

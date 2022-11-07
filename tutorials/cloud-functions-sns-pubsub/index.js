@@ -1,26 +1,28 @@
 /* jslint es6 */
 /* jslint white:true */
+/* eslint-disable no-undef */
+/* eslint-disable no-case-declarations */
 
 'use strict';
 
 // We use the https library to confirm the SNS subscription
 const https = require('https');
 
-// import the Google Cloud Pubsub client library
-const PubSub = require('@google-cloud/pubsub');
+// import the Google Cloud Pub/Sub client library
+const { PubSub } = require('@google-cloud/pubsub');
 
 // the sns-validator package verifies the host an signature of SNS messages
-var MessageValidator = require('sns-validator');
-var validator = new MessageValidator();
+const MessageValidator = require('sns-validator');
+const validator = new MessageValidator();
 
-// our pubsub client
-const pubsub = PubSub();
+// our Pub/Sub client
+const pubsub = new PubSub();
 
-// the cloud pubsub topic we will publish messages to
+// the Pub/Sub topic we will publish messages to
 const topicName = 'sns-events';
 const topic = pubsub.topic(topicName);
 
-const expectedTopicArn = 'arn:aws:sns:us-west-2:759791620908:my-sns-topic';
+const expectedTopicArn = process.env.SNS_TOPIC_ARN;
 
 /**
  * Cloud Function.
@@ -36,7 +38,7 @@ exports.receiveNotification = function receiveNotification (req, res) {
   }
 
   // all valid SNS requests should have this header
-  var snsHeader = req.get('x-amz-sns-message-type');
+  const snsHeader = req.get('x-amz-sns-message-type');
   if (snsHeader === undefined) {
     res.status(403).end('invalid SNS message');
     return;
@@ -44,7 +46,7 @@ exports.receiveNotification = function receiveNotification (req, res) {
 
   // use the sns-validator library to verify signature
   // we first parse the cloud function body into a javascript object
-  validator.validate(JSON.parse(req.body), function (err, message) {
+  validator.validate(JSON.parse(req.body), async function (err, message) {
     if (err) {
       // the message did not validate
       res.status(403).end('invalid SNS message');
@@ -81,7 +83,7 @@ exports.receiveNotification = function receiveNotification (req, res) {
         });
         break;
       case 'notification':
-        // this is a regular SNS notice, we relay to Pubsub
+        // this is a regular SNS notice, we relay to Pub/Sub
         console.log(message.MessageId + ': ' + message.Message);
 
         const attributes = {
@@ -89,12 +91,17 @@ exports.receiveNotification = function receiveNotification (req, res) {
           snsSubject: message.Subject
         };
 
-        var msgData = Buffer.from(message.Message);
+        const msgData = Buffer.from(message.Message);
 
-        topic.publisher().publish(msgData, attributes).then(function (results) {
-          console.log('message published ' + results[0]);
+        // Send a message to the topic
+        try {
+          const messageId = await topic.publish(msgData, attributes);
+          console.log('message published ' + messageId);
           res.status(200).end('ok');
-        });
+        } catch (error) {
+          console.error(`Received error while publishing: ${error.message}`);
+          res.status(400).end('failed to publish message');
+        }
         break;
       default:
         console.error('should not have gotten to default block');

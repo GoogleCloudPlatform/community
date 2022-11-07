@@ -45,10 +45,10 @@ First, install the `gcloud` and `kubectl` command line tools. Follow the instruc
 You need to install Telepresence, which will proxy your locally running service to Google Kubernetes Engine. (For the latest 
 installation instructions and documentation, visit [the Telepresence website](http://www.telepresence.io).)
 
-On OS X:
+On macOS (Homebrew 3 or later):
 
 ```
-brew cask install osxfuse
+brew install --cask osxfuse
 brew install datawire/blackbird/telepresence
 ```
 
@@ -94,7 +94,7 @@ menu, and then **Create a cluster**.
 The following `gcloud` command will create a small 2 node cluster in the us-central1-a region:
 
 ```
-% gcloud container --project "PROJECT" clusters create "EXAMPLE_NAME" --zone "us-central1-a" --machine-type "n1-standard-1" --image-type "GCI" --disk-size "100" --scopes "https://www.googleapis.com/auth/compute","https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/trace.append" --num-nodes "2" --network "default" --enable-cloud-logging --enable-cloud-monitoring
+% gcloud container --project "PROJECT" clusters create "EXAMPLE_NAME" --zone "us-central1-a" --machine-type "n1-standard-1" --disk-size "100" --scopes "https://www.googleapis.com/auth/compute","https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/trace.append" --num-nodes "2" --network "default" --enable-cloud-logging --enable-cloud-monitoring
 ```
 
 Finally, we can authenticate to our cluster:
@@ -144,15 +144,15 @@ Go to the external IP address of your load balancer (in the above example, 104.1
 
 What if you want to try out some changes to your code, without having to redeploy it each time?
 
-We're now going to use [Telepresence](http://www.telepresence.io) to create a virtual network between your local machine and the remote Kubernetes cluster. This way, a PHP application running locally will be able to talk to remote cloud resources, and vice versa.
-
-In addition, Telepresence will temporarily replace the pods running the PHP code in Kubernetes with a proxy talking to your local machine:
+We're now going to use [Telepresence](http://www.telepresence.io) to create a virtual network between your local machine and the remote Kubernetes cluster by running this command:
 
 ```
-% telepresence --swap-deployment frontend --expose 8080:80 --run-shell
+% telepresence intercept frontend --port 8080:80
 ```
 
-In this special shell, change to the `examples/guestbook` directory, and start the frontend application as follows. We'll need to know the directory where PHP can load its dependencies, e.g., Predis. You can figure this out by typing:
+This tells Telepresence to send remote traffic to your local service instead of the service in the remote Kubernetes cluster.
+
+Now, change to the `examples/guestbook` directory, and start the frontend application as follows. We'll need to know the directory where PHP can load its dependencies, e.g., Predis. You can figure this out by typing:
 
 ```
 % pear config-get php_dir
@@ -177,7 +177,6 @@ What's going on behind the scenes? Your incoming request goes to the load balanc
 ## Additional resources
 
 * [Setting up a Python development environment for Docker](http://matthewminer.com/2015/01/25/docker-dev-environment-for-web-app.html) covers how to configure your Docker image for hot reload
-* [Doing the same for NodeJS](http://fostertheweb.com/2016/02/nodemon-inside-docker-container/)
 * The [Microservices Architecture Guide](https://www.datawire.io/guide) covers design patterns and HOWTOs in setting up an end-to-end microservices infrastructure
 * The [Kubernetes tutorial](https://kubernetes.io/docs/tutorials/kubernetes-basics/) gives a good walk-through of using Kubernetes, or visit the [Google Kubernetes Engine quickstart](https://cloud.google.com/kubernetes-engine/docs/quickstart)
 

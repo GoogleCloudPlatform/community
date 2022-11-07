@@ -1,0 +1,27 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: staging-restrict-gcs-viewer-sa-annotation
+  annotations:
+    policies.kyverno.io/title: Restrict Workload Identity Annotation Staging
+    policies.kyverno.io/category: Pod Security
+    policies.kyverno.io/description: >-
+      Restrict the Object Viewer Service Account to be annotated with the
+      corresponding Google Service Account in Staging
+spec:
+  validationFailureAction: enforce
+  rules:
+  - name: validate-annotation
+    match:
+      resources:
+        kinds:
+        - ServiceAccount
+        namespaces:
+        - staging
+    validate:
+      message: "Invalid workload identity annotation"
+      pattern:
+        metadata:
+          =(name): gcs-viewer
+          annotations:
+            =(iam.gke.io/gcp-service-account): gcs-viewer-staging@[gcp-project-id].iam.gserviceaccount.com

@@ -21,7 +21,7 @@ For a video demonstration, see
 
 * Enable Cloud Data Loss Prevention
 * Create a Cloud DLP hybrid job or trigger
-* Create a secret in Secret Manger
+* Create a secret in Secret Manager
 * Create an automated process that uses Cloud DLP to inspect data in a database using JDBC
 
 ## Costs
@@ -102,9 +102,21 @@ Reminder: If you want to see detailed findings or run analysis on findings, we r
 
 ## Build
 
-Run the following command to compile the script:
+1.  Ensure that Git and Maven are installed:
 
-    mvn clean package -DskipTests
+        sudo apt-get install git maven
+        
+1.  Clone the source repository for this tutorial:
+
+        git clone https://github.com/GoogleCloudPlatform/community.git
+        
+1.  Go to the directory for this tutorial:
+
+        cd community/tutorials/dlp-hybrid-inspect
+
+1.  Compile the script:
+
+        mvn clean package -DskipTests
 
 ## Command-line parameters
 

@@ -392,7 +392,7 @@ The steps in this section create the Kubernetes cluster and deploy the OpenTelem
 
 1.  Change the project ID in the file `k8s/ot-service.yaml` with the `sed` command:
 
-        sed -i.bak "s/{{PROJECT-ID}}/$GOOGLE_CLOUD_PROJECT/" k8s/ot-service.yaml
+        sed -i.bak "s/[YOUR_PROJECT_ID]/$GOOGLE_CLOUD_PROJECT/" k8s/ot-service.yaml
 
 1.  Deploy the OpenTelemetry Collector to the Kubernetes cluster:
 
@@ -440,7 +440,7 @@ This section uses Cloud Build to build the test app, and then the app is deploye
 
 1.  Change the project ID in the file `k8s/deployment.yaml` with the `sed` command:
 
-        sed -i.bak "s/{{PROJECT-ID}}/$GOOGLE_CLOUD_PROJECT/" k8s/deployment.yaml
+        sed -i.bak "s/[YOUR_PROJECT_ID]/$GOOGLE_CLOUD_PROJECT/" k8s/deployment.yaml
 
 1.  Add a deployment for the app to the cluster:
 
@@ -606,7 +606,7 @@ latency that you can use to compare against the result of the load spike.
 
     ![Screenshot: CPU for the Kubernetes Pod](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/pod_cpu_spike.png)
 
-The request chart and browser summary showed errors. One convenient place to look for error summaries in the Error Reporting user interface:
+The request chart and browser summary showed errors. One convenient place to look for error summaries is the Error Reporting user interface:
 
 ![Screenshot: Error Reporting](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/error_reporting_spike.png)
 
@@ -758,6 +758,5 @@ Explore the following related resources:
 * Read about [load balancing in data centers](https://landing.google.com/sre/sre-book/chapters/load-balancing-datacenter/)
   in the SRE Book.
 * Read about [managing load](https://landing.google.com/sre/workbook/chapters/managing-load/) in the SRE Workbook.
-* Adapt the app in this tutorial to a Java backend with [Identifying causes of app latency with Stackdriver and OpenCensus](https://cloud.google.com/solutions/identifying-causes-of-app-latency-with-stackdriver-and-opencensus).
 * Adapt the app in this tutorial to a Go backend with [Troubleshooting app latency with Cloud Spanner and OpenCensus](https://cloud.google.com/solutions/troubleshooting-app-latency-with-cloud-spanner-and-opencensus).
 * Try out other Google Cloud features. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).

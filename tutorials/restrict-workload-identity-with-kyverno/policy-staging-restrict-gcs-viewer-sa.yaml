@@ -1,0 +1,42 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: staging-restrict-gcs-viewer-sa
+  annotations:
+    policies.kyverno.io/title: Restrict GCS Viewer Service Account in Staging
+    policies.kyverno.io/category: Pod Security
+    policies.kyverno.io/description: >-
+      Restrict Pod resources in staging to use a known service account.
+spec:
+  validationFailureAction: enforce
+  rules:
+  - name: require-service-account
+    match:
+      resources:
+        kinds:
+        - Pod
+        namespaces:
+        - staging
+    validate:
+      message: "Service account required"
+      pattern:
+        spec:
+          serviceAccountName: "?*"
+          containers:
+          # in a real world scenario this would be your app's image
+          - =(image): "google/cloud-sdk:slim"
+  - name: validate-service-account
+    match:
+      resources:
+        kinds:
+        - Pod
+        namespaces:
+        - staging
+    validate:
+      message: "Invalid service account"
+      pattern:
+        spec:
+          =(serviceAccountName): gcs-viewer
+          containers:
+          # in a real world scenario this would be your app's image
+          - =(image): "google/cloud-sdk:slim"

@@ -322,7 +322,7 @@ You can close the Cloud Shell.
 
 ## Install LoRa Server
 
-When you have succesfully completed the previous steps, then your gateway is
+When you have successfully completed the previous steps, then your gateway is
 connected to the IoT Core MQTT bridge, all the LoRa (App) Server 
 requirements are set up and is it time to install [LoRa Server](https://www.loraserver.io/loraserver/) and
 [LoRa App Server](https://www.loraserver.io/lora-app-server/).
@@ -523,7 +523,7 @@ SSH to the VM and execute the following command to install LoRa App Server:
 The LoRa App Server configuration file is located at
 `/etc/lora-app-server/lora-app-server.toml`. Below you will find a minimal
 but working configuration example. Please refer to the LoRa App Server
-[Configuration](/lora-app-server/install/config/) documentation for all the
+[Configuration](https://www.loraserver.io/lora-app-server/install/config/) documentation for all the
 available options.
 
 You need to replace the following values:

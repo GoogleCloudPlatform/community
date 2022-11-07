@@ -311,7 +311,7 @@ the `dev` and `prod` projects.
 ### Set up your GitHub repository
 
 To get all the code and understand the repository structure needed to deploy your app, follow the steps in
-[Setting up your GiHub repository](https://cloud.google.com/solutions/managing-infrastructure-as-code#setting_up_your_github_repository). Make sure to replace 
+[Setting up your GitHub repository](https://cloud.google.com/solutions/managing-infrastructure-as-code#setting_up_your_github_repository). Make sure to replace 
 `solutions-terraform-cloudbuild-gitops `with `cloud-monitoring-notification-delivery-integration-sample-code`.
 
 ### Provision Google Cloud resources with Terraform

@@ -160,7 +160,8 @@ environments.
 
 ## Configuration
 
-The tokenizer service uses the configuration file [`config/default.json`](config/default.json) with overrides in 
+The tokenizer service uses the configuration file
+[`config/default.json`](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/pci-tokenizer/config/default.json) with overrides in 
 `config/local.json`. The best practice is to copy `config/default.json` to `config/local.json` and make edits there.
 
 -   `general.project_id` is required but it can either be set here or with each API call. API call project_id overrides this
@@ -178,7 +179,8 @@ The tokenizer service uses the configuration file [`config/default.json`](config
 
 -   `kms.key_name` is the actual key name.
 
--   Other settings are documented in [`config/default.json`](config/default.json).
+-   Other settings are documented in
+    [`config/default.json`](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/pci-tokenizer/config/default.json).
 
 ## Containerizing and deploying the tokenizer service
 
@@ -201,7 +203,7 @@ The tokenizer service uses the configuration file [`config/default.json`](config
 
 1.  Deploy using the following command:  
 
-        gcloud run deploy tokenizer --image gcr.io/$PROJECT/tokenizer --platform managed --no-allow-unauthenticated --region us-central1 --memory 128M
+        gcloud run deploy tokenizer --image gcr.io/$PROJECT/tokenizer --platform managed --no-allow-unauthenticated --region us-central1 --memory 128Mi
 
     - `tokenizer` is the name of your service.
     - `--image` is the image you created in the previous step.

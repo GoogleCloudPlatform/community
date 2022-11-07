@@ -311,5 +311,5 @@ hyperparameters and the hyperparameters and object values used during model trai
 
 You may also be interested in exploring the updated [AutoML Tables client libraries](https://googleapis.dev/python/automl/latest/gapic/v1beta1/tables.html), 
 which make it easy for you to
-[train and use Tables programmatically](https://github.com/GoogleCloudPlatform/python-docs-samples/tree/master/tables/automl/notebooks), or reading about how to create a _contextual bandit_ model pipeline
+[train and use Tables programmatically](https://github.com/googleapis/python-automl/tree/master/samples/tables), or reading about how to create a _contextual bandit_ model pipeline
 [using AutoML Tables, without needing a specialist for tuning or feature engineering](https://cloud.google.com/blog/products/ai-machine-learning/how-to-build-better-contextual-bandits-machine-learning-models).
