@@ -13,7 +13,7 @@ import (
 
 var logStatements = [4]string{
 	"error happened with social security number 111-22-3333",
-	"Something happened..with social 222334444",
+	"Something happened..with social 222-33-4444",
 	"Processing credit card 1234 5678 9012 3456",
 	"Users email is john.doe@example.com"}
 

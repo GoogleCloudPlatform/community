@@ -508,13 +508,14 @@ Deploy this Dataflow job by running the following commands in Cloud Shell:
 
     gcloud beta dataflow flex-template run "${DATAFLOW_JOB_NAME}" \
         --project="${PROJECT_ID}" --region="${GCP_REGION_ID}" \
-        --template-file-gcs-location="gs://dataflow-templates/latest/flex/Cloud_Datastream_to_Postgres" \
+        --template-file-gcs-location="gs://dataflow-templates/latest/flex/Cloud_Datastream_to_SQL" \
         --parameters inputFilePattern="${GCS_STREAM_PATH}",\
             gcsPubSubSubscription="projects/${PROJECT_ID}/subscriptions/${PUBSUB_TOPIC}-subscription",\
             databaseHost=${DATABASE_HOST},\
             databasePort="5432",\
             databaseUser="postgres",\
             databasePassword="${DATABASE_PASSWORD}",\
+            schemaMap=":",\
             maxNumWorkers=10,\
             autoscalingAlgorithm="THROUGHPUT_BASED"
 
