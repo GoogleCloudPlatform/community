@@ -14,4 +14,4 @@ spec:
     spec:
       containers:
         - name: test-logger
-          image: gcr.io/cloud-solutions-images/test-logger
+          image: gcr.io/${project_id}/test-logger

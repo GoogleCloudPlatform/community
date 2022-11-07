@@ -56,9 +56,9 @@ In this section, you define variables that control where elements of the infrast
 
 1.  Set the variables used by this tutorial:
 
-        region=us-east1
-        zone=${region}-b
-        project_id=[YOUR_PROJECT_ID]
+        export region=us-east1
+        export zone=${region}-b
+        export project_id=[YOUR_PROJECT_ID]
         
     This tutorial uses the region `us-east-1`. If you change the region, make sure that the zone values reference your region.
 
@@ -81,20 +81,36 @@ In this section, you define variables that control where elements of the infrast
 
 1.  Create the GKE cluster with system-only logging turned on:
 
-        gcloud beta container clusters create custom-fluentbit \
-        --zone us-east1-b \
-        --enable-logging-monitoring-system-only \
+        gcloud container clusters create custom-fluentbit \
+        --zone $zone \
+        --logging=SYSTEM \
         --tags=gke-cluster-with-customized-fluentbit \
         --scopes=logging-write,storage-rw
 
 ## Deploying the test logger application
 
-By default, the sample application that you deploy continuously emits random logging statements. The Docker container it uses is available at
-`gcr.io/cloud-solutions-images/test-logger`, and its source code is included in the `test-logger` subdirectory.
+By default, the sample application that you deploy continuously emits random logging statements. The Docker container is
+built from the source code under the `test-logger` subdirectory.
+
+1.  Build the `test-logger` container image:
+
+        docker build -t test-logger test-logger
+
+1.  Tag the container before pushing to the registry:
+
+        docker tag test-logger gcr.io/${project_id}/test-logger
+
+1.  Push the container image:
+
+        docker push gcr.io/${project_id}/test-logger
+
+1.  Update the deployment file:
+
+        envsubst < kubernetes/test-logger.yaml > kubernetes/test-logger-deploy.yaml
 
 1.  Deploy the `test-logger` application to the GKE cluster:
 
-        kubectl apply -f kubernetes/test-logger.yaml
+        kubectl apply -f kubernetes/test-logger-deploy.yaml
 
 1.  View the status of the `test-logger` pods:
 

@@ -7,10 +7,10 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@google-cloud/functions-framework": "^1.1.0",
-    "@types/redis": "^2.8.12",
+    "@types/redis": "^3.1.1",
     "@types/redis-rate-limiter": "^1.2.1",
     "good-env": "^4.0.0",
-    "redis": "^2.8.0",
+    "redis": "^3.1.1",
     "redis-rate-limiter": "^1.2.0"
   },
   "devDependencies": {
