@@ -8,11 +8,11 @@
   "dependencies": {
     "@google-cloud/functions-framework": "^1.1.0",
     "@google-cloud/logging-winston": "^0.11.1",
-    "@types/redis": "^2.8.12",
+    "@types/redis": "^3.1.1",
     "@types/redis-rate-limiter": "^1.2.1",
     "firebase-admin": "^7.3.0",
     "good-env": "^4.0.0",
-    "redis": "^2.8.0",
+    "redis": "^3.1.1",
     "redis-rate-limiter": "^1.2.0",
     "winston": "^3.2.1"
   },

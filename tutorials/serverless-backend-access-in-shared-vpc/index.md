@@ -162,7 +162,7 @@ This section gives an overview of
 
 1.  Test the web server by going to the IP address, `http://[IP_ADDRESS]/` or `https://[IP_ADDRESS]/ping`.
 
-1.  If you supplied the variable `cloud_run_invoker` in the `modules/serverless_endpoint/variables.tf` file with your user, the you can try to access
+1.  If you supplied the variable `cloud_run_invoker` in the `modules/serverless_endpoint/variables.tf` file with your user, then you can try to access
     the IP address with authentication:
 
         curl -H "Authorization: Bearer $(gcloud auth print-identity-token)" http://[IP_ADDRESS]/ping
