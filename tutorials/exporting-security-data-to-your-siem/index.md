@@ -69,7 +69,7 @@ several steps below, such as setting up an organization-wide log sink and organi
 
 1.  Create a Pub/Sub subscription where the data will be aggregated:
 
-        gcloud pubsub subscriptions export-subscription \
+        gcloud pubsub subscriptions create export-subscription \
           --topic=export-topic \
           --expiration-period="never"
 

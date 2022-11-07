@@ -8,7 +8,7 @@
   "dependencies": {
     "@google-cloud/functions-framework": "^1.1.0",
     "good-env": "^4.0.0",
-    "redis": "^2.8.0",
+    "redis": "^3.1.1",
     "redis-rate-limiter": "^1.2.0"
   },
   "devDependencies": {

@@ -183,7 +183,7 @@ performance tests, because network latency can interfere with the tests.
 
     Windows:
 
-        for /r /Y %x in (*.jar) do copy "%x" .\
+        for /r %x in (*.jar) do copy "%x" .
 
 ### Set up authentication for JMeter
 

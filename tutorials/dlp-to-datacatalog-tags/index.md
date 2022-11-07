@@ -1,7 +1,7 @@
 ---
 title: Create Data Catalog tags by inspecting BigQuery data with Cloud Data Loss Prevention
 description: Learn how to inspect BigQuery data using Cloud Data Loss Prevention and automatically create Data Catalog tags for sensitive elements with results from inspection scans.
-author: scellis,mesmacosta
+author: imadethis,mesmacosta
 tags: database, Cloud DLP, Java, PII
 date_published: 2020-04-27
 ---

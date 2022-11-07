@@ -1,0 +1,4 @@
+<!-- Copy the app.yaml on publish -->
+<ItemGroup>
+    <None Include="app.yaml" CopyToOutputDirectory="Always" />
+</ItemGroup>

@@ -78,7 +78,7 @@ Open Cloud Shell by clicking the **Activate Cloud Shell** button in the upper-ri
 ### Get the sample code
 
 The sample code for this tutorial is in the
-[Google Cloud Community GitHub repository](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/exporting-prometheus-metrics-bigquery).
+[Google Cloud Community GitHub repository](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/writing-prometheus-metrics-bigquery).
 
 1.  Clone the repository:
 
