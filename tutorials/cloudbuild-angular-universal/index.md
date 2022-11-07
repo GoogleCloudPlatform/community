@@ -174,7 +174,7 @@ You will create a repository called `tour-of-heroes-universal`
         --target-http-proxy http-lb-proxy \
         --ports 80
 
-## Create the Cloud Build file and add it to the Git repsoitory
+## Create the Cloud Build file and add it to the Git repository
 
 1.  Give the Cloud Build account Cloud Storage admin access:
 

@@ -370,14 +370,22 @@ In this section, you view your deployed cluster in the Cloud Console.
 
         clusterrolebinding.rbac.authorization.k8s.io/cloud-console-view-binding created
 
-1.  Obtain the bearer token for the KSA:
+1.  Create a secret and obtain the bearer token for the KSA:
 
-        SECRET_NAME=$(kubectl get serviceaccount ${KSA_NAME} \
-        -o jsonpath='{$.secrets[0].name}') 
+        SECRET_NAME=${KSA_NAME}-token
 
-        kubectl get secret ${SECRET_NAME} \
-        -o jsonpath='{$.data.token}' \
-        | base64 --decode` 
+        kubectl apply -f - << __EOF__
+        apiVersion: v1
+        kind: Secret
+        metadata:
+          name: "${SECRET_NAME}"
+          annotations:
+            kubernetes.io/service-account.name: "${KSA_NAME}"
+        type: kubernetes.io/service-account-token
+        __EOF__
+
+        kubectl get secret ${SECRET_NAME} -o jsonpath='{$.data.token}' \
+        | base64 --decode
 
     The output from the `kubectl` command is a long string.
 

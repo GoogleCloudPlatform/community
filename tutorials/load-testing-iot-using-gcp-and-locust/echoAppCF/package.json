@@ -7,6 +7,6 @@
     "deploy": "gcloud functions deploy echoAppCF --source=. --trigger-topic defaultTelemetry --runtime nodejs8"
   },
   "dependencies": {
-    "googleapis": "^35.0.0"
+    "googleapis": "39.1.0"
   }
 }

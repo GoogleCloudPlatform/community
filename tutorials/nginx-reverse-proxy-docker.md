@@ -82,6 +82,10 @@ NGINX to forward requests to the corresponding website.
 As an example, this tutorial shows a plain NGINX server running as
 site A and a [plain Apache server](https://hub.docker.com/_/httpd/) running as site B.
 
+You run the commands in this section from the VM instance that you created
+in the "Setting up the virtual machine" section. Before you run these commands,
+connect to the VM instance using SSH.
+
 1.  Run the reverse proxy.
 
         docker run -d \
