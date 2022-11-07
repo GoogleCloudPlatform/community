@@ -74,6 +74,7 @@ Debian instance with a public IP. We will need to install some packages:
 sudo apt update -y
 sudo apt install -y bridge-utils # Install Linux Bridge Tools. 
 sudo apt install -y tcpdump
+sudo apt install -y screen
 sudo apt install  -y conntrack #Tool to interrogate connection tracking table
 PATH=$PATH:/sbin # Get brctl in your path (you may include this in your .profile)
 ```
