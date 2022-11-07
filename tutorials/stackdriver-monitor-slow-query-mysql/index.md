@@ -327,8 +327,8 @@ Sample output if already running:
 
 If yes, skip to the next section. Otherwise run the following commands:
 
-    curl -sSO https://dl.google.com/cloudagents/install-logging-agent.sh
-    sudo bash install-logging-agent.sh
+    curl -sSO https://dl.google.com/cloudagents/add-logging-agent-repo.sh
+    sudo bash add-logging-agent-repo.sh --also-install
 
 Confirm that the `google-fluentd` process is active:
 

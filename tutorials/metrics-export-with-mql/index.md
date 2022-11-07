@@ -39,7 +39,7 @@ the  "Cleaning up" section at the end of the tutorial.
 
 1.  [Enable billing for your project.](https://support.google.com/cloud/answer/6293499#enable-billing)
 
-1.  [Enable the Cloud Functions, Cloud Scheduler, Pub/Sub, and BigQuery APIs.](https://console.cloud.google.com/flows/enableapi?apiid=cloudfunctions.googleapis.com,cloudscheduler.googleapis.com,pubsub.googleapis.com,bigquery.googleapis.com)  
+1.  [Enable the Cloud Functions, Cloud Scheduler, Pub/Sub, Cloud Build, and BigQuery APIs.](https://console.cloud.google.com/flows/enableapi?apiid=cloudfunctions.googleapis.com,cloudscheduler.googleapis.com,pubsub.googleapis.com,bigquery.googleapis.com,cloudbuild.googleapis.com)
 
 1.  Make sure that you have either a project [owner or editor role](https://cloud.google.com/iam/docs/understanding-roles#primitive_roles), or sufficient 
     permissions to use the services listed above.
@@ -132,6 +132,8 @@ The sample code for this tutorial is in the
         --schedule "*/5 * * * *" \
         --topic $PUBSUB_TOPIC \
         --message-body "Exporting metric..."
+
+   If the command fails and requests a location, you can add the location flag with your current region. For example, you can use `--location us-central1`.
 
 ## Verify the result
 
