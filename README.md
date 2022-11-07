@@ -1,17 +1,14 @@
 <img src="https://avatars2.githubusercontent.com/u/2810941?v=3&s=96" alt="Google Cloud logo" title="Google Cloud" align="right" height="96" width="96"/>
 
-# Google Cloud Community
-
-This repository holds the content submitted to the
-[Google Cloud Community site](https://cloud.google.com/community/).
+# Google Cloud open tutorials
 
 Markdown files added to the [`tutorials` folder](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials) are published at
-[cloud.google.com/community/tutorials](https://cloud.google.com/community/tutorials/).
+[cloud.google.com/docs/open-tutorials](https://cloud.google.com/docs/open-tutorials).
 
 ## Contributing
 
 For instructions on contributing a tutorial, see
-[How to write a tutorial for the Google Cloud Community site](https://cloud.google.com/community/tutorials/write).
+[How to write a tutorial](https://cloud.google.com/community/tutorials/write).
 
 ## License
 

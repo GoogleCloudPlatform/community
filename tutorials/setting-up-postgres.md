@@ -54,7 +54,7 @@ available in earlier versions.
 1. In the Cloud Console, go to the [**VM instances**](https://console.cloud.google.com/compute/instances) page.
 1. Click **Create instance**.
 1. In the **Name** field, enter `postgres-tutorial`.
-1. In the **Book disk** section, click **Change**.
+1. In the **Boot disk** section, click **Change**.
 1. In the Boot disk window, perform the following steps in the **Public images** tab:
     1. In the **Operating system** menu, select **Ubuntu**.
     1. In the **Version** menu, select **Ubuntu 20.04 LTS**.
