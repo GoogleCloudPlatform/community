@@ -205,7 +205,7 @@ There are many ways of using Cloud Build for any application. For simplicity, th
 
             gcloud app deploy --image-url us.gcr.io/yourprojectid/angular-nginx-container
      
-1.  Verfy that the `webapiurl` matches what you provided in the environment variable as shown in the flow diagram at the beginning of this tutorial.
+1.  Verify that the `webapiurl` matches what you provided in the environment variable as shown in the flow diagram at the beginning of this tutorial.
 
 ## App Engine dispatch
 
