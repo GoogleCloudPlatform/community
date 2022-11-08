@@ -1,6 +1,6 @@
 ---
 title: Measure Cloud Spanner performance using JMeter
-description: Evaluate Cloud Spanner for custom workloads using the JMeter JSR-223 Sampler.
+description: Evaluate Cloud Spanner for custom workloads using the JMeter JSR223 Sampler.
 author: shashank-google,somanishivam
 tags: spanner, cloud spanner, evaluation, migration, performance test, mutation, client library, java
 date_published: 2022-11-08
@@ -17,18 +17,21 @@ Before you migrate to Cloud Spanner, you might want to run performance tests to 
 you do performance testing with Cloud Spanner before making application code changes and migrating data.
 
 [Apache JMeter](https://jmeter.apache.org/) is a popular open source tool for load testing. It includes scriptable
-samplers in JSR 223-compatible languages, such as Groovy and BeanShell. In this tutorial, you use the JSR 223 Sampler,
-which can execute operations or query on spanner database using [Java client API and Mutation](https://cloud.google.com/spanner/docs/modify-mutation-api#java).
+samplers in JSR223-compatible languages, such as Groovy and BeanShell. In this tutorial, you use the JSR223 Sampler,
+which can execute operations on or query a Cloud Spanner database using the
+[Java client API and mutations](https://cloud.google.com/spanner/docs/modify-mutation-api#java).
 
-This document demonstrates JMeter performance tests using an example Cloud Spanner schema. You use features like [mutations](https://cloud.google.com/spanner/docs/modify-mutation-api) and
+This document demonstrates JMeter performance tests using an example Cloud Spanner schema. You use features like
+[mutations](https://cloud.google.com/spanner/docs/modify-mutation-api) and
 [parallel reads (partitioned selects)](https://cloud.google.com/spanner/docs/reads#read_data_in_parallel)
 using JDBC Sampler. 
 
-**Note:** This is continuation of [previous article](https://cloud.google.com/community/tutorials/jmeter-spanner-performance-test) regarding Spanner Performance tests using JMeter via JDBC and DMLs.
+This tutorial is a continuation of
+[Measure Cloud Spanner performance using JMeter](https://cloud.google.com/community/tutorials/jmeter-spanner-performance-test).
 
 ## Costs
 
-This guide uses billable components of Google Cloud, including the following:
+This tutorial uses billable components of Google Cloud, including the following:
 
 * Compute Engine (for running JMeter)
 * Cloud Spanner
@@ -62,26 +65,32 @@ Even if you use JMeter performance tests, you should also do application-based p
 
 ## Design considerations for Cloud Spanner performance tests
 
-You run performance tests to understand application behavior. Consider the factors mentioned [here](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/jmeter-spanner-performance-test/index.md#design-considerations-for-cloud-spanner-performance-tests) when deciding
-how to design and run tests that can answer your specific questions.
+You run performance tests to understand application behavior. Consider the factors mentioned in
+[Design considerations for Cloud Spanner performance tests](https://cloud.google.com/community/tutorials/jmeter-spanner-performance-test)
+when deciding how to design and run tests that can answer your specific questions.
 
 ## Preparing for tests
 
 Before you begin writing performance tests, make the following preparations
 
-1. Identify top SQL queries. Determine the latency, frequency, and average number of rows returned or updated for each
-   of the top queries. This information will also serve as a baseline for the current system.
-2. Determine the Cloud Spanner region or multi-region deployment. Ideally, load should be generated from Cloud Spanner’s
-   leader region for minimum latency and best performance. For more information, see
-   [Demystifying Cloud Spanner multi-region configurations](https://cloud.google.com/blog/topics/developers-practitioners/demystifying-cloud-spanner-multi-region-configurations).
-3. Estimate the range of Cloud Spanner nodes required for the workload. We recommend that you have at
-   least 2 nodes for linear scaling.
-4. [Request quota](https://cloud.google.com/spanner/quotas#increasing_your_quotas) so that you have enough surplus quota for
-   Cloud Spanner nodes on a given region or multi-region. Changes in quota can take up to 1 business day. Although it depends on
-   workload, asking for a quota of 100 nodes for a performance test can be reasonable.
-5. Creating [schema](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/jmeter-spanner-performance-test/index.md#creating-a-cloud-spanner-schema) for Cloud Spanner. 
+1.  Identify your top SQL queries. Determine the latency, frequency, and average number of rows returned or updated for each
+    of the top queries. This information will also serve as a baseline for the current system.
+1.  Determine the Cloud Spanner region or multi-region deployment. Ideally, load should be generated from Cloud Spanner’s
+    leader region for minimum latency and best performance. For more information, see
+    [Demystifying Cloud Spanner multi-region configurations](https://cloud.google.com/blog/topics/developers-practitioners/demystifying-cloud-spanner-multi-region-configurations).
+1.  Estimate the range of Cloud Spanner nodes required for the workload. We recommend that you have at
+    least 2 nodes for linear scaling.
+1.  [Request quota](https://cloud.google.com/spanner/quotas#increasing_your_quotas) so that you have enough surplus quota for
+    Cloud Spanner nodes on a given region or multi-region. Although it depends on workload, asking for a quota of 100 nodes
+    for a performance test can be reasonable.
+    
+    Changes in quota can take up to 1 business day.
 
 ## Creating a Cloud Spanner schema
+
+1.  Create the schema for Cloud Spanner, as described in the "Creating a Cloud Spanner schema" section of
+    [Measure Cloud Spanner performance using JMeter](https://cloud.google.com/community/tutorials/jmeter-spanner-performance-test). 
+
 This example uses the database `Singers`, which is created with the following schema:
 
     CREATE TABLE Singers (
@@ -106,7 +115,8 @@ This example uses the database `Singers`, which is created with the following sc
     ) PRIMARY KEY (SingerId, AlbumId, TrackId),
       INTERLEAVE IN PARENT Albums ON DELETE CASCADE;
 
-Refer [previous article](https://cloud.google.com/community/tutorials/jmeter-spanner-performance-test) for more details on schema designing. 
+For more information about schema design, see
+[Measure Cloud Spanner performance using JMeter](https://cloud.google.com/community/tutorials/jmeter-spanner-performance-test). 
 
 ## Set up JMeter
 
