@@ -10,9 +10,9 @@ Edzo Blaauw | Cloud & Data Engineer | talabat
 
 <p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
-This tutorial will show you how you can create a Load Balancer connected to Cloud Run using a custom domain in Cloudflare. It will also show you how to setup Cloudflare. You need some experience on how to set up a Cloud Run application. In this tutorial I will not show you how to depkoy a Cloud Run application. The advantage of using this method is that you can setup Cloud Run behind a Cloudflare Access authentication. 
+This tutorial will show you how you can create a Load Balancer connected to Cloud Run using a custom domain in Cloudflare. It will also show you how to setup Cloudflare. You need some experience on how to set up a Cloud Run application. In this tutorial we will not show you how to deploy a Cloud Run application on itself. The advantage of using this method is that you can setup Cloud Run behind a Cloudflare Access authentication. 
 
-We will use the Google Cloud Platform UI. We will not use the command line in this tutorial.
+We will use the Google Cloud Platform UI. We will not use the command line in this tutorial. For extra security, you can consider to verify that the requests come from Cloudflare, but that is not something we will handle in this tutorial.
 
 ## Objectives
 
@@ -37,7 +37,7 @@ We will use the Google Cloud Platform UI. We will not use the command line in th
 
 We want our custom domain to talk with the Load Balancer. We do not want the domain to talk with the Cloud Run app directly. For that, we create a new VPC connector. Create a new connector by going to [Serverless VPC access](https://console.cloud.google.com/networking/connectors/list) and click on 'Create Connector'.
 
-In this tutorial, we will set the Region to europe-west1 and we will not create a new VPC network, so we will select the 'default' VPC network. You will need to create a custom subnet by clicking on Custom IP Range. Enter `10.8.0.0` in the IP Range field. After that, click Create.
+In this tutorial, we will set the Region to `europe-west1` and we will not create a new VPC network, so we will select the 'default' VPC network. You will need to create a custom subnet by clicking on Custom IP Range. Enter `10.8.0.0` in the IP Range field. After that, click Create.
 
 ![VPC Connector setup][state_machine_diagram]
 
@@ -62,12 +62,12 @@ In the third step of the service configuration, you want to change the ingress t
 
 #### Set up the right load balancer type
 
-Now that we have set up the Cloud Run application, we can go ahead and set up the Load Balancer. Open the [Load Balancing](https://console.cloud.google.com/net-services/loadbalancing/loadBalancers/list) page in the Google Cloud Platform, and create a new load Balancer. It will ask you for the type of load balancer, so select HTTP(S) Load Balancer. After that you want to choose the option "From Internet to my VMs" when it's asking for the load balance type traffic.
+Now that we have set up the Cloud Run application, we can go ahead and set up the Load Balancer. Open the [Load Balancing](https://console.cloud.google.com/net-services/loadbalancing/loadBalancers/list) page in the Google Cloud Platform, and create a new load Balancer. It will ask you for the type of load balancer, so select HTTP(S) Load Balancer. After that we want to choose the option "From Internet to my VMs" when it's asking for the load balance type traffic.
 
 #### Create a backend
 
-You will see 4 tabs on the side. It will start with an option to select the backend configuration. Click on the drop down and create a new backend service. You can name it as you like. For backend type, select Serverless network endpoint group. This is called a NEG. You want to use the HTTPS protocol and a timeout of 30 seconds. 
-Below that you will see a card with New backend. Click on create a new servless network group. Name it as you like but select the same region as we created the VPC Connector in, so europe-west1. 
+We will see 4 tabs on the side. It will start with an option to select the backend configuration. Click on the drop down and create a new backend service. We can name it as we like. For backend type, select Serverless network endpoint group. This is called a NEG. We want to use the HTTPS protocol and a timeout of 30 seconds. 
+Below that we will see a card with New backend. Click on create a new servless network group. Name it as we like but select the same region as we created the VPC Connector in, so europe-west1. 
 
 ![Serverless NEG Setup][serverless_neg_setup]
 
@@ -81,12 +81,9 @@ After we createad a serverless NEG, you can save the backend service.
 
 #### Create a frontend
 
-Create a new frontend IP and port by entering a name. The first frontend should be HTTP and can have Premium network tier. We want to use a fixed IP address for both HTTP and HTTPS, so create a new IP address by clicking on the IP address dropdown and create a new IP address. Name it as you like. Leave the port at port 80. 
+Create a new frontend IP and port by entering a name. The first frontend should be HTTP and can have Premium network tier. We want to use a fixed IP address for both HTTP and HTTPS, so create a new IP address by clicking on the IP address dropdown and create a new IP address. Name it as you like. Leave the port at port 80.
 
-Create one more frontend but use the protcol 'HTTPS'. Select the new IP address you just created and create a new certificate. This new certificate can be a Google managed certificate, but make sure to add the domain you want to use.
-
-![Certificate][certificate]
-[certificate]: https://storage.googleapis.com/gcp-community/tutorials/cloud-run-cloudflare/certificate.png
+Create one more frontend but use the protcol 'HTTPS'. Select the new IP address you just created. It will ask you to either upload a certificate or to use a Google-generated certificate. Because of we Cloudflare Proxy, we cannot use a Google managed certificate. Click on "Upload my certificate" to then generate a [Cloudflare Origin certificate](https://developers.cloudflare.com/ssl/origin-configuration/origin-ca/#1-create-an-origin-ca-certificate). Make sure to use _Generate private key and CSR with Cloudflare_ and the _OpenSSL_ format. Once you have created the private and public SSL key, you can upload this in GCP.
 
 You have set up both HTTP and HTTPS now. It should look like the image below.
 
@@ -105,8 +102,7 @@ Go to your new IP address and see if you will see a page that shows you the expe
 
 #### Set up Cloudflare
 
-To connect Cloudflare to this load balancer, log in to your Cloudflare Dashboard and create a new DNS record. Create a new A record by specifying the name (subdomain) and enter the new IP address of the load balancer. *Make sure to select DNS only*. After 24 hours, you can change to this to Cloudflare. If you do not set it to DNS Only, Google Cloud cannot verify and validate the HTTPS certificate.
-
+To connect Cloudflare to this load balancer, log in to your Cloudflare Dashboard and create a new DNS record. Create a new A record by specifying the name (subdomain) and enter the new IP address of the load balancer.
 
 ![Cloudflare setup][cloudflare_setup]
 [cloudflare_setup]: https://storage.googleapis.com/gcp-community/tutorials/cloud-run-cloudflare/cloudflare_setup.png
