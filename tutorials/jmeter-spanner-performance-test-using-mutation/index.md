@@ -3,7 +3,7 @@ title: Measure Cloud Spanner performance using JMeter
 description: Evaluate Cloud Spanner for custom workloads using the JMeter JSR223 Sampler.
 author: shashank-google,somanishivam
 tags: spanner, cloud spanner, evaluation, migration, performance test, mutation, client library, java
-date_published: 2022-11-08
+date_published: 2022-11-10
 ---
 
 Shashank Agarwal, Shivam Somani | Google
@@ -120,7 +120,7 @@ For more information about schema design, see
 
 ## Set up JMeter
 
-JMeter provides a GUI for easy development of tests. After tests are developed, use the command line to run the
+JMeter provides a graphical user interface (GUI) for development of tests. After tests are developed, use the command line to run the
 JMeter tests. You can create a VM (in the same region as Cloud Spanner’s Leader) with the GUI enabled, so the same VM
 instance can be used for development and execution of tests.
 
@@ -138,20 +138,20 @@ performance tests, because network latency can interfere with the tests.
 
 1.  Move the downloaded JAR files into a folder for JMeter to load in its classpath:
 
-    Linux:
+    - Linux:
     
-        find . -name *.jar -exec mv '{}' . \;
+          find . -name *.jar -exec mv '{}' . \;
 
-    Windows:
+    - Windows:
 
-        for /r %x in (*.jar) do copy "%x" .
+          for /r %x in (*.jar) do copy "%x" .
 
 ### Set up authentication for JMeter
 
-JMeter uses Cloud Spanner JDBC client libraries to connect. It
-supports [various authentication mechanisms](https://github.com/googleapis/google-cloud-java#authentication), including
-service accounts. For simplicity, this example uses application default credentials. For detailed
-steps, see [the Cloud Spanner setup documentation](https://cloud.google.com/spanner/docs/getting-started/set-up).
+JMeter uses Cloud Spanner JDBC client libraries to connect. It supports
+[various authentication mechanisms](https://github.com/googleapis/google-cloud-java#authentication), including
+service accounts. For simplicity, this example uses application default credentials. For detailed steps, see the
+[Cloud Spanner setup documentation](https://cloud.google.com/spanner/docs/getting-started/set-up).
 
 In summary, you need to set up `gcloud` and run the following command to store credentials locally:
 
@@ -175,17 +175,17 @@ library to connect to Cloud Spanner.
 * `db`: Cloud Spanner database name
 
 The following parameters may not need to be changed; they will be passed from the command line, and default values are used when
-testing from JMeter graphical user interface.
+testing from JMeter GUI:
 
-* `threads`: Number of parallel threads per thread group, increasing stress on target.
-* `loops`: Number of times each thread should loop, extending duration of tests.
+* `threads`: Number of parallel threads per thread group, increasing stress on target
+* `loops`: Number of times each thread should loop, extending duration of tests
 
 ### Thread groups
 
-[Thread group](https://jmeter.apache.org/usermanual/test_plan.html#thread_group) represents a test case containing a collection of samplers, each sampler is executed sequentially. It can be configured with a number of parallel threads (aka users) for that test.
+[Thread group](https://jmeter.apache.org/usermanual/test_plan.html#thread_group) represents a test case containing a collection of
+samplers, each of which is executed sequentially. It can be configured with a number of parallel threads (users) for that test.
 
-Within the thread group samplers are added which will call spanner.
-
+Within the thread group, samplers are added that will call Cloud Spanner.
 
 ### JSR223 request sampler
 
@@ -225,7 +225,7 @@ Similarly, you should also create a tearDown thread group with a sampler to clos
 ### Listeners
 
 You can add an aggregate report (or other types of reports) after all the thread groups. This will show staistics from the
-JMeter graphical user interface (GUI) in real time for all of the samplers. However, we don't recommend running performance
+JMeter GUI in real time for all of the samplers. However, we don't recommend running performance
 tests in GUI mode, because the JMeter GUI can be slow. You can use it for test development purposes, though.
 
 We recommend running tests in command-line mode, which generates HTML reports with the different JMeter reports.
