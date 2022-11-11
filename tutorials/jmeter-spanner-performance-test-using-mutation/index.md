@@ -1,5 +1,5 @@
 ---
-title: Measure Cloud Spanner performance using JMeter
+title: Measure Cloud Spanner performance using JMeter with mutation
 description: Evaluate Cloud Spanner for custom workloads using the JMeter JSR223 Sampler.
 author: shashank-google,somanishivam
 tags: spanner, cloud spanner, evaluation, migration, performance test, mutation, client library, java
@@ -138,13 +138,13 @@ performance tests, because network latency can interfere with the tests.
 
 1.  Move the downloaded JAR files into a folder for JMeter to load in its classpath:
 
-    - Linux:
+    -   Linux:
     
-          find . -name *.jar -exec mv '{}' . \;
+            find . -name *.jar -exec mv '{}' . \;
 
-    - Windows:
+    -   Windows:
 
-          for /r %x in (*.jar) do copy "%x" .
+            for /r %x in (*.jar) do copy "%x" .
 
 ### Set up authentication for JMeter
 
