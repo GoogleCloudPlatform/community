@@ -55,6 +55,7 @@ You need to define several variables that control where elements of the infrastr
         REGION=us-central1
         ZONE=${REGION}-b
         PROJECT_ID=[YOUR_PROJECT_ID]
+        gcloud config set project ${PROJECT_ID}
    
     Replace `[YOUR_PROJECT_ID]` with your project ID. This tutorial uses the region `us-central1`. If you want to change the region, check that the zone 
     values are appropriate for the region that you specify.
@@ -69,9 +70,8 @@ You need to define several variables that control where elements of the infrastr
         gcloud services enable containerregistry.googleapis.com
         gcloud services enable cloudasset.googleapis.com
 
-1.  Set the zone and project ID so that you don't have to specify these values in subsequent commands:
+1.  Set the project parameters so that you don't have to specify these values in subsequent commands:
 
-        gcloud config set project ${PROJECT_ID}
         gcloud config set compute/zone ${ZONE}
         gcloud config set run/platform managed
         gcloud config set run/region ${REGION}
@@ -148,7 +148,7 @@ The sample code for this tutorial is in the Google Cloud Community GitHub reposi
 
         gcloud app create --region=$REGION
         
-    Cloud Scheduler depends on App Engine.
+    Cloud Scheduler depends on App Engine. If it's already been done and you recevived an error, you can ignore it and go to the next step.
 
 1.  Create the Cloud Scheduler job:
 
@@ -175,12 +175,11 @@ If you don't want to wait for the Cloud Scheduler to invoke your Cloud Run insta
 
 1.  In the [Cloud Console](https://console.cloud.google.com/), select your Google Cloud project.
 1.  Go to the [Cloud Monitoring **Metrics explorer** page](https://console.cloud.google.com/monitoring/metrics-explorer).
-1.  In the **Find resource type and metric** field, enter `database_assets`.
+1.  In the **Select a metric** field, enter `database_assets`.
+1.  For the resource type, enter `Global` and select the **Global** resource type.
 1.  Select the metric that starts with `custom.googleapis.com/database_asset`.
 
     You might need to refresh the page to see the metric name.
-
-1.  For the resource type, enter `Global` and select the **Global** resource type.
 1.  From the menu above the chart, choose **Stacked bar chart**.
 
     Within a few minutes, you should have a chart like the following:
