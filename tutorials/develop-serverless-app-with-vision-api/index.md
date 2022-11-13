@@ -345,7 +345,7 @@ In this section, we extend the previous example by isolating each object detecte
 
 ## <a name="4_kgsearch_client_api"></a>Try out the Knowledge Graph Search API
 
-Retrieving a number of labels of an object is useful information, but being able to identify the classification of those labels is useful knowledge. Each object and label in the earlier examples came with a `mid` or machine-generated identifier. These are unique identifiers that correspond to an entity's Google Knowledge Graph entry.
+Retrieving a number of labels of an object is useful information, but being able to identify the classification of those labels is useful knowledge. Each object and label in the earlier examples came with a `mid` or "machine-generated identifier". These are unique identifiers that correspond to an entity's [Google Knowledge Graph](https://developers.google.com/knowledge-graph) entry.
 
 In this section, you'll start to look at the Knowledge Graph Search API, and use this API to further process the returned `mid` values. The Knowledge Graph Search API is accessible from the discovery-based API library rather than a dedicated package like Vision API was.
 
