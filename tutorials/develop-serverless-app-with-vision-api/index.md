@@ -236,8 +236,10 @@ In this section, you will perform similar tasks to the previous section, but thi
 1. Install the Python Vision API Client Library (you may choose to first create a `virtualenv`): 
 
     ```shell
-    pip3 install google-cloud-vision==2.3.1
+    pip3 install google-cloud-vision==3.1.4
     ```
+
+    Note: this tutorial has been tested with this version of the client library. Updates may be available.
     
 1. Open the code sample and read the contents: 
 
