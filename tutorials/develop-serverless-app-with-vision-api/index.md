@@ -437,7 +437,7 @@ In this section, you'll connect the Vision API and Knowledge Graph Search API an
 
     You should get: 
      
-      * two generated images, `doggo_1.png` and `doggo_2.png`
+      * two generated images in the `5_kgsearch_and_vision` directory, `doggo_1.png` and `doggo_2.png`
       * for both images: 
         * the list of labels, and 
         * which label was detected as the breed. 
@@ -461,9 +461,9 @@ In this section, you'll run a small Flask application that provides a richer imp
 
     You'll notice several files:
 
-        * `app.py`, a Flask app with similar contents to the most recent example.
-        * `requirements.txt`, a file listing all the packages installed so far, plus `Flask`
-        * a copy of the sample image, for ease of use.
+    * `app.py`, a Flask app with similar contents to the most recent example.
+    * `requirements.txt`, a file listing all the packages installed so far, plus `Flask`
+    * a copy of the sample image, for ease of use.
     
 1. Create a new virtualenv in this directory (if you haven't already): 
 
