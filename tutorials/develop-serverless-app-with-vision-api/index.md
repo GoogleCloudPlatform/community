@@ -621,7 +621,7 @@ Now you have setup the secret, you can deploy your application:
 1. Open the generated service URL. You can also find the URL from the command line: 
 
     ```
-    gcloud run services describe demo-doggo --format="value(service.url)"
+    gcloud run services describe demo-doggo --region us-central1
     ```
 
 1. Try uploading the sample image, and viewing the results. 
