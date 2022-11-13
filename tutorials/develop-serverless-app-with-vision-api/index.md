@@ -85,7 +85,7 @@ There are multiple ways to interact with the Vision API. The simplest way withou
 
 In this section, you will gain familiarity with the Vision API through `gcloud`.
 
-1. Using the `gcloud` command line, [detect the objects](https://cloud.google.com/vision/docs/object-localizer) in the sample dog image: 
+1. Using the `gcloud` command line, [detect the objects](https://cloud.google.com/vision/docs/object-localizer) in the [sample dog image](doggo.jpg): 
 
     ```shell
     gcloud ml vision detect-objects doggo.jpg
