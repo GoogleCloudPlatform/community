@@ -601,9 +601,10 @@ Now you have setup the secret, you can deploy your application:
 1. Deploy the provided code sample to Cloud Run, referencing the created secret: 
 
     ```
-    gcloud beta run deploy demo-doggo \
+    gcloud run deploy demo-doggo \
         --source . \
-        --platform managed --region us-central1 --allow-unauthenticated \
+        --region us-central1 \
+        --allow-unauthenticated \
         --set-secrets KGSEARCH_API=kgsearch_key:latest
     ```
 
