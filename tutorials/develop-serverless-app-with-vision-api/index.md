@@ -510,10 +510,10 @@ You'll also notice from the last section that there are images being created and
 
     You'll notice several files: 
 
-        * `app.py`, a Flask app with similar contents to the most recent example, with some changes to have information output in a dictionary, and streamed images. 
-        * `requirements.txt`, the same packages as the last example, adding `gunicorn`.
-        * `Procfile`, a file defining how to start the Flask app. 
-        * `templates/index.html`, a template to show nicer output. 
+    * `app.py`, a Flask app with similar contents to the most recent example, with some changes to have information output in a dictionary, and streamed images. 
+    * `requirements.txt`, the same packages as the last example, adding `gunicorn`.
+    * `Procfile`, a file defining how to start the Flask app. 
+    * `templates/index.html`, a template to show nicer output. 
     
 1. If you have your virtualenv setup and active from the last step, no change required. Otherwise, create a new virtualenv in this directory, installing the depedencies: 
 
