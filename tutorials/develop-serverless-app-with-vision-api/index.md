@@ -314,7 +314,7 @@ We will be using a new sample image with multiple objects, showing how different
 
 ## <a name="3_vision_split_labels"></a>Labelling multiple images
 
-Since the image is now more complex, each object in isolation needs to be processed to run the more detailed process of label analysis. Processing each object in an image allows for differences in objects to be identified. 
+Since the image is now more complex, each object needs to be seperately processed for label analysis. Processing each object in an image allows for differences in objects to be identified. 
 
 In this section, we extend the previous example by isolating each object detected and run label detection on each in isolation. This allows us to get more detailed information for each object in an image.
 
