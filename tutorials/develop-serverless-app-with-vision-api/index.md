@@ -355,7 +355,8 @@ In this section, you'll start to look at the Knowledge Graph Search API, and use
 Before trying the Knowledge Graph Search API, you will need to register a developer key. 
 
 1. [Enable the kgsearch API through the Console](https://console.developers.google.com/start/api?id=kgsearch.googleapis.com&credential=client_key). Ensure you select the project for your tutorial.
-1. Click **Go to credentials**.
+1. Go to the [API Details page](https://console.cloud.google.com/apis/api/kgsearch.googleapis.com/metrics).
+1. In the top right, click **Create Credentials**
 1. Confirm "Knowledge Graph Search API" is selected under "Which API are you using?"
 1. Under "Credential Type", select "Public data". 
 1. Click **Next**. 
