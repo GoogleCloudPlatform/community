@@ -310,7 +310,7 @@ We will be using a new sample image with multiple objects, showing how different
     python3 2_vision_image_markup/markup.py
     ```
 
-    You should get the created file `result.png`, that has two boxes drawn in blue around the two dogs in the image.
+    You should get the created file `2_vision_image_markup/result.png`, that has two boxes drawn in blue around the two dogs in the image.
 
 ## <a name="3_vision_split_labels"></a>Labelling multiple images
 
