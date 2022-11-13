@@ -341,7 +341,7 @@ In this section, we extend the previous example by isolating each object detecte
     python3 3_vision_split_labels/split_labels.py
     ```
 
-    You should get two images created, `doggo_1.png` and `doggo_2.png`, with their labels printed in your result.
+    You should get two images created in the `3_vision_split_labels` directory, `doggo_1.png` and `doggo_2.png`, with their labels printed in your result.
 
 ## <a name="4_kgsearch_client_api"></a>Try out the Knowledge Graph Search API
 
