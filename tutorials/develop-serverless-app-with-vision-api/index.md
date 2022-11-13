@@ -536,7 +536,7 @@ You'll also notice from the last section that there are images being created and
 
     The previous step used the Flask development server, and when you started it, it said not to use it in production. `gunicorn` is a production-ready web server. 
 
-1. Navigate to the application: [http://localhost:8080](http://localhost:8080)
+1. Navigate to the application: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 
     Note that this application allows for custom uploaded images. 
 
@@ -551,6 +551,8 @@ You'll also notice from the last section that there are images being created and
 1. Upload an image without a dog, such as the [Google Cloud logo](https://upload.wikimedia.org/wikipedia/en/thumb/5/51/Google_Cloud_logo.svg/2880px-Google_Cloud_logo.svg.png). 
 
     Note how the output detects no dogs.
+
+1. Stop the local web server by entering `Ctrl-C`. 
 
 ### Setup elements
 
