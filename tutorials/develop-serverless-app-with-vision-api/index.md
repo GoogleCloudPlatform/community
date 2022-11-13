@@ -515,11 +515,16 @@ You'll also notice from the last section that there are images being created and
     * `Procfile`, a file defining how to start the Flask app. 
     * `templates/index.html`, a template to show nicer output. 
     
-1. If you have your virtualenv setup and active from the last step, no change required. Otherwise, create a new virtualenv in this directory, installing the depedencies: 
+1. If you have your virtualenv setup and active from the last step, no change is required. Otherwise, create a new virtualenv in this directory:
 
     ```
     python3 -m venv venv
     source venv/bin/activate
+    ```
+
+1. Install the depedencies in this directory: 
+
+    ```
     pip3 install -r requirements.txt
     ```
 
