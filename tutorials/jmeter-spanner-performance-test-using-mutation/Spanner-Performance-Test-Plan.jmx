@@ -1,0 +1,690 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.5">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Spanner Performance Test Plan" enabled="true">
+      <stringProp name="TestPlan.comments"></stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="project-id" elementType="Argument">
+            <stringProp name="Argument.name">project-id</stringProp>
+            <stringProp name="Argument.value">XXXXXXXXXXX</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="instance-id" elementType="Argument">
+            <stringProp name="Argument.name">instance-id</stringProp>
+            <stringProp name="Argument.value">XXXXXXXXXXX</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="db" elementType="Argument">
+            <stringProp name="Argument.name">db</stringProp>
+            <stringProp name="Argument.value">XXXXXXXXXXX</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="threads" elementType="Argument">
+            <stringProp name="Argument.name">threads</stringProp>
+            <stringProp name="Argument.value">${__P(threads, 1)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="loops" elementType="Argument">
+            <stringProp name="Argument.name">loops</stringProp>
+            <stringProp name="Argument.value">${__P(loops, 5)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </elementProp>
+      <stringProp name="TestPlan.user_define_classpath">path/to/spanner-jar</stringProp>
+    </TestPlan>
+    <hashTree>
+      <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set Config" enabled="true">
+        <stringProp name="filename">/path/to/csv/singer_and_album_ids.csv</stringProp>
+        <stringProp name="fileEncoding">UTF-8</stringProp>
+        <stringProp name="variableNames">singerid,albumid,trackid</stringProp>
+        <boolProp name="ignoreFirstLine">true</boolProp>
+        <stringProp name="delimiter">,</stringProp>
+        <boolProp name="quotedData">false</boolProp>
+        <boolProp name="recycle">true</boolProp>
+        <boolProp name="stopThread">false</boolProp>
+        <stringProp name="shareMode">shareMode.all</stringProp>
+      </CSVDataSet>
+      <hashTree/>
+      <SetupThreadGroup guiclass="SetupThreadGroupGui" testclass="SetupThreadGroup" testname="setUp Thread Group" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">1</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+      </SetupThreadGroup>
+      <hashTree>
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="DB Connection" enabled="true">
+          <stringProp name="scriptLanguage">groovy</stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="cacheKey">true</stringProp>
+          <stringProp name="script">// Imports the Google Cloud client library
+import com.google.cloud.spanner.DatabaseClient;
+import com.google.cloud.spanner.DatabaseId;
+import com.google.cloud.spanner.Spanner;
+import com.google.cloud.spanner.SpannerOptions;
+import com.google.cloud.spanner.BatchClient;
+
+/**
+ * A quick start code for Cloud Spanner. It demonstrates how to setup the Cloud Spanner client and
+ * execute a simple query using it against an existing database.
+ */
+
+    // Instantiates a client
+    SpannerOptions options = SpannerOptions.newBuilder().build();
+    Spanner spanner = options.getService();
+
+    // Name of your instance &amp; database.
+    String instanceId = vars.get(&quot;instance-id&quot;);
+    String databaseId = vars.get(&quot;db&quot;);
+    String projectId = vars.get(&quot;project-id&quot;);
+
+      // Creates a database client
+     DatabaseClient dbClient = spanner.getDatabaseClient(DatabaseId.of(projectId, instanceId, databaseId));
+
+     BatchClient batchClient =
+          spanner.getBatchClient(DatabaseId.of(projectId, instanceId, databaseId));
+     OUT.println(&quot;Connection Open\n&quot;);
+	
+    		props.put(&quot;spanner&quot;,spanner);
+    		props.put(&quot;dbClient&quot;,dbClient);
+    		props.put(&quot;batchClient&quot;,batchClient);</stringProp>
+        </JSR223Sampler>
+        <hashTree/>
+      </hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Insert using Mutation" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">${loops}</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">${threads}</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">300</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+      </ThreadGroup>
+      <hashTree>
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="Write to Singers" enabled="true">
+          <stringProp name="scriptLanguage">groovy</stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="cacheKey">true</stringProp>
+          <stringProp name="script">import com.google.cloud.spanner.DatabaseClient;
+import com.google.cloud.spanner.Mutation;
+
+class Singer {
+
+     String singerId;
+     String firstName;
+     String lastName;
+
+    Singer(String singerId, String firstName, String lastName) {
+      this.singerId = singerId;
+      this.firstName = firstName;
+      this.lastName = lastName;
+    }
+}
+
+DatabaseClient dbClient = props.get(&quot;dbClient&quot;);
+
+String SingerId = vars.get(&quot;id&quot;) ;
+String FirstName = vars.get(&quot;firstname&quot;);
+String LastName = vars.get(&quot;lastname&quot;);
+
+List&lt;Singer&gt; SINGERS = Arrays.asList(
+	new Singer(SingerId, FirstName, LastName)
+	);
+List&lt;Mutation&gt; mutations = new ArrayList&lt;&gt;();
+
+for (Singer singer : SINGERS) {
+    mutations.add(
+        Mutation.newInsertBuilder(&quot;Singers&quot;)
+            .set(&quot;SingerId&quot;)
+            .to(singer.singerId)
+            .set(&quot;FirstName&quot;)
+            .to(singer.firstName)
+            .set(&quot;LastName&quot;)
+            .to(singer.lastName)
+            .build());
+  }
+dbClient.write(mutations);</stringProp>
+        </JSR223Sampler>
+        <hashTree>
+          <UserParameters guiclass="UserParametersGui" testclass="UserParameters" testname="User Parameters" enabled="true">
+            <collectionProp name="UserParameters.names">
+              <stringProp name="3355">id</stringProp>
+              <stringProp name="133788987">firstname</stringProp>
+              <stringProp name="-1458646495">lastname</stringProp>
+              <stringProp name="-477469889">album_count</stringProp>
+            </collectionProp>
+            <collectionProp name="UserParameters.thread_values">
+              <collectionProp name="-839407398">
+                <stringProp name="118040362">${__UUID()}</stringProp>
+                <stringProp name="-1194545551">${__RandomString(10,abcdefghijklmnopqrstuvwxyz)}</stringProp>
+                <stringProp name="-1194545551">${__RandomString(10,abcdefghijklmnopqrstuvwxyz)}</stringProp>
+                <stringProp name="-732309092">${__Random(0,2)}</stringProp>
+              </collectionProp>
+            </collectionProp>
+            <boolProp name="UserParameters.per_iteration">false</boolProp>
+          </UserParameters>
+          <hashTree/>
+        </hashTree>
+        <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">true</boolProp>
+          <stringProp name="LoopController.loops">${album_count}</stringProp>
+        </LoopController>
+        <hashTree>
+          <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="Write to Album and Songs" enabled="true">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="script">import com.google.cloud.spanner.DatabaseClient;
+import com.google.cloud.spanner.Mutation;
+
+DatabaseClient dbClient = props.get(&quot;dbClient&quot;);
+
+/** Class to contain album sample data. */
+ class Album {
+
+    final String singerId;
+    final String albumId;
+    final String albumTitle;
+
+    Album(String singerId, String albumId, String albumTitle) {
+      this.singerId = singerId;
+      this.albumId = albumId;
+      this.albumTitle = albumTitle;
+    }
+  }
+
+/** Class to contain Song sample data. */
+ class Song {
+
+    final String singerId;
+    final String albumId;
+    final String trackId;
+    final String songName;
+
+    Song(String singerId, String albumId, String trackId, String songName) {
+      this.singerId = singerId;
+      this.albumId = albumId;
+      this.trackId = trackId;
+      this.songName = songName;
+    }
+  }
+  
+String SingerId = vars.get(&quot;id&quot;) ;
+String AlbumId = vars.get(&quot;aid&quot;);
+String AlbumTitle = vars.get(&quot;title&quot;);
+String SongName = vars.get(&quot;song_name&quot;);
+int count = Integer.parseInt(vars.get(&quot;songs_count&quot;))
+
+List&lt;Album&gt; ALBUMS =
+    Arrays.asList(
+        new Album(SingerId, AlbumId , AlbumTitle)
+        );
+List&lt;Song&gt; SONGS = new ArrayList&lt;&gt;();
+for(int i=0; i&lt;count;i++){
+	SONGS.add(new Song(SingerId, AlbumId, &apos;T&apos;+i, SongName+i));
+}
+  
+
+List&lt;Mutation&gt; mutations = new ArrayList&lt;&gt;();
+  for (Album album : ALBUMS) {
+    mutations.add(
+        Mutation.newInsertBuilder(&quot;Albums&quot;)
+            .set(&quot;SingerId&quot;)
+            .to(album.singerId)
+            .set(&quot;AlbumId&quot;)
+            .to(album.albumId)
+            .set(&quot;AlbumTitle&quot;)
+            .to(album.albumTitle)
+            .build());
+  }
+  for (Song song : SONGS) {
+    mutations.add(
+        Mutation.newInsertBuilder(&quot;Songs&quot;)
+            .set(&quot;SingerId&quot;)
+            .to(song.singerId)
+            .set(&quot;AlbumId&quot;)
+            .to(song.albumId)
+            .set(&quot;TrackId&quot;)
+            .to(song.trackId)
+            .set(&quot;SongName&quot;)
+            .to(song.songName)
+            .build());
+  }
+  dbClient.write(mutations);
+</stringProp>
+          </JSR223Sampler>
+          <hashTree>
+            <UserParameters guiclass="UserParametersGui" testclass="UserParameters" testname="User Parameters" enabled="true">
+              <collectionProp name="UserParameters.names">
+                <stringProp name="96572">aid</stringProp>
+                <stringProp name="110371416">title</stringProp>
+                <stringProp name="360653685">song_name</stringProp>
+                <stringProp name="-1161466994">songs_count</stringProp>
+              </collectionProp>
+              <collectionProp name="UserParameters.thread_values">
+                <collectionProp name="-1212696240">
+                  <stringProp name="118040362">${__UUID()}</stringProp>
+                  <stringProp name="-843745614">${__RandomString(20,abcdefghijklmnopqrstuvwxyz)}</stringProp>
+                  <stringProp name="-492945677">${__RandomString(30,abcdefghijklmnopqrstuvwxyz)}</stringProp>
+                  <stringProp name="-732306209">${__Random(0,5)}</stringProp>
+                </collectionProp>
+              </collectionProp>
+              <boolProp name="UserParameters.per_iteration">false</boolProp>
+            </UserParameters>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+      </hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Insert using DML" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">${loops}</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">${threads}</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">300</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+      </ThreadGroup>
+      <hashTree>
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="Write to Singers" enabled="true">
+          <stringProp name="scriptLanguage">groovy</stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="cacheKey">true</stringProp>
+          <stringProp name="script">import com.google.cloud.spanner.DatabaseClient;
+import com.google.cloud.spanner.Statement;
+
+DatabaseClient dbClient = props.get(&quot;dbClient&quot;);
+
+String SingerId = vars.get(&quot;id&quot;) ;
+String FirstName = vars.get(&quot;firstname&quot;);
+String LastName = vars.get(&quot;lastname&quot;);
+
+dbClient.readWriteTransaction()
+      .run(transaction -&gt; {
+        String sql =
+            &quot;INSERT INTO Singers ( SingerId, FirstName, LastName ) VALUES ( &apos;${SingerId}&apos;, &apos;${FirstName}&apos;, &apos;${LastName}&apos; )&quot;;
+        long rowCount = transaction.executeUpdate(Statement.of(sql));
+        OUT.println(rowCount+&quot; records inserted in Singers.\n&quot;);
+      });</stringProp>
+        </JSR223Sampler>
+        <hashTree>
+          <UserParameters guiclass="UserParametersGui" testclass="UserParameters" testname="User Parameters" enabled="true">
+            <collectionProp name="UserParameters.names">
+              <stringProp name="3355">id</stringProp>
+              <stringProp name="133788987">firstname</stringProp>
+              <stringProp name="-1458646495">lastname</stringProp>
+              <stringProp name="-477469889">album_count</stringProp>
+            </collectionProp>
+            <collectionProp name="UserParameters.thread_values">
+              <collectionProp name="-839407398">
+                <stringProp name="118040362">${__UUID()}</stringProp>
+                <stringProp name="-1194545551">${__RandomString(10,abcdefghijklmnopqrstuvwxyz)}</stringProp>
+                <stringProp name="-1194545551">${__RandomString(10,abcdefghijklmnopqrstuvwxyz)}</stringProp>
+                <stringProp name="-732309092">${__Random(0,2)}</stringProp>
+              </collectionProp>
+            </collectionProp>
+            <boolProp name="UserParameters.per_iteration">false</boolProp>
+          </UserParameters>
+          <hashTree/>
+        </hashTree>
+      </hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Update using Mutation" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">${loops}</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">${threads}</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">300</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+      </ThreadGroup>
+      <hashTree>
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="Update Album" enabled="true">
+          <stringProp name="scriptLanguage">groovy</stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="cacheKey">true</stringProp>
+          <stringProp name="script">import com.google.cloud.spanner.DatabaseClient;
+import com.google.cloud.spanner.Mutation;
+import com.google.cloud.spanner.Struct;
+import com.google.cloud.spanner.Key;
+
+DatabaseClient dbClient = props.get(&quot;dbClient&quot;);
+
+String SingerId = vars.get(&quot;singerid&quot;) ;
+String AlbumId = vars.get(&quot;albumid&quot;);
+
+dbClient.readWriteTransaction()
+      .run(transaction -&gt; {       
+        Struct row = transaction.readRow(&quot;Albums&quot;, Key.of(SingerId, AlbumId), Arrays.asList(&quot;AlbumTitle&quot;));
+        String old_title = row.getString(0);
+        String new_title = &quot;updated-&quot; + old_title
+
+        transaction.buffer(
+              Mutation.newUpdateBuilder(&quot;Albums&quot;)
+                  .set(&quot;SingerId&quot;)
+                  .to(SingerId)
+                  .set(&quot;AlbumId&quot;)
+                  .to(AlbumId)
+                  .set(&quot;AlbumTitle&quot;)
+                  .to(new_title)
+                  .build());
+      })</stringProp>
+        </JSR223Sampler>
+        <hashTree/>
+      </hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Update using DML" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">${loops}</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">${threads}</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">300</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+      </ThreadGroup>
+      <hashTree>
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="Update Singer" enabled="true">
+          <stringProp name="scriptLanguage">groovy</stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="cacheKey">true</stringProp>
+          <stringProp name="script">import com.google.cloud.spanner.DatabaseClient;
+import com.google.cloud.spanner.Statement;
+
+DatabaseClient dbClient = props.get(&quot;dbClient&quot;);
+
+String SingerId = vars.get(&quot;singerid&quot;) ;
+String SingerInfo = vars.get(&quot;infohex&quot;);
+
+dbClient.readWriteTransaction()
+      .run(transaction -&gt; {
+      	String sql = &quot;UPDATE Singers SET SingerInfo = &apos;${SingerInfo}&apos; WHERE SingerId = &apos;${SingerId}&apos;&quot;;
+        	Statement updateStatement = Statement.newBuilder(sql).build();
+          transaction.executeUpdate(updateStatement);
+        	OUT.printf(&quot;Update in Singers.\n&quot; );
+      });</stringProp>
+        </JSR223Sampler>
+        <hashTree>
+          <UserParameters guiclass="UserParametersGui" testclass="UserParameters" testname="User Parameters" enabled="true">
+            <collectionProp name="UserParameters.names">
+              <stringProp name="1945421741">infohex</stringProp>
+            </collectionProp>
+            <collectionProp name="UserParameters.thread_values">
+              <collectionProp name="292808673">
+                <stringProp name="-1034328907">${__RandomString(200,123456789abcdef)}</stringProp>
+              </collectionProp>
+            </collectionProp>
+            <boolProp name="UserParameters.per_iteration">false</boolProp>
+          </UserParameters>
+          <hashTree/>
+        </hashTree>
+      </hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Scan Thread Group" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">${loops}</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">${threads}</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">300</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+      </ThreadGroup>
+      <hashTree>
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="Scan Songs" enabled="true">
+          <stringProp name="scriptLanguage">groovy</stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="cacheKey">true</stringProp>
+          <stringProp name="script">import com.google.cloud.spanner.DatabaseClient;
+import com.google.cloud.spanner.Statement;
+import com.google.cloud.spanner.ReadContext;
+import com.google.cloud.spanner.Struct;
+import com.google.cloud.spanner.Key;
+
+DatabaseClient dbClient = props.get(&quot;dbClient&quot;);
+
+String SingerId = vars.get(&quot;singerid&quot;) ;
+String AlbumId = vars.get(&quot;albumid&quot;);
+String TrackId = vars.get(&quot;trackid&quot;);
+
+ReadContext readContext = dbClient.singleUse();
+Struct row = readContext.readRow(&quot;Songs&quot;, Key.of(SingerId, AlbumId, TrackId), Arrays.asList(&quot;SongName&quot;));
+OUT.printf(&quot;Result: %s\n\n&quot;, row.getString(0));
+</stringProp>
+        </JSR223Sampler>
+        <hashTree/>
+      </hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Parallel Read using BatchClient" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">${loops}</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">${threads}</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">300</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+      </ThreadGroup>
+      <hashTree>
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="Read Albums" enabled="true">
+          <stringProp name="scriptLanguage">groovy</stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="cacheKey">true</stringProp>
+          <stringProp name="script">import com.google.cloud.spanner.BatchClient;
+import com.google.cloud.spanner.BatchReadOnlyTransaction;
+import com.google.cloud.spanner.DatabaseId;
+import com.google.cloud.spanner.Partition;
+import com.google.cloud.spanner.PartitionOptions;
+import com.google.cloud.spanner.ResultSet;
+import com.google.cloud.spanner.Statement;
+import com.google.cloud.spanner.TimestampBound;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
+
+// [START spanner_batch_client]
+    int numThreads = Runtime.getRuntime().availableProcessors();
+    ExecutorService executor = Executors.newFixedThreadPool(numThreads);
+
+    // Statistics
+    int totalPartitions;
+    AtomicInteger totalRecords = new AtomicInteger(0);
+
+    try {
+      BatchClient batchClient = props.get(&quot;batchClient&quot;);
+
+      final BatchReadOnlyTransaction txn =
+          batchClient.batchReadOnlyTransaction(TimestampBound.strong());
+
+      List&lt;Partition&gt; partitions =
+          txn.partitionQuery(
+              PartitionOptions.getDefaultInstance(),
+              Statement.of(&quot;SELECT SingerId, FirstName, LastName FROM Singers&quot;));
+
+      totalPartitions = partitions.size();
+
+      for (final Partition p : partitions) {
+        executor.execute(
+            () -&gt; {
+              try (ResultSet results = txn.execute(p)) {
+                while (results.next()) {
+                  String singerId = results.getString(0);
+                  String firstName = results.getString(1);
+                  String lastName = results.getString(2);
+                  //System.out.println(&quot;[&quot; + singerId + &quot;] &quot; + firstName + &quot; &quot; + lastName);
+                  totalRecords.getAndIncrement();
+                }
+              }
+            });
+      }
+    } finally {
+      executor.shutdown();
+      executor.awaitTermination(1, TimeUnit.HOURS);
+    }
+
+    double avgRecordsPerPartition = 0.0;
+    if (totalPartitions != 0) {
+      avgRecordsPerPartition = (double) totalRecords.get() / totalPartitions;
+    }
+    OUT.println(&quot;totalPartitions=&quot; + totalPartitions);
+    OUT.println(&quot;totalRecords=&quot; + totalRecords);
+    OUT.println(&quot;avgRecordsPerPartition=&quot; + avgRecordsPerPartition);
+
+  
+
+</stringProp>
+        </JSR223Sampler>
+        <hashTree>
+          <UserParameters guiclass="UserParametersGui" testclass="UserParameters" testname="User Parameters" enabled="true">
+            <collectionProp name="UserParameters.names">
+              <stringProp name="110371416">title</stringProp>
+            </collectionProp>
+            <collectionProp name="UserParameters.thread_values">
+              <collectionProp name="1052563230">
+                <stringProp name="1730530892">${__RandomString(1,abcdefghijklmnopqrstuvwxyz)}%</stringProp>
+              </collectionProp>
+            </collectionProp>
+            <boolProp name="UserParameters.per_iteration">false</boolProp>
+          </UserParameters>
+          <hashTree/>
+        </hashTree>
+      </hashTree>
+      <PostThreadGroup guiclass="PostThreadGroupGui" testclass="PostThreadGroup" testname="tearDown Thread Group" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">1</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+      </PostThreadGroup>
+      <hashTree>
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="Close Connection" enabled="true">
+          <stringProp name="scriptLanguage">groovy</stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="cacheKey">true</stringProp>
+          <stringProp name="script">OUT.println(&quot;Closing connection&quot;);
+props.get(&quot;spanner&quot;).close();</stringProp>
+        </JSR223Sampler>
+        <hashTree/>
+      </hashTree>
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <fieldNames>true</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+            <sentBytes>true</sentBytes>
+            <url>true</url>
+            <threadCounts>true</threadCounts>
+            <idleTime>true</idleTime>
+            <connectTime>true</connectTime>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+      <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <fieldNames>true</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+            <sentBytes>true</sentBytes>
+            <url>true</url>
+            <threadCounts>true</threadCounts>
+            <idleTime>true</idleTime>
+            <connectTime>true</connectTime>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>
