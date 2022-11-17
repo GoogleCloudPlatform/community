@@ -63,7 +63,7 @@ Create a materialized view with partition and clustering alignment from the tabl
 
 In this part of the tutorial we will compare the performance of queries running against the setups that we have created in previous steps.
 
-Open the [Colab](https://colab.research.google.com/) and follow the instructions there. Once the Colab completes running, you should see at the bottom of it a chart and performance indicators for the queries that you've run.
+Open the [Colab](https://colab.research.google.com/drive/1npGmCLb0s6M3Kttw8SDw8wKEm6FXZbb-?usp=share_link) and follow the instructions there. Once the Colab completes running, you should see at the bottom of it a chart and performance indicators for the queries that you've run.
 
 
 ## Cleaning up
