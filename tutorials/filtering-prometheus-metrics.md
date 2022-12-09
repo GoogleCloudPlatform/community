@@ -8,7 +8,7 @@ date_published: 2020-12-07
 
 Ganochenko Dmitrii
 
-<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This tutorial shows how to set up filtering Prometheus metrics on the Pod size, without using `metric_relabel_config` feature.
 Follow this tutorial to update the Pod specification and configure filtering metrics with allow and block lists.
