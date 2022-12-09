@@ -1,6 +1,6 @@
 ---
 title: Filtering Prometheus metrics
-description: Learn how to setup filtering Prometheus metrics on the Pod side
+description: Learn how to setup filtering Prometheus metrics on the Pod side.
 author: ganochenkodg
 tags: Prometheus, metrics
 date_published: 2020-12-07
