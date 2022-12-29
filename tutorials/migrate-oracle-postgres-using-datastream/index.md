@@ -145,7 +145,8 @@ of this tutorial.
             dataflow.googleapis.com \
             sqladmin.googleapis.com \
             pubsub.googleapis.com \
-            datastream.googleapis.com
+            datastream.googleapis.com \
+            servicenetworking.googleapis.com
 
 1.  Set environment variables: 
 
@@ -172,6 +173,9 @@ of this tutorial.
 
         # Target Cloud SQL for PostgreSQL version (e.g., POSTGRES_12)
         export CLOUD_SQL_PG_VERSION="[CLOUD_SQL_PG_VERSION]"
+        
+        # Cloud SQL Database Password
+        export DATABASE_PASSWORD="[DATABASE_PASSWORD]
 
 1.  Create the bastion Compute Engine VM instance:
 
@@ -204,10 +208,18 @@ of this tutorial.
 
 1.  Create the target Cloud SQL for PostgreSQL instance and give the associated service account the necessary role:
 
+        gcloud compute addresses create psql-reserve-ip-range \
+            --global \
+            --purpose=VPC_PEERING \
+            --prefix-length=16 \
+            --description="Test for Oracle Migration" \
+            --network=default \
+            --project=${PROJECT_ID}
+        
         gcloud beta sql instances create ${CLOUD_SQL} \
             --database-version=${CLOUD_SQL_PG_VERSION} \
             --cpu=4 --memory=3840MiB \
-            --region=${REGION} \
+            --region=${GCP_REGION_ID} \
             --no-assign-ip \
             --network=default \
             --root-password=${DATABASE_PASSWORD} \
@@ -252,7 +264,7 @@ The bastion VM is used during the migration process to execute Ora2Pg queries, a
 1.  From Cloud Shell, connect to the VM with SSH:
 
         gcloud compute ssh ${BASTION_VM_NAME} \
-            --zone ${GCP_ZONE_ID}
+            --zone ${GCP_ZONE_ID} \
             --project ${PROJECT_ID}
 
 1.  In the VM shell, install Docker:
@@ -304,6 +316,11 @@ The bastion VM is used during the migration process to execute Ora2Pg queries, a
         # Space-separated list of Oracle object types to export (e.g., "TABLE VIEW"). Leave blank to export all object types supported by Ora2Pg.
         export ORACLE_TYPES="[SPACE_SEPARATED_OBJECT_TYPES]"
 
+1.  Install `git` and use it to clone the repository:
+
+        sudo apt-get install git -y
+        git clone https://github.com/GoogleCloudPlatform/community.git
+     
 1.  Download Oracle Instant Client packages:
 
     1.  Go to the [Oracle Instant Client download page](https://www.oracle.com/database/technologies/instant-client/linux-x86-64-downloads.html).
@@ -316,11 +333,6 @@ The bastion VM is used during the migration process to execute Ora2Pg queries, a
         *   `oracle-instantclient12.2-odbc-12.2.0.1.0-2.x86_64.rpm`
 
     1.  Copy the RPM files to `community/tutorials/migrate-oracle-postgres-using-datastream/ora2pg/oracle/` on the bastion VM.
-
-1.  Install `git` and use it to clone the repository:
-
-        sudo apt-get install git -y
-        git clone https://github.com/GoogleCloudPlatform/community.git
 
 1.  Go to the `ora2pg` directory:
 
