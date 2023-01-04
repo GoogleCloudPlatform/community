@@ -817,7 +817,7 @@ used in this tutorial, you can delete the project.
 
 1.  Delete the Cloud Endpoint:
 
-        gcloud endpoints services delete dt.endpoints.${GCP_PROJECT}.cloud.goog
+        gcloud endpoints services delete dt.endpoints.${GCP_PROJECT_ID}.cloud.goog
 
 1.  In the Cloud Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
 1.  In the project list, select the project you want to delete and click **Delete**.
