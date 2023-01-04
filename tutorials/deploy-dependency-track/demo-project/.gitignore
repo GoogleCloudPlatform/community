@@ -1,3 +1,5 @@
 requirements.txt
 bom.xml
 bom.json
+cyclonedx.json
+cyclonedx.xml
