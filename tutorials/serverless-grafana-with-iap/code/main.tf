@@ -162,6 +162,7 @@ locals {
     GF_AUTH_JWT_EMAIL_CLAIM       = "email"
     GF_AUTH_JWT_JWK_SET_URL       = "https://www.gstatic.com/iap/verify/public_key-jwk"
     GF_AUTH_JWT_EXPECTED_CLAIMS   = "{\"iss\": \"https://cloud.google.com/iap\"}"
+    GF_AUTH_JWT_AUTO_SIGN_UP      = "true"
     GF_AUTH_PROXY_ENABLED         = "true"
     GF_AUTH_PROXY_HEADER_NAME     = "X-Goog-Authenticated-User-Email"
     GF_AUTH_PROXY_HEADER_PROPERTY = "email"
