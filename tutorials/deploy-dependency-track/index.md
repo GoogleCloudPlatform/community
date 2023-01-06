@@ -41,7 +41,7 @@ This tutorial takes approximately 2-4 hours to complete.
 
 The following diagram illustrates the architecture of the solution described in this tutorial:
 
-![Architecture overview.](img/architecture.png)
+![Architecture overview.](https://storage.googleapis.com/gcp-community/tutorials//architecture.png)
 
 - The Dependency-Track Frontend and API components are hosted as GKE pods.
 - Cloud Load Balancing manages traffic to the GKE pods.
@@ -290,7 +290,7 @@ In this section, you configure the system to run on Google Kubernetes Engine (GK
 
         gcloud compute addresses create dependency-track --global
 
-1.  Set an environment variable to hold the the external IP address:
+1.  Set an environment variable to hold the external IP address:
 
         export DT_IP=$(gcloud compute addresses describe dependency-track \
           --global --format="value(address)")
@@ -301,15 +301,15 @@ In this section, you configure the system to run on Google Kubernetes Engine (GK
 
 ### Create a Cloud Endpoint
 
-You would normally associate your service with a domain name but, for this tutorial,
-we'll use [Cloud Endpoints](https://cloud.google.com/endpoints) to create a domain
+You would normally associate your service with a domain name but this tutorial
+uses [Cloud Endpoints](https://cloud.google.com/endpoints) to create a domain
 name without needing to register a domain or configure DNS for the domain.
 
 1. Configure the endpoint name:
 
         export DT_DOMAIN="dt.endpoints.${GCP_PROJECT_ID}.cloud.goog"
 
-1. Generate the ednpoint configuration:
+1. Generate the endpoint configuration:
 
 ```bash
 cat <<EOF | tee endpoint.yaml
