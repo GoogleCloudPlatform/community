@@ -63,12 +63,9 @@ spec:
           - containerPort: 8080
             name: api
         resources:
-          limits:
-            cpu: "4"
-            memory: "16G"
           requests:
             cpu: "2"
-            memory: "12G"
+            memory: "8G"
         volumeMounts:
           - mountPath: /data
             name: data
@@ -98,3 +95,33 @@ spec:
           persistentVolumeClaim:
             claimName: dependency-track-data
             readOnly: false
+
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: dependency-track-data
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dependency-track-apiserver-svc
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}'
+spec:
+  type: ClusterIP
+  selector:
+    app: dependency-track-apiserver
+  ports:
+  - port: 8088
+    name: api
+    protocol: TCP
+    targetPort: 8080
