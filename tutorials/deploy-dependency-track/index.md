@@ -41,7 +41,7 @@ This tutorial takes approximately 2-4 hours to complete.
 
 The following diagram illustrates the architecture of the solution described in this tutorial:
 
-![Architecture overview.](https://storage.googleapis.com/gcp-community/tutorials//architecture.png)
+![Architecture overview.](https://storage.googleapis.com/gcp-community/tutorials/deploy-dependency-track/architecture.png)
 
 - The Dependency-Track Frontend and API components are hosted as GKE pods.
 - Cloud Load Balancing manages traffic to the GKE pods.
