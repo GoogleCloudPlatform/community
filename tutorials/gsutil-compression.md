@@ -17,28 +17,27 @@ According to the Google Cloud Platform standard documentation, it is suggested t
 ## Use-Case
 Suppose you have just dumped alot of data from Snowflake datawarehouse to GCS bucket using "COPY INTO <LOCATION-TO-GCS>" statement without any compression applied since you want to process this data further without decompressing, but once the processing is done you want to compress it again and send to an API endpoint which applies an upload limit of 200MB with gzip compression. How to approach it without burning much compute on custom applications built by developers having inefficient code. Instead of reinventing the wheel, you just have to use "gsutil" commands in multithread setting to efficiently compress the data. 
 
-For more information, see the 
-[style guide](https://cloud.google.com/community/tutorials/styleguide) and [contribution guide](https://cloud.google.com/community/tutorials/write).
+Before proceeding ahead, you have to make sure to have following services enabled:
 
-The first paragraph or two of the tutorial should tell the reader the following:
+  * GCP Account
+  * Compute Engine
+  * Google Cloud Storage
 
-  * Who the tutorial is for
-  * What they will learn from the tutorial
-  * What prerequisite knowledge they need for the tutorial
+## Setup a Compute Engine VM instance
 
-Don't use a heading like **Overview** or **Introduction**. Just get right to it.
+We will use Compute Engine VM instance to pull the existing data in GCS bucket. We assume that you have some uncompressed data residing in one of the GCS buckets.
 
-## Objectives
+## Pulling data from GCS Bucket
 
-Give the reader a high-level summary of what steps they take during the tutorial. This information is often most effective as a short bulleted list.
+In this step, we will use gsutil to pull the data in the bucket. While pulling the data, we have to use multithreading parameter "-m" for faster download. Usually the data transafer between the services in the GCP is much faster when compared to pulling data from on-premise machines.
 
-### Example: Objectives
+## Store the data back to GCS bucket with Compression enabled
 
-*   Create a service account with limited access.
-*   Create a Cloud Function that triggers on HTTP.
-*   Create a Cloud Scheduler job that targets an HTTP endpoint.
-*   Run the Cloud Scheduler job. 
-*   Verify success of the job.
+Once the data is downloaded to VM isntance, we will again use gsutil command to send the data back to the bucket with the compression parameter "-z" enabled with value "csv" file format. By default if you use "-Z" instead of "-z" the "gzip" encoding is applied.
+
+## Deleting the Compute Engine VM instance
+
+After completing the compression step, you can stop and delete the VM instance to stop any cost from incurring. Since for this exercise, the configuration used for VM instance is heavy, be careful to not leave the instance running.
 
 ## Costs
 
@@ -47,53 +46,6 @@ Tell the reader which technologies the tutorial uses and what it costs to use th
 For Google Cloud services, link to the preconfigured [pricing calculator](https://cloud.google.com/products/calculator/) if possible.
 
 If there are no costs to be incurred, state that.
-
-### Example: Costs 
-
-This tutorial uses billable components of Google Cloud, including the following:
-
-*   [Cloud Functions](https://cloud.google.com/functions)
-*   [Cloud Scheduler](https://cloud.google.com/scheduler)
-*   [App Engine](https://cloud.google.com/appengine/docs/flexible/python)
-
-Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage.
-
-## Before you begin
-
-Give a numbered sequence of procedural steps that the reader must take to set up their environment before getting into the main tutorial.
-
-Don't assume anything about the reader's environment. You can include simple installation instructions of only a few steps, but provide links to installation
-instructions for anything more complex.
-
-### Example: Before you begin
-
-This tutorial assumes that you're using the Microsoft Windows operating system.
-
-1.  Create an account with the BigQuery free tier. See
-    [this video from Google](https://www.youtube.com/watch?v=w4mzE--sprY&list=PLIivdWyY5sqI6Jd0SbqviEgoA853EvDsq&index=2) for detailed instructions.
-1.  Create a Google Cloud project in the [Cloud console](https://console.cloud.google.com/).
-1.  Install [DBeaver Community for Windows](https://dbeaver.io/download/).
-
-## Tutorial body
-
-Break the tutorial body into as many sections and subsections as needed, with concise headings.
-
-### Use short numbered lists for procedures
-
-Use numbered lists of steps for procedures. Each action that the reader must take should be its own step. Start each step with the action, such as *Click*, 
-*Run*, or *Enter*.
-
-Keep procedures to 7 steps or less, if possible. If a procedure is longer than 7 steps, consider how it might be separated into sub-procedures, each in its
-own subsection.
-
-### Provide context, but don't overdo the screenshots
-
-Provide context and explain what's going on.
-
-Use screenshots only when they help the reader. Don't provide a screenshot for every step.
-
-Help the reader to recognize what success looks like along the way. For example, describing the result of a step helps the reader to feel like they're doing
-it right and helps them know things are working so far.
 
 ## Cleaning up
 
