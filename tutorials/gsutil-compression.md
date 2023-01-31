@@ -9,19 +9,16 @@ date_published: 2023-01-31
 Rahul Dubey | Community Editor | Software Engineer | Capgemini
 
 <p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
-<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-To begin creating a tutorial, copy the Markdown source for this tutorial template into your blank Markdown file. Replace the explanatory text and examples with 
-your own tutorial content. Not all documents will use all of the sections described in this template. For example, a conceptual document or code walkthrough
-might not include the "Costs" or "Cleaning up" sections. For more information, see the 
+This tutorial is to provide a brief workflow to allow the users who are facing the issue of non-compressed data in the Google Cloud Storage bucket and wants to compress it within the same bucket. But the very first question comes up is Why? Because the Google Cloud Storage buckets are blob storages and doesn't follow the same rules as with the local File System and hence the file manipulation applied to the stored blobs only creates new blobs inplace of the existing one. One such case is compression on upload.
+
+According to the Google Cloud Platform standard documentation, it is suggested that compression can only be applied while using gsutil when uploading the data to the bucket, but same gsutil command cannot be use to compress the data which is already there in the bucket.
+
+## Use-Case
+Suppose you have just dumped alot of data from Snowflake datawarehouse to GCS bucket using "COPY INTO <LOCATION-TO-GCS>" statement without any compression applied since you want to process this data further without decompressing, but once the processing is done you want to compress it again and send to an API endpoint which applies an upload limit of 200MB with gzip compression. How to approach it without burning much compute on custom applications built by developers having inefficient code. Instead of reinventing the wheel, you just have to use "gsutil" commands in multithread setting to efficiently compress the data. 
+
+For more information, see the 
 [style guide](https://cloud.google.com/community/tutorials/styleguide) and [contribution guide](https://cloud.google.com/community/tutorials/write).
-
-Replace the placeholders in the metadata at the top of the Markdown file with your own values. Follow the guidance provided by the placeholder values for spacing
-and punctuation.
-
-The first line after the metadata should be your name and an optional job description and organization affiliation.
-
-After that is one of two banners that indicates whether the document was contributed by a Google employee. Just leave one banner and delete the other one.
 
 The first paragraph or two of the tutorial should tell the reader the following:
 
