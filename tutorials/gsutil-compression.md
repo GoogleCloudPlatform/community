@@ -2,7 +2,7 @@
 title: Compression using gsutil & Compute Engine
 description: This tutorial is intented to provide an alternate way to compress the data already exisitng in a bucket.
 author: RahulDubey391
-tags: #gsutil, #compression, #gzip
+tags: gsutil, Google Cloud Storage, Compression, gzip
 date_published: 2023-01-31
 ---
 
