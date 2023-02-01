@@ -15,17 +15,21 @@ This tutorial is to provide a brief workflow to allow the users who are facing t
 
 According to the Google Cloud Platform standard documentation, it is suggested that compression can only be applied while using gsutil when uploading the data to the bucket, but same gsutil command cannot be use to compress the data which is already there in the bucket.
 
+
 ## Use-Case
 Suppose you have just dumped alot of data from Snowflake datawarehouse to GCS bucket using "COPY INTO <LOCATION-TO-GCS>" statement without any compression applied since you want to process this data further without decompressing, but once the processing is done you want to compress it again and send to an API endpoint which applies an upload limit of 200MB with gzip compression. How to approach it without burning much compute on custom applications built by developers having inefficient code. Instead of reinventing the wheel, you just have to use "gsutil" commands in multithread setting to efficiently compress the data. 
+
 
 ## Alternative Suggestion
 According to the documentations provided by officially by Google, there are several ways you can approach this problem, but these ways require you to have some handy experience with programming and some development efforts.
   * Using Bulk Compression Dataflow template.
   * Writing a custom App Engine or Cloud Run application to handle compression logic.
 
+
 ## Drawbacks with Alternative Suggestions
   * For the Dataflow template, you have to understant the unified programming model provided by Apache Beam. This can be a bit challenging if you have never used it before.
   * For writing custom application, you have to be familiar Multithreading, Multiprocessing, Task Queues etc. Apart from the programming jargon, you have to understand that there are limitations with GCS API if you are using HDD type. Even if you use SSD type, your program will always be IO-Bounded and hence an efficient implementation is out of question.
+
 
 ## Gsutil to the rescue
 Often the simpler solutions are better and highly performant when compared to the complex solution with not-so-good performance and this can escalate quickly if you are dealing with heavy amout of data in production setting. Gsutil is an elegant and simpler tool provided for GCS related worklods.
@@ -36,15 +40,18 @@ Before proceeding ahead, you have to make sure to have following services enable
   * Compute Engine
   * Google Cloud Storage
 
+
 ## Costs
 
 For this tutorial, you will be charged for Compute Engine Instance, Google Cloud Storage.
 
 For Google Cloud services, check this [pricing calculator](https://cloud.google.com/products/calculator/) to get a rough estimate of the charge incurred.
 
+
 ## Setup a Compute Engine VM instance
 
 We will use Compute Engine VM instance to pull the existing data in GCS bucket. We assume that you have some uncompressed data residing in one of the GCS buckets.
+
 
 ## Pulling data from GCS Bucket
 
@@ -58,6 +65,7 @@ Here the parameters are as follow:
   * `-r` - Enables recursive copy execution for whole directory tree.
   * `<SOURCE-BUCKET>` - Source bucket name followed by `<BLOB-PREFIX>` for any particular folder
   * `<LOCAL-DESTINATION>` - Local path in the Compute Engine attached storage  
+
 
 ## Store the data back to GCS bucket with Compression enabled
 
@@ -73,9 +81,11 @@ Here the parameters are as follow:
   * `<LOCAL-SOURCE>` - Source path in the VM instance's local storage.
   * `<DESTINATION-BUCKET>` - Destination path of the GCS bucket. Keep the Source and Destination bucket same to avoid creating multiple files.
 
+
 ## Cleaning up
 
 Tell the reader how to shut down what they built to avoid incurring further costs.
+
 
 ### Example: Cleaning up
 
@@ -94,9 +104,11 @@ To delete a project, do the following:
 1.  In the project list, select the project you want to delete and click **Delete**.
 1.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
 
+
 ## What's next
 
 Tell the reader what they should read or watch next if they're interested in learning more.
+
 
 ### Example: What's next
 
