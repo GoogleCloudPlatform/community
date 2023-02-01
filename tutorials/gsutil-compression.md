@@ -101,7 +101,5 @@ To avoid any charge incurred for the services used, follow these steps to clean 
 ## What's next
 As explained before, there are alternative ways for developers to follow for the compression of data.
 
-- Watch this tutorial's [Google Cloud Level Up episode on YouTube](https://youtu.be/uBzp5xGSZ6o).
-- Learn more about [AI on Google Cloud](https://cloud.google.com/solutions/ai/).
-- Learn more about [Cloud developer tools](https://cloud.google.com/products/tools).
-- Try out other Google Cloud features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
+- Learn more about [Bulk Compression using Cloud Dataflow Templates](https://cloud.google.com/dataflow/docs/guides/templates/provided-utilities).
+- Learn more about [Object Transcoding](https://cloud.google.com/storage/docs/transcoding).
