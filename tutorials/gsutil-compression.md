@@ -60,6 +60,8 @@ Follow these steps to create VM instance:
   7. Under **Boot disk** section, click on **CHANGE** and select the size of disk under **Size(GB)** as more than **100**. Since this exercise assumes you have to process large number of files and data.
   8. Also under **Access scopes**, set **Allow full acces to all Cloud APIs** as active radio button. This will ensure that VM instance is allowed to access **GCS Bucket**.
   9. Finally, click on **Create** to assign a VM instance.
+
+After setting up the VM instance, click on **SSH** to open a terminal window. After this in the terminal type **sudo -i** to become root user. Once this is done you can follow the below steps to execute `gsutil` commands.
  
 ## Pulling data from GCS Bucket
 In this step, we will use gsutil to pull the data in the bucket. While pulling the data, we have to use multithreading parameter "-m" for faster download. Usually the data transafer between the services in the GCP is much faster when compared to pulling data from on-premise machines.
