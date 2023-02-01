@@ -39,9 +39,11 @@ Before proceeding ahead, you have to make sure to have following services enable
 
 
 ## Costs
-For this tutorial, you will be charged for Compute Engine Instance, Google Cloud Storage.
+For this tutorial, you will be charged for:
+  * Compute Engine Instance 
+  * Google Cloud Storage.
 
-For Google Cloud services, check this [pricing calculator](https://cloud.google.com/products/calculator/) to get a rough estimate of the charge incurred.
+For Google Cloud services, check this [pricing calculator](https://cloud.google.com/products/calculator/) to get a rough estimate of the chargable services.
 
 
 ## Setup a Compute Engine VM instance
