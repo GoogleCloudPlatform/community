@@ -1,6 +1,6 @@
 ---
-title: Compression using gsutil & Compute Engine for same bucket
-description: This tutorial is intented to provide an alternate way to compress the data already exisitng in a bucket.
+title: Bulk Compression using gsutil & Compute Engine for same bucket
+description: This tutorial is intented to provide a simpler way to compress the data already exisitng in a bucket.
 author: RahulDubey391
 tags: gsutil, Google Cloud Storage, Google Compute Engine, Compression, gzip
 date_published: 2023-02-01
