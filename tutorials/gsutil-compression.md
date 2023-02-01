@@ -50,7 +50,17 @@ For Google Cloud services, check this [pricing calculator](https://cloud.google.
 ## Setup a Compute Engine VM instance
 We will use Compute Engine VM instance to pull the existing data in GCS bucket. We assume that you have some uncompressed data residing in one of the GCS buckets.
 
-
+Follow these steps to create VM instance:
+  1. Go to Google Cloud Console and click on **Side Drawer**.
+  2. Hover mouse pointer over **Compute Engine**. Then click on **Virtual Machines**.
+  3. After the above step, a new page will open. At the top you will see **CREATE INSTANCE**. Click on it and start configuring the VM.
+  4. Provide a **Name** for the instance.
+  5. Set **Region** and **Zone** accordingly.
+  6. Under **Machine Configuration**, set **Series** as **N2** and **Machine type** as **n2-standard-8**.
+  7. Under **Boot disk** section, click on **CHANGE** and select the size of disk under **Size(GB)** as more than **100**. Since this exercise assumes you have to process large number of files and data.
+  8. Also under **Access scopes**, set **Allow full acces to all Cloud APIs** as active radio button. This will ensure that VM instance is allowed to access **GCS Bucket**.
+  9. Finally, click on **Create** to assign a VM instance.
+ 
 ## Pulling data from GCS Bucket
 In this step, we will use gsutil to pull the data in the bucket. While pulling the data, we have to use multithreading parameter "-m" for faster download. Usually the data transafer between the services in the GCP is much faster when compared to pulling data from on-premise machines.
 
