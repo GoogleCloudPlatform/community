@@ -65,6 +65,14 @@ Once the data is downloaded to VM isntance, we will again use gsutil command to 
 
 `gsutil -m cp -r -z csv <LOCAL-SOURCE>/*.csv gs://<DESTINATION-BUCKET>/<BLOB-PREFIX>/`
 
+Here the parameters are as follow:
+  * `cp` - Copy command to copy the files from one location to another.
+  * `-m` - Enables multithreading/multi-processing for `cp` command.
+  * `-r` - Enables recursive copy execution for whole directory tree.
+  * `-z` - Enables **gzip** compression over the source files. The target file format is provided as `csv`.
+  * `<LOCAL-SOURCE>` - Source path in the VM instance's local storage.
+  * `<DESTINATION-BUCKET>` - Destination path of the GCS bucket. Keep the Source and Destination bucket same to avoid creating multiple files.
+
 ## Cleaning up
 
 Tell the reader how to shut down what they built to avoid incurring further costs.
