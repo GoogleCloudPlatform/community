@@ -11,7 +11,7 @@ Rahul Dubey | Community Editor | Software Engineer | Capgemini
 
 <p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
-This tutorial gives you a simpler and brief idea about dealing with non-compressed data existing in the bucket which you want to compress in bulk manner. There are already other exisitng methods mentioned below under **Alternative Suggestion** section but those require some developer's effort. This one only require few commands to execute to enable bulk compression over an exisiting bucket.
+This tutorial gives you a simpler and brief idea about dealing with non-compressed data existing in the bucket which you want to compress in bulk manner. There are already other exisitng methods mentioned below under **Alternative Suggestion** section but those require some developer's effort. This one only require few commands to execute to enable bulk compression.
 
 ## Use-Case
 Suppose you have dumped large number of files from Snowflake datawarehouse to GCS bucket using "COPY INTO <LOCATION-TO-GCS>" statement without any compression and chunking enabled. You want to process this data further without decompressing, but once the processing is done you want to compress it again and send to an API endpoint which applies an upload limit of 200MB with gzip compression. How to approach it without burning much compute on custom applications built by developers having not-close-to-perfect performance? Instead of reinventing the wheel, you just have to use "gsutil" commands. 
