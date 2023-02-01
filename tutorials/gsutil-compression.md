@@ -53,11 +53,11 @@ In this step, we will use gsutil to pull the data in the bucket. While pulling t
 `gsutil -m cp -r gs://<SOURCE-BUCKET>/<BLOB-PREFIX> <LOCAL-DESTINATION>`
 
 Here the parameters are as follow:
-    * `cp` - Copy command to copy the files from one location to another.
-    * `-m` - Enables multithreading/multi-processing for `cp` command.
-    * `-r` - Enables recursive copy execution for whole directory tree.
-    * `<SOURCE-BUCKET>` - Source bucket name followed by `<BLOB-PREFIX>` for any particular folder
-    * `<LOCAL-DESTINATION>` - Local path in the Compute Engine attached storage  
+  * `cp` - Copy command to copy the files from one location to another.
+  * `-m` - Enables multithreading/multi-processing for `cp` command.
+  * `-r` - Enables recursive copy execution for whole directory tree.
+  * `<SOURCE-BUCKET>` - Source bucket name followed by `<BLOB-PREFIX>` for any particular folder
+  * `<LOCAL-DESTINATION>` - Local path in the Compute Engine attached storage  
 
 ## Store the data back to GCS bucket with Compression enabled
 
