@@ -50,9 +50,13 @@ We will use Compute Engine VM instance to pull the existing data in GCS bucket. 
 
 In this step, we will use gsutil to pull the data in the bucket. While pulling the data, we have to use multithreading parameter "-m" for faster download. Usually the data transafer between the services in the GCP is much faster when compared to pulling data from on-premise machines.
 
+`gsutil -m cp -r gs://<SOURCE-BUCKET>/<BLOB-PREFIX> <LOCAL-DESTINATION>` 
+
 ## Store the data back to GCS bucket with Compression enabled
 
 Once the data is downloaded to VM isntance, we will again use gsutil command to send the data back to the bucket with the compression parameter "-z" enabled with value "csv" file format. By default if you use "-Z" instead of "-z" the "gzip" encoding is applied.
+
+`gsutil -m cp -r -z csv <LOCAL-SOURCE>/*.csv gs://<DESTINATION-BUCKET>/<BLOB-PREFIX>/`
 
 ## Cleaning up
 
