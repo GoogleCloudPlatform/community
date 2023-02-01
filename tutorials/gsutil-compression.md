@@ -50,7 +50,14 @@ We will use Compute Engine VM instance to pull the existing data in GCS bucket. 
 
 In this step, we will use gsutil to pull the data in the bucket. While pulling the data, we have to use multithreading parameter "-m" for faster download. Usually the data transafer between the services in the GCP is much faster when compared to pulling data from on-premise machines.
 
-`gsutil -m cp -r gs://<SOURCE-BUCKET>/<BLOB-PREFIX> <LOCAL-DESTINATION>` 
+`gsutil -m cp -r gs://<SOURCE-BUCKET>/<BLOB-PREFIX> <LOCAL-DESTINATION>`
+
+Here the parameters are as follow:
+    * `cp` - Copy command to copy the files from one location to another.
+    * `-m` - Enables multithreading/multi-processing for `cp` command.
+    * `-r` - Enables recursive copy execution for whole directory tree.
+    * `<SOURCE-BUCKET>` - Source bucket name followed by `<BLOB-PREFIX>` for any particular folder
+    * `<LOCAL-DESTINATION>` - Local path in the Compute Engine attached storage  
 
 ## Store the data back to GCS bucket with Compression enabled
 
