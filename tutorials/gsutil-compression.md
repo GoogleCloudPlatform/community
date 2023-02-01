@@ -91,14 +91,15 @@ Here the parameters are as follow:
 
 
 ## Cleaning up
-Tell the reader how to shut down what they built to avoid incurring further costs.
-
+To avoid any charge incurred for the services used, follow these steps to clean up the service instances:
+  1. Go to **Compute Engine** and select **VM Instances**. This will provide a list of instances already created.
+  2. Click on checkbox next to the VM instance you created at the beginning of this tutorial.
+  3. Click on **Three dot menu button** at the top right corner and click on **Delete**. This will delete the VM instance along with the data stored in the attached storage.
+  4. Now go to **Google Cloud Storage** and select the bucket you have created. 
+  5. After selecting the bucket, click **Delete**. This will popup a box asking to type **DELETE** in the textbox. Type it and click delete.
 
 ## What's next
-Tell the reader what they should read or watch next if they're interested in learning more.
-
-
-### Example: What's next
+As explained before, there are alternative ways for developers to follow for the compression of data.
 
 - Watch this tutorial's [Google Cloud Level Up episode on YouTube](https://youtu.be/uBzp5xGSZ6o).
 - Learn more about [AI on Google Cloud](https://cloud.google.com/solutions/ai/).
