@@ -38,11 +38,9 @@ Before proceeding ahead, you have to make sure to have following services enable
 
 ## Costs
 
-Tell the reader which technologies the tutorial uses and what it costs to use them.
+For this tutorial, you will be charged for Compute Engine Instance, Google Cloud Storage.
 
-For Google Cloud services, link to the preconfigured [pricing calculator](https://cloud.google.com/products/calculator/) if possible.
-
-If there are no costs to be incurred, state that.
+For Google Cloud services, check this [pricing calculator](https://cloud.google.com/products/calculator/) to get a rough estimate of the charge incurred.
 
 ## Setup a Compute Engine VM instance
 
