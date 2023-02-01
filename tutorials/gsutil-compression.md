@@ -1,9 +1,9 @@
 ---
-title: Compression using gsutil & Compute Engine
+title: Compression using gsutil & Compute Engine for same bucket
 description: This tutorial is intented to provide an alternate way to compress the data already exisitng in a bucket.
 author: RahulDubey391
-tags: gsutil, Google Cloud Storage, Compression, gzip
-date_published: 2023-01-31
+tags: gsutil, Google Cloud Storage, Google Compute Engine, Compression, gzip
+date_published: 2023-02-01
 ---
 
 
@@ -42,19 +42,16 @@ Before proceeding ahead, you have to make sure to have following services enable
 
 
 ## Costs
-
 For this tutorial, you will be charged for Compute Engine Instance, Google Cloud Storage.
 
 For Google Cloud services, check this [pricing calculator](https://cloud.google.com/products/calculator/) to get a rough estimate of the charge incurred.
 
 
 ## Setup a Compute Engine VM instance
-
 We will use Compute Engine VM instance to pull the existing data in GCS bucket. We assume that you have some uncompressed data residing in one of the GCS buckets.
 
 
 ## Pulling data from GCS Bucket
-
 In this step, we will use gsutil to pull the data in the bucket. While pulling the data, we have to use multithreading parameter "-m" for faster download. Usually the data transafer between the services in the GCP is much faster when compared to pulling data from on-premise machines.
 
 `gsutil -m cp -r gs://<SOURCE-BUCKET>/<BLOB-PREFIX> <LOCAL-DESTINATION>`
@@ -68,7 +65,6 @@ Here the parameters are as follow:
 
 
 ## Store the data back to GCS bucket with Compression enabled
-
 Once the data is downloaded to VM isntance, we will again use gsutil command to send the data back to the bucket with the compression parameter "-z" enabled with value "csv" file format. By default if you use "-Z" instead of "-z" the "gzip" encoding is applied.
 
 `gsutil -m cp -r -z csv <LOCAL-SOURCE>/*.csv gs://<DESTINATION-BUCKET>/<BLOB-PREFIX>/`
@@ -83,30 +79,10 @@ Here the parameters are as follow:
 
 
 ## Cleaning up
-
 Tell the reader how to shut down what they built to avoid incurring further costs.
 
 
-### Example: Cleaning up
-
-To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project.
-
-Deleting a project has the following consequences:
-
-- If you used an existing project, you'll also delete any other work that you've done in the project.
-- You can't reuse the project ID of a deleted project. If you created a custom project ID that you plan to use in the
-  future, delete the resources inside the project instead. This ensures that URLs that use the project ID, such as
-  an `appspot.com` URL, remain available.
-
-To delete a project, do the following:
-
-1.  In the Cloud console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
-1.  In the project list, select the project you want to delete and click **Delete**.
-1.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
-
-
 ## What's next
-
 Tell the reader what they should read or watch next if they're interested in learning more.
 
 
