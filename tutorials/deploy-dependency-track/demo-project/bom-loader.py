@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Copyright 2021 Google LLC
+Copyright 2023 Google LLC
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ def get_project_details(project_file: str = 'pyproject.toml') -> (str, str):
     return toml["tool"]["poetry"]["name"], toml["tool"]["poetry"]["version"]
 
 
-def get_bom_xml(bom_xml: str = 'bom.xml') -> str:
+def get_bom_xml(bom_xml: str = 'cyclonedx.xml') -> str:
     with open(bom_xml, 'r') as bom:
         return bom.read()
 

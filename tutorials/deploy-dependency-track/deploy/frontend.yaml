@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: dependency-track-frontend
+  name: dependency-track-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dependency-track-frontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: dependency-track-frontend
+    spec:
+      containers:
+      - image: dependency-track-frontend
+        name: dependency-track-frontend
+        livenessProbe:
+          httpGet:
+            port: web
+        readinessProbe:
+          httpGet:
+            port: web
+        ports:
+          - containerPort: 8080
+            name: web
+        #env:
+        #  - name: API_BASE_URL
+        #    valueFrom:
+        #      configMapKeyRef:
+        #        name: dt-frontend-application-properties
+        #        key: API_BASE_URL
+        resources:
+          requests:
+            cpu: "1"
+            memory: "512M"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dependency-track-frontend-svc
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}'
+spec:
+  type: ClusterIP
+  selector:
+    app: dependency-track-frontend
+  ports:
+  - port: 8080
+    name: web
+    protocol: TCP
+    targetPort: 8080

@@ -5,15 +5,14 @@ description = "A basic demonstration project environment."
 authors = ["Duncan Dickinson <dickinsond@google.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.7"
-Flask = "^1.1.2"
-Django = "2.2.28"
+python = "^3.9"
+Flask = "^2.2"
+Django = "^4.1"
 
-[tool.poetry.dev-dependencies]
-cyclonedx-bom = "^0.4.3"
-tomlkit = "^0.7.0"
-safety = "^1.10.3"
-pylint = "^2.7.4"
+[tool.poetry.group.dev.dependencies]
+cyclonedx-bom = "^3.10"
+tomlkit = "^0.11"
+requests = "^2.28.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
