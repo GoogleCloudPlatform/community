@@ -1,4 +1,4 @@
 locustio==0.14.6
-cryptography==3.4.7
+cryptography==39.0.1
 paho-mqtt==1.5.1
 pyjwt>=2.4.0
