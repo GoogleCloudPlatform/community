@@ -1,4 +1,0 @@
-bash build
-docker build -t gcr.io/cloud-solutions-images/simulator:0.0.1 .
-docker push gcr.io/cloud-solutions-images/simulator:0.0.1
-rm simulator

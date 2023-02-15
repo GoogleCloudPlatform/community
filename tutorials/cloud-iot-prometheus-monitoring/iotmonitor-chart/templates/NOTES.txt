@@ -1,5 +1,0 @@
-Chart deployed. Follow the next instructions in the tutorial to get the service IP address and deploy the web proxy
-
-
-
-

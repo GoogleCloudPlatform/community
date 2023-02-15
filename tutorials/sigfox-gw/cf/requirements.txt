@@ -1,3 +1,0 @@
-rfc3339
-google-cloud-pubsub
-google-cloud-datastore
