@@ -1,9 +1,0 @@
-simplejson==3.16.0
-apache-beam[gcp]
-strict-rfc3339==0.7
-google-cloud-bigquery
-google-auth
-google-cloud-core
-google-cloud-pubsub
-google-cloud-storage
-google-api-python-client
