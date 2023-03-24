@@ -147,6 +147,13 @@ resource "google_cloud_run_service" "default" {
   ]
 }
 
+resource "google_cloud_run_service_iam_member" "allowAllUsers" {
+  service  = google_cloud_run_service.default.name
+  location = google_cloud_run_service.default.location
+  role     = "roles/run.invoker"
+  member   = "allUsers"
+}
+
 locals {
   static_envs = {
     GF_LOG_LEVEL                  = "DEBUG"
