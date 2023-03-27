@@ -154,6 +154,14 @@ Set environment variables that you use throughout the tutorial:
         npm run build
 
     This is a demonstration app using Vue.js. You can ignore any warnings from `npm`.
+    If you have the following error, it's probably due to the node version you are using. Please look for a workaround 
+    in the issue [#2364](https://github.com/GoogleCloudPlatform/community/issues/2364).
+    ```
+    library: 'digital envelope routines',
+    reason: 'unsupported',
+    code: 'ERR_OSSL_EVP_UNSUPPORTED'
+    ```
+
 
 1.  Create a bucket:
 
