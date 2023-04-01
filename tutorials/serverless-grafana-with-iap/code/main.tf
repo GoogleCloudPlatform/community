@@ -148,6 +148,7 @@ resource "google_cloud_run_service" "default" {
 }
 
 resource "google_cloud_run_service_iam_member" "allowAllUsers" {
+  project  = data.google_project.project.project_id
   service  = google_cloud_run_service.default.name
   location = google_cloud_run_service.default.location
   role     = "roles/run.invoker"
@@ -170,10 +171,6 @@ locals {
     GF_AUTH_JWT_JWK_SET_URL       = "https://www.gstatic.com/iap/verify/public_key-jwk"
     GF_AUTH_JWT_EXPECTED_CLAIMS   = "{\"iss\": \"https://cloud.google.com/iap\"}"
     GF_AUTH_JWT_AUTO_SIGN_UP      = "true"
-    GF_AUTH_PROXY_ENABLED         = "true"
-    GF_AUTH_PROXY_HEADER_NAME     = "X-Goog-Authenticated-User-Email"
-    GF_AUTH_PROXY_HEADER_PROPERTY = "email"
-    GF_AUTH_PROXY_AUTO_SIGN_UP    = "true"
     GF_USERS_AUTO_ASSIGN_ORG_ROLE = "Viewer"
     GF_USERS_VIEWERS_CAN_EDIT     = "true"
     GF_USERS_EDITORS_CAN_ADMIN    = "false"
