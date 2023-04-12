@@ -89,7 +89,7 @@ def break_sentences(args, subs, alternative):
 def write_srt(args, subs):
     srt_file = args.out_file + ".srt"
     print("Writing {} subtitles to: {}".format(args.language_code, srt_file))
-    f = open(srt_file, 'w')
+    f = open(srt_file, 'w', encoding="utf-8")
     f.writelines(srt.compose(subs))
     f.close()
     return
@@ -98,7 +98,7 @@ def write_srt(args, subs):
 def write_txt(args, subs):
     txt_file = args.out_file + ".txt"
     print("Writing text to: {}".format(txt_file))
-    f = open(txt_file, 'w')
+    f = open(txt_file, 'w', encoding="utf-8")
     for s in subs:
         f.write(s.content.strip() + "\n")
     f.close()
