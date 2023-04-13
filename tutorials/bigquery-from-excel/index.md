@@ -51,7 +51,7 @@ for details about on-demand and flat-rate pricing. BigQuery also offers
 
 1.  Check whether your version of Excel is
     [32-bit or 64-bit](https://www.digitalcitizen.life/3-ways-learn-whether-windows-program-64-bit-or-32-bit).
-1.  Download the latest version  of thevODBC driver from the
+1.  Download the latest version  of the ODBC driver from the
     [Simba Drivers for BigQuery page](https://cloud.google.com/bigquery/partners/simba-drivers/) that
     matches your version of Excel.
 1. Run the ODBC driver installer.

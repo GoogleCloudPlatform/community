@@ -44,7 +44,7 @@ your computer but sends the actual workload to a cluster on Google Kubernetes En
 the following:
 
 -   You can continue to use your laptop/workstation for other work while waiting for the results.
--   You can use more powerful machines to speed up the search, for instance mulitple nodes with 64 virtual CPU cores.
+-   You can use more powerful machines to speed up the search, for instance multiple nodes with 64 virtual CPU cores.
 
 To accomplish this, we will create a `SearchCV` object in the notebook, upload a pickled copy of this object to Cloud 
 Storage. A job running on a cluster which we will create then retrieves that pickled object and calls its `fit` method and 

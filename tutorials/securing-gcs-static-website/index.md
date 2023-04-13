@@ -175,7 +175,7 @@ Set environment variables that you use throughout the tutorial:
 
         gsutil rsync -R dist/ gs://$BUCKET_NAME
 
-    For infomation on the `gsutil rsync` command, see [the documentation](https://cloud.google.com/storage/docs/gsutil/commands/rsync).
+    For information on the `gsutil rsync` command, see [the documentation](https://cloud.google.com/storage/docs/gsutil/commands/rsync).
 
 1.  Set the `MainPageSuffix` property with the `-m` flag and the `NotFoundPage` with the `-e` flag:
 

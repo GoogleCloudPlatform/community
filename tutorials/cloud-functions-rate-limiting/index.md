@@ -142,7 +142,7 @@ The `gcloud` command does the following (with each line below corresponding to a
 - triggered by HTTP requests,
 - from the Typescript transpiled JavaScript source code;
 - sets a runtime environment variable to the Redis service IP address,
-- connected to the VPC netowrk,
+- connected to the VPC network,
 - in the target region.
 
 This function uses a Redis-backed [rate-limiting library](https://www.npmjs.com/package/redis-rate-limiter) for Node.js.

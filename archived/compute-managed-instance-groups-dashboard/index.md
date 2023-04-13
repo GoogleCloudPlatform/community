@@ -101,7 +101,7 @@ the one you want to monitor.
 
 ### Initialization and authentication using gapi
 
-Once the user opens the page, Angular's `ng-init` embeded in the
+Once the user opens the page, Angular's `ng-init` embedded in the
 [`body` element of *index.html*][index] runs our `initialize()` function from
 [*main-controller.js*][main-controller].
 

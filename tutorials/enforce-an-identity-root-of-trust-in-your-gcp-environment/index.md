@@ -68,7 +68,7 @@ authorization of Google Cloud resources is governed by Cloud IAM policies.
 You can provision users and groups in the [Admin console](https://admin.google.com), which lets you manage settings and 
 identities for Google Cloud products like Google Cloud Platform and G Suite. If your users only need access to Google Cloud
 Platform, you can give them [Cloud Identity licences](https://support.google.com/cloudidentity/answer/7384684), which exist
-in the Free and Premium tiers. There is a default limit of 50 free users for each Cloud Identity account. To rasie this 
+in the Free and Premium tiers. There is a default limit of 50 free users for each Cloud Identity account. To raise this 
 limit, contact Google Cloud support.
 
 To manage your identities within the Admin console, you can designate

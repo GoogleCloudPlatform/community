@@ -156,7 +156,7 @@ and copy the following content to it:
 
     #!/bin/sh
 
-    # Set the metadata server to the get projct id
+    # Set the metadata server to the get project id
     PROJECTID=$(curl -s "http://metadata.google.internal/computeMetadata/v1/project/project-id" -H "Metadata-Flavor: Google")
     BUCKET=$(curl -s "http://metadata.google.internal/computeMetadata/v1/instance/attributes/BUCKET" -H "Metadata-Flavor: Google")
 

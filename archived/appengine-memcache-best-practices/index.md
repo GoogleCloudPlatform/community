@@ -233,7 +233,7 @@ programming languages. You can share the data in your memcache between any of
 your app's modules and versions. Because the memcache API serializes its
 parameters, and the API may be implemented differently in different languages,
 you need to code memcache keys and values carefully if you intend to share them
-between langauges.
+between languages.
 
 ### Key Compatibility
 

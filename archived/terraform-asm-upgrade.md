@@ -527,7 +527,7 @@ you can't roll back.
 
 ### Terraform destroy
 
-Use the `terraform destory` command to destroy all Terraform resources:
+Use the `terraform destroy` command to destroy all Terraform resources:
 
     cd ${WORKDIR}
     terraform destroy -auto-approve

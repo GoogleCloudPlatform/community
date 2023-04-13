@@ -61,7 +61,7 @@ The following diagram shows the architecture of the solution:
     - The first topic is used by Cloud Scheduler to start a scheduled job.
     - The second topic is used by the Cloud DLP API to notify when a scanning job is complete.
 
-1.  Create two Cloud Functions with the trigger type **Cloud Pub/Sub** by following the instructons in the
+1.  Create two Cloud Functions with the trigger type **Cloud Pub/Sub** by following the instructions in the
     [Cloud Functions quickstart guide](https://cloud.google.com/functions/docs/quickstart-python).
     
     - Make the first Cloud Function subscribe to the first Pub/Sub topic so that the function is triggered when Cloud Scheduler starts a scheduled job. Add both
