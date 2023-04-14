@@ -1,6 +1,6 @@
 ---
 title: Using Cloud VPN with Alibaba Cloud VPN Gateway with redundancy
-description: Describes how to build IPsec VPNs between Cloud VPN on Google Cloud and Alibaba Cloud VPN Gateway with redudancy.
+description: Describes how to build IPsec VPNs between Cloud VPN on Google Cloud and Alibaba Cloud VPN Gateway with redundancy.
 author: epluscloudservices
 tags: VPN, interop, alibaba, alibaba cloud vpn gateway, redundancy
 date_published: 2018-08-31
@@ -201,7 +201,7 @@ takes about a minute for this network and its subnet to appear.
 
 #### Create the Google Cloud external IP addresses for Cloud VPN gateways
 
-Two Cloud VPN gateways on the Google Cloud side are needed for redudancy.
+Two Cloud VPN gateways on the Google Cloud side are needed for redundancy.
 
 The following procedure configures one external IP address for the first Cloud VPN gateway. 
 

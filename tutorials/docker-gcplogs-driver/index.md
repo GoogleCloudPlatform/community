@@ -174,7 +174,7 @@ you can skip this section.*
 
 From [Cloud Shell](https://cloud.google.com/shell/docs/quickstart) or a development machine
 where you have [installed and initialized the Cloud SDK](https://cloud.google.com/sdk/docs/),
-use the [gcloud compute intances add-metadata](https://cloud.google.com/sdk/gcloud/reference/compute/instances/add-metadata)
+use the [gcloud compute instances add-metadata](https://cloud.google.com/sdk/gcloud/reference/compute/instances/add-metadata)
 command to add the `user-data` key to your instance.
 
 1.  Create a file `instance-config.txt` with the following contents:

@@ -415,7 +415,7 @@ For the 1-peer-2-address topology, configure a minimum of three interfaces:
 two outside interfaces that are connected to the internet and one inside interface
 that is connected to the private network.
 
-Make sure to replace the IP addresses based on your envrionment:
+Make sure to replace the IP addresses based on your environment:
 
     config system interface
         edit port1
@@ -521,7 +521,7 @@ through the VPN tunnel or tunnels using the BGP routing protocol.
 
 With the configuration below, BGP peering will be enabled and all "connected" routes
 will be advertised to the peer. Change redistribution of routes based on your
-envrionment.
+environment.
 
     config router bgp
         set as 65002

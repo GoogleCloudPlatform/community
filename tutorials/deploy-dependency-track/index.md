@@ -25,7 +25,7 @@ This kind of system is useful in a number of scenarios:
 - Teams building and deploying software can submit SBOMs when new versions are deployed.
 - You can manually list dependencies for legacy systems.
 
-Using Dependency-Track helps you to monitor and respond to vulnerabilites in components in your systems.
+Using Dependency-Track helps you to monitor and respond to vulnerabilities in components in your systems.
 [Using components with known vulnerabilities](https://owasp.org/www-project-top-ten/2017/A9_2017-Using_Components_with_Known_Vulnerabilities)
 is one of the [top 10 web application security risks](https://owasp.org/www-project-top-ten/) identified by the Open Web Application Security Project (OWASP).
 If you have an inventory of components in use across your environment, then you can use resources such as the
@@ -806,7 +806,7 @@ including the following:
 - **Use security and operations services**: Consider tools such as [Cloud Armor](https://cloud.google.com/armor) and
   [Google Cloud's operations suite](https://cloud.google.com/products/operations) for the ongoing security and operation of your system.
 
-Having a model to track dependecies is a great first step. Configuring the system to notify you when a vulnerability pops up is even better. Check out the
+Having a model to track dependencies is a great first step. Configuring the system to notify you when a vulnerability pops up is even better. Check out the
 [Dependency-Track notifications](https://docs.dependencytrack.org/integrations/notifications/) document for options. The webhooks model is a useful approach to
 automating responses. Also consider your processes and how your organization will respond when a vulnerability is reported.
 

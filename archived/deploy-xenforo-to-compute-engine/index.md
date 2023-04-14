@@ -258,7 +258,7 @@ tutorial:
 
 		| Before                    | After                     |
 		| --------------------------|---------------------------|
-		| default_transport = error | #default_transpot = error |
+		| default_transport = error | #default_transport = error |
 		| relay_transport = error   | #relay_transport = error  |
 
 		Edit the following lines:

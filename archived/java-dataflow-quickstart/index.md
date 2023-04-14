@@ -23,7 +23,7 @@ In this walkthrough you’ll do the following:
 
 * Set up Dataflow.
 * Enable the necessary Google Cloud APIs.
-* Create a pipleine.
+* Create a pipeline.
 * Publish the pipeline to Dataflow.
 
 [![Open walkthrough in the Cloud Console](https://storage.googleapis.com/gcp-community/tutorials/java-dataflow-quickstart/tutorial.png)](https://console.cloud.google.com/?walkthrough_id=dataflow__quickstart-beam__quickstart-beam-java)

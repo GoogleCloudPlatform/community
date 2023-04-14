@@ -35,7 +35,7 @@ This tutorial discusses three different methods.
 
 ## Easiest: Do nothing
 
-When you deploy to App Engine flexible enviroment a Docker image is created for
+When you deploy to App Engine flexible environment a Docker image is created for
 you and your code is copied into the image. This first method relies on the
 Docker image build step to make Bower dependencies available to your app. This
 method is the easiest.

@@ -402,7 +402,7 @@ best practices.
 To harden your SSL/TLS configuration:
 
 1.  Set the `ssl_prefer_server_ciphers` directive to specify that server ciphers
-    should be prefered over client ciphers:
+    should be preferred over client ciphers:
 
         ssl_prefer_server_ciphers on;
 

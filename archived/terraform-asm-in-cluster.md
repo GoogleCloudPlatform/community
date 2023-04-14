@@ -434,7 +434,7 @@ For more information about metrics, logs, and tracing with Anthos Service Mesh, 
 
 ### Terraform destroy
 
-Use the `terraform destory` command to destroy all Terraform resources:
+Use the `terraform destroy` command to destroy all Terraform resources:
 
     ${TERRAFORM_CMD} destroy -auto-approve
 

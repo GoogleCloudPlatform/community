@@ -204,7 +204,7 @@ In this section, you change `kubernetes/fluentbit-daemonset.yaml` to mount the `
 
         kubectl rollout status ds/fluent-bit --namespace=logging
 
-    When it completes, you should see the follwoing message:
+    When it completes, you should see the following message:
 
         daemon set "fluent-bit" successfully rolled out
 
