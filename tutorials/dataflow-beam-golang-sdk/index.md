@@ -1,6 +1,6 @@
 ---
 title: Build Dataflow Pipelines with Beam Golang SDK
-description: Learn to build a sample Dataflow Pipeline in Golang with a real world example
+description: Learn to build a sample Dataflow Pipeline in Golang with a real world example.
 author: shadowshot-x
 tags: Dataflow, Beam, Golang
 date_published: 2023-04-17
