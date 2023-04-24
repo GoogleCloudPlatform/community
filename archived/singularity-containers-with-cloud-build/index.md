@@ -13,7 +13,7 @@ Vanessa Sochat | Stanford
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This tutorial shows you how to use [Cloud Build](https://cloud.google.com/cloud-build/) to build [Singularity](https://www.sylabs.io/singularity/) containers. 
-In constrast to [Docker](https://www.docker.com/), the Singularity container binary is designed specifically for high performance computing (HPC) workloads. 
+In contrast to [Docker](https://www.docker.com/), the Singularity container binary is designed specifically for high performance computing (HPC) workloads. 
 
 ## Before you begin
 

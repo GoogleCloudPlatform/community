@@ -216,3 +216,12 @@ To delete the project, do the following:
 1.  In the Cloud Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
 1.  In the project list, select the project you want to delete and click **Delete**.
 1.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
+
+## Update regarding changes due to Grafana 9.2
+
+There have been configuration behavior changes in Grafana 9.2 that affect this tutorial. For details, see
+[the discussion in this GitHub issue](https://github.com/GoogleCloudPlatform/community/pull/2288#issuecomment-1469728639).
+Because we recommend that you verify the proper signing of the token, we removed the proxy config option.
+This could mean that if you are updating from the previous configuration to the updated configuration in
+this tutorial, the provider of the users in your `user_auth` will change, and permissions and roles might
+not be carried over.

@@ -234,14 +234,14 @@ Using the Cloud Shell environment, you will configure IoT Core audit logs to rou
 
 1.  Create a log export for IoT Core device creation events to Pub/Sub:
 
-        gcloud beta logging sinks create device-lifecyle \
+        gcloud beta logging sinks create device-lifecycle \
         pubsub.googleapis.com/projects/$PROJECT/topics/registration-events \
         --log-filter='resource.type="cloudiot_device" protoPayload.methodName="google.cloud.iot.v1.DeviceManager.CreateDevice"'
 
 1.  Give the log exporter system-account permission to publish to your topic:
 
         gcloud beta pubsub topics add-iam-policy-binding registration-events \
-        --member $(gcloud beta logging sinks describe device-lifecyle --format='value(writerIdentity)') \
+        --member $(gcloud beta logging sinks describe device-lifecycle --format='value(writerIdentity)') \
         --role roles/pubsub.publisher
 
 ### Deploy Firebase Functions to call Mender Preauthorization API

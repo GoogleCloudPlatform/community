@@ -673,7 +673,7 @@ Google with many Google Cloud services pre-configured for ease of use. Follow th
 
 1.  Execute the code in the **Client Latency** block.
 
-    The resut is a chart of median client latency:
+    The result is a chart of median client latency:
 
     ![Median client latency from Colab sheet](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/client_latency_median.png)
 
@@ -758,6 +758,5 @@ Explore the following related resources:
 * Read about [load balancing in data centers](https://landing.google.com/sre/sre-book/chapters/load-balancing-datacenter/)
   in the SRE Book.
 * Read about [managing load](https://landing.google.com/sre/workbook/chapters/managing-load/) in the SRE Workbook.
-* Adapt the app in this tutorial to a Java backend with [Identifying causes of app latency with Stackdriver and OpenCensus](https://cloud.google.com/solutions/identifying-causes-of-app-latency-with-stackdriver-and-opencensus).
 * Adapt the app in this tutorial to a Go backend with [Troubleshooting app latency with Cloud Spanner and OpenCensus](https://cloud.google.com/solutions/troubleshooting-app-latency-with-cloud-spanner-and-opencensus).
 * Try out other Google Cloud features. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).

@@ -121,6 +121,7 @@ lists the parameters and gives examples of the values used in this guide.
 | First BGP peer interface                | `[ROUTER_INTERFACE_NAME_0]` | `bgp-peer-tunnel-a-to-on-prem-if-0` |
 | Second BGP peer interface               | `[ROUTER_INTERFACE_NAME_1]` | `bgp-peer-tunnel-a-to-on-prem-if-1` |
 | BGP interface netmask length            | `[MASK_LENGTH]`             | `/30`                               |
+| Dead Peer Detection                     | `[phase1-interface]`        | `disable / on-idle / on demand`     |
 
 ## Configure the Google Cloud side
 
@@ -414,7 +415,7 @@ For the 1-peer-2-address topology, configure a minimum of three interfaces:
 two outside interfaces that are connected to the internet and one inside interface
 that is connected to the private network.
 
-Make sure to replace the IP addresses based on your envrionment:
+Make sure to replace the IP addresses based on your environment:
 
     config system interface
         edit port1
@@ -463,6 +464,9 @@ This configuration creates the Phase 1 proposal. Make sure to change the
             set remote-gw 35.242.121.143
             set local-gw 209.119.81.228
             set psksecret mysharedsecret
+            set dpd[disable | on-idle | on demand]
+            set dpd-retryinterval 15
+            set dpd-retrycount 3
         next
         edit GCP-HA-VPN-INT1
             set interface port2
@@ -517,7 +521,7 @@ through the VPN tunnel or tunnels using the BGP routing protocol.
 
 With the configuration below, BGP peering will be enabled and all "connected" routes
 will be advertised to the peer. Change redistribution of routes based on your
-envrionment.
+environment.
 
     config router bgp
         set as 65002

@@ -26,7 +26,7 @@ concerns in compute intensive problem domains. Jupyter notebooks are an
 increasingly common mechanism for collaboration around, and delivery of,
 scientific information processing solutions. While originally constructed around
 Python, Jupyter now supports the installation of additional "kernels", *e.g.* R,
-Scala, and Julia. While this tutorial is specifc to Julia, it would be easy to
+Scala, and Julia. While this tutorial is specific to Julia, it would be easy to
 modify to add a different kernel to the resulting notebook server.
 
 ## Objectives

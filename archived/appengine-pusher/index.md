@@ -90,7 +90,7 @@ Custom event handlers can be attached to a given event type.
 This allows for efficient event routing in the clients.
 **Note**: A subscriber will receive all messages published over a channel.
 
-Events may be trigged by the user or Pusher.
+Events may be triggered by the user or Pusher.
 In case of Pusher-triggered events on a channel, the event name is
 prefixed with `pusher:`, such as `pusher:subscription-succeeded`.
 

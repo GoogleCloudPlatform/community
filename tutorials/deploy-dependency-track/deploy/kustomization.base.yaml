@@ -1,0 +1,31 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: dependency-track
+
+configMapGenerator:
+- name: dt-api-application-properties
+  literals:
+  - ALPINE_DATABASE_MODE=external
+  - ALPINE_DATABASE_URL=jdbc:postgresql://localhost:5432/dependency-track
+  - ALPINE_DATABASE_DRIVER=org.postgresql.Driver
+  - ALPINE_DATABASE_USERNAME=dependency-track-user
+
+- name: dt-sql-proxy-properties
+  literals:
+  - DT_DB_CONNECTION=${DT_DB_CONNECTION}
+
+images:
+  - name: dependency-track-apiserver
+    newName: $GCP_REGISTRY/apiserver
+    newTag: "4.7.0"
+  - name: cloud-sql-proxy
+    newName: gcr.io/cloudsql-docker/gce-proxy
+    newTag: "1.28.0"
+  - name: dependency-track-frontend
+    newName: $GCP_REGISTRY/frontend
+    newTag: "4.7.0"
+
+resources:
+- api.yaml
+- frontend.yaml
+- ingress.yaml

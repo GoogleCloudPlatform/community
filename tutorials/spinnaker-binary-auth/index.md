@@ -422,7 +422,7 @@ In this section, you create a trigger that starts the continuous delivery pipeli
 1. Go to the [**Triggers** page](https://console.cloud.google.com/cloud-build/triggers) in the Cloud Console.
 1. Click **Run trigger**.
 
-After the build is complete and successful, go back to Spinnaker and check whether it shows that the pipeline has exectuted. There should be an execution, 
+After the build is complete and successful, go back to Spinnaker and check whether it shows that the pipeline has executed. There should be an execution, 
 showing that the trigger is working, as in the following screenshot:
 
 ![First execution](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/06-first-run.png)

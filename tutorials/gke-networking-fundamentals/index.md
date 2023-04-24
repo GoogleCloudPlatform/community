@@ -74,6 +74,7 @@ Debian instance with a public IP. We will need to install some packages:
 sudo apt update -y
 sudo apt install -y bridge-utils # Install Linux Bridge Tools. 
 sudo apt install -y tcpdump
+sudo apt install -y screen
 sudo apt install  -y conntrack #Tool to interrogate connection tracking table
 PATH=$PATH:/sbin # Get brctl in your path (you may include this in your .profile)
 ```
@@ -697,7 +698,7 @@ to get an understanding of how we might answer the following types of questions:
 
 - Which bridge in the host's default namespace is the pod attached to?
 - Which port on the bridge is the pod's MAC address learned on?
-- What is each namepace's next hop to the other?
+- What is each namespace's next hop to the other?
 
 #### Exposing the container
 

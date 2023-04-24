@@ -1,0 +1,127 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: dependency-track-apiserver
+  name: dependency-track-apiserver
+spec:
+  serviceName: dependency-track-apiserver
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dependency-track-apiserver
+  template:
+    metadata:
+      labels:
+        app: dependency-track-apiserver
+    spec:
+      serviceAccountName: dependency-track
+      containers:
+      - image: dependency-track-apiserver
+        name: dependency-track-apiserver
+        env:
+          - name: ALPINE_DATABASE_POOL_MAX_SIZE
+            value: "10"
+          - name: ALPINE_DATABASE_MODE
+            valueFrom:
+              configMapKeyRef:
+                name: dt-api-application-properties
+                key: ALPINE_DATABASE_MODE
+          - name: ALPINE_DATABASE_URL
+            valueFrom:
+              configMapKeyRef:
+                name: dt-api-application-properties
+                key: ALPINE_DATABASE_URL
+          - name: ALPINE_DATABASE_DRIVER
+            valueFrom:
+              configMapKeyRef:
+                name: dt-api-application-properties
+                key: ALPINE_DATABASE_DRIVER
+          - name: ALPINE_DATABASE_USERNAME
+            valueFrom:
+              configMapKeyRef:
+                name: dt-api-application-properties
+                key: ALPINE_DATABASE_USERNAME
+          - name: ALPINE_DATABASE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: dependency-track-postgres-user-password
+                key: ALPINE_DATABASE_PASSWORD
+
+        startupProbe:
+          httpGet:
+            path: /api/version
+            port: api
+          failureThreshold: 3
+          periodSeconds: 60
+        livenessProbe:
+          httpGet:
+            port: api
+            path: /api/version
+
+        ports:
+          - containerPort: 8080
+            name: api
+        resources:
+          requests:
+            cpu: "2"
+            memory: "8G"
+        volumeMounts:
+          - mountPath: /data
+            name: data
+      - name: cloud-sql-proxy
+        # See: https://cloud.google.com/sql/docs/mysql/connect-kubernetes-engine#running_the_proxy_as_a_sidecar
+        image: cloud-sql-proxy
+        command: ["/cloud_sql_proxy"]
+        args:
+          - "-instances=$(DT_DB_CONNECTION)=tcp:5432"
+          # If connecting from a VPC-native GKE cluster, you can use the
+          # following flag to have the proxy connect over private IP
+          #    - "-ip_address_types=PRIVATE"
+        env:
+          - name: DT_DB_CONNECTION
+            valueFrom:
+              configMapKeyRef:
+                name: dt-sql-proxy-properties
+                key: DT_DB_CONNECTION
+        securityContext:
+          runAsNonRoot: true
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: dependency-track-data
+            readOnly: false
+
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: dependency-track-data
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dependency-track-apiserver-svc
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}'
+spec:
+  type: ClusterIP
+  selector:
+    app: dependency-track-apiserver
+  ports:
+  - port: 8088
+    name: api
+    protocol: TCP
+    targetPort: 8080

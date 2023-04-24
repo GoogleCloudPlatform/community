@@ -50,7 +50,7 @@ needs.
     The files for this tutorial are in the
     [`/tutorials/gke-node-agent-metrics-cloud-monitoring`](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/gke-node-agent-metrics-cloud-monitoring) directory.
 
-## Build the container iamge
+## Build the container image
 
 1. Update `cloudbuild.yaml` by replacing the following values:
 
