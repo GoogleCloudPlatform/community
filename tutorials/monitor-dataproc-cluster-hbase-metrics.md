@@ -96,14 +96,14 @@ scrape_configs:
 ```
 
 * After configuration complete Prometheus will start on port 9090
-* Port forward monitoring vm port 9090 to local machine using gcloud compute ssh node_name --tunnel-through-iap -- -L 9090:127.0.0.1:9090
+* Port forward monitoring vm port 9090 to local machine using `gcloud compute ssh node_name --tunnel-through-iap -- -L 9090:127.0.0.1:9090`
 * Browse http://localhost:9090/
 * Open Status -> Targets tab. It will show all the connected targets at Prometheus Configuration Step 2. All nodes should in Up state
 
 
 * Install [Grafana](https://grafana.com/docs/grafana/latest/setup-grafana/installation/debian/). (Use latest stable version)
 * After configuration complete Grafana start on port 3000
-* Port forward monitoring vm port 9090 to local machine using gcloud compute ssh node_name --tunnel-through-iap -- -L 30000:127.0.0.1:3000
+* Port forward monitoring vm port 9090 to local machine using `gcloud compute ssh node_name --tunnel-through-iap -- -L 30000:127.0.0.1:3000`
 * Browse http://localhost:30000/
 
 ### Create Dashboard and Graphs to monitor HBase stats
