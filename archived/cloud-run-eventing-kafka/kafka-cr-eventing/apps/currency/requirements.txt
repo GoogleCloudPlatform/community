@@ -1,6 +1,6 @@
 pylint==2.4.0
 google-cloud==0.34.0
-Flask==1.1.1
+Flask==2.3.2
 kafka-python==1.4.6
 pykafka==2.8.0
 confluent-kafka==1.1.0
