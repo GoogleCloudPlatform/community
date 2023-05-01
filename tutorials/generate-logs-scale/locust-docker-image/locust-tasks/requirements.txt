@@ -1,7 +1,7 @@
 certifi==2022.12.7
 chardet==3.0.4
 Click==7.0
-Flask==1.0.2
+Flask==2.3.2
 gevent==1.4.0
 greenlet==0.4.15
 idna==2.8
