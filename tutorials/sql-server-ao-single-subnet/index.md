@@ -1,6 +1,6 @@
 ---
 title: Deploy a Microsoft SQL Server Always On availability group in a single subnet
-description: Learn how to deploy a Microsoft SQL Server Always On availabilty group in a single subnet.
+description: Learn how to deploy a Microsoft SQL Server Always On availability group in a single subnet.
 author: shashank-google
 tags: databases, MSSQL, AOAG, AG
 date_published: 2020-12-10
@@ -54,9 +54,9 @@ and [SQL Server multi-subnet Always On availability groups](https://cloud.google
 
 ## Create and configure a Windows domain controller
 
-In this tutorial, you use an exisiting default VPC network.
+In this tutorial, you use an existing default VPC network.
 
-An Active Directory domain is used for domain name services and Windows Failover Clustering, which is used by Always On availabilty groups. 
+An Active Directory domain is used for domain name services and Windows Failover Clustering, which is used by Always On availability groups. 
 
 Having the AD domain controller in the same VPC network is not a requirement, but is a simplification for the purpose of this tutorial.
 
@@ -307,7 +307,7 @@ an existing database for the availability group.
 1.  Create the availability group listener:
 
         osql -S node-1 -E -Q "USE [master] ALTER AVAILABILITY GROUP [sql-ag] 
-        ADD LISTENER N'sql-listner' (WITH IP ((N'10.128.0.20', N'255.255.252.0')) , PORT=1433);"
+        ADD LISTENER N'sql-listener' (WITH IP ((N'10.128.0.20', N'255.255.252.0')) , PORT=1433);"
 
     The listener must be created with an unused IP address before creating the internal load balancer. Later, the same IP address is allocated to the 
     internal load balancer. If SQL Server detects that the IP address is already in use, then this command to create the listener fails.

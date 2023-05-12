@@ -1,5 +1,5 @@
 ---
-title: Measure Cloud Spanner performance using JMeter
+title: Measure Cloud Spanner performance using JMeter with SQL queries
 description: Evaluate Cloud Spanner for custom workloads using the JMeter JDBC Sampler.
 author: shashank-google,chbussler,rlota
 tags: spanner, cloud spanner, evaluation, migration, performance test, jdbc
@@ -260,7 +260,7 @@ The following screnshot shows an example thread group configuration:
 
 ![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/03_thread_groups.png)
 
-If you want a thread group to run for a given duration, then you can change the beahvior as shown in the following screenshot:
+If you want a thread group to run for a given duration, then you can change the behavior as shown in the following screenshot:
 
 ![drawing](https://storage.googleapis.com/gcp-community/tutorials/jmeter-spanner-performance-test/04_thread_groups_2.png)
 

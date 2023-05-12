@@ -26,7 +26,7 @@ One of the more common cloud-native development workflows looks like this:
 This workflow seems to work for large, infrequent changes; but for small, fast changes it introduces a lot of wait time. You should be able to see the results 
 of your changes immediately. 
 
-In this tutorial, you'll set up a local development environment for a Go microservice in Google Kubernete Engine (GKE). Instead of waiting through the
+In this tutorial, you'll set up a local development environment for a Go microservice in Google Kubernetes Engine (GKE). Instead of waiting through the
 old-fashioned development workflow, you'll use [Telepresence](http://www.getambassador.io/products/telepresence/), an open source Cloud Native Computing
 Foundation project, to see the results of your change right away. 
 

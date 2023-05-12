@@ -10,7 +10,7 @@ Anant Damle | Solutions Architect | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-This solution is intended for technical practitioners—such as data engineers and analysts—who are responsibile for metadata management, data governance, and 
+This solution is intended for technical practitioners—such as data engineers and analysts—who are responsible for metadata management, data governance, and 
 related analytics.
 
 Historical metadata about your data warehouse is a treasure trove for discovering insights about changing data patterns, data quality, and user behavior. The

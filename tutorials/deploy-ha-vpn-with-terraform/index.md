@@ -21,10 +21,10 @@ configuration on Google Cloud.
 ## Before you begin
 
 *   This guide assumes that you are familiar with [Terraform](https://cloud.google.com/docs/terraform). Instructions provided in this guide
-    are based on the Google Cloud envrionment depicted in the
+    are based on the Google Cloud environment depicted in the
     [HA VPN interop guides](https://cloud.google.com/vpn/docs/how-to/interop-guides) and are only for testing purposes.
 
-*   See [Getting started with Terraform on Google Cloud](https://cloud.google.com/community/tutorials/getting-started-on-gcp-with-terraform) to set up your Terraform envrionment for Google Cloud.
+*   See [Getting started with Terraform on Google Cloud](https://cloud.google.com/community/tutorials/getting-started-on-gcp-with-terraform) to set up your Terraform environment for Google Cloud.
 
 *   Ensure the you have a [service account](https://cloud.google.com/iam/docs/creating-managing-service-accounts) with 
     [sufficient permissions](https://cloud.google.com/vpn/docs/how-to/creating-ha-vpn2#permissions) to deploy the resources
@@ -40,7 +40,7 @@ configuration on Google Cloud.
 
         cd community/tutorials/deploy-ha-vpn-with-terraform/terraform
 
-1.  (optional) Change variable values in `gcp_variables.tf` for your envrionment.
+1.  (optional) Change variable values in `gcp_variables.tf` for your environment.
 
 1.  Run the following Terraform commands:
 

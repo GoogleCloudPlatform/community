@@ -35,7 +35,7 @@ configuration using the referenced device:
 
 # Before you begin
 
-## Prerequisities
+## Prerequisites
 
 To use a Check Point security gateway with Cloud VPN make sure the following prerequisites have been met:
 

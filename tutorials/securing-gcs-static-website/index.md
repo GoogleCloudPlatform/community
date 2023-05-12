@@ -155,6 +155,16 @@ Set environment variables that you use throughout the tutorial:
 
     This is a demonstration app using Vue.js. You can ignore any warnings from `npm`.
 
+    If you get the following error, see the suggestions in [this thread](https://github.com/GoogleCloudPlatform/community/issues/2364)
+    for possible solutions:
+    
+    ```
+    library: 'digital envelope routines',
+    reason: 'unsupported',
+    code: 'ERR_OSSL_EVP_UNSUPPORTED'
+    ```
+
+
 1.  Create a bucket:
 
         gsutil mb -b on gs://$BUCKET_NAME
@@ -165,7 +175,7 @@ Set environment variables that you use throughout the tutorial:
 
         gsutil rsync -R dist/ gs://$BUCKET_NAME
 
-    For infomation on the `gsutil rsync` command, see [the documentation](https://cloud.google.com/storage/docs/gsutil/commands/rsync).
+    For information on the `gsutil rsync` command, see [the documentation](https://cloud.google.com/storage/docs/gsutil/commands/rsync).
 
 1.  Set the `MainPageSuffix` property with the `-m` flag and the `NotFoundPage` with the `-e` flag:
 

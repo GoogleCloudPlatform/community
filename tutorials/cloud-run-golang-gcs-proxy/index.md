@@ -383,7 +383,7 @@ Here is are some options for approaches that you could take to do this:
     you automatically get the improvements. This could be slow and expensive if you make a translation each time, but you can
     add some caching or CDN, so that the translation is only made on cache fills.
     
-     This dyanmic server-side approach is the one that is described in this section.
+     This dynamic server-side approach is the one that is described in this section.
 
 Change the `config.go` contents to the following:
 
@@ -394,7 +394,7 @@ func GET(ctx context.Context, output http.ResponseWriter, input *http.Request) {
 }
 ```
 
-`DynamicTranslationFromEnToEs` is a pipeline included in the sample confguration:
+`DynamicTranslationFromEnToEs` is a pipeline included in the sample configuration:
 
 ```go
 // EXAMPLE: Translate HTML files from English to Spanish dynamically.

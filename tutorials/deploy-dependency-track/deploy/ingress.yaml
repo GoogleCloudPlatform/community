@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dependency-track-ingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: "dependency-track"
+    kubernetes.io/ingress.allow-http: "false"
+    ingress.gcp.kubernetes.io/pre-shared-cert: "dependency-track-cert"
+
+spec:
+  defaultBackend:
+    service:
+      name: dependency-track-frontend-svc
+      port:
+        name: web
+
+  rules:
+  - http:
+      paths:
+      - pathType: Prefix
+        path: "/api"
+        backend:
+          service:
+            name: dependency-track-apiserver-svc
+            port:
+              name: api

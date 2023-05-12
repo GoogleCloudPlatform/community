@@ -36,6 +36,8 @@ RUN apt-get -y install --fix-missing --upgrade vim alien unixodbc-dev wget libai
 
 COPY oracle/*.rpm ./
 RUN alien -i *.rpm && rm *.rpm \
+# If DBD::Oracle build failed, uncomment following line and set to the instanclient lib version
+# && ln -s /usr/lib/oracle/${ORACLE_ODBC_VERSION}/client64/lib/libclntshcore.so.<version>.1 /usr/lib/oracle/${ORACLE_ODBC_VERSION}/client64/lib/libclntshcore.so \
     && echo "/usr/lib/oracle/${ORACLE_ODBC_VERSION}/client64/lib/" > /etc/ld.so.conf.d/oracle.conf \
     && ln -s /usr/include/oracle/${ORACLE_ODBC_VERSION}/client64 $ORACLE_HOME/include \
     && ldconfig -v
@@ -43,6 +45,7 @@ RUN alien -i *.rpm && rm *.rpm \
 # Instal DBI module with Oracle, Postgres, and Compress::Zlib module
 RUN perl -MCPAN -e 'install DBI' &&\
     perl -MCPAN -e 'install DBD::Pg' &&\
+    perl -MCPAN -e 'install Test::NoWarnings' &&\
     perl -MCPAN -e 'install DBD::Oracle' &&\
     perl -MCPAN -e 'install Bundle::Compress::Zlib'
 

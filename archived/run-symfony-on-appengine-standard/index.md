@@ -267,7 +267,7 @@ benefit from all of the features of a real email broadcasting system.
 
         composer require symfony/mailer
 
-1.  Specify which mail sytem to use:
+1.  Specify which mail system to use:
 
         composer require symfony/mailgun-mailer
      

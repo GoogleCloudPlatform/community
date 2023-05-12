@@ -85,7 +85,7 @@ It may take a few minutes for the APIs to be enabled.
 
 ## Set environment variables
 
-Run the following comands in the Cloud Console to set environment variables. Replace the values for `PROJECT_ID`, 
+Run the following commands in the Cloud Console to set environment variables. Replace the values for `PROJECT_ID`, 
 `TOPIC_NAME`, `SUBSCRIPTION_NAME`, and `CLUSTER_NAME`.
     
     REGION=us-central1
@@ -222,7 +222,7 @@ After the test starts, you can see statistics in Locust, as shown in the followi
 
 ## Monitor GKE cluster utilization
 
-To check the utilization of you GKE cluster in the Kubenetes Monitoring dashboard, go to 
+To check the utilization of you GKE cluster in the Kubernetes Monitoring dashboard, go to 
 **Menu > Monitoring > Dashboards > Kubernetes Engine**.
 
 [Go to the Kubernetes Engine dashboard.](https://console.cloud.google.com/monitoring/dashboards/resourceList/kubernetes)

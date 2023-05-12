@@ -407,7 +407,7 @@ topology, configure a minimum of three interfaces, named `outside-0`, `outside-1
 interfaces are connected to the internet; the inside interface is connected to the private network.
 
 Enter the configuration mode to create the base Layer 3 network configuration for the Cisco system,
-replacing the IP addresses based on your envrionment:
+replacing the IP addresses based on your environment:
 
     configure terminal
     interface GigabitEthernet1/1

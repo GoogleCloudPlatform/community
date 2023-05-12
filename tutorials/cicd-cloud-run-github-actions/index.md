@@ -23,7 +23,7 @@ of the sample code and its Dockerfile.
 *   Write a unit test for your code.
 *   Create a Dockerfile.
 *   Create a GitHub Action workflow file to deploy your code on Cloud Run.
-*   Make the code acessible for anyone.
+*   Make the code accessible for anyone.
 
 ## Costs
 

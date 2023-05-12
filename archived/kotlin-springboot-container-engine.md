@@ -315,7 +315,7 @@ building a new image and pointing your deployment to it.
         kubectl set image deployment/demo demo=gcr.io/${PROJECT_ID}/demo:v1
 
 **Note:** If a deployment gets stuck because an error in the image prevents
-it from starting successfuly, you can recover by undoing the rollout. See the
+it from starting successfully, you can recover by undoing the rollout. See the
 [Kubernetes deployment documentation](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)
 for more info.
 
