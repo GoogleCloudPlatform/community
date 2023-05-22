@@ -673,7 +673,7 @@ Google with many Google Cloud services pre-configured for ease of use. Follow th
 
 1.  Execute the code in the **Client Latency** block.
 
-    The resut is a chart of median client latency:
+    The result is a chart of median client latency:
 
     ![Median client latency from Colab sheet](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/client_latency_median.png)
 

@@ -1,6 +1,6 @@
 ---
 title: Understanding OAuth2 and deploying a basic authorization service to Cloud Functions
-description: Learn how to deploy a basic OAuth2 authorization serivce to Cloud Functions.
+description: Learn how to deploy a basic OAuth2 authorization service to Cloud Functions.
 author: michaelawyu
 tags: OAuth 2.0, Node.js, Cloud Functions, Cloud Datastore
 date_published: 2018-06-15

@@ -311,7 +311,7 @@ maintain their specific structure.
 It might help to understand a little bit about how this polymorphism is
 implemented. All sub-classes of a given class hierarchy root share the same
 Google Cloud Datastore kind. To differentiate between classes within the
-hiearchy, the PolyModel has an extra hidden string list property, class, in the
+hierarchy, the PolyModel has an extra hidden string list property, class, in the
 Cloud Datastore. This list, known as the class key, describes that particular
 object's location in the class hierarchy. Each element of this list is the name
 of a class, starting with the root of the hierarchy at index 0. Because queries
@@ -348,7 +348,7 @@ It might be tempting to make every single class in an application a PolyModel
 class, even for classes that do not immediately require a subclass. However it
 should not normally be required to create a PolyModel class earlier so that it
 might be subclassed in the future. If the application sticks to using the class
-method version of gql and all it is future compatible to change the inheritence
+method version of gql and all it is future compatible to change the inheritance
 from Model to PolyModel later. This is because calls to gql and all on the
 class hierarchy root class do not attempt to query against class property.
 

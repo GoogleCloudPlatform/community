@@ -190,7 +190,7 @@ Because the audio we're transcribing is longer than a minute in length, we must
 first upload the raw audio files to [Cloud Storage][storage], so the Speech API
 can access it asynchronously. We could use the
 [gsutil][gsutil] tool to do this manually, or we could
-do it programatically from our code. Because we'd like to eventually
+do it programmatically from our code. Because we'd like to eventually
 [automate this process in a pipeline](/community/tutorials/data-science-preprocessing/),
 we'll do this in code:
 

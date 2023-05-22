@@ -261,7 +261,7 @@ used to authenticate the device.
 
 ## Verify communication
 
-1.  Retun to the Fledge GUI dashboard.
+1.  Return to the Fledge GUI dashboard.
 
     The count of readings sent and received readings should be increasing.
     

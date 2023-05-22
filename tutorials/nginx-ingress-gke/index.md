@@ -285,7 +285,7 @@ method can also be forced by setting the annotation's value to `gce`:
 Deploying multiple Ingress controllers of different types (for example, both `nginx` and `gce`) and not specifying a class
 annotation will result in all controllers fighting to satisfy the Ingress, and all of them racing to update the Ingress
 status field in confusing ways. For more information, see
-[Multipe Ingress controllers](https://kubernetes.github.io/ingress-nginx/user-guide/multiple-ingress/).
+[Multiple Ingress controllers](https://kubernetes.github.io/ingress-nginx/user-guide/multiple-ingress/).
 
 1.  Create a simple Ingress Resource YAML file that uses the NGINX Ingress Controller and has one path rule defined:
 

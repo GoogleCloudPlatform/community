@@ -257,7 +257,7 @@ Quantiles are useful for getting a quick feel for the distribution of your data
 Finally, one might be concerned, when researching a new place to live or
 establish a business, the rate you might expect meteors to land in your area.
 Fortunately, BigQuery provides some functions to help compute distances between
-latitude and logitude coordinates. Adapted from the
+latitude and longitude coordinates. Adapted from the
 [advanced examples](/bigquery/docs/reference/legacy-sql#math-adv-examples) in
 the docs, we can find the number of meteors within an approximately 50-mile
 radius of Google's Kirkland campus (at 47.669861, -122.197355):

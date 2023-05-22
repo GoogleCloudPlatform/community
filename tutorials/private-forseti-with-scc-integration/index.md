@@ -296,7 +296,7 @@ You must be logged in with the super admin account for the steps in this section
 
 For details of domain-wide delegation, see
 [Enable domain-wide delegation in G Suite](https://forsetisecurity.org/docs/latest/configure/inventory/gsuite.html) in
-the Forseti documentaton.
+the Forseti documentation.
 
 1.  Navigate to [**IAM & admin > Service Account** page](https://console.cloud.google.com/iam-admin/serviceaccounts) on the `forseti` project.
 1.  Find the `Forseti Server` service account, click the more icon (three dots), and then click **Edit**. Note the service
@@ -502,7 +502,7 @@ page:
 
 ## Conclusion
 
-This gives you a production-ready base intallation of Forseti. However, it's important to note that you still need to create
+This gives you a production-ready base installation of Forseti. However, it's important to note that you still need to create
 an organizaton-specific configuration. Typically, you need to refine the base rules to remove the noise and catch
 use-cases that are specific to your organization (for example, allow firewall rules opening SSH and RDP traffic only
 for your defined IP ranges).

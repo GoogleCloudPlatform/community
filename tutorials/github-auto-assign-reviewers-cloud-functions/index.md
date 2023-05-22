@@ -15,7 +15,7 @@ opened. The Cloud Function is implemented in [Node.js][node].
 The sample Cloud Function is triggered by webhook request from GitHub when a
 pull request is opened, and then attempts to assign to the pull request the
 reviewer with the smallest review workload from a supplied list of eligible
-reviewers. The review workload of the eligble reviewers is inferred from the
+reviewers. The review workload of the eligible reviewers is inferred from the
 reviews that have already been assigned to them on other open pull requests in
 the repository.
 
@@ -137,7 +137,7 @@ const url = require('url');
 const settings = require('./settings.json');
 
 /**
- * Assigns a reviewer to a new pull request from a list of eligble reviewers.
+ * Assigns a reviewer to a new pull request from a list of eligible reviewers.
  * Reviewers with the least assigned reviews on open pull requests will be
  * prioritized for assignment.
  *
@@ -222,7 +222,7 @@ function validateRequest (req) {
 
 ### Retrieving all open pull requests
 
-In order to figure out how many pull requests the eligible recievers are already
+In order to figure out how many pull requests the eligible receivers are already
 reviewing, you need to retrieve all of the repository's open pull requests. Add
 a GitHub API helper function to your `index.js` file:
 
@@ -323,8 +323,8 @@ function getReviewsForPullRequests (pullRequests) {
 ### Calculating the current workloads of all reviewers
 
 Now that you have the open pull requests and their reviews, you can calculate
-the current review workload of eligble receivers. The following function figures
-out how many reviews are already assigned to the eligble reviewers. It then
+the current review workload of eligible receivers. The following function figures
+out how many reviews are already assigned to the eligible reviewers. It then
 sorts the reviewers by least-assigned reviews to most-assigned reviews. Add it
 to your `index.js` file:
 

@@ -34,7 +34,7 @@ The high-level steps in this section:
 Log in or sign up for [Google Cloud](https://cloud.google.com), then open
 the [Cloud Console](https://console.cloud.google.com).
 
-The examples in this document use the `gcloud` command-line inteface. Google Cloud APIs must be enabled through the
+The examples in this document use the `gcloud` command-line interface. Google Cloud APIs must be enabled through the
 [Services and APIs page](https://console.cloud.google.com/apis/dashboard) in the console before they can be used
 with `gcloud`. To perform the steps in this tutorial, enable the following APIs: 
 

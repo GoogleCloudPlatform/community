@@ -72,15 +72,15 @@ Point the environment variable `GOOGLE_APPLICATION_CREDENTIALS` to the location 
 
 *   Linux or macOS:
 
-        export GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/service-acount-key.json"
+        export GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/service-account-key.json"
 
 *   Windows, with Powershell:
 
-        $env:GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/service-acount-key.json"
+        $env:GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/service-account-key.json"
 
 *   Windows, with Command Prompt:
 
-        set GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/service-acount-key.json"  
+        set GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/service-account-key.json"  
 
 You are now ready to connect to your Firestore in Datastore mode.
 

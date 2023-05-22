@@ -1,8 +1,0 @@
-resources:
-- deployment.yaml
-- service.yaml
-configMapGenerator:
-- name: mqtt-conf
-  files:
-  - ./etc-mqtt/roots.pem
-  - ./etc-mqtt/bridge.conf.tmpl
