@@ -16,7 +16,7 @@ exports.ToBigQuery_Stage = (event, callback) => {
   // Do not use the ftp_files Bucket to ensure that the bucket does not get crowded.
   // Change bucket to gas_ddr_files_staging
   // Set the table name (TableId) to the full file name including date,
-  // this will give each table a new distinct name and we can keep a record of all of the files recieved.
+  // this will give each table a new distinct name and we can keep a record of all of the files received.
   // This may not be the best way to do this... at some point we will need to archive and delete prior records.
   const dashOffset = filename.indexOf('-');
   const tableId = filename.substring(0, dashOffset) + '_STAGE';

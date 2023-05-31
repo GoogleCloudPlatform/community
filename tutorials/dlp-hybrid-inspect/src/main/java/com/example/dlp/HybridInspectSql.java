@@ -304,7 +304,7 @@ public class HybridInspectSql {
     System.out.println();
     System.out.print(String.format(">> [%s,%s:%s]: Starting Inspection", database.databaseInstanceDescription, database.databaseInstanceServer, database.databaseName));
 
-    //retreive the password from Secret Manager
+    //retrieve the password from Secret Manager
     final String databasePassword = accessSecretVersion(ServiceOptions.getDefaultProjectId(),
           database.getSecretManagerResourceName(),"latest");
 
@@ -323,7 +323,7 @@ public class HybridInspectSql {
       String dbVersion = String.format("%s[%s]", dbMetadata.getDatabaseProductName(),
           dbMetadata.getDatabaseProductVersion());
 
-      // this will list out all tables in the curent schama
+      // this will list out all tables in the current schama
       ResultSet ListTablesResults = dbMetadata
           .getTables(conn.getCatalog(), null, "%", new String[]{"TABLE"});
 
@@ -540,10 +540,10 @@ public class HybridInspectSql {
   }
 
   /**
-  * Because this script may be connecting to mulitple JDBC drivers in the same run, this method helps ensure that the drivers are registered
+  * Because this script may be connecting to multiple JDBC drivers in the same run, this method helps ensure that the drivers are registered
   */
   private static java.sql.Driver getJdbcDriver (String databaseType){
-    // Based on the SQL database type, reguster the driver. Note the pom.xml must have a
+    // Based on the SQL database type, register the driver. Note the pom.xml must have a
     // matching driver for these to work. This addresses driver not found issues when
     // trying to scan more than one JDBC type.
     try {
