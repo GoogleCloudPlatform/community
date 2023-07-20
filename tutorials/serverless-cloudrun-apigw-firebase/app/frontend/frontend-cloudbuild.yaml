@@ -1,0 +1,35 @@
+steps:
+  # Build the Docker Image
+  - name: gcr.io/cloud-builders/docker
+    args: [
+      'build',
+      '--build-arg', 'GATEWAY_URL=${_GATEWAY_URL}',
+      '-t', '$LOCATION-docker.pkg.dev/$PROJECT_ID/amazing-employees/amazing-employees-frontend-service:latest',
+      '.',
+    ]
+
+  # Push to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Push the Docker Image Artifact Registry'
+    args: ['push', '$LOCATION-docker.pkg.dev/$PROJECT_ID/amazing-employees/amazing-employees-frontend-service:latest']
+
+  # Deploy to Cloud Run
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'Deploy to Cloud Run'
+    args: [
+      'run',
+      'deploy',
+      'amazing-employees-frontend-service',
+      '--image', '$LOCATION-docker.pkg.dev/$PROJECT_ID/amazing-employees/amazing-employees-frontend-service:latest',
+      '--region', '$LOCATION',
+      '--platform', 'managed',
+     '--no-allow-unauthenticated',
+      '--service-account', 'employees-frontend-sa@$PROJECT_ID.iam.gserviceaccount.com',
+      '--max-instances', '2',
+    ]
+substitutions:
+  _GATEWAY_URL: 'DEFAULT'
+images: ['$LOCATION-docker.pkg.dev/$PROJECT_ID/amazing-employees/amazing-employees-frontend-service:latest']
+options:
+  logging: CLOUD_LOGGING_ONLY
+  substitution_option: 'ALLOW_LOOSE'

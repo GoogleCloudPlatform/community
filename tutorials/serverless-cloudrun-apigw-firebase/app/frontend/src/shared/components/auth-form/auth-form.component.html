@@ -1,0 +1,48 @@
+<div class="auth-form">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+<!-- Just allowing Google Login at the moment -->
+<!-- so... commenting everything else out. This becaues: -->
+<!-- To enable email sign in and sign up, I would need to implement -->
+<!-- a blocking function to verify the email is a McK email -->
+<!-- but it seems we would need to request a Firebase subscription upgrade.. -->
+
+<!--    <ng-content select="h1"></ng-content>-->
+
+<!--    <label>-->
+<!--      <input-->
+<!--        type="email"-->
+<!--        autocomplete="username"-->
+<!--        placeholder="Email Address"-->
+<!--        formControlName="email">-->
+<!--    </label>-->
+
+<!--    <div *ngIf="showPasswordInput">-->
+<!--      <label>-->
+<!--        <input-->
+<!--          [required]="true"-->
+<!--          type="password"-->
+<!--          placeholder="Enter Password"-->
+<!--          autocomplete="current-password"-->
+<!--          formControlName="password">-->
+<!--      </label>-->
+<!--      <div class="error" *ngIf="passwordInvalid">Password is Required</div>-->
+<!--    </div>-->
+
+<!--    <div class="error" *ngIf="emailFormat">Invalid Email Format</div>-->
+
+<!--    <ng-content select=".error"></ng-content>-->
+
+<!--    <div class="auth-form__action">-->
+<!--      <ng-content select=".email-button"></ng-content>-->
+<!--    </div>-->
+
+<!--    <div class="auth-form__divider">or</div>-->
+<!--    -->
+    <ng-content select=".google-button"></ng-content>
+
+<!--    <div class="auth-form__toggle">-->
+<!--        <ng-content select="a"></ng-content>-->
+<!--    </div>-->
+  </form>
+</div>

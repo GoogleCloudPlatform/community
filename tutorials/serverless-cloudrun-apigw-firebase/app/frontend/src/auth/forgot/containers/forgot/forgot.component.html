@@ -1,0 +1,24 @@
+<div>
+  <auth-form (submitted)="resetPassword($event)" [showPasswordInput]="showPasswordInput" (formIsValid)="isFormValid($event)">
+    <h1>Reset Password Request</h1>
+    <a routerLink="/auth/register">Not Registered</a>
+    <a routerLink="/auth/login">Already have an Account?</a>
+
+    <button
+      *ngIf="!(loading | async); else showSpinner"
+      class="email-button"
+      [disabled]="!formIsValid"
+      type="submit">Request Reset
+    </button>
+
+    <ng-template #showSpinner>
+      <button
+        class="email-button"
+        disabled
+        type="submit"><fa-icon [icon]="faHourglass" [spin]="true" size="lg"></fa-icon>
+      </button>
+    </ng-template>
+
+    <div class="error" *ngIf="formError">{{ formError }}</div>
+  </auth-form>
+</div>

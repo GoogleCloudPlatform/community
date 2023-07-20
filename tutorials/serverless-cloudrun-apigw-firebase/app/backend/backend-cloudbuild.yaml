@@ -1,0 +1,37 @@
+steps:
+  # Build the Docker Image
+  - name: gcr.io/cloud-builders/docker
+    args: ['build', '-t', '$LOCATION-docker.pkg.dev/$PROJECT_ID/amazing-employees/amazing-employees-backend-service:latest', '.']
+
+
+  # Push to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', '$LOCATION-docker.pkg.dev/$PROJECT_ID/amazing-employees/amazing-employees-backend-service:latest']
+
+  # Deploy to Cloud Run
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args: [
+      'run',
+      'deploy',
+      'amazing-employees-backend-service',
+      '--image', '$LOCATION-docker.pkg.dev/$PROJECT_ID/amazing-employees/amazing-employees-backend-service:latest',
+      '--region', '$LOCATION',
+      '--platform', 'managed',
+     '--no-allow-unauthenticated',
+      '--service-account', 'employees-backend-sa@$PROJECT_ID.iam.gserviceaccount.com',
+      '--max-instances', '2',
+    ]
+
+images: ['$LOCATION-docker.pkg.dev/$PROJECT_ID/amazing-employees/amazing-employees-backend-service:latest']
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+
+# TODO - Add a step to delete old images
+# see here for an example https://ahmet.im/blog/google-container-registry-tips/
+# we should delete all the images older than a certain date to avoid storing a lot of images unnecessary :
+# gcloud container images list-tags gcr.io/bonsai-iot-watering-system/firestore-service
+
+# To upload from console to GCP run:
+# gcloud builds submit --config backend-cloudbuild.yaml
+# Otherwise, its integrated with github cloud-build-backend workflows 

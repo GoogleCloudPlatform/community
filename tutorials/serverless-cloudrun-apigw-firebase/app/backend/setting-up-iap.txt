@@ -1,0 +1,39 @@
+Steps to enable IAP
+
+https://codelabs.developers.google.com/secure-serverless-application-with-identity-aware-proxy#4
+
+I already have an application brand created...
+projects/1036905305322/brands/1036905305322
+
+create a client:
+
+gcloud alpha iap oauth-clients create \
+    projects/1036905305322/brands/1036905305322 \
+    --display_name=amazing-employees-ui
+
+get client name:
+
+export CLIENT_NAME=$(gcloud alpha iap oauth-clients list \
+    projects/1036905305322/brands/1036905305322 --format='value(name)' \
+    --filter="displayName:amazing-employees-ui")
+
+projects/1036905305322/brands/1036905305322/identityAwareProxyClients/1036905305322-g69hkio2ffs0sgd4i1osod5mga8lpu8g.apps.googleusercontent.com
+
+get client id:
+
+export CLIENT_ID=${CLIENT_NAME##*/}
+1036905305322-g69hkio2ffs0sgd4i1osod5mga8lpu8g.apps.googleusercontent.com
+
+get client secret:
+
+export CLIENT_SECRET=$(gcloud alpha iap oauth-clients describe $CLIENT_NAME --format='value(secret)')
+
+
+gcloud iap web enable --resource-type=backend-services \
+    --oauth2-client-id=$CLIENT_ID \
+    --oauth2-client-secret=$CLIENT_SECRET \
+    --service=employees-app-be-lb-service
+
+
+an issue that I was facing was that IAP could not be enabled as CDN was turned on on the load balancer. There is a either or CDN-IAP thing in place..
+

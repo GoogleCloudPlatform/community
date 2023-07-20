@@ -1,0 +1,19 @@
+<mat-toolbar color="primary">
+  <span>Employees who amazes!</span>
+  <span class="example-spacer"></span>
+  <button
+    *ngIf="(employee$ | async)?.authenticated"
+    (click)="onLogout()"
+    mat-icon-button
+    class="example-icon favorite-icon"
+    aria-label="Example icon-button with heart icon"
+  >
+    <fa-icon [icon]="faArrowAltCircleRight" size="lg"></fa-icon>
+  </button>
+</mat-toolbar>
+
+<router-outlet>
+  <span class="loader" *ngIf="loading">
+    <div class="lds-dual-ring"></div>
+  </span>
+</router-outlet>

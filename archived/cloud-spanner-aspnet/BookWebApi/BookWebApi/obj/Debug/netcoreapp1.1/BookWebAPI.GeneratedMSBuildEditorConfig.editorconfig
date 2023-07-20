@@ -1,0 +1,3 @@
+is_global = true
+build_property.RootNamespace = BookWebAPI
+build_property.ProjectDir = /Users/Maksood_Mohiuddin/Documents/Clients/Internal/GCP/serverless_article/serverless-cloudrun-apigw-firebase/archived/cloud-spanner-aspnet/BookWebApi/BookWebAPI/

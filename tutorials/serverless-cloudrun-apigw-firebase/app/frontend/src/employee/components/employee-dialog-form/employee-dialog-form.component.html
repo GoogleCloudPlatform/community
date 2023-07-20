@@ -1,0 +1,77 @@
+<title mat-dialog-title>Add Employee</title>
+
+<form [formGroup]="form">
+  <mat-dialog-content>
+    <div class="employee_bio">
+      <mat-form-field>
+        <input
+          matInput
+          placeholder="First Name"
+          formControlName="firstName"
+          type="text">
+      </mat-form-field>
+
+      <mat-form-field>
+        <input
+          matInput
+          placeholder="Last Name"
+          formControlName="lastName"
+          type="text">
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-select placeholder="Job Title" formControlName="jobTitle">
+          <mat-option *ngFor="let jobTitle of jobTitles" [value]="jobTitle">{{ jobTitle }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input
+          matInput
+          placeholder="Years of Experience"
+          formControlName="yearsExperience"
+          type="number">
+      </mat-form-field>
+
+      <mat-form-field>
+        <input
+          matInput
+          placeholder="City"
+          formControlName="city"
+          type="text">
+      </mat-form-field>
+
+      <mat-form-field>
+        <input
+          matInput
+          placeholder="Street"
+          formControlName="street"
+          type="text">
+      </mat-form-field>
+
+      <mat-form-field>
+        <input
+          matInput
+          placeholder="Avatar URL"
+          formControlName="avatarURL"
+          type="text">
+      </mat-form-field>
+
+      <mat-form-field>
+        <input
+          matInput
+          placeholder="Image URL"
+          formControlName="imageURL"
+          type="text">
+      </mat-form-field>
+
+
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+    <button mat-button mat-dialog-close>Cancel</button>
+    <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
+    <button mat-raised-button [mat-dialog-close]=form.value color="primary">Save</button>
+  </mat-dialog-actions>
+</form>

@@ -1,0 +1,13 @@
+gcloud certificate-manager certificates create webappstests-gcp-mckinsey-cloud \
+--domains="webappstests.gcp.mckinsey.cloud" \
+--location=us-east1
+
+
+curl -m 70 -X GET https://amazing-employees-frontend-service-xhco3gspdq-ue.a.run.app \
+-H "Authorization:bearer $(gcloud auth print-identity-token)" \
+-H "Content-Type:application/json" \
+-d '{}'
+
+
+gcloud artifacts repositories create docker-repo --repository-format=docker \
+    --location=europe-west2 --description="Docker repository"

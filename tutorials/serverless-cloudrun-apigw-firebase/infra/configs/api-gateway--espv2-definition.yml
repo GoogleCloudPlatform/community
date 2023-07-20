@@ -1,0 +1,129 @@
+swagger: '2.0'
+info:
+  title: Employee API
+  description: Employee API on Cloud Endpoints with a Cloud Run Service
+  version: 1.0.0
+schemes:
+  - https
+paths:
+  /employees:
+    options:
+      summary: CORS
+      operationId: cors_employees_path
+      x-google-backend:
+        address: https://amazing-employees-backend-service-nguo7th7ja-ue.a.run.app
+        path_translation: APPEND_PATH_TO_ADDRESS
+      responses:
+        204:
+          description: "Allow"
+        401:
+          description: "Cors not allowed"
+        default:
+          description: unexpected error!
+    get:
+      summary: Gets employees or an employee if id is passed as query string
+      operationId: get_employees_oauth2
+      x-google-backend:
+        address: https://amazing-employees-backend-service-nguo7th7ja-ue.a.run.app
+        path_translation: APPEND_PATH_TO_ADDRESS
+      parameters:
+        - in: query
+          name: id
+          type: integer
+          required: false
+          description: Employee ID to be retrieved
+      security:
+        - firebase: [ ]
+      responses:
+        '200':
+          description: Employee(s) retrieved!
+        default:
+          description: unexpected error!
+  /employee:
+    options:
+      summary: CORS
+      operationId: cors_employee_path
+      x-google-backend:
+        address: https://amazing-employees-backend-service-nguo7th7ja-ue.a.run.app
+        path_translation: APPEND_PATH_TO_ADDRESS
+      responses:
+        204:
+          description: "Allow"
+        401:
+          description: "Cors not allowed"
+        default:
+          description: unexpected error!
+    post:
+      summary: Adds or Updates Employee using Cloud Run Service using OAuth2
+      operationId: add_update_employee_oauth2
+      x-google-backend:
+        address: https://amazing-employees-backend-service-nguo7th7ja-ue.a.run.app
+        path_translation: APPEND_PATH_TO_ADDRESS
+      parameters:
+        - name: employee
+          in: body
+          description: Employee to be added or to be updated
+          schema:
+            $ref: '#/definitions/Employee'
+      security:
+        - firebase: []
+      responses:
+        '200':
+          description: awesome!
+        default:
+          description: unexpected error!
+    delete:
+      summary: Deletes Employee using Cloud Run Service using OAuth2
+      operationId: delete_employee_oauth2
+      x-google-backend:
+        address: https://amazing-employees-backend-service-nguo7th7ja-ue.a.run.app
+        path_translation: APPEND_PATH_TO_ADDRESS
+      parameters:
+        - in: query
+          name: employee
+          type: integer
+          description: Employee to be deleted
+      security:
+        - firebase: [ ]
+      responses:
+        '200':
+          description: Employee Deleted!
+        default:
+          description: unexpected error!
+definitions:
+  Employee:
+    type: object
+    required:
+      - firstName
+      - lastName
+    properties:
+      id:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      jobTitle:
+        type: string
+      avatarURL:
+        type: string
+      imageURL:
+        type: string
+      yearsExperience:
+        type: string
+      address:
+        type: object
+      displayName:
+        type: string
+      email:
+        type: string
+      authenticated:
+        type: boolean
+securityDefinitions:
+  firebase:
+      authorizationUrl: ""
+      flow: "implicit"
+      type: "oauth2"
+      x-google-issuer: "https://securetoken.google.com/gcp-three-tier-ref-app"
+      x-google-jwks_uri: "https://www.googleapis.com/service_accounts/v1/metadata/x509/securetoken@system.gserviceaccount.com"
+      x-google-audiences: "gcp-three-tier-ref-app"

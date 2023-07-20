@@ -1,0 +1,12 @@
+<div class="employees-list">
+  <ng-container *ngIf="employeeList$ | async as employees else noData">
+    <div *ngFor="let employee of employees">
+      <app-employee [employeeDetails]="employee"></app-employee>
+    </div>
+  </ng-container>
+
+  <ng-template #noData>No Data Available</ng-template>
+
+</div>
+
+

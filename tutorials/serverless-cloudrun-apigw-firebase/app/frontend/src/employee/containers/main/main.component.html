@@ -1,0 +1,16 @@
+<ng-template [ngIf]="(loading$ | async)">
+  <div class="spinner">
+    <mat-spinner color='primary' diameter=35 strokeWidth=5></mat-spinner>
+  </div>
+</ng-template>
+<div class="add-employees">
+  <button mat-raised-button color="primary" (click)=openDialog()>Add Employee</button>
+<!--  <button mat-raised-button color="accent">Upload Employees File</button>-->
+  <form class="example-form">
+    <mat-form-field class="example-full-width">
+      <mat-label>Filter Employees</mat-label>
+      <input matInput placeholder="Marco Marulli">
+    </mat-form-field>
+  </form>
+</div>
+<app-employees-list [employeeList$]="employees$"></app-employees-list>

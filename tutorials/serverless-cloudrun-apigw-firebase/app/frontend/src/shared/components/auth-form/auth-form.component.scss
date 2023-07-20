@@ -1,0 +1,179 @@
+:host ::ng-deep {
+  .error {
+    color: #a94442;
+    background: #f2dede;
+    border: 1px solid #e4b3b3;
+    border-radius: 2px;
+    padding: 8px;
+    font-size: 14px;
+    font-weight: 400;
+    margin: 10px 0 0;
+  }
+  h1 {
+    margin: 0 0 25px;
+    font-size: 20px;
+    font-weight: 600;
+    text-align: center;
+  }
+  .email-button {
+    cursor: pointer;
+    outline: 0;
+    width: 100%;
+    border-radius: 2px;
+    border: 1px solid #1c79b8;
+    background: #39a1e7;
+    color: #fff;
+    padding: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
+    &:hover {
+      background: darken(#39a1e7, 5%);
+      border-color: darken(#1c79b8, 5%);
+    }
+    &:disabled {
+      opacity: .4;
+      cursor: not-allowed;
+    }
+  }
+  a {
+    display: block;
+    text-align: center;
+    color: #5e7386;
+    font-size: 1rem;
+  }
+
+  .google-button {
+    display: flex;
+    justify-content: center;
+    align-self: center;
+    min-width: 200px;
+    margin: 20px 0 30px;
+    padding: 10px;
+    background: white;
+    border: 1px solid #d1deeb;
+    color: #737373;
+    border-radius: 5px;
+    white-space: nowrap;
+    box-shadow: 1px 1px 0px 1px rgba(0,0,0,0.05);
+    transition-property: background-color, box-shadow;
+    transition-duration: 150ms;
+    transition-timing-function: ease-in-out;
+
+    &:focus,
+    &:hover {
+      box-shadow: 1px 4px 5px 1px rgba(0,0,0,0.1);
+    }
+
+    &:active {
+      background-color: #e5e5e5;
+      box-shadow: none;
+      transition-duration: 10ms;
+    }
+
+    &__text {
+      margin-left: 10px;
+      font-size: 1rem;
+      font-weight: bold;
+      font-family: 'Roboto',arial,sans-serif;
+      text-align: center;
+    }
+
+    &__icon {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      box-sizing: border-box;
+    }
+  }
+
+
+
+}
+
+.auth-form {
+  // commenting out the styling below just because only using the Google Login...
+  //background: #fff;
+  //box-shadow: 0 3px 4px rgba(0,0,0,.1);
+  //border-radius: 3px;
+  //border: 1px solid #c1cedb;
+  width: 400px;
+  margin: 50px auto;
+  padding: 30px;
+
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__action {
+    margin: 10px 0 20px;
+  }
+
+  &__toggle {
+    display: flex;
+    justify-content: space-around;
+    border-radius: 0 0 3px 3px;
+    border-top: 1px solid #c1cedb;
+    background: #f8fafc;
+    padding: 10px;
+    margin: 0 -30px -30px;
+  }
+
+  &__divider {
+    position: relative;
+    margin: 0 auto;
+    width: 20%;
+    color: #5777a8;
+    text-align: center;
+
+    &::before {
+      content: '';
+      display: block;
+      position: absolute;
+      background-color: #5777a8;
+      left: -5px;
+      top: 50%;
+      width: 25px;
+      height: 1px;
+    }
+
+    &::after {
+      content: '';
+      display: block;
+      position: absolute;
+      background-color: #5777a8;
+      right: -5px;
+      top: 50%;
+      width: 25px;
+      height: 1px;
+    }
+
+  }
+
+  label {
+    display: flex;
+    margin: 0;
+  }
+  input {
+    outline: 0;
+    font-size: 16px;
+    padding: 10px 15px;
+    margin: 0;
+    width: 100%;
+    background: #fafcfd;
+    color: #5777a8;
+    border: 1px solid #d1deeb;
+    text-align: center;
+    &::-webkit-input-placeholder {
+      color: #5777a8;
+    }
+    &[type=email] {
+      border-radius: 3px 3px 0 0;
+    }
+    &[type=password] {
+      border-radius: 0 0 3px 3px;
+      margin: -1px 0 0;
+    }
+  }
+}

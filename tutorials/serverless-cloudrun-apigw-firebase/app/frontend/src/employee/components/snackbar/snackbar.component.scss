@@ -1,0 +1,81 @@
+$close-button-size: 26px;
+$close-button-offset: calc((#{$close-button-size} / 2) * -1);
+
+.feedback-message-container {
+  position: relative;
+  display: inline-flex;
+  border-radius: 6px;
+  box-shadow: 0 0 16px rgba(0, 0, 0, 0.25);
+  padding: 18px 24px;
+  align-items: center;
+  min-width: 300px;
+  box-sizing: border-box;
+
+  .message {
+    letter-spacing: 0.0625rem;
+    font-size: 0.8rem;
+  }
+
+  .close-button {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: $close-button-offset;
+    right: $close-button-offset;
+    cursor: pointer;
+    background: white;
+    border-radius: 50%;
+    border: none;
+    margin: 0;
+    padding: 0;
+    width: $close-button-size;
+    height: $close-button-size;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+
+    &:focus {
+      outline: none;
+    }
+
+    i {
+      font-size: 16px;
+    }
+  }
+
+  &.info {
+    background-color: white;
+
+    .message {
+      color: black;
+    }
+
+    .close-button {
+      background-color: #40445a;
+      color: white;
+    }
+  }
+
+  &.warn {
+    background-color: #ff6f00;
+
+    .message {
+      color: white;
+    }
+
+    .close-button {
+      color: #ff6f00;
+    }
+  }
+
+  &.error {
+    background-color: #b71c1c;
+
+    .message {
+      color: white;
+    }
+
+    .close-button {
+      color: #b71c1c;
+    }
+  }
+}
