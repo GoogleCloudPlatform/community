@@ -1,0 +1,66 @@
+name: Trigger Backend Cloud Build
+
+on:
+  push:
+    branches:
+        - main
+    paths:
+      - 'app/backend/**'
+  workflow_dispatch:
+
+
+
+jobs:
+  trigger:
+    name: Backend Build & Deploy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: ./app/backend
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: GCP Auth
+      uses: 'google-github-actions/auth@v0'
+      with:
+        credentials_json: '${{ secrets.GCP_TF_CREDENTIALS }}'
+        service_account: '${{ vars.GCP_TF_SA }}'
+
+    - name: Trigger Backend Cloud Build
+      run: 'gcloud builds submit --region=us-east1 --config backend-cloudbuild.yaml'
+
+  terraform:
+    name: Terraform Update API Gateway
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: ./infra
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: GCP Auth
+      uses: 'google-github-actions/auth@v0'
+      with:
+        credentials_json: '${{ secrets.GCP_TF_CREDENTIALS }}'
+        service_account: '${{ vars.GCP_TF_SA }}'
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+
+    - name: Terraform Init
+      id: init
+      run: terraform init
+
+    - name: Terraform Apply
+      id: apply
+      run: terraform apply -replace="google_api_gateway_api_config.api_cfg" --auto-approve
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GCP_TF_CREDENTIALS }}

@@ -1,0 +1,161 @@
+name: Terraform Apply
+
+on:
+  issue_comment:
+    types:
+      - created
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: ./infra
+
+jobs:
+  terraform:
+    name: Terraform Apply
+    if: ${{ (startsWith(github.event.comment.body, 'tf apply')) || (github.event_name == 'workflow_dispatch')}}
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+      contents: write
+      checks: write
+
+    steps:
+      - name: Extract PR Branch Name
+        uses: actions/github-script@v6
+        if: github.event_name == 'issue_comment'
+        id: extract_branch_name
+        with:
+          script: |
+            const branchName = '${{ github.event.comment.body }}'.replace('tf apply ', '').replace(/['"]+/g, '');
+            console.log(branchName);
+            core.setOutput('branch_name', branchName);
+
+      - name: Checkout PR branch
+        uses: actions/checkout@v3
+        if: github.event_name == 'issue_comment'
+        with:
+          ref: 'refs/heads/${{ steps.extract_branch_name.outputs.branch_name }}'
+          fetch-depth: 0
+
+      - name: Check for PR approval
+        uses: actions/github-script@v6
+        if: github.event_name == 'issue_comment'
+        id: approval
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: reviews } = await github.rest.pulls.listReviews({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.issue.number
+            });
+            const approvals = reviews.filter(review => review.state === 'APPROVED');
+            if (approvals.length < 1) {
+              console.log(`No approvals yet. Waiting for approval...`);
+              process.exit(1);
+            }
+
+      - name: GCP Auth
+        uses: "google-github-actions/auth@v0"
+        if: github.event_name == 'issue_comment'
+        with:
+          credentials_json: "${{ secrets.GCP_TF_CREDENTIALS }}"
+          service_account: '${{ vars.GCP_TF_SA }}'
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        if: github.event_name == 'issue_comment'
+
+      - name: Terraform Init
+        id: init
+        if: github.event_name == 'issue_comment'
+        run: terraform init
+
+      - name: Terraform Format
+        id: fmt
+        if: github.event_name == 'issue_comment'
+        run: terraform fmt -check
+
+      - name: Terraform Validate
+        id: validate
+        if: github.event_name == 'issue_comment'
+        run: terraform validate -no-color
+
+      - name: Terraform Apply from Branch
+        id: apply
+        if: github.event_name == 'issue_comment'
+        continue-on-error: true
+        run: terraform apply --auto-approve -no-color
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GCP_TF_CREDENTIALS }}
+
+      - name: Update Pull Request
+        uses: actions/github-script@v6
+        if: github.event_name == 'issue_comment'
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { owner, repo } = context.repo;
+            const runId = context.runId;
+
+            const output = `
+            #### Terraform Apply 📖\`${{ steps.apply.outcome }}\`
+
+            <details><summary>Show Apply Output</summary>
+
+            \`\`\`\n
+            ${{ steps.apply.outputs.stdout }}
+            \`\`\`
+
+            </details>
+
+            [Link to workflow run](https://github.com/${owner}/${repo}/actions/runs/${runId})`
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+
+      - name: Wait for 10 seconds to release state lock
+        if: github.event_name == 'issue_comment'
+        run: sleep 10
+
+      - name: Merge Branch into Main
+        if: ${{ (steps.apply.outcome == 'success') && (github.event_name == 'issue_comment') }}
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.pulls.merge({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            })
+
+      - name: Checkout Main
+        uses: actions/checkout@v3
+        with:
+          ref: main
+
+      - name: GCP Auth for Main
+        uses: "google-github-actions/auth@v0"
+        with:
+          credentials_json: "${{ secrets.GCP_TF_CREDENTIALS }}"
+          service_account: '${{ vars.GCP_TF_SA }}'
+
+      - name: Setup Terraform for Main
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Terraform Init from Main
+        id: init-from-main
+        run: terraform init
+
+      - name: Terraform Apply from Main
+        id: apply-from-main
+        run: terraform apply --auto-approve -no-color
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GCP_TF_CREDENTIALS }}

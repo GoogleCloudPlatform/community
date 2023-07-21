@@ -1,0 +1,114 @@
+name: Initial Deploy Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      check-project:
+        description: 'Did you add your project_id in terraform.tfvars?'
+        required: true
+        default: 'Yes'
+        type: choice
+        options:
+          - Yes
+          - No
+      check:
+        description: 'Did you add your Service Account credential as a github secret?'
+        required: true
+        default: 'Yes'
+        type: choice
+        options:
+          - Yes
+          - No
+
+defaults:
+  run:
+    working-directory: ./infra
+
+jobs:
+  apis:
+    name: Initial Deploy
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+    - name: Validate Input
+      working-directory: ./
+      run: |
+        echo "Updated Project ID: ${{ github.event.inputs.check-project }}"
+        echo "Service Account added as secret: ${{ github.evnt.inputs.check }}"
+
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: GCP Auth
+      uses: 'google-github-actions/auth@v0'
+      with:
+        credentials_json: '${{ secrets.GCP_TF_CREDENTIALS }}'
+        service_account: '${{ vars.GCP_TF_SA }}'
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+
+    - name: Terraform Init
+      id: init
+      run: terraform init
+      continue-on-error: true
+
+    - name: Terraform Apply API's
+      working-directory: ./infra
+      id: apply-api
+      run: |
+        terraform apply --auto-approve \
+        -target='google_project_service.project["iam.googleapis.com"]' \
+        -target='google_project_service.project["storage.googleapis.com"]' \
+        -target='google_project_service.project["cloudresourcemanager.googleapis.com"]' \
+        -target='google_project_service.project["compute.googleapis.com"]' \
+        -target='google_project_service.project["firestore.googleapis.com"]' \
+        -target='google_project_service.project["artifactregistry.googleapis.com"]' \
+        -target='google_project_service.project["cloudbuild.googleapis.com"]' \
+        -target='google_project_service.project["apigateway.googleapis.com"]' \
+        -target='google_project_service.project["servicecontrol.googleapis.com"]' \
+        -target='google_project_service.project["run.googleapis.com"]' \
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GCP_TF_CREDENTIALS }}
+
+    - name: Terraform Apply Service Accounts & Registry
+      working-directory: ./infra
+      id: apply-sa
+      run: |
+        terraform apply --auto-approve \
+        -target='google_service_account.backend_service_account' \
+        -target='google_project_iam_member.backend_iam_member' \
+        -target='google_service_account.frontend_service_account' \
+        -target='google_project_iam_member.cloud_build_sa["roles/run.admin"]' \
+        -target='google_project_iam_member.cloud_build_sa["roles/iam.serviceAccountUser"]' \
+        -target='google_artifact_registry_repository.docker_repo'
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GCP_TF_CREDENTIALS }}
+
+    - name: Trigger Backend Cloud Build
+      working-directory: ./app/backend
+      id: cb-backend
+      run: 'gcloud builds submit --region=us-east1 --config backend-cloudbuild.yaml'
+
+    - name: Deploy API Gateway
+      working-directory: ./infra
+      id: api-gw
+      run: 'terraform apply --auto-approve -target=google_api_gateway_gateway.api_gw'
+
+
+    - name: Trigger Frontend Cloud Build
+      working-directory: ./app/frontend
+      id: cb-frontend
+      run: |
+        GATEWAY_URL=$(gcloud api-gateway gateways describe employee-gateway --location us-central1 --format 'value(defaultHostname)')
+        echo $GATEWAY_URL
+        gcloud builds submit --region=us-east1 --config frontend-cloudbuild.yaml \
+        --substitutions=_GATEWAY_URL=$GATEWAY_URL
+
+    - name: Terraform Apply All
+      working-directory: ./infra
+      id: apply-all
+      run: terraform apply --auto-approve

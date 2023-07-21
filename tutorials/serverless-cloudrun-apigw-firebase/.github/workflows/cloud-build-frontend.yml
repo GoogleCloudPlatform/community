@@ -1,0 +1,37 @@
+name: Trigger Frontend Cloud Build
+
+on:
+  push:
+    branches:
+        - main
+    paths:
+      - 'app/frontend/**'
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: ./app/frontend
+
+jobs:
+  trigger:
+    name: Frontend Build & Deploy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: GCP Auth
+      uses: 'google-github-actions/auth@v0'
+      with:
+        credentials_json: '${{ secrets.GCP_TF_CREDENTIALS }}'
+        service_account: '${{ vars.GCP_TF_SA }}'
+
+    - name: Trigger Frontend Cloud Build
+      run: |
+        GATEWAY_URL=$(gcloud api-gateway gateways describe employee-gateway --location us-east1 --format 'value(defaultHostname)')
+        echo $GATEWAY_URL
+        gcloud builds submit --region=us-east1 --config frontend-cloudbuild.yaml \
+        --substitutions _GATEWAY_URL="http://${GATEWAY_URL}"

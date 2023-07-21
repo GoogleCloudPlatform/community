@@ -1,0 +1,128 @@
+name: Terraform Plan & Static Analysis
+
+on:
+  pull_request:
+    paths:
+      - 'infra/**'
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: ./infra
+
+jobs:
+  terraform:
+    name: Terraform
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Cache dependencies
+      id: cache
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.terraform.d/plugin-cache
+          ~/.cache/checkov
+        key: ${{ runner.os }}-terraform
+
+    - name: Test with tfsec
+      id: tfsec
+      uses: aquasecurity/tfsec-action@v1.0.0
+      with:
+        working_directory: ./infra
+        additional_args: |
+          --tfvars-file ./infra/terraform.tfvars
+          -e google-storage-bucket-encryption-customer-key,google-iam-no-project-level-service-account-impersonation,google-dns-enable-dnssec,google-iam-no-user-granted-permissions
+
+      continue-on-error: true
+
+    - name: Test with Checkov
+      id: checkov
+      uses: bridgecrewio/checkov-action@v12
+      with:
+        directory: ./infra
+        framework: terraform
+        output_format: cli
+        download_external_modules: true
+        skip_check: CKV_GCP_49,CKV_GCP_117,CKV_GCP_84,CKV_GCP_16,CKV_GCP_41
+      continue-on-error: true
+
+
+    - name: 'GCP Auth'
+      uses: 'google-github-actions/auth@v0'
+      with:
+        credentials_json: '${{ secrets.GCP_TF_CREDENTIALS }}'
+        service_account: '${{ vars.GCP_TF_SA }}'
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+
+    - name: Terraform Init
+      id: init
+      run: terraform init
+      continue-on-error: true
+
+    - name: Terraform Format
+      id: fmt
+      run: terraform fmt -check
+      continue-on-error: true
+
+    - name: Terraform Validate
+      id: validate
+      run: terraform validate -no-color
+      continue-on-error: true
+
+    - name: Terraform Plan
+      id: plan
+      run: terraform plan -no-color -input=false
+      continue-on-error: true
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GCP_TF_CREDENTIALS }}
+
+    - name: Update Pull Request
+      uses: actions/github-script@v6
+      if: github.event_name == 'pull_request'
+      env:
+        PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const { owner, repo } = context.repo;
+          const runId = context.runId;
+
+          const output = `
+          #### Tfsec \`${{ steps.tfsec.outcome }}\`
+          #### Checkov \`${{ steps.checkov.outcome }}\`
+          #### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+          #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+          #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+          #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+
+          <details><summary>Show Plan</summary>
+
+          \`\`\`\n
+          ${process.env.PLAN}
+          \`\`\`
+
+          </details>
+
+          [Link to workflow run](https://github.com/${owner}/${repo}/actions/runs/${runId})
+
+          *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: output
+          })
+
+    - name: Terraform Plan Status
+      if: steps.plan.outcome == 'failure'
+      run: exit 1
