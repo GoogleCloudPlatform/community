@@ -1,9 +1,5 @@
 # Three-Tier Containerized Application on Google Cloud
 
-[![Terraform Plan](https://github.com/McK-Internal/gcp-three-tier-ref-app/actions/workflows/tf-plan.yml/badge.svg)](https://github.com/McK-Internal/gcp-three-tier-ref-app/actions/workflows/tf-plan.yml)
-
-[![Terraform Apply](https://github.com/McK-Internal/gcp-three-tier-ref-app/actions/workflows/tf-apply.yml/badge.svg)](https://github.com/McK-Internal/gcp-three-tier-ref-app/actions/workflows/tf-apply.yml)
-
 This repository contains the source code and configuration files for a three-tier containerized application on Google Cloud. The application consists of a frontend developed using Angular, a backend developed using Flask, and a Firestore database. The infrastructure is managed using Terraform, and the continuous integration and deployment (CI/CD) pipeline is set up using GitHub Actions for infrastructure and Cloud Build for application code / containers.
 
 ## Architecture
@@ -47,11 +43,11 @@ In the Google Cloud console, navigate to the Cloud Storage Buckets page > Create
 - For **storage class**, choose **Standard**.
 - For **access control**, check **Enforce public access prevention** on this bucket and select **Uniform access control**
 - For **data protection**, select **Object versioning**
-```
+
 ```
 gcloud storage buckets create gs://BUCKET_NAME
 ```
-```
+
 
 Note: If you are especially savvy with Terraform, you may find it easier to create the bucket with Terraform local state, then migrate the state into the bucket. See the Google Cloud documentation for more details.
 
