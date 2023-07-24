@@ -88,6 +88,7 @@ In this section, you will deploy the infrastructure with Terraform. Due to depen
 1.  Set the required environment variables:
 
         export TF_VAR_project_id=$GOOGLE_CLOUD_PROJECT
+        export TF_VAR_region=$REGION
 
 1.  Initialize Terraform:
 
