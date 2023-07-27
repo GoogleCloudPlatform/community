@@ -496,7 +496,7 @@ public class DlpDataCatalogTagsTutorial {
     return subRows;
   }
 
-  // this methods calcualtes the total bytes of a list of rows.
+  // this methods calculates the total bytes of a list of rows.
   public static int getBytesFromList(List list) throws IOException {
     java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
     java.io.ObjectOutputStream out = new java.io.ObjectOutputStream(baos);

@@ -11,6 +11,7 @@
   "dependencies": {
     "@google-cloud/dlp": "^1.9",
     "@google-cloud/kms": "^1.6",
+    "body-parser": "^1.20.2",
     "config": "^3.2",
     "express": "^4.17",
     "google-auth-library": "^5.7",

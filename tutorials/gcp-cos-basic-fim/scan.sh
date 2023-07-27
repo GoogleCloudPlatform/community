@@ -79,7 +79,7 @@ mkdir -p $DATDIR $TMPDIR $LOGDIR
 
 # Fail fast if already running
 if [ -f "$LOCKFILE" ];then
-  echo "A scan is already in progess." | tee -a $LOGFILE
+  echo "A scan is already in progress." | tee -a $LOGFILE
   exit
 fi
 touch $LOCKFILE

@@ -1,5 +1,5 @@
 /**
-Main applicaiton script for the card data tokenizer. Called by server.js.
+Main application script for the card data tokenizer. Called by server.js.
 
 See ../index.md for usage info and Apache 2.0 license
 */

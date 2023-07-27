@@ -49,7 +49,7 @@ def read_dataset(data_dir, prefix, pattern, batch_size=512, eval=False):
 
 
 def get_wide_deep():
-    # defin model inputs
+    # define model inputs
     inputs = {}
     inputs['is_male'] = layers.Input(shape=(), name='is_male', dtype='string')
     inputs['plurality'] = layers.Input(shape=(), name='plurality', dtype='string')

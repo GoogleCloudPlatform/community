@@ -367,7 +367,5 @@ If you don't want to delete the project, you can delete the provisioned resource
 
 ## What's next
 
--  Learn how to
-   [manage Cloud Monitoring dashboards with the Cloud Monitoring API](https://cloud.google.com/solutions/managing-monitoring-dashboards-automatically-using-the-api).
 -  Learn more about how to [export metrics from multiple projects](https://cloud.google.com/solutions/stackdriver-monitoring-metric-export).
 -  Try out other Google Cloud features for yourself. Have a look at those [tutorials](https://cloud.google.com/docs/tutorials).

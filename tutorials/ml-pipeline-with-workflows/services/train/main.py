@@ -33,7 +33,7 @@ MODEL_PATH = os.getenv('MODEL_PATH')
 
 @app.route('/')
 def index():
-    return 'A service to Submit a traing job for the babyweight-keras example. '
+    return 'A service to Submit a training job for the babyweight-keras example. '
 
 
 @app.route('/api/v1/job/<string:job_id>', methods=['GET'])
