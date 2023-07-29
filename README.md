@@ -2,13 +2,8 @@
 
 # Google Cloud open tutorials
 
-Markdown files added to the [`tutorials` folder](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials) are published at
-[cloud.google.com/docs/open-tutorials](https://cloud.google.com/docs/open-tutorials).
-
-## Contributing
-
-For instructions on contributing a tutorial, see
-[How to write a tutorial](https://cloud.google.com/community/tutorials/write).
+This repository is no longer accepting submissions of new documents. Documents that had previously been published through this systme have been moved to the `/archived`
+folder of this repository and are not being maintained. 
 
 ## License
 
