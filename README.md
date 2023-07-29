@@ -2,7 +2,7 @@
 
 # Google Cloud open tutorials
 
-This repository is no longer accepting submissions of new documents. Documents that had previously been published through this systme have been moved to the `/archived`
+This repository is no longer accepting submissions of new documents. Documents that had previously been published through this system have been moved to the `/archived`
 folder of this repository and are not being maintained. 
 
 ## License
