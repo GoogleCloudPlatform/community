@@ -1,0 +1,1 @@
+The documents that were in this folder are now in the `/archived` folder.
